@@ -61,7 +61,8 @@ interface BundleDbSource {
 }
 ```
 
-- **`search`**: 입력을 **공유 정규화 함수** `normalizeKeyword`로 정규화한 뒤 `keyword`(정규화 비교) **또는 `aliases` 중 하나**(정규화 비교)와 완전 일치하는 첫 항목. 미발견 시 `null`. 빈/공백 입력은 `null`.
+- **`search`**: 입력을 **공유 정규화 함수** `normalizeKeyword`로 정규화한 뒤 `keyword`(정규화 비교) **또는 `aliases` 중 하나**(정규화 비교)와 완전 일치하는 항목. 미발견 시 `null`. 빈/공백 입력은 `null`.
+  - **정규화 키 다대일 충돌 시 계약(조용한 비결정 제거)**: `normalizeKeyword`로 접힌 정규화 키가 서로 다른 두 엔트리에 걸쳐 중복될 수 있다 — 실 배포 `terms.json`(650)에 현재 **3건 실재**(`집계`→{aggregate, aggregation}·`분기`→{branch, fork}·`샤딩`→{shard, sharding}). 이때 `search`는 **번들(리스트) 순서상 첫 매칭을 결정적으로 반환**한다(아래 인덱스 first-wins). 뒤로 밀린 매칭은 `search`로 가려지고 `autocomplete`도 alias 비대상(§3-1 아래)이라 대체 발견 경로가 없다 — 그러나 이 반환은 **결정적**이며 리스트 순서에 고정돼 "조용히 비결정적으로 틀림"은 아니다. **alias 정규화-유일성 강제(번들 린트 de-dup)와 가려진 엔트리 발견성 회복은 M3에서 미봉이며 Open Questions로 명시 이월**한다 — M3 `search`는 최소 계약으로 **결정적 반환만** 보증한다.
   - **`normalizeKeyword`는 term-key(캐시 키·로컬 매칭) 정규화의 단일 정본이다**(`commonMain/data/`): `fun normalizeKeyword(s: String): String = s.trim().lowercase()`. `BundleDbSource.search`가 이 함수로 로컬 매칭 키를 만들고, **서버 캐시 키잉도 같은 정규화**(§7-3 서버 파생 또는 `X-Term-Key` 헤더)를 써 `React`/`react`가 같은 term-key로 접혀 캐시 파편화·M4 중복 upsert가 방지된다. **단, 이 정규화는 키잉 전용이다 — AI에 보여줄 질의 content에는 적용하지 않는다**(§3-2): lowercase가 대소문자 유의미 용어(`NaN`/`Go`/`REST`/`C`)의 의미를 뭉개 어원 오답을 유발하므로, AI user 메시지에는 원본 keyword를 대소문자 보존해 싣는다(iOS 검증본 계승). 키잉과 프롬프트 입력은 다른 요구라 한 함수로 합치지 않는다.
 - **`autocomplete`**: 빈/공백 prefix면 `emptyList()`. 아니면 정규화 prefix로 `keyword.lowercase().startsWith(prefix)`인 항목들. (aliases는 autocomplete 대상 아님 — spec 2-1.)
 
@@ -70,6 +71,7 @@ interface BundleDbSource {
 // 파싱·인덱스·매칭 — 바이트 획득과 무관. 테스트가 실 번들 entries를 직접 주입할 수 있다.
 class InMemoryBundleDbSource(entries: List<TermEntry>) : BundleDbSource {
     // init에서 검색 인덱스 구성: keyword·aliases를 정규화 키로 접어 매칭 집합에 넣는다.
+    // 정규화 키 충돌 시 번들(리스트) 순서 first-wins(putIfAbsent) — §3-1 결정적 반환 계약과 일치(last-wins 덮어쓰기 금지).
     // ⚠️ INV-A: aliases를 인덱스에서 누락하면 search(alias)가 조용히 miss한다(§4·§6-B의 sharp 오라클).
 }
 
@@ -249,6 +251,7 @@ val AppJson = Json {
 > 비준 종료 시점의 **명시 이월** 자리. 미탐색이지만 알려진 클래스를 암묵적으로 넘기지 않고 여기에 적어서 넘긴다. (비준 착수 전 — 현재는 비어 있으며, 적대 비준·사람 게이트가 채운다.)
 
 - [ ] (비준 대기) §7 열린 질문 1~6의 판정.
+- [ ] (미봉·이월) **BundleDbSource alias 정규화-유일성 + 가려진 엔트리 발견성** — `normalizeKeyword`(=`trim().lowercase()`)로 접힌 alias가 서로 다른 엔트리에 중복되면(실 번들 3건: `집계`→{aggregate, aggregation}·`분기`→{branch, fork}·`샤딩`→{shard, sharding}) `search`가 번들 순서 첫 매칭만 반환하고 나머지를 가린다(`autocomplete`은 alias 비대상이라 대체 발견 경로 없음). M3는 §3-1대로 **결정적 반환만** 보증(first-wins). 해소책 택일 — (i) 번들 린트로 중복 정규화 alias(keyword 포함)를 빌드 게이트에서 거부(데이터 de-dup 강제), (ii) alias-aware autocomplete로 가려진 엔트리 발견성 회복, (iii) 결정적-반환 유지(현행) — 는 비준/후속(데이터·M4) 트랙 판정.
 - [ ] (선상속·서버 트랙) INV-13(정규화-후-캐시쓰기)·서버 `devetym-proxy` 전체 — §0 스코핑상 클라 M3 밖, 서버 트랙 DoD로 상속(§4·§7-6).
 - [ ] (선상속·M4) AI 응답 category 정규화(§7-4)·fetch 3단 오케스트레이션·로컬 AI 캐시 조회·upsert 정책·pinning 스킵 — M4 DoD로 상속.
 - [ ] (선상속·M8) 실 플랫폼 HTTP 엔진(Darwin/OkHttp) 소켓 IO·`Res.readBytes` 바이트 획득 런타임 — §6-A `MockEngine`·§6-B `File`로 무측정, M8 통합/실기기 DoD로 상속(§5).
