@@ -98,7 +98,7 @@ DELETE FROM searchHistory;
 ```
 
 - `bookmarked`/`recent`가 반응형 진입점이다: M4/M5가 `.asFlow().mapToList(...)`로 관찰해 **수동 재조회 없이** 목록을 갱신한다(ADR-0002). M2는 쿼리를 정의하고 `.executeAsList()`로 결과·정렬을 실측한다(재방출은 M4/M5, §2·§7-5).
-- `insertOrReplaceTerm`은 M2가 제공하는 **기본 저장 메커니즘**이다. `isBookmarked`/`source` 보존, pinned(`seenAt`) 로우 미덮어쓰기 같은 **정책은 M4**가 이 위에서 조건 분기로 구현한다(M2는 REPLACE 자체만 제공, 정책 판단 없음).
+- `insertOrReplaceTerm`은 M2가 제공하는 **기본 저장 메커니즘**이다. `isBookmarked`/`source`/`createdAt` 보존, pinned(`seenAt`) 로우 미덮어쓰기 같은 **정책은 M4**가 이 위에서 조건 분기로 구현한다(M2는 REPLACE 자체만 제공, 정책 판단 없음). ⚠️ `INSERT OR REPLACE`는 DELETE+INSERT라 `createdAt`을 포함한 모든 컬럼을 새 값으로 덮으므로, bookmarked(및 pinned) 로우 refresh 시 M4가 `createdAt`을 **`isBookmarked`/`source`와 함께 보존**해야 `bookmarked`(§3-1 `ORDER BY createdAt DESC`) 정렬이 새로고침마다 조용히 재정렬되지 않는다 — 이 보존 목록·정렬 안정성은 M4 DoD/ROADMAP로 상속(§7·DR-M2-2).
 
 ### 3-3. 드라이버 `expect`/`actual` (`commonMain` + `androidMain`/`iosMain`)
 
@@ -229,5 +229,6 @@ fun Term.toDto(): TermEntry = TermEntry(
 
 > 비준 종료 시점의 **명시 이월**. 미탐색이지만 알려진 클래스를 암묵적으로 넘기지 않고, 여기에 적어서 넘긴다("본다는 걸 적어서 넘긴다").
 
-- [ ] (비준 후 채움) 이번 라운드 carry-forward: _TBD_.
+- [ ] (M4 상속·DR-M2-2) bookmarked(및 pinned) 로우 upsert 시 `createdAt`을 `isBookmarked`/`source`와 함께 보존 — `INSERT OR REPLACE`(DELETE+INSERT)가 `createdAt`을 새 fetch 시각으로 덮으면 `bookmarked` 목록(§3-1 `createdAt DESC`)이 새로고침마다 조용히 재정렬된다. M2 스키마는 `createdAt` 컬럼을 제공해 보존을 '가능'하게 하나 정책은 M4 소관 → M4 DoD/ROADMAP이 보존 목록에 `createdAt`을 명시하고 정렬 안정성을 하류에서 실측한다.
+- [ ] (M4/캐시 트랙 상속·DR-M2-3) `toDto`의 `Long?→Int?`는 M2 소유 경로(DTO `Int?` 출처)에서 무손실 확인됨(§3-4·INV-9) — 새 M2 처방 불요. `schemaVersion`을 Int 범위로 보장(또는 `toDto` 범위 가드)할 책임은 §3-4/INV-9대로 M4/캐시 트랙 DoD에 상속되어 있으며, 각 DoD에 걸려 있는지는 사람 게이트가 추적.
 - [ ] (사람 게이트) M2 §3 구현 착수 승인: _대기_.
