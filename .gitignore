@@ -3,3 +3,20 @@ harness/
 
 # macOS
 .DS_Store
+
+# Gradle / build
+.gradle/
+build/
+**/build/
+local.properties
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+captures/
+
+# Kotlin/Native · Xcode
+*.hprof
+iosApp/**/xcuserdata/
+iosApp/**/*.xcworkspace/xcuserdata/
+iosApp/build/

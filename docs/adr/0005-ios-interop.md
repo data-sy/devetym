@@ -16,20 +16,25 @@ devetym의 iOS 경계 성격이 이 결정을 좌우한다:
 
 **웹으로 2026-07 현재 사실을 확인**했다(어시스턴트 컷오프 2026-01은 이 영역에서 stale). 확인 결과는 아래 References의 URL.
 
-### 확인된 버전 매트릭스 (2026-07, M0 골격 투입용)
+### 확인된 버전 매트릭스 (2026-07, M0 골격 투입용 — 빌드로 실측 검증)
 
 | 구성요소 | 버전 | 근거 |
 |---|---|---|
-| Kotlin | **2.4.0** (stable; 2.4.20 9월·2.5.0 12월 예정) | kotlinlang.org/releases |
+| Kotlin | **2.3.21** | SKIE 상한(아래) — CMP 권장선 ≥2.2.20 충족 |
 | Compose Multiplatform | **1.11.1** (stable) | compose-compatibility-and-versioning |
-| Compose Compiler Gradle 플러그인 | Kotlin과 **동일 버전** (2.4.0) | 동 문서 |
+| Compose Compiler Gradle 플러그인 | Kotlin과 **동일 버전** (2.3.21) | 동 문서 |
+| Android Gradle Plugin | **8.13.0** | Kotlin 2.3.x 지원 AGP 8.2.2–8.13.0 상한 |
+| Gradle | **8.13** | Kotlin 2.3.x(7.6.3–9.0.0) ∩ AGP 8.13 |
 | SKIE | **0.10.12** (2026-05) | github.com/touchlab/SKIE/releases |
-| SKIE ↔ Kotlin 지원범위 | **2.0.0 – 2.4.0** | skie.touchlab.co/intro |
+| **SKIE ↔ Kotlin 지원 상한** | **2.3.21** ⚠️ | **빌드 실측**(플러그인이 2.4.0 거부) |
 
-- CMP 1.11.1 요구: 최소 Kotlin 2.1.0, iOS/web 타깃은 **2.2.20+ 권장**. → Kotlin **2.4.0**이 CMP 권장선(≥2.2.20)과
-  SKIE 지원상한(≤2.4.0)의 **교집합**이자 현재 stable. 세 축이 한 점에서 만난다.
-- ⚠️ SKIE는 "최신 Kotlin 지원까지 수일~수주 지연"이 있다. **Kotlin을 앞질러 올리지 말 것** — 2.4.20/2.5.0으로 갈 땐
-  SKIE가 그 버전을 지원하는지 먼저 확인하고 함께 올린다(정본은 [ROADMAP](../../ROADMAP.md) M0).
+- ⚠️ **실측 정정**: 웹 조사에서 본 "SKIE↔Kotlin 2.0.0–2.4.0"은 낙관적/부정확했다. SKIE 0.10.12 플러그인은
+  **Kotlin 2.4.0을 명시적으로 거부**하고 상한이 **2.3.21**이다(빌드 에러로 확인). 이게 정본이다.
+- 그래서 Kotlin을 **2.3.21**로 고정한다. CMP 1.11.1 요구(최소 2.1.0, iOS/web 권장 2.2.20+)를 충족하고
+  SKIE 상한과 정확히 맞는 최상단 지점이다. 이것이 이 ADR의 결정("interop 품질 우선")이 SKIE 채택 시 감수하는
+  **Negative(Kotlin 최신판 추종 지연)의 구체적 실체**다.
+- ⚠️ **Kotlin을 SKIE 상한(2.3.21) 위로 앞질러 올리지 말 것.** 2.4.x로 가려면 SKIE가 그 버전을 지원하는지
+  먼저 확인하고 함께 올린다(정본은 [ROADMAP](../../ROADMAP.md) M0).
 
 ## Decision
 **SKIE (표준 Obj-C export + SKIE 오버레이).**

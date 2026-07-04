@@ -76,6 +76,25 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 
 ---
 
+## 빌드 · green 루프
+
+골격 검증 오라클(세 축 모두 통과해야 green). 버전은 [`gradle/libs.versions.toml`](gradle/libs.versions.toml) 한 곳에서 관리
+(Kotlin 2.3.21 · CMP 1.11.1 · AGP 8.13.0 · Gradle 8.13 · SKIE 0.10.12 — [ADR-0005](docs/adr/0005-ios-interop.md)).
+
+```bash
+./gradlew :shared:testDebugUnitTest                      # 공유 로직 단위테스트
+./gradlew :androidApp:assembleDebug                      # Android APK
+./gradlew :shared:linkDebugFrameworkIosSimulatorArm64    # iOS 프레임워크(Kotlin/Native + SKIE)
+```
+
+- iOS interop은 **SKIE**로 `Shared.framework`의 Swift API를 개선한다(suspend→async/await, Flow→AsyncSequence 등).
+- ⚠️ **SKIE 0.10.12는 Kotlin 최대 2.3.21까지만** 지원 — Kotlin을 앞질러 올리지 말 것.
+- 전체 iOS 앱 시뮬레이터 실행은 `iosApp.xcodeproj` 생성이 남았다([`iosApp/README.md`](iosApp/README.md)).
+
+---
+
 ## 현재 상태
 
-**설계 문서 세트 완료 → 구현 착수 대기.** README·PRD·아키텍처·ADR·Spec·로드맵을 세웠고, 아직 앱 코드는 없다. 다음 착수는 [`ROADMAP.md`](ROADMAP.md)의 **M0(KMP 골격)** — 진행 상태 정본은 로드맵.
+**M0(KMP 골격) 완료 — green 루프 확립.** `shared + androidApp + iosApp` 골격이 서고, 위 세 오라클이 모두 통과한다
+(공유 `Greeting`을 Koin으로 배선해 양 플랫폼 Compose 화면에 표시). 다음은 [`ROADMAP.md`](ROADMAP.md)의 **M1(모델·직렬화)**
+— 진행 상태 정본은 로드맵.
