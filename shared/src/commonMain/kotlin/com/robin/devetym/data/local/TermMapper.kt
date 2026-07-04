@@ -26,7 +26,9 @@ private val aliasesJson = Json
  * `toDto`가 이 넷을 버리므로 M4 refresh는 옛 `Term`을 읽어 재주입해야 하는데(read-modify-write;
  * `INSERT OR REPLACE`=DELETE+INSERT라 부분 갱신 불가), 기본값이 있으면 재주입 누락이 컴파일 에러 없이
  * `isBookmarked→0`(북마크 소실)·`seenAt→null`(unpin, INV-6 위반)으로 조용히 덮인다. 기본값을 없애 누락을
- * 컴파일 에러로 만든다. 신규 저장은 호출부에서 `isBookmarked = false, seenAt = null`을 명시한다.
+ * 컴파일 에러로 만든다. 신규 저장의 `seenAt`은 **경로별로 다르다**(M4 §3-4 정본): AI 네트워크 신규
+ * 로우는 `seenAt = clock()`로 **pin**(INV-6, 처음 본 항목 불변), 번들 북마크 신규 로우(`toggleBookmark`
+ * 미존재 분기, `isBookmarked = true`)는 `seenAt = null`(unpinned). 호출부(M4)가 경로에 맞게 명시한다.
  */
 fun TermEntry.toEntity(
     source: Source,
