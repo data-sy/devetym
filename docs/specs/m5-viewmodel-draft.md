@@ -64,7 +64,7 @@ class DetailViewModel(private val repository: TermRepository) : ViewModel() {
     val state: StateFlow<DetailUiState>              // MutableStateFlow(Loading) 백킹
     fun load(keyword: String)                        // fetch — 재진입 시 이전 job 취소
     fun refresh(keyword: String)                     // repository.refresh — pinning 우회(INV-6)
-    fun toggleBookmark()                             // 현재 Result.Found(entry)를 repository.toggleBookmark에 위임(fire-and-forget). ⚠️ 상세 화면 북마크 현재값 상태는 M5 미노출 — M6 이월(아래·Open Questions)
+    fun toggleBookmark()                             // 현재 state가 Result(Found(entry))일 때만 그 entry를 repository.toggleBookmark에 위임(그 외 상태는 no-op·위임 미호출). ⚠️ VM-scoped launch 유실 창(DR5-2)·상세 북마크 현재값 상태 미노출은 M6 이월(아래·Open Questions)
 }
 ```
 
@@ -76,7 +76,10 @@ class DetailViewModel(private val repository: TermRepository) : ViewModel() {
 3. **`not_dev_term`/`possible_typo`는 오류가 아니라 `Result`**(정상 `TermResult` 분기) — M6가 `TermResult` 안에서 분기 표시(spec 3-3).
 - **job 취소**: 재진입(`load` 재호출)·화면 이탈(`onCleared`/명시 `cancel`) 시 이전 fetch를 취소해 레이스·stale 상태 갱신을 막는다(iOS `currentSearchTask` 계승).
 - `refresh(keyword)`는 `load`와 같되 `repository.refresh`를 호출(pinning 우회).
-- **⚠️ 상세 북마크 상태 소스 부재 (DR-4) — M6 이월.** `DetailUiState.Result`는 `TermResult`만 담고 `TermResult.Found`의 `TermEntry`에는 `isBookmarked` 필드가 없다(정본 `model/TermEntry.kt`·`TermResult.kt`). 따라서 `DetailViewModel`은 '현재 용어가 북마크됐는지'를 노출하는 반응형 상태(`StateFlow<Boolean>` 등)를 두지 않으며 `toggleBookmark()`도 Boolean을 돌려주지 않는 위임뿐이다(§6 `test_removeBookmark`류는 위임 호출만 단언). 상세 화면 별표의 현재값을 그릴 상태 소스 — 예: `bookmarkedTerms()`를 keyword로 교차조회한 파생 `StateFlow<Boolean>`, 또는 `DetailUiState.Result`에 `isBookmarked` 필드 추가 — 는 **M6로 이월**한다. M5는 iOS 검증본의 상세 북마크 상태 계층을 이 슬라이스에서 복제하지 않음을 정직히 남긴다(상태 소스 부재를 은폐하지 않음).
+- **`toggleBookmark()` 전이(guard 필수):** `state.value`가 `Result`이고 그 `TermResult`가 `Found(entry)`일 **때만** `entry`를 꺼내 `repository.toggleBookmark(entry)`에 위임한다. `Loading`·`Error`·`Result(NotDevTerm)`·`Result(PossibleTypo)` 등 **`Found`가 아닌 모든 상태에서는 no-op**(위임 미호출) — `entry`를 강제 추출(`as Result.Found`)하지 않는다(별표 탭 시 NPE/ClassCast 금지). 이 guard/추출은 §6 `test_toggleBookmark_*` 두 케이스가 discriminating하게 실측한다.
+- **⚠️ 상세 북마크 상태 소스 부재 (DR-4) — M6 이월.** `DetailUiState.Result`는 `TermResult`만 담고 `TermResult.Found`의 `TermEntry`에는 `isBookmarked` 필드가 없다(정본 `model/TermEntry.kt`·`TermResult.kt`). 따라서 `DetailViewModel`은 '현재 용어가 북마크됐는지'를 노출하는 반응형 상태(`StateFlow<Boolean>` 등)를 두지 않으며 `toggleBookmark()`도 Boolean을 돌려주지 않는 위임뿐이다(방어 오라클은 별개 VM의 `test_removeBookmark`가 아니라 §6 `DetailViewModel`의 `test_toggleBookmark_Result_Found일때_위임`/`test_toggleBookmark_상태가Found아님_no-op` 두 케이스 — entry 추출·guard를 실측). 상세 화면 별표의 현재값을 그릴 상태 소스 — 예: `bookmarkedTerms()`를 keyword로 교차조회한 파생 `StateFlow<Boolean>`, 또는 `DetailUiState.Result`에 `isBookmarked` 필드 추가 — 는 **M6로 이월**한다. M5는 iOS 검증본의 상세 북마크 상태 계층을 이 슬라이스에서 복제하지 않음을 정직히 남긴다(상태 소스 부재를 은폐하지 않음).
+
+**⚠️ VM-scoped 쓰기 유실 창 (DR5-2) — M6 이월 병기.** `toggleBookmark()`가 `viewModelScope.launch`(fire-and-forget)라, 별표 탭 직후 사용자가 상세를 이탈하면 `onCleared`→`viewModelScope.cancel()`이 아직 디스패치되지 않은 toggle launch를 취소해 **북마크 쓰기가 에러 없이 유실**될 수 있다(`Main.immediate` 동기 실행이면 대개 안전하나, Main에 선행 작업이 큐잉된 경우 이 창이 실재). 게다가 위 DR-4로 상세엔 반응형 `isBookmarked` 상태가 없어 성공/실패 피드백이 전무하므로 이 유실은 사용자·후속 화면 어디에도 가시화되지 않는다(리스트 VM의 `removeBookmark`은 Flow 재방출로 항목이 되살아나 가시적이지만 상세는 무피드백이라 최악). **M5는 이 유실 창+무피드백을 은폐하지 않고 아래 DR-4 이월 항목에 병기**해, M6가 상세 북마크 현재값 상태를 얹을 때 **확정 피드백과 함께**(예: 앱/repository 스코프 쓰기 또는 결과 반영 상태) 이 창까지 닫도록 한다.
 
 ### 3-3. `SearchUiState` + `SearchViewModel` (`commonMain/ui/`)
 
@@ -152,6 +155,8 @@ M4 `TermRepository`는 **같은 `normalizeKeyword(keyword)`에 대한 `fetch`/`r
 - `test_load_NotDevTerm_Result아닌Error아님` — Fake fetch가 `NotDevTerm` → `state == Result(NotDevTerm)`(오류 아님).
 - `test_load_재진입_이전job취소` — `load(a)` 진행 중 `load(b)` → 최종 `state`가 b의 결과(a의 늦은 방출이 b를 덮지 않음).
 - `test_refresh_repository_refresh호출` — `refresh` → Fake의 `refresh` 호출(pinning 우회 경로).
+- `test_toggleBookmark_Result_Found일때_위임` — `load` 성공으로 `state == Result(Found(entry))`인 상태에서 `toggleBookmark()` → Fake `repository.toggleBookmark`가 **그 `entry`로 정확히 1회 호출**된다(현재 상태에서 entry 추출·위임 실측).
+- `test_toggleBookmark_상태가Found아님_no-op` — `state`가 `Loading`(또는 `Error`/`Result(NotDevTerm)`)일 때 `toggleBookmark()` → Fake `toggleBookmark` **미호출**(예외 없음). guard 없이 강제 추출하면 이 케이스가 크래시/오호출로 발화한다(discriminating).
 
 **SearchViewModel:**
 - `test_onQueryChanged_디바운스후_autocomplete` — 입력 후 `advanceTimeBy(300)` 전엔 `suggestions` 빈, 후엔 결과.
@@ -193,6 +198,6 @@ M4 `TermRepository`는 **같은 `normalizeKeyword(keyword)`에 대한 `fetch`/`r
 - [ ] (비준 대기) §7 열린 질문 1~5의 판정.
 - [ ] (선상속·DR-2 강제 미검증·M7 게이트) 정규화 키 `Mutex`(§3-5)는 하드닝의 제안 메커니즘일 뿐이며 **M5는 이 Mutex 코드를 `TermRepositoryImpl`에 넣지 않고 문서상 제안으로만 두고 전면 이월한다**(§2 OUT — 검증 오라클 없는 동시성 코드 무증거 착지 금지). 강제는 **M5에서 증명되지 않는다**: (a) `TermRepository`=`single` 배선은 M7 미검증·미게이트 전제이고(factory/화면-scoped 배선 시 Mutex가 아무것도 직렬화 못 함), (b) §6 교차-VM 테스트는 단일스레드·손배선 공유라 Mutex 유무를 구분 못 하는 비-discriminating 스모크다. 실제 강제 실측은 (i) M7에 두 VM이 동일 인스턴스를 받는지 확인하는 배선 게이트를 두거나 (ii) 다중스레드 실측 또는 SQLDelight `transaction` 원자화로 이월.
 - [ ] (선상속·AD-1 계승 정정) `TermRepository.kt` KDoc(line 25-26)의 'refresh RMW 창=네트워크 왕복 전체' 문구는 impl 실제(RMW 읽기가 `buildAiRow`의 post-network `selectByKeyword`)와 어긋난 과장이다(§3-5에서 M5 서술은 정정). M4 정본 KDoc도 같은 정정 대상 — 소스 편집은 이 세션 스코프(스펙 저작) 밖이라 이월.
-- [ ] (M6 이월·DR-4) 상세 화면 북마크 현재값 상태 소스 — `DetailUiState.Result`/`TermEntry`에 `isBookmarked`가 없어 `DetailViewModel`이 현재 용어 북마크 여부를 노출하지 않는다(§3-2). M6가 `bookmarkedTerms()` Flow를 keyword로 교차조회해 파생하거나 `DetailUiState.Result`에 `isBookmarked`를 얹는 방식 중 택일 — 상태 소스 부재를 M5에서 정직히 이월(별표가 토글해도 갱신 안 되는 회귀를 M6가 닫음).
+- [ ] (M6 이월·DR-4/DR5-2) 상세 화면 북마크 현재값 상태 소스 — `DetailUiState.Result`/`TermEntry`에 `isBookmarked`가 없어 `DetailViewModel`이 현재 용어 북마크 여부를 노출하지 않는다(§3-2). M6가 `bookmarkedTerms()` Flow를 keyword로 교차조회해 파생하거나 `DetailUiState.Result`에 `isBookmarked`를 얹는 방식 중 택일 — 상태 소스 부재를 M5에서 정직히 이월(별표가 토글해도 갱신 안 되는 회귀를 M6가 닫음). **+ DR5-2 병기:** `toggleBookmark()`가 `viewModelScope` fire-and-forget이라 별표 탭 직후 상세 이탈 시 `onCleared` 취소로 쓰기가 **무피드백으로 유실**될 수 있는 창이 있다(§3-2 DR-4 문단). M6는 이 상태 소스를 얹을 때 **쓰기 유실 방지(앱/repository 스코프 launch 등)와 확정 성공/실패 피드백을 함께** 착지시켜 이 창까지 닫는다.
 - [ ] (선상속·M6) Compose UI·collectAsStateWithLifecycle·로딩 애니메이션(iOS LoadingPhase)·문구(오프라인 구분)·네비게이션.
 - [ ] (선상속·M7) Koin `viewModel { }` 배선.
