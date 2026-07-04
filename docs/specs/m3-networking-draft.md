@@ -62,7 +62,7 @@ interface BundleDbSource {
 ```
 
 - **`search`**: 입력을 **공유 정규화 함수** `normalizeKeyword`로 정규화한 뒤 `keyword`(정규화 비교) **또는 `aliases` 중 하나**(정규화 비교)와 완전 일치하는 첫 항목. 미발견 시 `null`. 빈/공백 입력은 `null`.
-  - **`normalizeKeyword`는 term-key 정규화의 단일 정본이다**(`commonMain/data/`): `fun normalizeKeyword(s: String): String = s.trim().lowercase()`. `BundleDbSource.search`와 `ClaudeApi.buildClaudeRequest`(§3-2)가 **동일 함수를 소비**해 정규화 seam을 제거한다 — 로컬 매칭(lowercase)과 클라 request(trim만) 비대칭이 없어 term-key 대소문자 정합(`React`/`react` 캐시 파편화·M4 중복 upsert)이 조용히 깨지지 않는다.
+  - **`normalizeKeyword`는 term-key(캐시 키·로컬 매칭) 정규화의 단일 정본이다**(`commonMain/data/`): `fun normalizeKeyword(s: String): String = s.trim().lowercase()`. `BundleDbSource.search`가 이 함수로 로컬 매칭 키를 만들고, **서버 캐시 키잉도 같은 정규화**(§7-3 서버 파생 또는 `X-Term-Key` 헤더)를 써 `React`/`react`가 같은 term-key로 접혀 캐시 파편화·M4 중복 upsert가 방지된다. **단, 이 정규화는 키잉 전용이다 — AI에 보여줄 질의 content에는 적용하지 않는다**(§3-2): lowercase가 대소문자 유의미 용어(`NaN`/`Go`/`REST`/`C`)의 의미를 뭉개 어원 오답을 유발하므로, AI user 메시지에는 원본 keyword를 대소문자 보존해 싣는다(iOS 검증본 계승). 키잉과 프롬프트 입력은 다른 요구라 한 함수로 합치지 않는다.
 - **`autocomplete`**: 빈/공백 prefix면 `emptyList()`. 아니면 정규화 prefix로 `keyword.lowercase().startsWith(prefix)`인 항목들. (aliases는 autocomplete 대상 아님 — spec 2-1.)
 
 **로드 경로와 파싱·인덱스를 분리한다(§6-B 실측·§7-1 판정 대상):**
@@ -110,8 +110,8 @@ class ClaudeApi(
 ```
 
 **요청 본문**(Anthropic Messages API 형태 — 프록시가 그대로 forward):
-- `model`(`Constants.claudeModel` — 착수 시 docs.anthropic.com에서 최신 ID 확인)·`max_tokens`(4096)·`thinking`(enabled)·`system`(§3-3 프롬프트)·`tools`(§3-3 3개)·`tool_choice`(auto)·`messages`(user 메시지에 정규화된 `keyword`).
-- **정규화**: `buildClaudeRequest`는 `normalizeKeyword(keyword)`(§3-1 공유 정본 = `trim().lowercase()`)를 user 메시지에 싣는다 — `BundleDbSource.search`와 **같은 함수**라 정규화가 M3 한 지점으로 수렴한다(M3 trim·M4 lowercase 분산 seam 제거). 서버 캐시 키잉 **헤더**(`X-Term-Key`) 추가 여부만 §7-3으로 미룬다(정규화 자체는 M3 확정).
+- `model`(`Constants.claudeModel` — 착수 시 docs.anthropic.com에서 최신 ID 확인)·`max_tokens`(4096)·`thinking`(enabled)·`system`(§3-3 프롬프트)·`tools`(§3-3 3개)·`tool_choice`(auto)·`messages`(user 메시지에 **원본 `keyword`** — 대소문자 보존, iOS 검증본 계승).
+- **키잉 vs 프롬프트 입력 분리**: `buildClaudeRequest`는 **원본 `keyword`를 대소문자 보존해** user 메시지에 싣는다(iOS 검증본 계승) — lowercase하면 `NaN`→`nan`·`Go`→`go`·`REST`→`rest`·`C`→`c`처럼 대소문자 유의미 용어가 뭉개져 어원이 조용히 오답이 된다. 캐시 파편화 방지(`React`/`react` 접기)는 **AI 질의 content가 아니라 캐시 키**에서 한다(§3-1 `normalizeKeyword` = `trim().lowercase()`를 서버가 본문에서 파생하거나 §7-3 `X-Term-Key` 헤더로). 키잉과 프롬프트 입력은 다른 요구라 한 함수 소비로 합치지 않는다.
 
 **응답 파싱 — `tool_use` 3분기(설계 불변식):** `content` 배열에서 첫 `tool_use` 블록을 찾아 도구 이름으로 분기.
 
@@ -226,7 +226,7 @@ val AppJson = Json {
 
 2. **`ClaudeApi` 테스트 대체 지점 — `MockEngine`(제안) vs 순수 파서 분리** — 제안은 `HttpClient(MockEngine)`으로 `generate`를 end-to-end 실측해 **Native Ktor 파이프라인(ContentNegotiation·body 디코드)+429 처리**까지 네이티브 실행 축에 태운다. **대안**: `toTermResult()`를 순수 함수로 떼어 Ktor 없이 3분기만 테스트(더 얇으나 파이프라인·429·헤더 무측정). — 제안: MockEngine(파이프라인 포함). 비준이 `MockEngine`이 실 엔진(Darwin/OkHttp) IO를 대체함을 근거로 §5 잔여 이월(M8 실기기)이 정직한지 판정.
 
-3. **서버 캐시 키잉 계약 seam(클라↔서버 트랙 경계)** — read-through 서버가 D1을 term key로 조회하려면 요청에서 키를 추출해야 한다. 클라가 (i) user 메시지 본문의 keyword로 서버가 파생하게 둘지, (ii) 명시 헤더(`X-Term-Key: <정규화 keyword>`)를 실을지. **정규화 자체는 M3에서 확정**(§3-1·§3-2 공유 `normalizeKeyword` = `trim().lowercase()`): user 메시지에 싣는 keyword가 이미 로컬 매칭과 동일하게 정규화되므로, 옵션(i)로 서버가 본문 keyword에서 키를 파생해도 `React`/`react`가 같은 캐시 엔트리로 접힌다(파편화·term-key 대소문자 정합 리스크 제거). **미루는 것은 명시 헤더(ii) 추가 여부뿐** — 서버 트랙과 조율해 나중에 무리팩토링으로 추가 가능(투명성상 클라 재작성 없음)하므로 이 슬라이스에서 헤더를 강제하지 않는다. — 비준이 헤더(ii)를 M3에서 확정할지, 서버 트랙 착수 시로 미룰지 판정. 미룰 시 §8에 명시 이월.
+3. **서버 캐시 키잉 계약 seam(클라↔서버 트랙 경계)** — read-through 서버가 D1을 term key로 조회하려면 요청에서 키를 추출해야 한다. **AI user 메시지 본문은 원본 keyword(대소문자 보존, §3-2)라 그대로 캐시 키로 쓰면 `React`/`react`가 파편화**하므로, 캐시 키는 정규화값(`normalizeKeyword` = `trim().lowercase()`)이어야 한다. 이를 (i) 서버가 본문 keyword를 받아 **서버측에서 정규화**해 파생할지, (ii) 클라가 명시 헤더(`X-Term-Key: <정규화 keyword>`)로 실을지. **정규화 함수 자체는 M3 확정**(§3-1 `normalizeKeyword` — 로컬 매칭 정본)이나 **AI 질의 content엔 적용하지 않는다**(키잉 전용). 두 옵션 모두 서버 트랙과 조율해 나중에 무리팩토링으로 확정 가능(투명성상 클라 재작성 없음)하므로 이 슬라이스에서 헤더를 강제하지 않는다. — 비준이 헤더(ii)를 M3에서 확정할지, 서버 트랙 착수 시로 미룰지 판정. 미룰 시 §8에 명시 이월.
 
 4. **AI 응답 category 정규화 지점 — M3(파서) vs M4(오케스트레이터)** — M1 §7-2는 "AI 응답 경로(M3·M4)가 집합 밖 category를 강제/정규화"라 했다. **제안**: M3 `ClaudeApi`는 pass-through(순수 파서 유지, M2 매퍼와 동형)하고, **정규화/clamp는 M4**가 upsert 직전(서버 INV-13이 write-게이트에서 하는 것과 대칭 클라 지점)에 수행한다. — 비준이 이 배치(M3 pass-through + M4 정규화)가 downstream 버킷팅 누락을 막는 데 충분한지, 아니면 M3 파서가 즉시 clamp해야 하는지 판정. **미월 시 명시**: M3는 category를 pass-through로 두고, 클라측 정규화 상속을 M4 DoD로, 서버측 소유(INV-13)를 서버 트랙으로 각각 이월(§4).
 
