@@ -8,11 +8,8 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 ## Now — 진행 중
 
-- **M0(KMP 골격) 완료 — 양 플랫폼 실제 실행 확인.** `shared + androidApp + iosApp` 골격이 서고,
-  공유 `Greeting`을 Koin으로 배선해 **Android APK + iOS 시뮬레이터** 둘 다에서 공유 Compose 화면이 뜬다.
-  - green 루프 3축: `:shared:testDebugUnitTest` · `:androidApp:assembleDebug` · `:shared:linkDebugFrameworkIosSimulatorArm64`(SKIE 포함).
-  - iOS: `iosApp.xcodeproj`(XcodeGen 스펙 `project.yml`) — 시뮬레이터에서 렌더 검증 완료([`iosApp/README.md`](iosApp/README.md)). 실기기 서명·배포는 이후.
-- **다음 착수 = Next M1(모델·직렬화) — 별도 세션.**
+- **M1 · 모델·직렬화** — 브랜치 `feat/m1-model-serialization`. `TermEntry`(@Serializable)·`Source`·`TermResult`(sealed)·매퍼. 거의 전부 `commonMain`. 참조: spec 1-1.
+  - 착수 상태: M0 병합 완료(`feat/m0-kmp-scaffold` → `main`), 브랜치 분기함. 구현 미착수.
 
 ---
 
@@ -20,10 +17,6 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 각 마일스톤은 앞 단계 완료를 전제로 순차 진행. 완료 시 Done으로 이관.
 
-- **M0 · KMP 골격** — ✅ **완료**(Android APK + iOS 시뮬레이터 실제 실행 확인). `shared + androidApp + iosApp`, Koin `startKoin` 배선, 공유 `Greeting`을 양 플랫폼 Compose 화면에 표시.
-  - 참조: architecture §3·§5, spec 1-6.
-  - ✅ iOS interop 결정: **SKIE**([ADR-0005](docs/adr/0005-ios-interop.md)). 골격 버전(**빌드 실측 확정**): **Kotlin 2.3.21 · CMP 1.11.1 · AGP 8.13.0 · Gradle 8.13 · SKIE 0.10.12**. ⚠️ **SKIE 0.10.12는 Kotlin 최대 2.3.21**(2.4.0 거부, 실측) — SKIE가 새 Kotlin 지원 전엔 앞질러 올리지 말 것.
-- **M1 · 모델·직렬화** — `TermEntry`(@Serializable)·`Source`·`TermResult`(sealed)·매퍼. 참조: spec 1-1.
 - **M2 · 로컬 DB** — 스키마(`term`·`searchHistory`)·반응형 쿼리·드라이버 `expect`/`actual`.
   - ⚠️ 착수 전: **[ADR-0003](docs/adr/0003-local-storage.md) 확정**(SQLDelight vs Room, `klibs.io`로 iOS 성숙도 재확인). 참조: spec 1-2.
 - **M3 · 네트워킹** — Ktor 클라이언트·Claude 요청/응답(tool_use 3분기)·`X-Device-Id`·429. 프록시 계약 그대로([ADR-0004](docs/adr/0004-backend-proxy-boundary.md)). 참조: spec 2-1·2-2.
@@ -51,6 +44,8 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 ## Done — 완료
 
+- **M0 · KMP 골격** — 2026-07-04 (`feat/m0-kmp-scaffold` → `main`, no-ff 병합). Android APK + iOS 시뮬레이터 실제 실행 확인. `shared + androidApp + iosApp`, Koin `startKoin` 배선, 공유 `Greeting`을 양 플랫폼 Compose 화면에 표시. green 루프 3축: `:shared:testDebugUnitTest` · `:androidApp:assembleDebug` · `:shared:linkDebugFrameworkIosSimulatorArm64`(SKIE 포함). 참조: architecture §3·§5, spec 1-6.
+  - ✅ iOS interop 결정: **SKIE**([ADR-0005](docs/adr/0005-ios-interop.md)). 골격 버전(**빌드 실측 확정**): **Kotlin 2.3.21 · CMP 1.11.1 · AGP 8.13.0 · Gradle 8.13 · SKIE 0.10.12**. ⚠️ **SKIE 0.10.12는 Kotlin 최대 2.3.21**(2.4.0 거부, 실측) — SKIE가 새 Kotlin 지원 전엔 앞질러 올리지 말 것.
 - **프로젝트 문서 세트 수립** — 2026-07-04
   - **그린필드 CMP 설계로** README·[PRD](docs/product/prd.md)·[아키텍처 설계서](docs/architecture.md)·[ADR 0001~0004](docs/adr/)·[Spec](docs/specs/spec.md) 작성.
   - 동일 제품의 iOS(`dev-etymology`, SwiftUI) 구현에서 **검증된 데이터 흐름·설계 불변식을 계승**(fetch 3단·lazy 저장·upsert·aliases 보존·tool_use 3분기·프록시 계약), 관용구는 **코틀린으로**([ADR-0002](docs/adr/0002-code-idiom-principle.md): 리터럴 포팅 금지, 우회 패턴은 삭제).
