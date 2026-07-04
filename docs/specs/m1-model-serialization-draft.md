@@ -62,7 +62,7 @@ sealed interface TermResult {
 
 ### 3-3. 카테고리 정본 어휘 (번들 DB·AI 응답 공통, 6개)
 `동시성` · `자료구조` · `네트워크` · `DB` · `패턴` · `기타` — downstream(카테고리 필터·버킷팅)이 기대하는 정본 집합.
-- **M1 계약은 `category: String` pass-through다.** M1 직렬화/역직렬화는 집합 밖 값(오타 `네트웤`·영문값 `Database` 등)도 **검증·거부·정규화 없이** 그대로 왕복 보존한다(INV-A). 6개 집합에 대한 **강제/정규화는 M1 밖** — 집합 밖 값이 실제로 유입되는 AI 응답 경로(M3·M4)의 소관이다. M1은 이 어휘를 *문서화*하되 *강제하지 않는다*(§7-2 결착 참조).
+- **M1 계약은 `category: String` pass-through다.** M1 직렬화/역직렬화는 집합 밖 값(오타 `네트웤`·영문값 `Database` 등)도 **검증·거부·정규화 없이** 그대로 왕복 보존한다(INV-A). 6개 집합에 대한 **강제/정규화는 M1 밖** — 집합 밖 값이 유입되는 각 경로의 소관이다(§7-2 결착: AI 응답=M3·M4 강제/정규화, 사람이 큐레이션하는 번들 `terms.json`=번들 저작/린트가 in-set 보장). M1은 이 어휘를 *문서화*하되 *강제하지 않는다*(§7-2 결착 참조).
 
 ## 4. 설계 불변식 (이 슬라이스가 반드시 지킬 것)
 - **INV-A `aliases`·`category` 보존**: 직렬화/역직렬화·이후 어떤 변환에서도 `aliases`(순서 포함)와 `category`를 손실 없이 보존한다. (설계 불변식 — DTO↔엔티티 변환 시 특히 강조되나, 직렬화 왕복에서도 성립해야 M2 매퍼가 이를 이어받을 수 있다.) M1 계층에서는 이 **보존이 거부에 우선한다**: 6개 집합 밖 `category`라도 예외 없이 보존하며 M1에서 거부·정규화하지 않는다(§3-3, 강제는 downstream).
@@ -72,7 +72,7 @@ sealed interface TermResult {
 ## 5. 완료 조건 (DoD) — 하네스 수렴 오라클
 - `commonMain`의 모델·직렬화가 **Android·iOS 양쪽에서 컴파일**된다: `:shared:testDebugUnitTest` + `:androidApp:assembleDebug` + `:shared:linkDebugFrameworkIosSimulatorArm64` green(M0에서 세운 3축 green 루프).
 - 아래 §6 `commonTest`가 전부 통과.
-- 새 라이브러리 좌표(kotlinx.serialization)를 도입하면 **버전 정렬을 사실로 확인**(Kotlin↔serialization 플러그인 호환) — stale 버전 하드코딩 금지.
+- 새 라이브러리 좌표(kotlinx.serialization)를 도입하면 **버전 정렬을 사실로 확인**(Kotlin↔serialization 플러그인 호환) — stale 버전 하드코딩 금지. 이 확인은 load-bearing이다: 버전 카탈로그 헤더의 '빌드 확인' 표기를 이 확인의 대체물로 삼지 말 것(헤더는 serialization 런타임의 `commonMain` 배선을 보증하지 않는다).
 
 ## 6. 테스트 (`commonTest/`) — 함수명 `test_[대상]_[조건]_[기대]`
 - `test_TermEntry_직렬화왕복_모든필드보존` — encode→decode 후 **디코드된 객체가 원본과 동등**(`==`, data class 구조 동등; 특히 `aliases` 순서·`category`)함으로 검증한다. JSON 키 존재 여부가 아니라 **객체 동등성**을 오라클로 삼아 `encodeDefaults` 설정(default 필드 생략 여부)과 무관하게 결정적이게 한다.
@@ -84,7 +84,7 @@ sealed interface TermResult {
 ## 7. 열린 질문 (비준이 판정할 항목)
 
 1. **매퍼 소속 경계 (ROADMAP↔spec 정합)** — ROADMAP은 M1에 "매퍼"를 명시하나, spec 1-1의 매퍼(`TermEntry.toEntity()`/`TermEntity.toDto()`)는 `TermEntity`(spec 1-2, **M2** 로컬 DB 로우)에 의존한다. 제안: **DB-엔티티 매퍼는 M2로 이관**하고, M1은 *직렬화* 계약(JSON↔`TermEntry`)과 보존 불변식(INV-A)만 소유. 대안: M1에 엔티티 타입을 선정의하고 매퍼까지 포함(단 M2 스키마와 결합). — **비준 판정 필요.**
-2. **카테고리 강제 지점 — 결착(round 2): M1은 강제하지 않는다.** M1 계약은 `category: String` pass-through로, 집합 밖 값도 손실 없이 보존한다(§3-3·INV-A). 6개 집합에 대한 검증/정규화는 집합 밖 값이 실제로 유입되는 지점(AI 응답 경로 = M3·M4)에서 수행한다. 자율 구간에서 enum 강제 여부를 임의로 굳히지 않는다 — M1 오라클(§6 `test_카테고리_집합밖값_처리`)은 pass-through 보존으로 확정.
+2. **카테고리 강제 지점 — 결착(round 2): M1은 강제하지 않는다.** M1 계약은 `category: String` pass-through로, 집합 밖 값도 손실 없이 보존한다(§3-3·INV-A). 6개 집합에 대한 검증/정규화는 집합 밖 값이 유입되는 각 지점이 소유한다: (a) AI 응답 경로(M3·M4)는 유입되는 집합 밖 값을 강제/정규화한다; (b) 사람이 큐레이션하는 번들 `terms.json`은 번들 저작 계약과 번들 로더/린트(M3 `BundleDbSource` 로드 경로)가 6개 집합 in-set를 보장한다 — 저작 오타로 집합 밖 값이 들어가면 downstream 버킷팅에서 조용히 누락되므로, 번들 경로의 category 무결성은 무주공산이 아니라 번들 로더/린트 소관이다. M1 자신은 어느 경로에도 강제를 걸지 않는다(pass-through 유지). 자율 구간에서 enum 강제 여부를 임의로 굳히지 않는다 — M1 오라클(§6 `test_카테고리_집합밖값_처리`)은 pass-through 보존으로 확정.
 3. **직렬화 설정 위치 — 결착(round 2): M3로 미룬다.** 소비처가 공유할 `Json` 인스턴스 설정(`encodeDefaults`·`ignoreUnknownKeys` 등, 서버 향후 필드 추가 시 하위호환)은 M1이 확정하지 않는다(§1). M1 왕복 테스트는 테스트-로컬 `Json`으로 **객체 동등성**을 검증하므로(§6) 이 설정과 무관하게 결정적이다. 인스턴스 정책은 네트워크 슬라이스(M3)에서 확정한다.
 
 ## 8. 안전·규율
