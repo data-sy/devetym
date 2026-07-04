@@ -30,6 +30,7 @@ Compose UI 렌더링·네비게이션·테마·디자인 토큰은 이 슬라이
 - **Koin `viewModel { }` 전체 배선·`koinViewModel()` 소비** → **M7**(spec 1-4). M5는 생성자 주입 형태만 제공, 컴파일을 green으로 검증.
 - **mailto 오류 제보·공유·앱 평가·온보딩 플래그·설정 저장** → M6(플랫폼 인텐트·Settings).
 - **`Analytics` 성공-결과 로깅** → 후속(M4 §3-6 이월).
+- **정규화 키 `Mutex` 등 단일-writer 직렬화 강제 코드** → **M7/하드닝**. M5는 §3-5에서 이를 **문서상 제안 메커니즘으로만** 서술하고 `TermRepositoryImpl`(M4 코드)에 강제 코드를 넣지 않는다. §6 교차-VM 오라클은 Mutex 유무를 구분 못 하는 비-discriminating 스모크라(§3-5 전제 b), 검증 오라클 없는 동시성 코드를 이 슬라이스에서 착지시키지 않는다.
 
 ## 3. 산출 명세
 
@@ -63,7 +64,7 @@ class DetailViewModel(private val repository: TermRepository) : ViewModel() {
     val state: StateFlow<DetailUiState>              // MutableStateFlow(Loading) 백킹
     fun load(keyword: String)                        // fetch — 재진입 시 이전 job 취소
     fun refresh(keyword: String)                     // repository.refresh — pinning 우회(INV-6)
-    fun toggleBookmark()                             // 현재 Result의 entry 북마크 토글
+    fun toggleBookmark()                             // 현재 Result.Found(entry)를 repository.toggleBookmark에 위임(fire-and-forget). ⚠️ 상세 화면 북마크 현재값 상태는 M5 미노출 — M6 이월(아래·Open Questions)
 }
 ```
 
@@ -75,6 +76,7 @@ class DetailViewModel(private val repository: TermRepository) : ViewModel() {
 3. **`not_dev_term`/`possible_typo`는 오류가 아니라 `Result`**(정상 `TermResult` 분기) — M6가 `TermResult` 안에서 분기 표시(spec 3-3).
 - **job 취소**: 재진입(`load` 재호출)·화면 이탈(`onCleared`/명시 `cancel`) 시 이전 fetch를 취소해 레이스·stale 상태 갱신을 막는다(iOS `currentSearchTask` 계승).
 - `refresh(keyword)`는 `load`와 같되 `repository.refresh`를 호출(pinning 우회).
+- **⚠️ 상세 북마크 상태 소스 부재 (DR-4) — M6 이월.** `DetailUiState.Result`는 `TermResult`만 담고 `TermResult.Found`의 `TermEntry`에는 `isBookmarked` 필드가 없다(정본 `model/TermEntry.kt`·`TermResult.kt`). 따라서 `DetailViewModel`은 '현재 용어가 북마크됐는지'를 노출하는 반응형 상태(`StateFlow<Boolean>` 등)를 두지 않으며 `toggleBookmark()`도 Boolean을 돌려주지 않는 위임뿐이다(§6 `test_removeBookmark`류는 위임 호출만 단언). 상세 화면 별표의 현재값을 그릴 상태 소스 — 예: `bookmarkedTerms()`를 keyword로 교차조회한 파생 `StateFlow<Boolean>`, 또는 `DetailUiState.Result`에 `isBookmarked` 필드 추가 — 는 **M6로 이월**한다. M5는 iOS 검증본의 상세 북마크 상태 계층을 이 슬라이스에서 복제하지 않음을 정직히 남긴다(상태 소스 부재를 은폐하지 않음).
 
 ### 3-3. `SearchUiState` + `SearchViewModel` (`commonMain/ui/`)
 
@@ -109,13 +111,13 @@ class HistoryViewModel(private val repository: TermRepository) : ViewModel() {
 
 ### 3-5. ⚠️ M4 단일-writer 계약 상속 (DR-2) — 정규화 키 Mutex(제안 메커니즘) · 강제는 이월
 
-M4 `TermRepository`는 **같은 `normalizeKeyword(keyword)`에 대한 `fetch`/`refresh`/`toggleBookmark` 직렬화**를 전제조건으로 요구한다(M4 §3-1·§3-4, 비원자 RMW lost-update 방지). 한 ViewModel 내부의 job 취소(§3-2)는 **그 VM 안에서만** 순차성을 준다 — 서로 다른 화면의 두 살아있는 ViewModel은 각자 독립 `viewModelScope`로 launch해 **공유 직렬화 지점이 없다**. 교차-화면 경로가 실재한다: `DetailViewModel.refresh("react")`가 `api.generate` 네트워크 왕복(수 초) 동안 RMW 창을 연 사이 `BookmarkViewModel.removeBookmark(entry(keyword="react"))`가 동기 RMW로 `isBookmarked=0`을 기록하면, refresh가 반환되며 토글 이전 스냅샷을 upsert에 재주입해 **방금 해제한 북마크·`seenAt`을 조용히 되돌린다**(에러 없음). M4 §3-4는 refresh RMW 창이 네트워크 왕복 전체라 좁지 않다며 'rareness' 정당화를 **명시 철회**하고 방어를 계약(직렬화)으로 못박았다.
+M4 `TermRepository`는 **같은 `normalizeKeyword(keyword)`에 대한 `fetch`/`refresh`/`toggleBookmark` 직렬화**를 전제조건으로 요구한다(M4 §3-1·§3-4, 비원자 RMW lost-update 방지). 한 ViewModel 내부의 job 취소(§3-2)는 **그 VM 안에서만** 순차성을 준다 — 서로 다른 화면의 두 살아있는 ViewModel은 각자 독립 `viewModelScope`로 launch해 **공유 직렬화 지점이 없다**. 교차-화면 경로가 실재한다: `DetailViewModel.refresh("react")`의 RMW 창은 `api.generate`가 **반환된 뒤**(post-network) `buildAiRow`가 기존 로우를 재조회(`store.selectByKeyword`)해 보존 필드를 읽는 지점부터 `store.upsertTerm`까지의 **짧은 동기 구간**이다(둘 다 non-suspend — 정본 `TermRepositoryImpl.buildAiRow`/`orchestrate`). 진짜 병렬에서 그 read→write 사이에 `BookmarkViewModel.removeBookmark(entry(keyword="react"))`의 동기 RMW(`isBookmarked=0`)가 끼면, refresh가 토글 이전 스냅샷을 upsert에 재주입해 **방금 해제한 북마크·`seenAt`을 조용히 되돌린다**(에러 없음). 창은 네트워크 왕복 전체가 아니라 post-network의 짧은 구간이지만 **진짜 병렬에서 lost-update가 실재**하므로 M4 §3-4는 'rareness' 정당화를 **명시 철회**하고 방어를 계약(직렬화)으로 못박았다(⚠️ 상속 `TermRepository.kt` KDoc의 'RMW 창=네트워크 왕복 전체' 문구는 같은 과장이라 M4 정본도 함께 정정 대상 — Open Questions 이월).
 
-**M5는 M4 단일-writer 계약을 계승하고, 그 하드닝의 제안 메커니즘으로 정규화 키 `Mutex`를 명세한다 — 다만 이 마일스톤에서 그 강제를 실측·증명한다고 자칭하지 않는다.** M4 Open Questions에 이월돼 있던 단일-writer 하드닝의 **구체 메커니즘 후보**는 이렇다: `TermRepositoryImpl`의 세 쓰기 오퍼레이션(`fetch`/`refresh`/`toggleBookmark`)은 각자 맨 앞에서 계산하는 `val key = normalizeKeyword(keyword)`로 **키잉된 `Mutex`를 오퍼레이션 전 구간(refresh의 네트워크 왕복 포함) 동안 보유**한 뒤 RMW한다. 같은 정규화 키의 두 번째 쓰기는 첫 쓰기가 끝날 때까지 suspend된다. 직렬화 단위는 raw 입력이 아니라 **정규화 저장 키**다(M4 AD-1 — `"React"`/`"react"`/`"REACT"`가 같은 로우에 RMW하므로 raw 뮤텍스는 lost-update를 놓친다). 잠금 맵은 정규화 키→`Mutex`이며, 서로 다른 키는 병렬을 유지한다(전역 잠금 아님). 맵 자체 접근의 원자성은 짧은 동기 잠금(맵 조회·삽입만 감싸는 별도 잠금 또는 동시성 맵)으로 확보한다.
+**M5는 M4 단일-writer 계약을 계승하고, 그 하드닝의 제안 메커니즘으로 정규화 키 `Mutex`를 명세한다 — 다만 이 마일스톤에서 그 강제를 실측·증명한다고 자칭하지 않는다. 그리고 M5는 이 `Mutex`(또는 어떤 직렬화 강제) 코드를 `TermRepositoryImpl`에 넣지 않는다: 아래 명세는 순수 문서상 후보일 뿐이고, 실제 강제 코드는 검증 오라클(§6은 비-discriminating)이 없어 M7/하드닝으로 전면 이월된다(§2 OUT). 자율 구현자는 이 제안을 근거로 미검증 동시성 코드를 M4에 착지시키지 않는다(mis-keyed·잠금맵 원자성 버그·전역 잠금 퇴행 같은 결함을 §6 어느 오라클도 발화 못 하므로 무증거 착지 금지).** M4 Open Questions에 이월돼 있던 단일-writer 하드닝의 **구체 메커니즘 후보**는 이렇다: `TermRepositoryImpl`의 세 쓰기 오퍼레이션(`fetch`/`refresh`/`toggleBookmark`)은 각자 맨 앞에서 계산하는 `val key = normalizeKeyword(keyword)`로 **키잉된 `Mutex`를 오퍼레이션 전 구간(refresh의 네트워크 왕복 포함) 동안 보유**한 뒤 RMW한다. 같은 정규화 키의 두 번째 쓰기는 첫 쓰기가 끝날 때까지 suspend된다. 직렬화 단위는 raw 입력이 아니라 **정규화 저장 키**다(M4 AD-1 — `"React"`/`"react"`/`"REACT"`가 같은 로우에 RMW하므로 raw 뮤텍스는 lost-update를 놓친다). 잠금 맵은 정규화 키→`Mutex`이며, 서로 다른 키는 병렬을 유지한다(전역 잠금 아님). 맵 자체 접근의 원자성은 짧은 동기 잠금(맵 조회·삽입만 감싸는 별도 잠금 또는 동시성 맵)으로 확보한다.
 
 **⚠️ 이 메커니즘의 강제는 M5에서 검증되지 않는 두 전제에 의존하므로, DR-2는 '해소'가 아니라 이월된다(§7-3·Open Questions):**
 - **(전제 a) 공유 인스턴스 — 미검증·미게이트.** 잠금 맵은 `TermRepositoryImpl` 인스턴스 필드이므로 **직렬화는 모든 ViewModel이 같은 repository 인스턴스를 공유할 때만 성립**한다. 이는 M7 Koin 배선이 `TermRepository`를 `single`로 제공함을 요구하나(M5는 생성자 주입 형태만 제공 — §2 OUT), M5에는 이를 강제·검증하는 게이트가 없다. M7이 factory/화면-scoped로 배선하면 각 VM이 별개 impl·별개 잠금 맵을 받아 Mutex가 아무것도 직렬화하지 않는다. 이 single-scope 전제는 **게이트 없는 미검증 이월 전제**다.
-- **(전제 b) 실제 동시성 노출 — 단일스레드 오라클로는 실측 불가.** §6 교차-VM 오라클은 단일스레드 test dispatcher(`Dispatchers.setMain`) 위에서 도는데, 그 위에선 `toggleBookmark`의 동기 RMW가 refresh 연속(continuation)에 대해 원자적으로 완료되고 M4 impl이 보존 필드를 네트워크 前/後 어느 쪽에서 재조회하든 최종값이 correct하게 수렴한다 → **Mutex 유무를 구분하지 못한다**(§6 참조). 따라서 그 오라클의 green은 Mutex의 작동을 증명하지 못한다.
+- **(전제 b) 실제 동시성 노출 — 단일스레드 오라클로는 실측 불가.** §6 교차-VM 오라클은 단일스레드 test dispatcher(`Dispatchers.setMain`) 위에서 도는데, 그 위에선 `toggleBookmark`의 동기 RMW와 refresh의 post-network 재조회→upsert가 서로의 연속(continuation)에 대해 원자적으로 완료돼(중간에 끼어들지 못함) 최종값이 correct하게 수렴한다 → **Mutex 유무를 구분하지 못한다**(§6 참조). 따라서 그 오라클의 green은 Mutex의 작동을 증명하지 못한다.
 
 > 이 메커니즘은 M4 read-side 순서(3단 캐시)를 바꾸지 않고 write-side RMW만 감싼다. ViewModel은 여전히 `TermRepository` 하나만 주입받으므로(§4·architecture §4.5) 직렬화가 인터페이스 뒤에 숨어 VM은 알 필요가 없다. §6의 교차-VM 테스트는 실제 `TermRepositoryImpl`(Fake 협력자 + 지연 가능한 generator)을 두 VM에 **손으로 배선해 공유**시키는 배선/무크래시 **스모크**다 — 실제 DI 스코프 결정(전제 a)과 무관하게 공유를 강제하고, 단일스레드 dispatcher(전제 b)라 Mutex 유무를 구분하지 못하므로 **직렬화 강제의 증명이 아니다.** DR-2 강제의 실측은 이월된다.
 
@@ -126,7 +128,7 @@ M4 `TermRepository`는 **같은 `normalizeKeyword(keyword)`에 대한 `fetch`/`r
 - **반응형(ADR-0002)**: 목록은 `Flow`→`stateIn`. 데이터 변경 후 수동 재조회 코드를 두지 않는다.
 - **job 취소 규율**: 재진입·이탈 시 진행 중 코루틴 취소. `CancellationException`을 오류 상태로 만들지 않는다(취소는 정상).
 - **오류 vs 정상 분기**: `ClaudeException`만 `Error(ErrorKind)`로, `not_dev_term`/`possible_typo`는 `Result(TermResult)`로(예외 아님, M3·M4 계승).
-- **M4 단일-writer 계약 계승**(§3-5): 정규화 키 키잉 `Mutex`를 교차-VM 동시 쓰기 직렬화의 **제안 메커니즘**으로 둔다('rareness' 근거는 폐기). 다만 그 강제는 M7 single-scope 배선(미게이트)과 실제 동시성 노출에 의존해 **M5에서 증명되지 않으며 이월**된다(§7-3·Open Questions) — M5는 계약을 '강제 완료'로 자칭하지 않는다.
+- **M4 단일-writer 계약 계승**(§3-5): 정규화 키 키잉 `Mutex`를 교차-VM 동시 쓰기 직렬화의 **제안 메커니즘**으로 둔다('rareness' 근거는 폐기) — **코드로 넣지 않고 문서상 후보로만 두며 강제는 M7/하드닝 이월**(§2 OUT). 그 강제는 M7 single-scope 배선(미게이트)과 실제 동시성 노출에 의존해 **M5에서 증명되지 않으며 이월**된다(§7-3·Open Questions) — M5는 계약을 '강제 완료'로 자칭하지 않는다.
 
 ## 5. 완료 조건 (DoD) — 하네스 수렴 오라클
 
@@ -171,7 +173,7 @@ M4 `TermRepository`는 **같은 `normalizeKeyword(keyword)`에 대한 `fetch`/`r
 
 1. **ViewModel base — `androidx.lifecycle.ViewModel`(CMP 멀티플랫폼, 제안) vs 주입 `CoroutineScope`** — 제안은 표준 `viewModelScope`를 쓰고 테스트는 `Dispatchers.setMain`로 제어. 대안은 `CoroutineScope`를 생성자 주입(테스트 단순하나 spec 1-4 `viewModel { }` Koin DSL·`koinViewModel()`과 정합성↓). — 제안: androidx ViewModel. 비준이 네이티브 실행 축에서 `setMain`+`viewModelScope`가 성립하는지, koin-compose-viewmodel 좌표가 필요한지 판정.
 2. **디바운스 위치 — ViewModel(제안) vs UI(M6)** — 제안: 디바운스·job 취소를 ViewModel에 둬 로직을 테스트 가능케(iOS도 VM). 대안: UI의 `snapshotFlow`+`debounce`. — 제안: ViewModel. 비준 판정.
-3. **단일-writer 계약(M4 DR-2) 준수 범위 — 미해소·이월**: 같은 정규화 키에 대한 쓰기(refresh/toggleBookmark)를 서로 다른 ViewModel(Detail vs Bookmark)이 동시에 건드리는 교차-화면 경로가 **실재**한다(두 VM이 독립 `viewModelScope`라 VM 내 job 취소로는 못 막음). **'M6 네비게이션 구조상 드묾' 근거는 폐기한다** — M4 §3-4가 rareness 정당화를 이미 명시 철회했으므로, 계약을 '준수'로 자칭할 수 없다. §3-5는 하드닝의 **제안 메커니즘**(정규화 키 `Mutex`)을 명세하되, 그 강제는 (a) M7이 `TermRepository`를 `single`로 배선하는 미검증·미게이트 전제와 (b) 단일스레드 오라클이 Mutex 유무를 구분 못 하는 한계에 걸려 **M5에서 증명되지 않는다** → 라운드 2의 '해소' 자칭은 철회하고 강제 실측을 이월한다(Open Questions). 비준이 이 이월 경계가 정직한지 판정.
+3. **단일-writer 계약(M4 DR-2) 준수 범위 — 미해소·이월**: 같은 정규화 키에 대한 쓰기(refresh/toggleBookmark)를 서로 다른 ViewModel(Detail vs Bookmark)이 동시에 건드리는 교차-화면 경로가 **실재**한다(두 VM이 독립 `viewModelScope`라 VM 내 job 취소로는 못 막음). **'M6 네비게이션 구조상 드묾' 근거는 폐기한다** — M4 §3-4가 rareness 정당화를 이미 명시 철회했으므로, 계약을 '준수'로 자칭할 수 없다. §3-5는 하드닝의 **제안 메커니즘**(정규화 키 `Mutex`)을 명세하되 **그 코드를 M5에서 넣지 않고 문서상 제안으로만 둔다**(§2 OUT), 그 강제는 (a) M7이 `TermRepository`를 `single`로 배선하는 미검증·미게이트 전제와 (b) 단일스레드 오라클이 Mutex 유무를 구분 못 하는 한계에 걸려 **M5에서 증명되지 않는다** → 라운드 2의 '해소' 자칭은 철회하고 강제 실측을 이월한다(Open Questions). 비준이 이 이월 경계가 정직한지 판정.
 4. **`Loading` 표시 정책 — 번들/캐시 히트는 Loading 없이 즉시 Result(제안)** — iOS의 시간분할 LoadingPhase(체감 latency)는 M6 UI 애니메이션 소관으로 이월, M5는 Loading/Result/Error 최소 상태만. 비준이 이 경계가 spec 3-3과 정합하는지 판정.
 5. **`commit()` 정규화 — trim만(제안)** — ViewModel은 `trim`만 하고 lowercase 정규화는 repository(M4 저장 키 정본)에 맡긴다(대소문자 유의미 용어 어원 보존 — M3·M4 계승). 비준 판정.
 
@@ -189,6 +191,8 @@ M4 `TermRepository`는 **같은 `normalizeKeyword(keyword)`에 대한 `fetch`/`r
 > 비준 종료 시점의 **명시 이월** 자리. (비준 착수 전 — 현재는 비어 있으며, 적대 비준이 채운다.)
 
 - [ ] (비준 대기) §7 열린 질문 1~5의 판정.
-- [ ] (선상속·DR-2 강제 미검증·M7 게이트) 정규화 키 `Mutex`(§3-5)는 하드닝의 제안 메커니즘일 뿐, 강제는 **M5에서 증명되지 않는다**: (a) `TermRepository`=`single` 배선은 M7 미검증·미게이트 전제이고(factory/화면-scoped 배선 시 Mutex가 아무것도 직렬화 못 함), (b) §6 교차-VM 테스트는 단일스레드·손배선 공유라 Mutex 유무를 구분 못 하는 비-discriminating 스모크다. 실제 강제 실측은 (i) M7에 두 VM이 동일 인스턴스를 받는지 확인하는 배선 게이트를 두거나 (ii) 다중스레드 실측 또는 SQLDelight `transaction` 원자화로 이월.
+- [ ] (선상속·DR-2 강제 미검증·M7 게이트) 정규화 키 `Mutex`(§3-5)는 하드닝의 제안 메커니즘일 뿐이며 **M5는 이 Mutex 코드를 `TermRepositoryImpl`에 넣지 않고 문서상 제안으로만 두고 전면 이월한다**(§2 OUT — 검증 오라클 없는 동시성 코드 무증거 착지 금지). 강제는 **M5에서 증명되지 않는다**: (a) `TermRepository`=`single` 배선은 M7 미검증·미게이트 전제이고(factory/화면-scoped 배선 시 Mutex가 아무것도 직렬화 못 함), (b) §6 교차-VM 테스트는 단일스레드·손배선 공유라 Mutex 유무를 구분 못 하는 비-discriminating 스모크다. 실제 강제 실측은 (i) M7에 두 VM이 동일 인스턴스를 받는지 확인하는 배선 게이트를 두거나 (ii) 다중스레드 실측 또는 SQLDelight `transaction` 원자화로 이월.
+- [ ] (선상속·AD-1 계승 정정) `TermRepository.kt` KDoc(line 25-26)의 'refresh RMW 창=네트워크 왕복 전체' 문구는 impl 실제(RMW 읽기가 `buildAiRow`의 post-network `selectByKeyword`)와 어긋난 과장이다(§3-5에서 M5 서술은 정정). M4 정본 KDoc도 같은 정정 대상 — 소스 편집은 이 세션 스코프(스펙 저작) 밖이라 이월.
+- [ ] (M6 이월·DR-4) 상세 화면 북마크 현재값 상태 소스 — `DetailUiState.Result`/`TermEntry`에 `isBookmarked`가 없어 `DetailViewModel`이 현재 용어 북마크 여부를 노출하지 않는다(§3-2). M6가 `bookmarkedTerms()` Flow를 keyword로 교차조회해 파생하거나 `DetailUiState.Result`에 `isBookmarked`를 얹는 방식 중 택일 — 상태 소스 부재를 M5에서 정직히 이월(별표가 토글해도 갱신 안 되는 회귀를 M6가 닫음).
 - [ ] (선상속·M6) Compose UI·collectAsStateWithLifecycle·로딩 애니메이션(iOS LoadingPhase)·문구(오프라인 구분)·네비게이션.
 - [ ] (선상속·M7) Koin `viewModel { }` 배선.
