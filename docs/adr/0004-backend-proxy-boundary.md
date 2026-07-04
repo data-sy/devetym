@@ -1,7 +1,9 @@
 # ADR 0004: 백엔드 프록시 경계 계승 — Cloudflare Worker, 클라이언트가 프롬프트 소유
 
 ## Status
-Accepted (2026-07-04) — 프록시 계약 자체는 기존 백엔드([`devetym-proxy`](https://github.com/data-sy/devetym-proxy))에서 계승.
+**Superseded by [ADR-0006](0006-server-cache-boundary.md) (2026-07-05)** — 프록시를 read-through 캐시로 확장하기로 결정. 아래 "얇은 프록시 계약 그대로" 결정은 무효. 단, **프롬프트·도구 스키마를 `commonMain`에 두는 결정과 `X-Device-Id`·`429`·tool_use 3분기 계약 형태는 ADR-0006에서 그대로 계승**한다(캐시 계층이 그 위에 얹힘).
+
+~~Accepted (2026-07-04) — 프록시 계약 자체는 기존 백엔드([`devetym-proxy`](https://github.com/data-sy/devetym-proxy))에서 계승.~~
 
 ## Context
 AI 폴백(번들 DB 미스 시 Claude 생성)은 **얇은 프록시**를 거친다 — 앱 → Cloudflare Worker → Claude API. 키는 서버에만 있고 앱에는 없다. 프록시는 **키 주입 + 기기당 일일 호출 한도**를 강제한다(디컴파일로 키 탈취·비용 폭증 방어).

@@ -1,6 +1,19 @@
 # DevEtym 서버측 캐시 & 콘텐츠 딜리버리 — 마일스톤
 
-> ⚠️ **번호 네임스페이스 주의**: 이 문서의 M0~M7은 **서버 캐시·딜리버리 트랙 고유 번호**다. [`ROADMAP.md`](../ROADMAP.md)의 CMP 클라이언트 마일스톤(M0~M8)과 **별개이며 번호가 겹쳐도 서로 무관**하다. 이 트랙은 별도 코드베이스(Cloudflare Worker·D1·db-expand)를 다루며, 현재 이 repo(CMP 클라이언트)에는 대부분 미착수 후속 작업이다. 두 트랙의 접점은 이 문서 M0(entry 데이터 계약)·M4(클라이언트 local-first pinning)뿐. ROADMAP Later의 "서버 캐시·딜리버리 트랙" 항목이 이 문서를 가리킨다.
+> ⚠️ **읽는 법 — 이 문서는 이제 별도 트랙이 아니라 CMP M1~M8에 빌트인이다.** 아래 M0~M7은 **캐시·딜리버리 고유 번호**이며 [`ROADMAP.md`](../ROADMAP.md)의 CMP 마일스톤(M0~M8)과 **번호가 겹쳐도 무관**하다. 별도 트랙으로 미루지 않고(=출시 후 없음), 처음부터 각 CMP 마일스톤 범위에 녹여 짓는다. 서버 코드는 별도 repo [`devetym-proxy`](https://github.com/data-sy/devetym-proxy)(read-through로 확장). 이 문서는 **불변식(§1 INV-1~12)·상세 스펙의 정본**이고, 실제 착수 순서·배치는 ROADMAP이 정본이다. 계약 결정은 [ADR-0006](adr/0006-server-cache-boundary.md).
+>
+> **캐시 번호 → CMP 마일스톤 매핑**:
+>
+> | 이 문서 | 내용 | CMP 배치 |
+> |---|---|---|
+> | M0 | term key 정규화·D1 스키마·entry 계약 | 클라 계약 = **CMP M1**(반영✅) / D1 = **CMP M3**(서버) |
+> | M1 | Worker read-through 캐시 | **CMP M3**(서버) + **CMP M4**(클라 소비) |
+> | M2 | single-flight(DO) | **CMP M3**(서버) |
+> | M3 | 품질 게이트(validator/critic) | write-게이트 **CMP M3**(서버) / critic 승격 **CMP M8** |
+> | M4 | 클라이언트 local-first pinning | 저장 **CMP M2** / 행위 **CMP M4** / UI **CMP M6** |
+> | M5 | seed 번들 + 승격 잡 | **CMP M8** |
+> | M6 | 콘텐츠 팩 백그라운드 동기화 | **CMP M8** |
+> | M7 | 비용·남용 안전 + 무효화 (횡단) | **CMP M3**(서버, 횡단) |
 >
 > **문서 목적**: DevEtym의 AI 생성 어원 항목을 서버에 캐싱해 재사용하고, 릴리즈마다 앱 번들 커버리지를 늘려 Claude API 의존도를 점진 축소하는 작업의 마일스톤 정의.
 >
