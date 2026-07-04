@@ -1,0 +1,38 @@
+# iosApp Xcode 프로젝트 스펙(정본) — XcodeGen으로 iosApp.xcodeproj 생성.
+#   xcodegen generate --spec iosApp/project.yml
+# 셸 배선: shared의 Shared.framework(Kotlin/Native + SKIE)를 gradle로 빌드·임베드하고 링크만 한다.
+name: iosApp
+options:
+  bundleIdPrefix: com.robin.devetym
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+targets:
+  iosApp:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - path: iosApp
+        excludes:
+          - "Info.plist"
+    settings:
+      base:
+        INFOPLIST_FILE: iosApp/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.robin.devetym
+        SWIFT_VERSION: "5.0"
+        # gradle이 여기로 프레임워크를 복사(embedAndSign) → 링커 검색 경로
+        FRAMEWORK_SEARCH_PATHS:
+          - $(inherited)
+          - $(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)
+        OTHER_LDFLAGS:
+          - $(inherited)
+          - -framework
+          - Shared
+    preBuildScripts:
+      - name: "Build & embed Shared.framework (Kotlin/Native + SKIE)"
+        basedOnDependencyAnalysis: false
+        script: |
+          cd "$SRCROOT/.."
+          ./gradlew :shared:embedAndSignAppleFrameworkForXcode

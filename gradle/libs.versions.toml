@@ -1,0 +1,34 @@
+# 버전 매트릭스 — 2026-07 웹+빌드 확인(ADR-0005). 버전 불일치가 KMP 1위 실패원이므로 여기 한 곳에서 관리.
+# ⚠️ SKIE 0.10.12는 Kotlin 최대 2.3.21까지만 지원(빌드 에러로 실측 확인). Kotlin을 그 위로 올리지 말 것.
+[versions]
+kotlin = "2.3.21"                      # SKIE 0.10.12 지원 상한. CMP 1.11 호환(≥2.2.20 권장선 충족)
+agp = "8.13.0"                         # Kotlin 2.3.x 지원 AGP 범위 8.2.2–8.13.0의 상한
+composeMultiplatform = "1.11.1"        # CMP stable
+coroutines = "1.11.0"
+serialization = "1.9.0"
+koin = "4.1.0"
+androidxActivityCompose = "1.11.0"
+skie = "0.10.12"                       # Touchlab SKIE (2026-05)
+# Android SDK 레벨
+compileSdk = "36"
+minSdk = "26"
+targetSdk = "36"
+
+[libraries]
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+
+[plugins]
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+skie = { id = "co.touchlab.skie", version.ref = "skie" }

@@ -8,7 +8,11 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 ## Now — 진행 중
 
-- **설계 문서 세트 완료 → 구현 착수 대기.** 다음 착수 = Next **M0(KMP 골격)**.
+- **M0(KMP 골격) 완료 — 양 플랫폼 실제 실행 확인.** `shared + androidApp + iosApp` 골격이 서고,
+  공유 `Greeting`을 Koin으로 배선해 **Android APK + iOS 시뮬레이터** 둘 다에서 공유 Compose 화면이 뜬다.
+  - green 루프 3축: `:shared:testDebugUnitTest` · `:androidApp:assembleDebug` · `:shared:linkDebugFrameworkIosSimulatorArm64`(SKIE 포함).
+  - iOS: `iosApp.xcodeproj`(XcodeGen 스펙 `project.yml`) — 시뮬레이터에서 렌더 검증 완료([`iosApp/README.md`](iosApp/README.md)). 실기기 서명·배포는 이후.
+- **다음 착수 = Next M1(모델·직렬화) — 별도 세션.**
 
 ---
 
@@ -16,9 +20,9 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 각 마일스톤은 앞 단계 완료를 전제로 순차 진행. 완료 시 Done으로 이관.
 
-- **M0 · KMP 골격** — `shared + androidApp + iosApp` 생성, 빈 앱이 **양쪽에서 뜨는지** 확인. Koin `startKoin` 배선 골격.
+- **M0 · KMP 골격** — ✅ **완료**(Android APK + iOS 시뮬레이터 실제 실행 확인). `shared + androidApp + iosApp`, Koin `startKoin` 배선, 공유 `Greeting`을 양 플랫폼 Compose 화면에 표시.
   - 참조: architecture §3·§5, spec 1-6.
-  - ⚠️ 착수 전 확인: 최신 Kotlin·CMP 안정 버전 + 플러그인 호환 조합(`klibs.io`/공식 문서). **iOS interop 도구(SKIE vs Swift Export) 결정 필요 → ADR 미작성**(버전 민감, 이 시점에 작성).
+  - ✅ iOS interop 결정: **SKIE**([ADR-0005](docs/adr/0005-ios-interop.md)). 골격 버전(**빌드 실측 확정**): **Kotlin 2.3.21 · CMP 1.11.1 · AGP 8.13.0 · Gradle 8.13 · SKIE 0.10.12**. ⚠️ **SKIE 0.10.12는 Kotlin 최대 2.3.21**(2.4.0 거부, 실측) — SKIE가 새 Kotlin 지원 전엔 앞질러 올리지 말 것.
 - **M1 · 모델·직렬화** — `TermEntry`(@Serializable)·`Source`·`TermResult`(sealed)·매퍼. 참조: spec 1-1.
 - **M2 · 로컬 DB** — 스키마(`term`·`searchHistory`)·반응형 쿼리·드라이버 `expect`/`actual`.
   - ⚠️ 착수 전: **[ADR-0003](docs/adr/0003-local-storage.md) 확정**(SQLDelight vs Room, `klibs.io`로 iOS 성숙도 재확인). 참조: spec 1-2.
