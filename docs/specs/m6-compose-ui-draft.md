@@ -99,7 +99,7 @@ object AppScheme { val colors @Composable get() = LocalAppColors.current; val ty
 - `FlowChip(text, onClick)`: Capsule, surface2, codeChip. (검색 최근·자동완성 미리보기용.)
 - `PulsingDots()`: 좌→우 pulse 3닷(로딩) — 애니메이션(타이밍은 검증 천장, 컴파일만 보증).
 - `EmptyState(icon, message)`: 빈 목록 공통(북마크·히스토리·자동완성 없음).
-- `RelativeTime(epochMillis, now)`: **순수 헬퍼** "방금 전/N분 전/어제/N일 전"(ko) — §6 네이티브 실측(iOS RelativeDateTimeFormatter 계승, 클록 주입).
+- `RelativeTime(epochMillis, now)`: **순수 헬퍼** — **경과 diff 기반**(캘린더/타임존/DST 비의존; `now - epochMillis`만 사용): `<1분`="방금 전", `<60분`="N분 전", `<24시간`="N시간 전", `<48시간`="어제", `그 이상`="N일 전"(ko). iOS `RelativeDateTimeFormatter`가 캘린더 기준('어제'=날짜 경계)인 점과 갈릴 수 있으나 M6는 **경과 diff 기반으로 못박아** 자정/DST 경계 모호성을 제거한다(iOS 계승은 라벨 어휘만, 경계 규칙은 diff). `1~23시간` 구간이 정의돼 있어 리터럴 포팅 시 무의미 라벨('300분 전')로 새지 않는다. §6 네이티브 실측(클록 주입).
 
 ### 3-7. 6화면 (`ui/screens/`) — 각 화면 구조·상태분기·VM 바인딩
 
@@ -153,8 +153,8 @@ object AppScheme { val colors @Composable get() = LocalAppColors.current; val ty
 - `test_색상토큰_정본일치` — Light/Dark 대표값(accent·bg·text) hex가 `Assets.xcassets/Theme/*.colorset` 정본과 일치(`Theme.swift` Palette는 Asset 참조만이라 hex 없음 — colorset이 대조 소스).
 - `test_타이포토큰_패밀리매핑` — `codeBody`.fontFamily==codeFamily, `titleHero`==serif, `body`==bodyFamily(Default). 크기/weight 대표 검증.
 - `test_errorKind_메시지_전수` — `ErrorKind` 5종 각 한글 메시지 매핑(when 전수, else 없음).
-- `test_relativeTime_경계` — now-30s→"방금 전", -5m→"5분 전", -1d→"어제", -3d→"3일 전"(클록 주입, ko).
-- `test_detailState_표시매핑` — `DetailUiState`/`TermResult` → 화면이 그릴 **표시 의도**(순수 매핑 함수 `detailPresentation(state)`: Loading/Found/NotDevTerm/PossibleTypo/Error 각 라벨·아이콘 키)로 분기(when 전수). UI 렌더 대신 이 매핑을 실측해 상태분기 정확성만 네이티브로 방어.
+- `test_relativeTime_경계` — now-30s→"방금 전", -5m→"5분 전", **-3h→"3시간 전"**, -1d→"어제", -3d→"3일 전"(클록 주입, ko; 경계 규칙=경과 diff 기반 §3-6).
+- `test_detailState_표시매핑` — `DetailUiState`/`TermResult` → 순수 매핑 함수 `detailPresentation(state)`(Loading/Found/NotDevTerm/PossibleTypo/Error 각 라벨·아이콘 키)의 반환을 분기별로 실측(when 전수). **이 테스트는 매핑 함수 자체의 반환 정확성만 보증하며, `DetailContent` 화면이 그 키대로 렌더한다는 것(매핑↔렌더 결속)은 보증하지 않는다** — 그 결속은 시각 천장(§0)으로, 아침 실기기 리뷰 소관이다. 분기 누락만 §4 when 전수 canary가 컴파일 강제한다.
 - `test_categoryColor_클램프` — 카테고리 6종+범위밖 → 색 매핑(범위밖은 accent 기본, 크래시 없음).
 - `test_isBookmarked_교차조회` — `isBookmarkedFor(bookmarks, keyword)`가 (번들 원문 대소문자 섞임 `OAuth`·AI정규화 `oauth`·미북마크·별칭/원형 경유) 각 케이스에서 저장 로우(`normalizeKeyword` 정규화값)와 `normalizeKeyword(keyword)` 정합으로 매치되는지 네이티브 실측(DR-4 종결 실증 — §3-8 순수 헬퍼).
 
