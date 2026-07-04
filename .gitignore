@@ -1,0 +1,5 @@
+# 사적 하네스 도구 — 공개 트리에 섞지 않는다(자체 nested git repo로 히스토리 보유).
+harness/
+
+# macOS
+.DS_Store

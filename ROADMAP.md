@@ -18,7 +18,7 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 - **M0 · KMP 골격** — `shared + androidApp + iosApp` 생성, 빈 앱이 **양쪽에서 뜨는지** 확인. Koin `startKoin` 배선 골격.
   - 참조: architecture §3·§5, spec 1-6.
-  - ⚠️ 착수 전 확인: 최신 Kotlin·CMP 안정 버전 + 플러그인 호환 조합(`klibs.io`/공식 문서). **iOS interop 도구(SKIE vs Swift Export) 결정 필요 → ADR 미작성**(버전 민감, 이 시점에 작성).
+  - ✅ iOS interop 결정: **SKIE**([ADR-0005](docs/adr/0005-ios-interop.md), 2026-07 웹 확인). 확인된 골격 버전(투입용): **Kotlin 2.4.0 · CMP 1.11.1 · Compose Compiler=Kotlin동일 · SKIE 0.10.12**(SKIE↔Kotlin 지원 2.0.0–2.4.0). ⚠️ Kotlin을 SKIE 지원상한 위로 앞질러 올리지 말 것 — 함께 올린다.
 - **M1 · 모델·직렬화** — `TermEntry`(@Serializable)·`Source`·`TermResult`(sealed)·매퍼. 참조: spec 1-1.
 - **M2 · 로컬 DB** — 스키마(`term`·`searchHistory`)·반응형 쿼리·드라이버 `expect`/`actual`.
   - ⚠️ 착수 전: **[ADR-0003](docs/adr/0003-local-storage.md) 확정**(SQLDelight vs Room, `klibs.io`로 iOS 성숙도 재확인). 참조: spec 1-2.
