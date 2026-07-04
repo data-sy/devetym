@@ -228,8 +228,9 @@ fun Term.toDto(): TermEntry = TermEntry(
 
 ## Open Questions
 
-> 비준 종료 시점의 **명시 이월**. 미탐색이지만 알려진 클래스를 암묵적으로 넘기지 않고, 여기에 적어서 넘긴다("본다는 걸 적어서 넘긴다").
+> 비준 종료(ESCALATE — cap 6 도달, Blocker 1 잔존) 시점의 **명시 이월**. 미탐색이지만 알려진 클래스를 암묵적으로 넘기지 않고, 여기에 적어서 넘긴다("본다는 걸 적어서 넘긴다").
 
+- [x] 이번 비준 종료 라운드의 carry-forward(미탐색이지만 알려진 클래스): **없음(빈 목록)**. 아래 M4/캐시 트랙 상속 항목은 앞선 라운드(round 2·3)에서 이미 명시 이월된 것이며, 종료 시점 신규 이월 클래스는 기록되지 않았다. 잔존 Blocker 1(round 6 DR-1: `NativeSqliteDriver`/Native `kotlinx.serialization` 실행 정확성이 §5 링크 green으로 무측정 — 링크 green은 klib 소비=컴파일/링크만 증명하고 쿼리 결과·직렬화 왕복 정확성을 실행으로 확인하지 않음)은 carry-forward로 면제되지 않고 **사람 게이트로 상신**된다.
 - [ ] (M4 상속·DR-M2-2) bookmarked(및 pinned) 로우 upsert 시 `createdAt`을 `isBookmarked`/`source`와 함께 보존 — `INSERT OR REPLACE`(DELETE+INSERT)가 `createdAt`을 새 fetch 시각으로 덮으면 `bookmarked` 목록(§3-1 `createdAt DESC`)이 새로고침마다 조용히 재정렬된다. M2 스키마는 `createdAt` 컬럼을 제공해 보존을 '가능'하게 하나 정책은 M4 소관 → M4 DoD/ROADMAP이 보존 목록에 `createdAt`을 명시하고 정렬 안정성을 하류에서 실측한다.
 - [ ] (M4/캐시 트랙 상속·DR-M2-3) `toDto`의 `Long?→Int?`는 M2 소유 경로(DTO `Int?` 출처)에서 무손실 확인됨(§3-4·INV-9) — 새 M2 처방 불요. `schemaVersion`을 Int 범위로 보장(또는 `toDto` 범위 가드)할 책임은 §3-4/INV-9대로 M4/캐시 트랙 DoD에 상속되어 있으며, 각 DoD에 걸려 있는지는 사람 게이트가 추적.
 - [ ] (사람 게이트) M2 §3 구현 착수 승인: _대기_.
