@@ -8,7 +8,7 @@ ADR-0004는 백엔드를 **얇은 프록시**(키 주입 + 기기당 한도)로 
 
 이 캐시·딜리버리 작업은 원래 별도 트랙(고유 마일스톤)으로 분리돼 있었으나, **"나중 마이그레이션·리팩토링·출시 후 없이 처음부터 빌트인"** 방침으로 전환했다. 즉 CMP 클라이언트(M1~M8)를 3계층 read-through 계약에 맞춰 **처음부터** 짓는다. 이 전환은 ADR-0004의 "프록시 계약 그대로"를 무효화하므로 새 ADR로 기록한다.
 
-확정 아키텍처 불변식(재론 금지)은 [`../cache-delivery-milestones.md`](../cache-delivery-milestones.md) §1의 **INV-1~12**. 이 ADR은 그 중 클라이언트-서버 경계에 관한 결정을 못박는다.
+확정 아키텍처 불변식(재론 금지)은 [`../cache-delivery-milestones.md`](../cache-delivery-milestones.md) §1의 **INV-1~13**. 이 ADR은 그 중 클라이언트-서버 경계에 관한 결정을 못박는다.
 
 ## Decision
 **서버(`devetym-proxy`)를 read-through 캐시로 확장하고, 클라이언트는 그 계약에 맞춰 처음부터 짓는다.**
@@ -44,7 +44,7 @@ ADR-0004는 백엔드를 **얇은 프록시**(키 주입 + 기기당 한도)로 
 3. **클라이언트 로컬 캐시만, 서버 캐시 없음** — 기각. 사용자 간 재사용 불가(한 사람이 생성한 정본을 다른 사람이 못 씀) → API 비용 절감 폭 작음.
 
 ## References
-- 불변식 정본: [`../cache-delivery-milestones.md`](../cache-delivery-milestones.md) §1 (INV-1~12)
+- 불변식 정본: [`../cache-delivery-milestones.md`](../cache-delivery-milestones.md) §1 (INV-1~13)
 - 대체 대상: [ADR-0004](0004-backend-proxy-boundary.md)
 - 로컬 저장: [ADR-0003](0003-local-storage.md)(pinning 컬럼이 얹힘)
 - 서버 repo: [`devetym-proxy`](https://github.com/data-sy/devetym-proxy)(비공개)

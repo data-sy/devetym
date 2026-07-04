@@ -79,8 +79,9 @@ sealed interface TermResult {
 - `test_TermEntry_직렬화왕복_모든필드보존` — encode→decode 후 **디코드된 객체가 원본과 동등**(`==`, data class 구조 동등; 특히 `aliases` 순서·`category`)함으로 검증한다. JSON 키 존재 여부가 아니라 **객체 동등성**을 오라클로 삼아 `encodeDefaults` 설정(default 필드 생략 여부)과 무관하게 결정적이게 한다.
 - `test_TermEntry_버전필드없는JSON_역직렬화시null` — 기존 번들 shape 하위호환(INV-B).
 - `test_TermEntry_버전필드있는JSON_왕복보존` — 서버 배달 shape(INV-9).
-- `test_TermResult_when분기_전수처리` — sealed 3분기(`Found`/`NotDevTerm`/`PossibleTypo`) 컴파일 타임 전수.
+- `test_TermResult_when분기_전수처리` — sealed 3분기(`Found`/`NotDevTerm`/`PossibleTypo`) 컴파일 타임 전수. **`else` 브랜치 금지(DR-3 결착)**: 이 테스트의 `when(result)`은 반드시 세 subtype을 명시 분기하고 `else ->`를 두지 않는다. `else`를 두면 4번째 subtype 추가 시에도 컴파일이 통과해 전수 canary가 무력화되므로, 미래에 subtype이 늘면 이 `when`이 컴파일 에러로 실패해야 한다(그 컴파일 에러가 곧 canary다).
 - `test_카테고리_집합밖값_처리` — 집합 밖 `category`(예: 오타 `네트웤`, 영문 `Database`)가 M1 왕복에서 **예외 없이 그대로 보존**됨(pass-through, INV-A). M1은 거부·정규화하지 않는다(강제는 M3·M4).
+- `test_실제번들_terms디코드_aliases내용보존` — **DR-1 wire측 M1 부분 폐쇄(사람 eyes-open 수용 하 채택)**. 실제 배포 `terms.json`(650, composeResources 배치본)을 로드·디코드해 (a) 항목 수가 650, (b) aliases를 가진 **알려진 term의 aliases *내용*을 단언**한다(예: `aa-tree` → `["AA 트리", "Arne Andersson tree"]`, `category` = `자료구조`). **성공 디코드는 오라클로 삼지 않는다** — wrong-key·키 생략 JSON도 예외 없이 성공 디코드되어 `aliases = emptyList()`를 산출하므로(별칭 소실이 silent), 반드시 aliases *내용*을 단언한다(§7-4 무효 오라클 규정 준수). 이 테스트는 §3-1 wire 키 계약(JSON 키=camelCase 프로퍼티명)이 실제 번들 문서에서 지켜짐을 M1에서 실측한다. **잔여 이월**: 번들 *로더*(M3 `BundleDbSource`)의 실제 로드 경로 회귀 가드와 DTO↔엔티티 매핑측(M2) 보존은 여전히 각 DoD로 상속된다(§7-1·§7-4, 아래 §8 및 ROADMAP M2/M3 바인딩 참조).
 
 ## 7. 열린 질문 (비준이 판정할 항목)
 
@@ -99,4 +100,9 @@ sealed interface TermResult {
 
 > 비준 종료(ESCALATE — cap 6 도달, Blocker 3 잔존) 시점의 **명시 이월**. 미탐색이지만 알려진 클래스를 암묵적으로 넘기지 않고, 여기에 적어서 넘긴다("본다는 걸 적어서 넘긴다").
 
-- [ ] 이번 비준 라운드의 carry-forward(미탐색이지만 알려진 클래스): **없음(빈 목록)**. 별도의 신규 이월 클래스는 기록되지 않았다. 잔여 판정 대상은 §7 열린 질문(§7-1 매퍼 M2 이월, §7-2 서버 read-through category 소유자 캐시·딜리버리 트랙 이월, §7-4 wire 키 계약 실측 M3 이월)과, 사람 게이트로 상신된 Blocker(DR-1 INV-A 실측 범위, DR-2 서버 캐시-히트 정규화 우회, DR-3 `when` else 금지 미명시)에 있다. 이 항목들은 사람 비준(-draft 제거 승인)에서 직접 다뤄진다.
+- [x] 이번 비준 라운드의 carry-forward(미탐색이지만 알려진 클래스): **없음(빈 목록)**. 별도의 신규 이월 클래스는 기록되지 않았다.
+- [x] **사람 게이트 판정 완료 (2026-07-05, eyes-open 수용)**. ESCALATE로 상신된 Blocker 3을 사람이 다음과 같이 결착했다:
+  - **DR-3 (`when` else 금지 미명시)** — **닫음**: §6 `test_TermResult_when분기_전수처리`에 else 금지 명시(subtractive 수정).
+  - **DR-1 (INV-A 실측 범위)** — **부분 폐쇄 + 바인딩 상속**: §6에 실제 `terms.json` 디코드 fixture 테스트(`test_실제번들_terms디코드_aliases내용보존`)를 추가해 wire 키 계약을 M1에서 실측(내용 단언, 성공 디코드 무효). 잔여 매핑측(M2)·로더 회귀(M3)는 ROADMAP M2/M3 DoD에 바인딩 상속으로 명문화.
+  - **DR-2 (서버 캐시-히트 정규화 우회)** — **캐시 트랙 불변식으로 이관**: `cache-delivery-milestones.md` INV-13(정규화-후-캐시쓰기 순서) 신설, 캐시 M1(write-back)·M3(write-게이트) 불변식 목록에 바인딩.
+  - **판정 성격**: 재비준을 다시 돌리지 않고(하네스 Rule 7상 DR-1/DR-2는 carry_forward 면제 안 됨 → 재ESCALATE 공산) 사람이 eyes-open으로 잔여 리스크를 수용하고 §3 M1 구현 착수를 승인했다. 자율 재비준 아님.

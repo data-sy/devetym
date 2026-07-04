@@ -1,6 +1,6 @@
 # DevEtym 서버측 캐시 & 콘텐츠 딜리버리 — 마일스톤
 
-> ⚠️ **읽는 법 — 이 문서는 이제 별도 트랙이 아니라 CMP M1~M8에 빌트인이다.** 아래 M0~M7은 **캐시·딜리버리 고유 번호**이며 [`ROADMAP.md`](../ROADMAP.md)의 CMP 마일스톤(M0~M8)과 **번호가 겹쳐도 무관**하다. 별도 트랙으로 미루지 않고(=출시 후 없음), 처음부터 각 CMP 마일스톤 범위에 녹여 짓는다. 서버 코드는 별도 repo [`devetym-proxy`](https://github.com/data-sy/devetym-proxy)(read-through로 확장). 이 문서는 **불변식(§1 INV-1~12)·상세 스펙의 정본**이고, 실제 착수 순서·배치는 ROADMAP이 정본이다. 계약 결정은 [ADR-0006](adr/0006-server-cache-boundary.md).
+> ⚠️ **읽는 법 — 이 문서는 이제 별도 트랙이 아니라 CMP M1~M8에 빌트인이다.** 아래 M0~M7은 **캐시·딜리버리 고유 번호**이며 [`ROADMAP.md`](../ROADMAP.md)의 CMP 마일스톤(M0~M8)과 **번호가 겹쳐도 무관**하다. 별도 트랙으로 미루지 않고(=출시 후 없음), 처음부터 각 CMP 마일스톤 범위에 녹여 짓는다. 서버 코드는 별도 repo [`devetym-proxy`](https://github.com/data-sy/devetym-proxy)(read-through로 확장). 이 문서는 **불변식(§1 INV-1~13)·상세 스펙의 정본**이고, 실제 착수 순서·배치는 ROADMAP이 정본이다. 계약 결정은 [ADR-0006](adr/0006-server-cache-boundary.md).
 >
 > **캐시 번호 → CMP 마일스톤 매핑**:
 >
@@ -40,6 +40,7 @@
 - **INV-10 · 비용/남용 안전선**: 기존 spend 상한·워크스페이스 분리를 재사용. 추가로 Worker에서 디바이스별 rate-limit + "프로그래밍 용어처럼 보이는가" 값싼 휴리스틱으로 비용 남용을 막는다.
 - **INV-11 · 오프라인 우선 & 서버 온리 금지**: 사전 앱의 킬러 기능은 즉시·오프라인·지연 0. 서버가 죽어도 앱은 살아 있어야 한다. 서버 딜리버리는 SSOT가 아니라 **freshness(staleness 단축)**를 담당한다. authoring 정본은 db-expand 파이프라인 산출물이다.
 - **INV-12 · head/tail 분리 + 승격 플라이휠**: 흔한·검증된 용어(head) = 구운 seed 번들. tail + 갓 생성분 = 서버 D1 캐시. 릴리즈마다 tail의 hot 항목을 critic 통과시켜 번들로 승격 → 번들 히트율 단조 증가.
+- **INV-13 · 정규화-후-캐시쓰기 순서(read-through는 원응답 캐시 금지)**: 서버 read-through는 **정규화(특히 category의 6집합 clamp/검증) 이전의 원응답을 D1에 write-back하지 않는다.** 캐시에 저장되고 캐시-히트로 되돌려지는 값은 **이미 정규화된 값**이어야 한다. 이유: 클라이언트 정규화(M3·M4)는 캐시-미스 생성 경로에만 걸리므로, 정규화 전 원응답이 캐시되면 이후 캐시-히트가 클라 정규화를 **우회**해 집합 밖 category가 downstream 버킷팅에서 조용히 누락된다(M1이 category를 pass-through로 두고 강제를 downstream에 분배했기 때문 — M1 슬라이스 §7-2·DR-2). write 게이트(INV-7 `validator.py`)와 같은 지점에서 category 정규화를 적용해 "정규화 통과분만 캐시 저장·서빙"을 보장한다. 〔M1 슬라이스 DR-2 이관 · 캐시 M1 write-back·M3 write-게이트 소관〕
 
 ---
 
@@ -58,8 +59,8 @@
 ### M1 — Worker read-through 캐시 경로
 - **목표**: 핵심 비용 절감 루프.
 - **스코프**: Worker 조회 순서(D1 → API), 미스 시 write-back, first-write-wins unique 제약 기반 멱등 write.
-- **지켜야 할 불변식**: INV-1, INV-2, INV-4(저장 측), INV-8.
-- **스펙 산출물**: Worker 요청 흐름 스펙 + 멱등 write 처리.
+- **지켜야 할 불변식**: INV-1, INV-2, INV-4(저장 측), INV-8, **INV-13(write-back 전 category 정규화 — 원응답 캐시 금지)**.
+- **스펙 산출물**: Worker 요청 흐름 스펙 + 멱등 write 처리 + **정규화-후-write-back 순서(INV-13)**.
 - **의존성**: M0.
 - **코드베이스 확인 필요**: 현재 Worker 프록시 구조/라우팅? API 호출 래핑 위치?
 
@@ -74,8 +75,8 @@
 ### M3 — 품질 게이트 배치
 - **목표**: validator/critic를 캐시·승격 경계에 배선.
 - **스코프**: `validator.py` = write 시점(통과분만 캐시 저장·서빙), `critic` = 승격 시점. validator 탈락 용어의 처리(저장 안 함? 재시도? 사용자 응답?) 정의.
-- **지켜야 할 불변식**: INV-7, INV-5.
-- **스펙 산출물**: 게이트 배치 스펙 + 실패 처리 흐름.
+- **지켜야 할 불변식**: INV-7, INV-5, **INV-13(write 게이트 지점에서 category 정규화 적용 — 정규화 통과분만 캐시 저장·서빙)**.
+- **스펙 산출물**: 게이트 배치 스펙 + 실패 처리 흐름 + **category 정규화 write-게이트 배선(INV-13)**.
 - **의존성**: M1 (write 경로 존재해야 함).
 - **코드베이스 확인 필요**: validator.py 현재 실행 형태/인터페이스? Worker에서 호출 가능한가, 아니면 사전 검증 단계로 분리?
 
