@@ -117,7 +117,7 @@ class ClaudeApi(
 
 **응답 파싱 — `tool_use` 3분기(설계 불변식):** `content` 배열에서 첫 `tool_use` 블록을 찾아 도구 이름으로 분기.
 
-- **content-block DTO는 `tool_use` 아닌 블록에 관용적이어야 한다(네이티브 디코드 필수 조건).** 요청이 `thinking`(enabled)이므로 **실 Anthropic 응답의 `content` 배열은 항상 `thinking`(및 흔히 `text`) 블록이 `tool_use` 앞에 온다** — `tool_use` 단일 블록 응답은 프로덕션에서 오지 않는다. 따라서 content 원소 DTO는 **비다형 flat DTO**(`type: String` + `tool_use` 필드만 nullable, thinking/text 등의 필드는 미선언 → `ignoreUnknownKeys`가 무시)로 두거나, 다형(`@JsonClassDiscriminator("type")` sealed)으로 갈 경우 **thinking/text/redacted_thinking 변이를 전부 등록**(또는 polymorphic default)한다. ⚠️ 다형인데 변이 미등록이면 `ignoreUnknownKeys`가 구제하지 못한다 — 그건 *키* 무시일 뿐 미지의 discriminator *값*은 네이티브에서 디코드 예외를 던지고(§3-2 `generate`의 `try` 밖 `res.body<>()` 경로라 uncaught), 실기기 첫 호출에서 선행 thinking 블록이 디코드를 깬다. **비다형 flat DTO를 우대**(단언·경로 최소).
+- **content-block DTO는 `tool_use` 아닌 블록에 관용적이어야 한다(네이티브 디코드 필수 조건).** 요청이 `thinking`(enabled)이므로 **실 Anthropic 응답의 `content` 배열은 항상 `thinking`(및 흔히 `text`) 블록이 `tool_use` 앞에 온다** — `tool_use` 단일 블록 응답은 프로덕션에서 오지 않는다. 따라서 content 원소 DTO는 **비다형 flat DTO**(`type: String` + `tool_use` 필드만 nullable, thinking/text 등의 필드는 미선언 → `ignoreUnknownKeys`가 무시)로 두거나, 다형(`@JsonClassDiscriminator("type")` sealed)으로 갈 경우 **미지 변이를 흡수하는 polymorphic-default(catch-all)를 필수로 둔다** — 개별 변이(thinking/text/redacted_thinking …)를 열거 등록만 하는 것은 금지다(default 없는 다형 금지). 개별 등록은 catch-all default 위에 선택적으로만 얹는다. ⚠️ 이 한정(default 필수)이 없으면: 구현이 다형+개별등록을 택해 자주 오는 `thinking`/`text`만 등록하고 **드문 `redacted_thinking`(thinking이 플래그될 때만 프로덕션에 드물게 등장) 변이를 누락**해도, 그 변이를 태우는 canned 응답이 없어 4축 green이 전부 통과한다 — 그런데 실기기 첫 호출에서 미지의 discriminator *값*이 나타나면 `ignoreUnknownKeys`가 구제하지 못하고(그건 *키* 무시일 뿐) 네이티브에서 디코드 예외를 던져(§3-2 `generate`의 `try` 밖 `res.body<>()` 경로라 uncaught) `ClaudeException`으로 매핑되지 않은 채 크래시한다. catch-all default를 필수로 못박으면 미등록 변이가 default로 흡수돼 이 크래시 경로가 데이터 변이(새 canned 픽스처)에 의존하지 않고 닫힌다. **비다형 flat DTO를 우대**(단언·경로 최소).
 
 | 도구 | 결과 |
 |---|---|
@@ -195,6 +195,7 @@ val AppJson = Json {
 - `test_search_alias매칭_반환` — 입력이 어떤 항목의 `aliases` 중 하나와 일치 → 그 항목(alias가 검색 집합에 편입됐음을 인메모리 수준에서 확인 — §6-B가 실 번들로 재확인).
 - `test_search_대소문자무시_반환` — `"REACT"`/`"React"`/`"react"` 동일 매칭(Native `lowercase` 실측).
 - `test_search_미발견_null` — 어떤 keyword·alias와도 불일치 → `null`.
+- `test_search_정규화충돌_리스트앞선엔트리_반환` — `fixtureEntries`에 **정규화 키가 충돌하는 최소 쌍**(두 엔트리가 같은 정규화 alias를 공유, 예: 엔트리A `aliases`와 엔트리B `keyword`가 `normalizeKeyword` 후 동일)을 리스트 순서로 넣고, 그 충돌 키로 `search`하면 **리스트 앞선(먼저 삽입된) 엔트리**를 반환함을 단언 — §3-1 first-wins(putIfAbsent) 결정적-반환 계약을 **실행 오라클로 고정**한다(구현이 last-wins 덮어쓰기로 인덱스를 지으면 이 테스트만 실패해 계약 이탈을 잡는다). 네이티브 실행 축에서도 인덱스 구성 순서가 결정적임을 재확인.
 - `test_search_빈입력_null` — `""`/공백 → `null`(네트워크·정책 판단 없음, 순수).
 - `test_autocomplete_prefix매칭_목록` — `keyword.startsWith(prefix)` 항목들.
 - `test_autocomplete_빈prefix_빈목록` — `""`/공백 → `emptyList()`.
