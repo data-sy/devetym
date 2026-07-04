@@ -22,7 +22,7 @@
 
 **IN (M6):**
 - **폰트**(§3-1): 7 ttf를 `composeResources/font/`로 이관, `FontFamily` 로더. **하이브리드 전략**: 한글 비중 본문=`FontFamily.Default`(플랫폼 시스템 — iOS SF/Android Roboto, iOS의 "SF 전환" 계승), 영문 코드/키워드=DM Mono, 시그니처 헤더=DM Serif.
-- **색상 토큰**(§3-2): 라이트/다크 11토큰(`Theme.swift` Palette 정본), `AppColors` + `CompositionLocal`, **다크 기본**.
+- **색상 토큰**(§3-2): 라이트/다크 11토큰(hex 정본=`Assets.xcassets/Theme/*.colorset`; `Theme.swift` Palette는 Asset 참조·토큰 이름만), `AppColors` + `CompositionLocal`, **다크 기본**.
 - **타이포 토큰**(§3-3): `Theme.Typography`의 `.typoX` 토큰(정본 파일 실개수, 계승)을 Compose `TextStyle`로 이관(폰트+size+weight 묶음; lineHeight/letterSpacing 정본과 이월은 §3-3).
 - **간격/모양 토큰**(§3-4): iOS 인라인 값에서 **신규 추출**(spacing 스케일·corner radius·stroke) — iOS엔 토큰 없음.
 - **테마 프로바이더**(§3-5): `AppTheme { }` = MaterialTheme(colorScheme 매핑) + `CompositionLocalProvider`(AppColors·AppTypography·AppDimens).
@@ -59,7 +59,7 @@ val DarkColors = AppColors(bg=0xFF0A0A0A, surface=0xFF111111, surface2=0xFF1A1A1
     accent=0xFFC8F060, accent2=0xFF60C8F0, accentAI=0xFFF0A060, brand=0xFF2E5D3A, text=0xFFECECEC, textDim=0xFFB4B4B4, textMuted=0xFF8A8A8A)
 val LocalAppColors = staticCompositionLocalOf { DarkColors }   // 다크 기본
 ```
-- 값은 `Theme.swift` Palette 정본(위 hex 표가 11토큰 전량 열거). hex는 §6 `test_색상토큰_정본일치`가 대표값 실측(순수, 네이티브).
+- hex 정본은 `Assets.xcassets/Theme/*.colorset/Contents.json`(라이트=기본 `components`, 다크=`luminosity/dark` appearances). `Theme.swift` Palette는 토큰 이름·Asset 참조(`Color("Theme/bg")`)만 담고 **hex 값은 없다** — 정본을 열어도 대조 대상이 없으므로 색 대조 소스는 colorset이다. 위 hex 표는 그 colorset 실측을 인라인한 11토큰 전량이며, §6 `test_색상토큰_정본일치`가 대표값을 colorset 정본과 대조(순수, 네이티브).
 
 ### 3-3. 타이포 토큰 (`ui/theme/AppTypography.kt`)
 
@@ -103,10 +103,10 @@ object AppScheme { val colors @Composable get() = LocalAppColors.current; val ty
 
 ### 3-7. 6화면 (`ui/screens/`) — 각 화면 구조·상태분기·VM 바인딩
 
-각 화면은 **두 겹**: `XxxScreen(vm: XxxViewModel)`(상태 구독 래퍼) + `XxxContent(state, callbacks)`(순수 상태→UI, 프리뷰/천장검증 대상). VM 화면은 `collectAsStateWithLifecycle`로 구독.
+각 화면은 **두 겹**: `XxxScreen(...)`(VM 구독 래퍼) + `XxxContent(state, [파생값,] callbacks)`(순수 상태→UI, 프리뷰/천장검증 대상). 래퍼가 VM `StateFlow`를 `collectAsStateWithLifecycle`로 구독해 **순수값만** `XxxContent`에 주입한다(Content는 VM/Repository를 모른다 — §4). 대부분 화면은 VM 하나지만 `DetailScreen`은 별표 파생을 위해 예외적으로 VM 둘을 받는다(시그니처는 아래 DetailScreen 항에서 확정).
 
 - **SearchScreen**(`SearchViewModel`): header(titleHero "DevEtym" + label) → suggestions 있으면 하단정렬 리스트 / 없으면 recent FlowChips → 하단고정 검색필드(codeInput, 클리어). 액션: `onQueryChanged`(디바운스는 VM), 칩·행 탭→`onNavigateDetail(keyword)`, submit→`commit()?.let(onNavigateDetail)`. **로딩·오류는 이 화면에 없음**(상세로 위임).
-- **DetailScreen**(`DetailViewModel`): `state: DetailUiState`(M5) 분기 —
+- **DetailScreen**(`vm: DetailViewModel`, `bookmarkVm: BookmarkViewModel`) — **시그니처 정본**(§3-8 DR-4 마감): 래퍼가 `vm.state`와 `bookmarkVm.bookmarks`를 각각 `collectAsStateWithLifecycle`로 구독하고, 후자에서 순수 헬퍼 `isBookmarkedFor(bookmarks, entry.keyword)`로 파생한 `isBookmarked: Boolean`을 함께 `DetailContent(state, isBookmarked, callbacks)`로 주입한다(Content는 두 번째 VM/Repository를 직접 모른다 — §4 불변식 유지; placeholder `false` 하드코딩 경로 제거). `state: DetailUiState`(M5) 분기 —
   - `Loading`: `PulsingDots` + keyword(codeHero) + 단계 메시지(시간분할 LoadingPhase는 **M6 애니메이션 소관** — 최소 "어원을 찾고 있어요"만, 타이밍 천장).
   - `Result(Found(entry, src))`: ScrollView[ header(keyword titleHero + `CategoryBadge` + `AiBadge`(src==AI) + summary bodySub) → "어원" 섹션(etymologyBlock: 좌측 2dp accent바 + surface2) → "왜 이 이름인가" 섹션(namingReason) → actionRow(북마크 토글·공유) ] + 하단 오류제보.
   - `Result(NotDevTerm)`: questionmark + "개발 용어를 검색해주세요" + 돌아가기.
@@ -121,7 +121,7 @@ object AppScheme { val colors @Composable get() = LocalAppColors.current; val ty
 ### 3-8. 네비게이션 (`ui/AppRoot.kt`)
 
 - `AppRoot(deps)`: 온보딩 미완료면 `OnboardingScreen`, 아니면 4탭 `Scaffold`(NavigationBar: 검색·북마크·히스토리·설정, tint=accent, surface 배경). 각 탭은 자체 nav 스택, `Detail` route(keyword arg)로 push. Compose Navigation(멀티플랫폼) 또는 단순 상태기반 back stack.
-- **⚠️ M5 DR-4 마감 — 상세 북마크 현재값 상태 소스**: `DetailScreen`이 북마크 별표 현재값을 그리려면 상태 소스가 필요하다(M5는 `DetailUiState.Result`에 `isBookmarked` 없음). **M6 결정**: 별표는 `Result(Found(entry, src))` 브랜치 안에서만 그려지므로(다른 상태엔 별표 없음), `DetailScreen`이 `BookmarkViewModel.bookmarks` `StateFlow`(**반드시 ViewModel 경유** — §4 불변식상 화면은 `repository.bookmarkedTerms()`를 직접 관측하지 않는다)를 **`normalizeKeyword(entry.keyword)`로** 교차조회한 파생 `isBookmarked: Boolean`을 `collectAsStateWithLifecycle`로 관측해 그린다. **교차조회 키를 조회 시점에 `normalizeKeyword`(=`trim().lowercase()`)로 정규화하는 것이 근거의 핵심이다 — `entry.keyword`가 이미 정규화돼 있다고 가정하지 않는다.** 정규화는 오직 AI 경로에서만 일어난다(`orchestrate()`가 `TermResult.Found` 저장 시 `copy(keyword=key)`, `TermRepository.kt:83`). **번들 Found 경로의 `entry`는 재정규화·저장되지 않아 `entry.keyword`가 `terms.json` 저작 원문 그대로**다(`orchestrate`는 `bundle.search(key)`가 돌려준 entry를 term 미저장·히스토리만 남기고 그대로 반환, `TermRepository.kt:58-60`; `InMemoryBundleDbSource.search`는 인덱스만 정규화하고 원본 `entry.keyword` 보존, `BundleDbSource.kt:54-57`). 따라서 '저장 시 정규화됨'은 번들 경로에 대해 사실이 아니며, 현재 정규화 일치는 번들 데이터가 전량 소문자로 authored된 미강제 관례로만 성립한다(장래 `OAuth`/`GraphQL`처럼 대소문자 섞인 번들 용어가 저작되면 관례가 깨짐). 저장 측 `toggleBookmark(entry)`도 `val key = normalizeKeyword(entry.keyword)`로 로우를 조회·저장하므로(`TermRepository.kt:116`), 표시 측 교차조회를 **동일하게 `normalizeKeyword(entry.keyword)`로 맞추면 두 경로가 같은 키 파생 위에서 매치**되어 근거가 authoring 관례가 아니라 **코드 불변식**이 된다. **라우트 원형 keyword(`SearchViewModel.commit()`=`trim()`만, lowercase 안 함) 또는 번들 원문 `entry.keyword`를 정규화 없이 교차조회하는 경로는 금지**(그렇게 하면 저장값 `oauth`와 원문 `OAuth`가 불일치→별표가 조용히 오표시되고, 재탭 시 기존 `oauth` 로우를 찾아 un-bookmark로 뒤집히며, STAY 케이스 확정 갱신도 매치 실패로 깨진다). 이로써 **DR-4(상태 소스 부재)만 닫는다**: 반응형이라 STAY(상세 체류) 케이스에서 토글 즉시 별표가 확정 갱신된다.
+- **⚠️ M5 DR-4 마감 — 상세 북마크 현재값 상태 소스**: `DetailScreen`이 북마크 별표 현재값을 그리려면 상태 소스가 필요하다(M5는 `DetailUiState.Result`에 `isBookmarked` 없음). **M6 결정**: 별표는 `Result(Found(entry, src))` 브랜치 안에서만 그려지므로(다른 상태엔 별표 없음), 교차조회를 **순수 헬퍼 `isBookmarkedFor(bookmarks: List<Term>, keyword: String): Boolean = bookmarks.any { it.keyword == normalizeKeyword(keyword) }`** 로 추출한다(색/타이포/상대시간/에러메시지/상태표시매핑과 동일 부류의 순수 함수 — §6 `test_isBookmarked_교차조회` 네이티브 실측으로 DR-4 종결을 실증). `DetailScreen` 래퍼는 `BookmarkViewModel.bookmarks` `StateFlow`(**반드시 ViewModel 경유** — §4 불변식상 화면은 `repository.bookmarkedTerms()`를 직접 관측하지 않는다)를 `collectAsStateWithLifecycle`로 구독하고 `isBookmarkedFor(bookmarks, entry.keyword)`로 파생 `isBookmarked: Boolean`을 계산해 그린다(시그니처 정본=§3-7). **교차조회 키를 조회 시점에 `normalizeKeyword`(=`trim().lowercase()`)로 정규화하는 것이 근거의 핵심이다 — `entry.keyword`가 이미 정규화돼 있다고 가정하지 않는다.** 정규화는 오직 AI 경로에서만 일어난다(`orchestrate()`가 `TermResult.Found` 저장 시 `copy(keyword=key)`, `TermRepository.kt:83`). **번들 Found 경로의 `entry`는 재정규화·저장되지 않아 `entry.keyword`가 `terms.json` 저작 원문 그대로**다(`orchestrate`는 `bundle.search(key)`가 돌려준 entry를 term 미저장·히스토리만 남기고 그대로 반환, `TermRepository.kt:58-60`; `InMemoryBundleDbSource.search`는 인덱스만 정규화하고 원본 `entry.keyword` 보존, `BundleDbSource.kt:54-57`). 따라서 '저장 시 정규화됨'은 번들 경로에 대해 사실이 아니며, 현재 정규화 일치는 번들 데이터가 전량 소문자로 authored된 미강제 관례로만 성립한다(장래 `OAuth`/`GraphQL`처럼 대소문자 섞인 번들 용어가 저작되면 관례가 깨짐). 저장 측 `toggleBookmark(entry)`도 `val key = normalizeKeyword(entry.keyword)`로 로우를 조회·저장하므로(`TermRepository.kt:116`), 표시 측 교차조회를 **동일하게 `normalizeKeyword(entry.keyword)`로 맞추면 두 경로가 같은 키 파생 위에서 매치**되어 근거가 authoring 관례가 아니라 **코드 불변식**이 된다. **라우트 원형 keyword(`SearchViewModel.commit()`=`trim()`만, lowercase 안 함) 또는 번들 원문 `entry.keyword`를 정규화 없이 교차조회하는 경로는 금지**(그렇게 하면 저장값 `oauth`와 원문 `OAuth`가 불일치→별표가 조용히 오표시되고, 재탭 시 기존 `oauth` 로우를 찾아 un-bookmark로 뒤집히며, STAY 케이스 확정 갱신도 매치 실패로 깨진다). 이로써 **DR-4(상태 소스 부재)만 닫는다**: 반응형이라 STAY(상세 체류) 케이스에서 토글 즉시 별표가 확정 갱신된다.
 - **⚠️ DR5-2는 이 슬라이스에서 닫지 않고 이월(carry-forward)한다.** 위 파생 읽기 Flow는 **STAY 케이스의 확정 피드백만** 준다. LEAVE-즉시 케이스(별표 탭 직후 상세 이탈)의 쓰기 유실은 미해결이다 — 정본 `DetailViewModel.toggleBookmark()`가 여전히 `viewModelScope.launch`(fire-and-forget)라 이탈 시 `onCleared→viewModelScope.cancel()`이 아직 디스패치 안 된 toggle launch를 취소→DB 미변경→`bookmarks` 재방출 없음→가시화·자기수정할 것이 없다(사용자는 이미 화면을 떠나 별표를 못 본다). 파생 읽기(표시)는 쓰기 내구성과 직교한다. `toggleBookmark`를 앱/repository 스코프 launch(또는 `NonCancellable`)로 내구화하는 것은 이 슬라이스 밖이므로 **DR5-2는 정직히 이월**한다(§7-Q2 비준 판정).
 
 ### 3-9. 플랫폼 seam + 매핑 (`ui/platform/` · `ui/DetailMessages.kt`)
@@ -150,12 +150,13 @@ object AppScheme { val colors @Composable get() = LocalAppColors.current; val ty
 
 > Compose UI 렌더 테스트(`compose-ui-test`)는 Android 계측/데스크톱 하네스가 필요해 4축(특히 네이티브)에 안 실려 **이 슬라이스 범위 밖**(천장). 대신 화면 로직을 **순수 헬퍼로 뽑아** 네이티브 실측한다.
 
-- `test_색상토큰_정본일치` — Light/Dark 대표값(accent·bg·text) hex가 `Theme.swift` 정본과 일치.
+- `test_색상토큰_정본일치` — Light/Dark 대표값(accent·bg·text) hex가 `Assets.xcassets/Theme/*.colorset` 정본과 일치(`Theme.swift` Palette는 Asset 참조만이라 hex 없음 — colorset이 대조 소스).
 - `test_타이포토큰_패밀리매핑` — `codeBody`.fontFamily==codeFamily, `titleHero`==serif, `body`==bodyFamily(Default). 크기/weight 대표 검증.
 - `test_errorKind_메시지_전수` — `ErrorKind` 5종 각 한글 메시지 매핑(when 전수, else 없음).
 - `test_relativeTime_경계` — now-30s→"방금 전", -5m→"5분 전", -1d→"어제", -3d→"3일 전"(클록 주입, ko).
 - `test_detailState_표시매핑` — `DetailUiState`/`TermResult` → 화면이 그릴 **표시 의도**(순수 매핑 함수 `detailPresentation(state)`: Loading/Found/NotDevTerm/PossibleTypo/Error 각 라벨·아이콘 키)로 분기(when 전수). UI 렌더 대신 이 매핑을 실측해 상태분기 정확성만 네이티브로 방어.
 - `test_categoryColor_클램프` — 카테고리 6종+범위밖 → 색 매핑(범위밖은 accent 기본, 크래시 없음).
+- `test_isBookmarked_교차조회` — `isBookmarkedFor(bookmarks, keyword)`가 (번들 원문 대소문자 섞임 `OAuth`·AI정규화 `oauth`·미북마크·별칭/원형 경유) 각 케이스에서 저장 로우(`normalizeKeyword` 정규화값)와 `normalizeKeyword(keyword)` 정합으로 매치되는지 네이티브 실측(DR-4 종결 실증 — §3-8 순수 헬퍼).
 
 ## 7. 열린 질문 (비준이 판정할 항목)
 
