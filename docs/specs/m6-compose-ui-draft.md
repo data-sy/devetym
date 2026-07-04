@@ -16,14 +16,14 @@
 
 `commonMain/ui/`에 **디자인 시스템**(폰트·색상·타이포·간격/모양 토큰 + 테마 프로바이더)과 그 위에 **6화면**(검색·상세·북마크·히스토리·설정·온보딩) Composable + **네비게이션**(4탭 + 상세 push + 온보딩 cover)을 세운다. 각 화면은 M5 ViewModel의 `StateFlow`를 `collectAsStateWithLifecycle`로 구독해 상태분기(빈/로딩/오류/결과)를 그리기만 한다(architecture §4.5 — UI는 ViewModel만 안다). iOS 검증본의 **디자인 토큰과 화면 구조를 코틀린/Compose 관용으로** 계승하되(하이브리드 폰트·상태머신·네비 흐름), SwiftUI 특유의 우회(수동 재조회·`@Query` 부재 보완)는 옮기지 않는다(ADR-0002 — 목록은 M5 반응형 Flow 소비).
 
-**M5 이월 마감**: 상세 북마크 현재값 상태 소스(DR-4)·쓰기 유실창(DR5-2)·History limit 구체값(DR5-3)을 이 슬라이스가 닫는다(§3-8·§3-9-2).
+**M5 이월 마감**: 상세 북마크 현재값 상태 소스(DR-4)와 History limit 구체값(DR5-3)을 이 슬라이스가 닫는다(§3-8·§3-9-2). **쓰기 유실창(DR5-2)은 이 슬라이스가 닫지 않고 이월**한다 — 파생 읽기 Flow는 STAY 케이스 피드백만 주고 LEAVE-즉시 쓰기 유실(fire-and-forget 취소)은 미착지다(§3-8).
 
 ## 2. 스코프
 
 **IN (M6):**
 - **폰트**(§3-1): 7 ttf를 `composeResources/font/`로 이관, `FontFamily` 로더. **하이브리드 전략**: 한글 비중 본문=`FontFamily.Default`(플랫폼 시스템 — iOS SF/Android Roboto, iOS의 "SF 전환" 계승), 영문 코드/키워드=DM Mono, 시그니처 헤더=DM Serif.
 - **색상 토큰**(§3-2): 라이트/다크 11토큰(`Theme.swift` Palette 정본), `AppColors` + `CompositionLocal`, **다크 기본**.
-- **타이포 토큰**(§3-3): `Theme.Typography`의 `.typoX` 24종을 Compose `TextStyle`로 이관(폰트+size+weight+lineHeight+letterSpacing 묶음).
+- **타이포 토큰**(§3-3): `Theme.Typography`의 `.typoX` 토큰(정본 파일 실개수, 계승)을 Compose `TextStyle`로 이관(폰트+size+weight 묶음; lineHeight/letterSpacing 정본과 이월은 §3-3).
 - **간격/모양 토큰**(§3-4): iOS 인라인 값에서 **신규 추출**(spacing 스케일·corner radius·stroke) — iOS엔 토큰 없음.
 - **테마 프로바이더**(§3-5): `AppTheme { }` = MaterialTheme(colorScheme 매핑) + `CompositionLocalProvider`(AppColors·AppTypography·AppDimens).
 - **재사용 원자**(§3-6): `CategoryBadge`·`AiBadge`·`FlowChip`·`PulsingDots`(로딩)·`EmptyState`·`RelativeTime`(상대시간 순수 헬퍼).
@@ -59,13 +59,13 @@ val DarkColors = AppColors(bg=0xFF0A0A0A, surface=0xFF111111, surface2=0xFF1A1A1
     accent=0xFFC8F060, accent2=0xFF60C8F0, accentAI=0xFFF0A060, brand=0xFF2E5D3A, text=0xFFECECEC, textDim=0xFFB4B4B4, textMuted=0xFF8A8A8A)
 val LocalAppColors = staticCompositionLocalOf { DarkColors }   // 다크 기본
 ```
-- 값은 `Theme.swift` Palette 정본(§인벤토리 B). hex는 §6 `test_색상토큰_정본일치`가 대표값 실측(순수, 네이티브).
+- 값은 `Theme.swift` Palette 정본(위 hex 표가 11토큰 전량 열거). hex는 §6 `test_색상토큰_정본일치`가 대표값 실측(순수, 네이티브).
 
 ### 3-3. 타이포 토큰 (`ui/theme/AppTypography.kt`)
 
-- iOS `.typoX` 24종(§인벤토리 A)을 `TextStyle`로 이관: 각 토큰 = (fontFamily, fontSize, fontWeight, lineHeight, letterSpacing). 예: `titleHero = TextStyle(serifFamily, 28.sp, W400, letterSpacing=(-0.3).sp)`, `codeBody = TextStyle(codeFamily, 17.sp, W500, letterSpacing=(-0.2).sp)`, `badge = TextStyle(codeFamily, 12.sp, W500, letterSpacing=0.8.sp)`(caps는 렌더에서 uppercase).
+- iOS `.typoX` 토큰(정본 `Theme.swift` Typography — 2026-07 기준 21종: titleHero·titleTab·bodyLarge·body·bodySub·bodyEmphasis·bodyBlock·bodyNotice·bodyPreview·bodyPreviewSmall·codeHero·codeBody·codeInput·codeValue·badge·badgeAI·codeChip·codeAction·sectionHeader·label·caption)을 `TextStyle`로 이관. **정본에서 직접 얻는 값은 (fontFamily, fontSize, fontWeight)뿐**이다(`Theme.swift`는 `.custom(name,size,relativeTo:)`/`Font.system`만 — lineHeight/letterSpacing 값 없음). letterSpacing/lineHeight의 정본은 **iOS Feature SwiftUI 뷰의 `.tracking()`/`.lineSpacing()` 모디파이어**이며, 이는 토큰 단위로 정리돼 있지 않고 뷰마다 흩어져 있어 **정확값은 시각 천장(§0)으로 이월**한다(아침 실기기 리뷰가 확정). 예(family+size+weight만 정본): `titleHero = TextStyle(serifFamily, 28.sp, W400)`, `codeBody = TextStyle(codeFamily, 17.sp, W500)`, `badge = TextStyle(codeFamily, 12.sp, W500)`(caps는 렌더에서 uppercase). tracking을 얹을 경우 그 sp 값은 정본이 아니라 시각 근사치이며 green이 보증하지 않는다.
 - `@Immutable data class AppTypography(val titleHero, titleTab, body, bodySub, bodyEmphasis, bodyBlock, codeHero, codeBody, codeInput, badge, badgeAI, codeChip, codeAction, sectionHeader, label, caption, ... : TextStyle)` + `LocalAppTypography`.
-- iOS lineSpacing(pt) → Compose `lineHeight`로 환산(size + lineSpacing 근사). tracking(pt) → `letterSpacing`(sp). **정확 픽셀 매칭은 검증 천장(실기기)** — 토큰 존재·패밀리·상대크기만 §6가 실측.
+- iOS `.lineSpacing()`(pt) → Compose `lineHeight`, `.tracking()`(pt) → `letterSpacing`(sp)로 얹되, 이 두 값은 정본이 없어(위 참조) **정확 매칭은 검증 천장(실기기)** — §6는 토큰 존재·패밀리·대표 size/weight만 실측하고 lineHeight/letterSpacing은 검증하지 않는다(그 정확성은 아침 리뷰 소관).
 
 ### 3-4. 간격/모양 토큰 (`ui/theme/AppDimens.kt`) — 신규 추출
 
@@ -76,7 +76,7 @@ val LocalAppColors = staticCompositionLocalOf { DarkColors }   // 다크 기본
     val strokeBorder=1.dp, val strokeField=1.5.dp,
 )  // + LocalAppDimens
 ```
-- iOS 인라인 관찰값(§인벤토리 C)에서 추출. spacing 스케일을 토큰화해 화면들이 매직넘버 대신 참조.
+- iOS Feature 뷰들의 인라인 관찰값(패딩·라운드·스트로크 리터럴)에서 추출하되, iOS에 토큰 정본이 없으므로 위 data class 값이 M6가 세우는 정본이다. spacing 스케일을 토큰화해 화면들이 매직넘버 대신 참조. 개별 화면의 실측 간격 정확성은 시각 천장(§0).
 
 ### 3-5. 테마 프로바이더 (`ui/theme/AppTheme.kt`)
 
@@ -121,7 +121,8 @@ object AppScheme { val colors @Composable get() = LocalAppColors.current; val ty
 ### 3-8. 네비게이션 (`ui/AppRoot.kt`)
 
 - `AppRoot(deps)`: 온보딩 미완료면 `OnboardingScreen`, 아니면 4탭 `Scaffold`(NavigationBar: 검색·북마크·히스토리·설정, tint=accent, surface 배경). 각 탭은 자체 nav 스택, `Detail` route(keyword arg)로 push. Compose Navigation(멀티플랫폼) 또는 단순 상태기반 back stack.
-- **⚠️ M5 DR-4 마감 — 상세 북마크 현재값 상태 소스**: `DetailScreen`이 북마크 별표 현재값을 그리려면 상태 소스가 필요하다(M5는 `DetailUiState.Result`에 `isBookmarked` 없음). **M6 결정**: `DetailScreen`이 `BookmarkViewModel.bookmarks`(또는 `repository.bookmarkedTerms()` 파생) `StateFlow`를 keyword로 교차조회한 파생 `isBookmarked: Boolean`을 `collectAsStateWithLifecycle`로 관측해 별표를 그린다(반응형 — 토글 즉시 반영, 유실창 없음). 이로써 DR-4(상태 소스 부재)와 DR5-2(무피드백 유실)를 함께 닫는다 — 토글 결과가 Flow로 되돌아와 별표가 확정 갱신되므로 fire-and-forget 유실이 사용자에게 가시화·자기수정된다.
+- **⚠️ M5 DR-4 마감 — 상세 북마크 현재값 상태 소스**: `DetailScreen`이 북마크 별표 현재값을 그리려면 상태 소스가 필요하다(M5는 `DetailUiState.Result`에 `isBookmarked` 없음). **M6 결정**: 별표는 `Result(Found(entry, src))` 브랜치 안에서만 그려지므로(다른 상태엔 별표 없음), `DetailScreen`이 `BookmarkViewModel.bookmarks` `StateFlow`(**반드시 ViewModel 경유** — §4 불변식상 화면은 `repository.bookmarkedTerms()`를 직접 관측하지 않는다)를 **`entry.keyword`로만** 교차조회한 파생 `isBookmarked: Boolean`을 `collectAsStateWithLifecycle`로 관측해 그린다. `entry.keyword`는 저장 시 `normalizeKeyword`(=`trim().lowercase()`)된 정규화 키라 `bookmarks` 저장값과 동일 정규화 위에서 매치된다 — **라우트 원형 keyword(`SearchViewModel.commit()`=`trim()`만, lowercase 안 함)로 교차조회하는 경로는 금지**(그렇게 하면 `React`/`OAuth`처럼 대소문자 섞인 용어에서 저장값 `react`와 불일치→별표가 조용히 오표시되고, STAY 케이스 확정 갱신도 매치 실패로 깨진다). 이로써 **DR-4(상태 소스 부재)만 닫는다**: 반응형이라 STAY(상세 체류) 케이스에서 토글 즉시 별표가 확정 갱신된다.
+- **⚠️ DR5-2는 이 슬라이스에서 닫지 않고 이월(carry-forward)한다.** 위 파생 읽기 Flow는 **STAY 케이스의 확정 피드백만** 준다. LEAVE-즉시 케이스(별표 탭 직후 상세 이탈)의 쓰기 유실은 미해결이다 — 정본 `DetailViewModel.toggleBookmark()`가 여전히 `viewModelScope.launch`(fire-and-forget)라 이탈 시 `onCleared→viewModelScope.cancel()`이 아직 디스패치 안 된 toggle launch를 취소→DB 미변경→`bookmarks` 재방출 없음→가시화·자기수정할 것이 없다(사용자는 이미 화면을 떠나 별표를 못 본다). 파생 읽기(표시)는 쓰기 내구성과 직교한다. `toggleBookmark`를 앱/repository 스코프 launch(또는 `NonCancellable`)로 내구화하는 것은 이 슬라이스 밖이므로 **DR5-2는 정직히 이월**한다(§7-Q2 비준 판정).
 
 ### 3-9. 플랫폼 seam + 매핑 (`ui/platform/` · `ui/DetailMessages.kt`)
 
@@ -159,7 +160,7 @@ object AppScheme { val colors @Composable get() = LocalAppColors.current; val ty
 ## 7. 열린 질문 (비준이 판정할 항목)
 
 1. **네비게이션 라이브러리 — Compose Navigation(멀티플랫폼) vs 단순 상태기반 back stack** — 제안: `org.jetbrains.androidx.navigation:navigation-compose`(CMP 정합 버전 실빌드 확정). 대안: sealed route + `StateFlow` 백스택(의존성 0, 테스트 쉬움). 비준이 네이티브 klib 소비·탭별 스택 요구에 비춰 판정.
-2. **DR-4 상세 북마크 상태 소스 — 파생 Flow 교차조회(제안) vs `DetailUiState.Result`에 `isBookmarked` 추가(M5 상태 확장)** — 제안: `bookmarkedTerms()` 파생(§3-8, M5 상태 불변). 비준이 유실창·피드백 폐쇄가 완전한지 판정.
+2. **DR-4 상세 북마크 상태 소스 — `BookmarkViewModel.bookmarks` 파생 교차조회(제안) vs `DetailUiState.Result`에 `isBookmarked` 추가(M5 상태 확장)** — 제안: ViewModel 경유 파생, `entry.keyword`(정규화 저장키)로만 교차조회(§3-8, M5 상태 불변). 비준이 파생 읽기가 STAY 피드백을 원형/정규화 키 불일치 없이 정확히 주는지, 그리고 DR5-2 쓰기 내구성 이월이 정직한지 판정. 대안(M5 상태에 `isBookmarked`를 얹는 안)이면 원형-정규화 불일치가 사라진다.
 3. **History limit(DR5-3) — `Int.MAX_VALUE` 전량(제안) vs 합리적 상한** — §3-9-2. 비준 판정.
 4. **플랫폼 seam 기본 구현 — no-op 스텁(제안) vs expect/actual 최소 실구현 당김** — 제안: no-op 기본(M6 조립 green), 실구현·검증 M8. 비준이 이 이월이 정직한지(스텁이 조립을 거짓 green으로 만들지 않는지) 판정.
 5. **검증 천장 표현 — 순수 헬퍼 추출 범위** — 화면 로직을 어디까지 순수 함수로 뽑아 네이티브 실측할지(제안: 색/타이포/상대시간/에러메시지/상태표시매핑). 비준이 '천장 위장'(테스트 불가한 걸 테스트한 척) 없이 정직한지 판정.
@@ -169,7 +170,7 @@ object AppScheme { val colors @Composable get() = LocalAppColors.current; val ty
 - **검증 천장 정직**(§0·§5): 시각·상호작용은 green 자칭 금지, 라벨로 아침 리뷰 이월. **거짓 green 금지.**
 - 마일스톤 경계 **사람 게이트 완화**(메모리 `milestone-human-gate-relaxed`): 적대 비준 후 eyes-open 수용·구현 자율, 사람은 완성물 사후 리뷰. 하네스는 push·머지·`-draft` 제거 안 함.
 - **디자인 정본 = iOS `Theme.swift`**(typography-review.md는 stale — 인벤토리 경고). 계승만, 재설계 아님.
-- **M5 이월 마감**: DR-4·DR5-2(§3-8)·DR5-3(§3-9-2)를 이 슬라이스가 닫음. 비준자 확인.
+- **M5 이월 마감**: DR-4(§3-8)·DR5-3(§3-9-2)를 이 슬라이스가 닫음. **DR5-2(쓰기 내구성)는 이월**(§3-8·§7-Q2). 비준자 확인.
 - **브랜치 보존·push 금지·젠더중립 네이밍·진행상태는 ROADMAP(디스크)**.
 
 ## Open Questions
