@@ -24,7 +24,7 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 - **M2 · 로컬 DB** — 스키마(`term`·`searchHistory`)·반응형 쿼리·드라이버 `expect`/`actual`.
   - 🔗 **캐시 빌트인**: ⚠️ **스키마에 local-first pinning 처음부터** — 본 항목 불변용 `pinned`/`seenAt` + `schemaVersion`/`promptVersion` 컬럼. 번들 DB = 로컬 "head" 계층. (안 넣으면 DB 마이그레이션) 〔INV-6·INV-12 head·캐시 트랙 M4 저장측〕
-  - ⚠️ 착수 전: **[ADR-0003](docs/adr/0003-local-storage.md) 확정**(SQLDelight vs Room, `klibs.io`로 iOS 성숙도 재확인). 참조: spec 1-2.
+  - ✅ 착수 전 게이트 닫힘: **[ADR-0003](docs/adr/0003-local-storage.md) Accepted (2026-07-05) — SQLDelight 2.3.2**. Kotlin 2.3.21(SKIE 상한) 호환·iOS Native 성숙도 근거(Room 3.0은 버전 호환하나 4일 전 재작성이라 최신성 리스크로 보류). 좌표는 ADR Implementation Notes. 참조: spec 1-2.
 - **M3 · 네트워킹 + 서버 read-through** — Ktor 클라이언트·Claude 요청/응답(tool_use 3분기)·`X-Device-Id`·429.
   - 🔗 **캐시 빌트인**: ⚠️ **클라를 read-through 프록시 계약에 맞춰 작성**(Claude 직접 호출 아님 — 안 하면 계약 교체 리팩토링). **서버(`devetym-proxy`) 신규 구축**: D1 스키마·Worker read-through(D1→API·write-back·first-write-wins)·single-flight(DO)·validator write-게이트·rate-limit/남용/무효화. 〔캐시 트랙 M0서버·M1·M2·M3write·M7〕
   - ⚠️ 계약 변경: 프록시 → read-through 캐시. [ADR-0006](docs/adr/0006-server-cache-boundary.md)(ADR-0004 대체). 참조: spec 2-1·2-2.
@@ -37,7 +37,8 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
   - 선행: **디자인 토큰 확정**(`docs/design/`, 작성 예정) — 색·타이포 값. iOS dark-first·DM 서체를 출발점으로.
 - **M7 · 배선·셸** — Koin 조립 마무리, 셸별 권한·진입점.
   - 🔗 서버 배포 배선(`devetym-proxy` wrangler). 참조: architecture §3·§4.7.
-- **M8 · 통합·마무리** — 오류 처리 통합·접근성·번들 DB 650 확장(iOS 자산 재사용)·앱 아이콘(Android adaptive + iOS)·스플래시.
+- **M8 · 통합·마무리** — 오류 처리 통합·접근성·번들 DB 650(iOS 자산 재사용)·앱 아이콘(Android adaptive + iOS)·스플래시.
+  - ℹ️ **번들은 이미 완성돼 있다**(저술 불필요, *재사용*만): `~/dev-etymology/DevEtym/DevEtym/Resources/terms.json` — **650개**, M1 `TermEntry`와 스키마 정합(6필드 + 버전 필드는 없음 → INV-B null default 경로). 카테고리 6집합 분포 균등. 배치는 **M1 구현 착수 시** `commonMain/composeResources`(spec 1-5)로.
   - 🔗 **캐시 빌트인**: **seed 승격 잡**(critic 배치, D1 hot 항목 → 번들 승격 플라이휠)·**콘텐츠 팩 백그라운드 동기화**(버전드 팩·delta/cursor 증분·로컬 병합) 메커니즘 내장 → **출시 1일차부터 가동**(데이터는 릴리즈마다 축적, 리팩토링 아님). 〔INV-11·INV-12·캐시 트랙 M5·M6·M3critic〕 참조: spec 4-x.
 
 ---
