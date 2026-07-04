@@ -195,8 +195,9 @@ M4 `TermRepository`는 **같은 `normalizeKeyword(keyword)`에 대한 `fetch`/`r
 
 ## Open Questions
 
-> 비준 종료 시점의 **명시 이월** 자리. (비준 착수 전 — 현재는 비어 있으며, 적대 비준이 채운다.)
+> 비준 종료(ESCALATE — cap 6 도달, 전이 라운드 없음·Blocker 잔존) 시점의 **명시 이월**. 미탐색이지만 알려진 클래스를 암묵적으로 넘기지 않고, 여기에 적어서 넘긴다("본다는 걸 적어서 넘긴다").
 
+- [x] 이번 비준 종료 라운드의 carry-forward(미탐색이지만 알려진 클래스): **없음(빈 목록)**. 아래 이월 항목들은 앞선 라운드(round 2·3)에서 이미 명시 이월된 것이며, 종료 시점 신규 이월 클래스는 기록되지 않았다. 잔존 Blocker(DR-2 Mutex 강제 미검증·AD-1 KDoc 과장 정정·DR-4/DR5-2 상세 북마크 상태 소스 부재·DR5-3 History limit)는 carry-forward로 면제되지 않고 **사람 게이트로 상신**된다.
 - [ ] (비준 대기) §7 열린 질문 1~5의 판정.
 - [ ] (선상속·DR-2 강제 미검증·M7 게이트) 정규화 키 `Mutex`(§3-5)는 하드닝의 제안 메커니즘일 뿐이며 **M5는 이 Mutex 코드를 `TermRepositoryImpl`에 넣지 않고 문서상 제안으로만 두고 전면 이월한다**(§2 OUT — 검증 오라클 없는 동시성 코드 무증거 착지 금지). 강제는 **M5에서 증명되지 않는다**: (a) `TermRepository`=`single` 배선은 M7 미검증·미게이트 전제이고(factory/화면-scoped 배선 시 Mutex가 아무것도 직렬화 못 함), (b) §6 교차-VM 테스트는 단일스레드·손배선 공유라 Mutex 유무를 구분 못 하는 비-discriminating 스모크다. 실제 강제 실측은 (i) M7에 두 VM이 동일 인스턴스를 받는지 확인하는 배선 게이트를 두거나 (ii) 다중스레드 실측 또는 SQLDelight `transaction` 원자화로 이월.
 - [ ] (선상속·AD-1 계승 정정) `TermRepository.kt` KDoc(line 25-26)의 'refresh RMW 창=네트워크 왕복 전체' 문구는 impl 실제(RMW 읽기가 `buildAiRow`의 post-network `selectByKeyword`)와 어긋난 과장이다(§3-5에서 M5 서술은 정정). M4 정본 KDoc도 같은 정정 대상 — 소스 편집은 이 세션 스코프(스펙 저작) 밖이라 이월.
