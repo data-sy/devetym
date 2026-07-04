@@ -6,6 +6,7 @@ agp = "8.13.0"                         # Kotlin 2.3.x 지원 AGP 범위 8.2.2–
 composeMultiplatform = "1.11.1"        # CMP stable
 coroutines = "1.11.0"
 serialization = "1.9.0"
+ktor = "3.5.1"                         # M3 네트워킹. Kotlin 2.3.21 × serialization 1.9.0 klib 소비를 네이티브 링크·테스트로 실측(M3 §5). 착수 시 Maven 최신 확인.
 koin = "4.1.0"
 androidxActivityCompose = "1.11.0"
 skie = "0.10.12"                       # Touchlab SKIE (2026-05)
@@ -23,6 +24,14 @@ koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }  # runTest — M3 suspend 테스트(commonTest)
+# Ktor (M3 §3-4) — 클라이언트 코어·ContentNegotiation·JSON은 commonMain, 엔진만 플랫폼별, MockEngine은 commonTest.
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }   # androidMain 엔진
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }   # iosMain 엔진
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }       # commonTest §6-A(네트워크 무의존)
 # SQLDelight (ADR-0003) — 드라이버만 플랫폼별. runtime/coroutines-extensions는 commonMain.
 sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
 sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
