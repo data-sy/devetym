@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.skie)
+    alias(libs.plugins.sqldelight)              // 로컬 DB(ADR-0003) — .sq → 타입세이프 Kotlin API 생성
 }
 
 kotlin {
@@ -35,9 +36,32 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)  // M1 JSON 왕복(kotlinx.serialization)
+            implementation(libs.sqldelight.runtime)              // M2 로컬 DB — 생성 API 런타임
+            implementation(libs.sqldelight.coroutines.extensions) // .asFlow() (반응형 쿼리, ADR-0002)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+        }
+        androidMain.dependencies {
+            implementation(libs.sqldelight.android.driver)   // AndroidSqliteDriver (M2 §3-3 actual)
+        }
+        iosMain.dependencies {
+            implementation(libs.sqldelight.native.driver)    // NativeSqliteDriver (M2 §3-3 actual)
+        }
+        // §6-B DB 왕복은 JVM(androidUnitTest)에서만 — JDBC in-memory. 네이티브엔 JDBC 없음(§7-4).
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(libs.sqldelight.sqlite.driver)  // JdbcSqliteDriver(IN_MEMORY)
+            }
+        }
+    }
+}
+
+// 생성 DB: DevEtymDatabase, 패키지 com.robin.devetym.db (M2 §3-1). 소스: src/commonMain/sqldelight.
+sqldelight {
+    databases {
+        create("DevEtymDatabase") {
+            packageName.set("com.robin.devetym.db")
         }
     }
 }

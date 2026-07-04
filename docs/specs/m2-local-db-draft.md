@@ -189,12 +189,13 @@ fun Term.toDto(): TermEntry = TermEntry(
 ## 5. 완료 조건 (DoD) — 하네스 수렴 오라클
 
 - 스키마·쿼리·드라이버 `expect`/`actual`·매퍼가 **Android·iOS 양쪽에서 컴파일**된다: `:shared:testDebugUnitTest` + `:androidApp:assembleDebug` + `:shared:linkDebugFrameworkIosSimulatorArm64` green(M0/M1의 3축 green 루프).
-- 아래 §6 테스트가 전부 통과. **§6-A(매퍼 INV-A 실측)는 DoD의 필수 항목** — 이것이 없으면 DR-1 매핑측이 무측정으로 남는다.
+- **⊕ 4번째 축 — 네이티브 실행(사람 게이트 B1 결착, ESCALATE DR-1 부분 폐쇄)**: `:shared:iosSimulatorArm64Test` green. §6-A(순수 매퍼·직렬화, 드라이버 무관 commonTest)가 **네이티브 타깃에서 실행**되어 Native `kotlinx.serialization`의 `aliases` JSON 왕복(헤드라인 INV-A)을 링크가 아니라 **실행으로** 실측한다. 이로써 잔존 blocker DR-1(네이티브 실행 갭)의 **직렬화 절반을 닫는다**. `NativeSqliteDriver` **실행** 정확성(§6-B DB 왕복의 네이티브측)은 여전히 무측정이며 — B1은 그 절반을 명시 이월한다 → **M8 통합/실기기 실행 DoD로 상속**(사람 게이트가 추적, 아래 Open Questions).
+- 아래 §6 테스트가 전부 통과. **§6-A(매퍼 INV-A 실측)는 DoD의 필수 항목** — 이것이 없으면 DR-1 매핑측이 무측정으로 남는다. §6-A는 JVM(`:testDebugUnitTest`)과 네이티브(`:iosSimulatorArm64Test`) **양쪽에서 실행**된다.
 - **버전 정렬을 사실로 확인(load-bearing, ADR-0003)**: SQLDelight 2.3.2 플러그인·런타임·`native-driver`가 **Kotlin 2.3.21에서 klib 소비된다는 것을 실빌드로 확인**한다 — 특히 `linkDebugFrameworkIosSimulatorArm64`가 native-driver klib를 소비해 green이어야 한다. stale 버전 하드코딩 금지(M1이 serialization 1.9.0×2.3.21을 빌드로 실측한 것과 동일 규율). 버전 카탈로그 헤더의 '빌드 확인' 표기를 이 확인의 대체물로 삼지 말 것.
 
 ## 6. 테스트 — 함수명 `test_[대상]_[조건]_[기대]`
 
-### 6-A. 매퍼 INV-A 실측 (`commonTest/`, 드라이버 없음) — **DR-1 폐쇄, 필수**
+### 6-A. 매퍼 INV-A 실측 (`commonTest/`, 드라이버 없음) — **DR-1 폐쇄, 필수 · JVM+네이티브 양쪽 실행(B1)**
 - `test_toEntity_toDto_왕복_aliases순서_category보존` — `aliases = ["A", "B", "C"]`(다중·순서 유의미)·in-set `category`를 가진 `TermEntry`를 `toEntity(source, createdAt, isBookmarked = false, seenAt = null).toDto()` 왕복 후 **원본 DTO와 aliases(순서 포함)·category·keyword·summary·etymology·namingReason 동등**. 실제 JSON 인코드/디코드를 태우는 순수 왕복(라이브 드라이버 불요).
 - `test_toEntity_toDto_왕복_빈aliases_보존` — `aliases = emptyList()` 왕복 후에도 `emptyList()`(JSON `[]` 왕복, silent 손실 없음).
 - `test_toEntity_toDto_집합밖category_pass-through` — `category = "네트웤"`(오타)·`"Database"`(영문) 등 6집합 밖 값이 매퍼 왕복에서 **거부·정규화 없이 그대로 보존**(M1 pass-through 상속).
@@ -231,6 +232,8 @@ fun Term.toDto(): TermEntry = TermEntry(
 > 비준 종료(ESCALATE — cap 6 도달, Blocker 1 잔존) 시점의 **명시 이월**. 미탐색이지만 알려진 클래스를 암묵적으로 넘기지 않고, 여기에 적어서 넘긴다("본다는 걸 적어서 넘긴다").
 
 - [x] 이번 비준 종료 라운드의 carry-forward(미탐색이지만 알려진 클래스): **없음(빈 목록)**. 아래 M4/캐시 트랙 상속 항목은 앞선 라운드(round 2·3)에서 이미 명시 이월된 것이며, 종료 시점 신규 이월 클래스는 기록되지 않았다. 잔존 Blocker 1(round 6 DR-1: `NativeSqliteDriver`/Native `kotlinx.serialization` 실행 정확성이 §5 링크 green으로 무측정 — 링크 green은 klib 소비=컴파일/링크만 증명하고 쿼리 결과·직렬화 왕복 정확성을 실행으로 확인하지 않음)은 carry-forward로 면제되지 않고 **사람 게이트로 상신**된다.
+- [x] **사람 게이트 판정 완료 (2026-07-05, eyes-open + B1 부분 폐쇄)**. ESCALATE 잔존 Blocker DR-1(네이티브 실행 갭)을 사람이 **B1(네이티브 실행 축 추가)**로 결착했다: §5에 4번째 green 축 `:shared:iosSimulatorArm64Test`를 추가해 §6-A(순수 매퍼·직렬화)를 **네이티브에서 실행** → Native `kotlinx.serialization` aliases JSON 왕복(헤드라인 INV-A)을 링크가 아니라 실행으로 실측(**DR-1 직렬화 절반 폐쇄**). 잔여 절반 = `NativeSqliteDriver` **실행** 정확성(§6-B DB 왕복의 네이티브측)은 eyes-open으로 수용하되 **M8 통합/실기기 실행 DoD로 명시 상속**(아래 신규 항목). 자율 재비준 아님 — 사람이 잔여 리스크를 수용하고 §3 구현 착수를 승인했다.
+- [ ] (M8 상속·DR-1 잔여 절반) `NativeSqliteDriver`의 실제 실행(스키마 create·`INSERT OR REPLACE`·`ORDER BY`/`LIMIT`·nullable INTEGER 바인드·TEXT 정렬 로케일) 정확성은 M2에서 무측정(§6-B는 JVM JDBC 전용). B2(§6-B를 expect/actual 네이티브 드라이버로 크로스타깃)를 채택하지 않았으므로, 네이티브 DB 실행 왕복은 **M8 통합/실기기 DoD**에서 실측한다 — 사람 게이트가 추적.
 - [ ] (M4 상속·DR-M2-2) bookmarked(및 pinned) 로우 upsert 시 `createdAt`을 `isBookmarked`/`source`와 함께 보존 — `INSERT OR REPLACE`(DELETE+INSERT)가 `createdAt`을 새 fetch 시각으로 덮으면 `bookmarked` 목록(§3-1 `createdAt DESC`)이 새로고침마다 조용히 재정렬된다. M2 스키마는 `createdAt` 컬럼을 제공해 보존을 '가능'하게 하나 정책은 M4 소관 → M4 DoD/ROADMAP이 보존 목록에 `createdAt`을 명시하고 정렬 안정성을 하류에서 실측한다.
 - [ ] (M4/캐시 트랙 상속·DR-M2-3) `toDto`의 `Long?→Int?`는 M2 소유 경로(DTO `Int?` 출처)에서 무손실 확인됨(§3-4·INV-9) — 새 M2 처방 불요. `schemaVersion`을 Int 범위로 보장(또는 `toDto` 범위 가드)할 책임은 §3-4/INV-9대로 M4/캐시 트랙 DoD에 상속되어 있으며, 각 DoD에 걸려 있는지는 사람 게이트가 추적.
-- [ ] (사람 게이트) M2 §3 구현 착수 승인: _대기_.
+- [x] (사람 게이트) M2 §3 구현 착수 승인: **승인 (2026-07-05, B1 결착과 함께)**. 구현은 수동(M1과 동일), worktree 격리 불필요.

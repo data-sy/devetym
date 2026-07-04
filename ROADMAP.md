@@ -10,7 +10,7 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 ## Now — 진행 중
 
-- **M2 · 로컬 DB 착수 준비** — 브랜치 `feat/m2-local-db` 생성(=`feat/m1` 위에 **스택** 분기, 아래 「브랜치·공개 전략」 참조). **M2 구현은 마일스톤 경계 사람 비준 후** 착수(안전 규율): 먼저 M2 스펙 슬라이스 저작 → 적대 비준 → 착수. 아직 슬라이스 미저작.
+- **M3 · 네트워킹 + 서버 read-through 착수 준비** — M2 완료(아래 Done). 다음은 `feat/m3-...`를 `feat/m2-local-db` 위에 **스택** 분기(브랜치 보존 규율). 프로세스는 M1·M2와 동일: M3 스펙 슬라이스 저작 → 적대 비준 → 사람 비준 → 구현. 아직 슬라이스 미저작. **마일스톤 경계 사람 비준 후** 착수.
 
 ---
 
@@ -32,10 +32,6 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 각 마일스톤의 🔗 항목이 그 단계에 빌트인되는 캐시 범위다. **락(안 지키면 나중 리팩토링) 지점은 ⚠️로 표시** — 처음부터 그렇게 짓는다.
 
-- **M2 · 로컬 DB** — 스키마(`term`·`searchHistory`)·반응형 쿼리·드라이버 `expect`/`actual`.
-  - 🔗 **캐시 빌트인**: ⚠️ **스키마에 local-first pinning 처음부터** — 본 항목 불변용 `pinned`/`seenAt` + `schemaVersion`/`promptVersion` 컬럼. 번들 DB = 로컬 "head" 계층. (안 넣으면 DB 마이그레이션) 〔INV-6·INV-12 head·캐시 트랙 M4 저장측〕
-  - ⚠️ **INV-A 매핑측 실측 상속(M1 DR-1 바인딩)**: M1 오라클은 JSON 자기왕복만 실측하므로, DTO↔엔티티 매퍼(`TermEntry.toEntity()`/`TermEntity.toDto()`)의 `aliases`(순서 포함)·`category` 무손실 보존은 **M2 DoD에서 반드시 테스트**한다. 안 하면 도메인 헤드라인 불변식(별칭 누락)이 어느 마일스톤에서도 실측되지 않는다. 근거: M1 슬라이스 §7-1·§8, DR-1 eyes-open 수용.
-  - ✅ 착수 전 게이트 닫힘: **[ADR-0003](docs/adr/0003-local-storage.md) Accepted (2026-07-05) — SQLDelight 2.3.2**. Kotlin 2.3.21(SKIE 상한) 호환·iOS Native 성숙도 근거(Room 3.0은 버전 호환하나 4일 전 재작성이라 최신성 리스크로 보류). 좌표는 ADR Implementation Notes. 참조: spec 1-2.
 - **M3 · 네트워킹 + 서버 read-through** — Ktor 클라이언트·Claude 요청/응답(tool_use 3분기)·`X-Device-Id`·429.
   - 🔗 **캐시 빌트인**: ⚠️ **클라를 read-through 프록시 계약에 맞춰 작성**(Claude 직접 호출 아님 — 안 하면 계약 교체 리팩토링). **서버(`devetym-proxy`) 신규 구축**: D1 스키마·Worker read-through(D1→API·write-back·first-write-wins)·single-flight(DO)·validator write-게이트·rate-limit/남용/무효화. 〔캐시 트랙 M0서버·M1·M2·M3write·M7〕
   - ⚠️ 계약 변경: 프록시 → read-through 캐시. [ADR-0006](docs/adr/0006-server-cache-boundary.md)(ADR-0004 대체). 참조: spec 2-1·2-2.
@@ -43,6 +39,8 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
   - ⚠️ **서버 read-through category 소유(M1 DR-2 바인딩)**: 서버가 정규화 이전 원응답을 캐시-히트로 되돌려 클라 정규화를 우회하지 않도록 **정규화-후-캐시쓰기 순서**를 고정한다(집합 밖 category clamp 후 write-back). 정본 불변식: [cache-delivery-milestones](docs/cache-delivery-milestones.md) **INV-13**. 근거: M1 슬라이스 §7-2, DR-2 eyes-open 수용.
 - **M4 · Repository 오케스트레이터** — `fetch` 3단 흐름·upsert·북마크·히스토리·Analytics. Fake 협력자 테스트.
   - 🔗 **캐시 빌트인**: ⚠️ **3계층 read-through를 처음부터**(로컬/번들 → 네트워크 → 서버 D1 캐시 → API, 2계층으로 짓고 확장 금지). **local-first pinning + 명시적 새로고침** 경로 내장. 〔INV-1·INV-2·INV-6·캐시 트랙 M1소비·M4행위〕 참조: spec 2-3·2-4.
+  - ⚠️ **upsert 보존 목록 상속(M2 DR-M2-2)**: `INSERT OR REPLACE`=DELETE+INSERT라 refresh 시 `createdAt`을 `isBookmarked`/`source`와 **함께 보존**해야 `bookmarked`(`createdAt DESC`)가 새로고침마다 조용히 재정렬되지 않는다. pinned(`seenAt`) 로우는 `fetch`가 덮지 않고 `refresh`만 갱신. `toEntity`는 4 DB전용 필드가 필수인자라 read-modify-write 재주입 누락이 **컴파일 에러**(M2가 강제). 근거: M2 슬라이스 §3-2·§3-4·Open Questions.
+  - ⚠️ **schemaVersion Int 범위 보장 상속(M2 DR-M2-3)**: `Term.toDto()`의 `Long?→Int?`는 Int 범위에서만 무손실. 서버 배달 경로가 `Int.MAX_VALUE` 초과 `schemaVersion`을 기록하면 silent 절단 → M4/캐시 트랙이 Int 범위 보장(또는 `toDto` 범위 가드). 근거: M2 슬라이스 §4(INV-9)·Open Questions.
 - **M5 · ViewModel + StateFlow** — 화면 상태를 sealed로 노출.
   - 🔗 pinned/refresh 상태 노출. 참조: architecture §4.5.
 - **M6 · Compose UI** — 검색/상세/북마크/히스토리/온보딩/설정. **반응형 `Flow`로 갱신(수동 재조회 없음, [ADR-0002](docs/adr/0002-code-idiom-principle.md))**.
@@ -53,6 +51,7 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 - **M8 · 통합·마무리** — 오류 처리 통합·접근성·번들 DB 650(iOS 자산 재사용)·앱 아이콘(Android adaptive + iOS)·스플래시.
   - ℹ️ **번들은 이미 완성돼 있다**(저술 불필요, *재사용*만): `~/dev-etymology/DevEtym/DevEtym/Resources/terms.json` — **650개**, M1 `TermEntry`와 스키마 정합(6필드 + 버전 필드는 없음 → INV-B null default 경로). 카테고리 6집합 분포 균등. 배치는 **M1 구현 착수 시** `commonMain/composeResources`(spec 1-5)로.
   - 🔗 **캐시 빌트인**: **seed 승격 잡**(critic 배치, D1 hot 항목 → 번들 승격 플라이휠)·**콘텐츠 팩 백그라운드 동기화**(버전드 팩·delta/cursor 증분·로컬 병합) 메커니즘 내장 → **출시 1일차부터 가동**(데이터는 릴리즈마다 축적, 리팩토링 아님). 〔INV-11·INV-12·캐시 트랙 M5·M6·M3critic〕 참조: spec 4-x.
+  - ⚠️ **`NativeSqliteDriver` 실행 정확성 실측 상속(M2 DR-1 잔여 절반, B1)**: M2 §6-B DB 왕복은 JVM(JDBC) 전용이라 네이티브 DB 실행(스키마 create·`INSERT OR REPLACE`·`ORDER BY`/`LIMIT`·nullable INTEGER 바인드·TEXT 정렬 로케일)은 무측정. B2(네이티브 드라이버 크로스타깃 테스트) 미채택 → **통합/실기기 실행에서 실측**한다. 근거: M2 슬라이스 §5·Open Questions(사람 게이트 추적).
 
 ---
 
@@ -71,6 +70,10 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 ## Done — 완료
 
+- **M2 · 로컬 DB** — 2026-07-05 (브랜치 `feat/m2-local-db`, 로컬 커밋·미푸시). SQLDelight 2.3.2([ADR-0003](docs/adr/0003-local-storage.md)): `.sq` 스키마(`term`·`searchHistory`, **pinning `seenAt` + 버전 `schemaVersion`/`promptVersion` 컬럼 처음부터** — INV-6·INV-9·INV-12, 마이그레이션 회피)·반응형 라벨 쿼리(`bookmarked`/`recent`, `.asFlow()` 대상)·드라이버 `expect`/`actual`(`AndroidSqliteDriver`/`NativeSqliteDriver`)·DTO↔엔티티 매퍼(`TermEntry.toEntity()`/`Term.toDto()`, aliases/source는 매퍼 변환). **green 4축 실측**: `:shared:testDebugUnitTest`(17) · `:androidApp:assembleDebug` · `:shared:linkDebugFrameworkIosSimulatorArm64` · **`:shared:iosSimulatorArm64Test`(11, B1 신규 축)**. **Kotlin 2.3.21 × SQLDelight 2.3.2 klib 소비를 네이티브 링크·테스트로 실측**(§5 load-bearing). 참조: [M2 슬라이스](docs/specs/m2-local-db-draft.md), spec 1-2.
+  - **⚠️ INV-A 매핑측 실측 = 폐쇄(M1 DR-1 바인딩)**: 매퍼 `toEntity`/`toDto`의 `aliases`(순서)·`category` 무손실 보존을 §6-A 순수 commonTest로 실측(DoD 필수). aliases/source 변환을 매퍼에 둬(컬럼 어댑터 아님) 드라이버 없는 순수 왕복으로 성립. **B1 결착**: §6-A가 `:iosSimulatorArm64Test`로 **네이티브 실행**돼 Native `kotlinx.serialization` 왕복도 실측.
+  - **비준 결과 = ESCALATE → 사람 eyes-open + B1 부분 폐쇄**(재비준 안 함). 6라운드가 draft를 강화(INV-9 무손실 M2경로 한정·`toEntity` 4필드 필수인자화로 M4 재주입누락 컴파일에러화·§6-B raw컬럼 canary). 잔존 Blocker(네이티브 실행 갭)를 **B1**(네이티브 실행 축 추가)로 직렬화 절반 폐쇄, DB 실행 절반은 M8 이월. 상세: M2 슬라이스 §5·§8·Open Questions.
+  - 🔗 캐시 빌트인: pinning/버전 컬럼 = 로컬 head 계층 저장측(INV-6·INV-9·INV-12). 값 쓰기는 M4. 〔캐시 트랙 M4 저장측〕
 - **M1 · 모델·직렬화** — 2026-07-05 (브랜치 `feat/m1-model-serialization`, 로컬 커밋·미푸시). `commonMain/model/`에 `TermEntry`(@Serializable, 버전 필드 옵셔널·INV-9)·`Source` enum·`TermResult` sealed interface·`Category` 정본 6어휘(pass-through, 강제 안 함). kotlinx.serialization JSON 왕복. 번들 `terms.json`(650) → `commonMain/composeResources/files/`(compose-resources 배선). `commonTest` §6 5종 + `androidUnitTest` fixture 1종(실제 번들 aliases 내용 단언). green 3축 실측: `:shared:testDebugUnitTest`(6 pass) · `:androidApp:assembleDebug` · `:shared:linkDebugFrameworkIosSimulatorArm64`. **serialization 1.9.0 ↔ Kotlin 2.3.21 호환 빌드로 실측**(§5 load-bearing). 참조: [M1 슬라이스](docs/specs/m1-model-serialization-draft.md), spec 1-1.
   - **비준 결과 = ESCALATE → 사람 eyes-open 수용**(재비준 안 함). Blocker 3 결착: **DR-3**(sealed `when` else 금지) 슬라이스 §6에서 닫음 · **DR-1**(INV-A 실측 범위) M1 fixture로 wire측 부분 폐쇄 + 매핑측(M2)·로더 회귀(M3) 바인딩 상속(위 M2·M3 ⚠️ 항목) · **DR-2**(서버 캐시-히트 정규화 우회) [cache-delivery-milestones](docs/cache-delivery-milestones.md) **INV-13**(정규화-후-캐시쓰기)로 이관. 상세는 슬라이스 §8·Open Questions.
   - 🔗 캐시 빌트인: entry 계약 = read-through 응답 shape. INV-9 버전 태깅 반영(`schemaVersion`/`promptVersion` 옵셔널). 〔캐시 트랙 M0-클라측〕
