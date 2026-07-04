@@ -145,8 +145,8 @@ private val aliasesJson = Json
 fun TermEntry.toEntity(
     source: Source,
     createdAt: Long,
-    isBookmarked: Boolean = false,
-    seenAt: Long? = null,
+    isBookmarked: Boolean,   // 기본값 없음 — 보존-임계(북마크). M4가 명시 전달, 누락=컴파일 에러
+    seenAt: Long?,           // 기본값 없음 — 보존-임계(pinned, INV-6). M4가 명시 전달, 누락=컴파일 에러
 ): Term = Term(
     keyword = keyword,
     aliases = aliasesJson.encodeToString(aliases),   // List<String> → JSON TEXT (순서 보존)
@@ -175,6 +175,7 @@ fun Term.toDto(): TermEntry = TermEntry(
 ```
 
 - **매퍼는 비대칭이다**: `TermEntry`(DTO)엔 DB 전용 필드(`source`/`isBookmarked`/`createdAt`/`seenAt`)가 없으므로 `toEntity`가 호출자(M4 repository)로부터 주입받는다. `createdAt`/`seenAt` 시계는 **호출자 주입**(매퍼에 `Clock` 없음 → 테스트 결정성). `toDto`는 DB 전용 필드를 버리고 DTO shape만 복원한다.
+- **네 DB 전용 필드에 기본값을 두지 않는다(DR-1 폐쇄)**: `source`/`createdAt`/`isBookmarked`/`seenAt` 전부 **필수 인자**다. `toDto`가 이 넷을 버리므로 DTO 왕복으로는 보존 불가 → M4 refresh는 옛 `Term`을 직접 읽어 네 값을 `toEntity(...)`로 재주입해야 하는데(read-modify-write; `INSERT OR REPLACE`=DELETE+INSERT라 부분 갱신 불가), 만약 `isBookmarked`/`seenAt`에 기본값이 있으면 M4의 재주입 누락이 컴파일 에러 없이 `isBookmarked→0`(북마크 소실)·`seenAt→null`(unpin, INV-6 위반)으로 **조용히** 덮인다. 기본값을 없애 그 누락을 컴파일 에러로 만든다(도메인 anti-silent-corruption 기조). 신규 저장은 호출부에서 `isBookmarked = false, seenAt = null`을 **명시**한다.
 - **aliases·source 변환은 매퍼에 둔다**(SQLDelight 컬럼 어댑터 아님, §7-2). 그래야 INV-A 매핑측 실측이 **드라이버 없는 순수 commonTest**로 성립한다(`toEntity(...).toDto()`가 실제 JSON 인코드/디코드를 태움).
 - **타입 폭 변환**: `schemaVersion` Int?(DTO)↔Long?(INTEGER), `isBookmarked` Boolean↔Long(0/1). null 보존(INV-B·INV-9). `toDto`의 `Long?→Int?`는 **Int 범위 값에서만 무손실** — Int 범위 밖 `Long?`(서버 배달 경로가 채울 수 있음)의 무손실 보장·범위 가드는 M4/캐시 트랙에 상속(INV-9).
 
@@ -194,7 +195,7 @@ fun Term.toDto(): TermEntry = TermEntry(
 ## 6. 테스트 — 함수명 `test_[대상]_[조건]_[기대]`
 
 ### 6-A. 매퍼 INV-A 실측 (`commonTest/`, 드라이버 없음) — **DR-1 폐쇄, 필수**
-- `test_toEntity_toDto_왕복_aliases순서_category보존` — `aliases = ["A", "B", "C"]`(다중·순서 유의미)·in-set `category`를 가진 `TermEntry`를 `toEntity(source, createdAt).toDto()` 왕복 후 **원본 DTO와 aliases(순서 포함)·category·keyword·summary·etymology·namingReason 동등**. 실제 JSON 인코드/디코드를 태우는 순수 왕복(라이브 드라이버 불요).
+- `test_toEntity_toDto_왕복_aliases순서_category보존` — `aliases = ["A", "B", "C"]`(다중·순서 유의미)·in-set `category`를 가진 `TermEntry`를 `toEntity(source, createdAt, isBookmarked = false, seenAt = null).toDto()` 왕복 후 **원본 DTO와 aliases(순서 포함)·category·keyword·summary·etymology·namingReason 동등**. 실제 JSON 인코드/디코드를 태우는 순수 왕복(라이브 드라이버 불요).
 - `test_toEntity_toDto_왕복_빈aliases_보존` — `aliases = emptyList()` 왕복 후에도 `emptyList()`(JSON `[]` 왕복, silent 손실 없음).
 - `test_toEntity_toDto_집합밖category_pass-through` — `category = "네트웤"`(오타)·`"Database"`(영문) 등 6집합 밖 값이 매퍼 왕복에서 **거부·정규화 없이 그대로 보존**(M1 pass-through 상속).
 - `test_toEntity_toDto_버전필드_null과값_왕복보존` — `schemaVersion=null,promptVersion=null`(pre-versioning)과 `schemaVersion=2,promptVersion="2026-07"`(서버 배달) 두 경우 모두 Int↔Long 변환 후 무손실(INV-9·INV-B).
@@ -213,7 +214,7 @@ fun Term.toDto(): TermEntry = TermEntry(
 
 1. **엔티티 타입 정체성 — SQLDelight 생성 `Term` 직접 사용 (제안)**: 별도 손수 `TermEntity` data class를 두지 않고 `.sq`에서 생성된 `Term`을 엔티티로 쓴다. 이 `Term`이 spec 2-3 `Flow<List<Term>>`의 반환 타입과 동일해 이중 타입·중복 변환을 피한다. 매퍼는 `TermEntry.toEntity(): Term` / `Term.toDto(): TermEntry`. **대안**: 손수 `TermEntity` + 생성 `Term` 이중(중복). — 제안: 생성 `Term` 직접. 비준 판정 필요(spec 1-1의 `TermEntity.toDto()` 명명을 생성 타입 `Term.toDto()`로 해석하는 것의 정합성 확인).
 2. **`aliases`/`source` 변환 위치 — 매퍼 함수 (제안) vs SQLDelight 컬럼 어댑터**: 제안은 변환을 매퍼에 둬 **INV-A 매핑측 실측이 드라이버 없는 순수 commonTest로 성립**(§6-A)하게 한다. 컬럼 어댑터를 쓰면 생성 `Term.aliases`가 `List<String>`으로 리치해지나(타입세이프↑), JSON 인코딩이 어댑터↔DB 경계로 이동해 **INV-A 실측이 라이브 DB를 경유**해야 한다(순수 왕복 불가). — 제안: 매퍼 변환. 비준이 어댑터를 선호하면 §6-A 오라클을 §6-B(DB 경유)로 이동해야 함을 명시.
-3. **`toEntity` 서명 — DB 컨텍스트 주입(`source`/`createdAt`/`isBookmarked`/`seenAt`)**: DTO엔 없는 DB 전용 필드를 호출자(M4)가 주입한다(비대칭 매퍼). `createdAt`/`seenAt` 시계는 매퍼가 아니라 호출자가 주입(매퍼에 `Clock` 없음 → 결정성). — 이 비대칭·시계 외부화가 M4 upsert 정책과 정합하는지 확인. 대안(매퍼가 `Clock` 소유·기본 `source` 가정)은 테스트 비결정·정책 누수라 기각 제안.
+3. **`toEntity` 서명 — DB 컨텍스트 주입(`source`/`createdAt`/`isBookmarked`/`seenAt`)**: DTO엔 없는 DB 전용 필드를 호출자(M4)가 주입한다(비대칭 매퍼). `createdAt`/`seenAt` 시계는 매퍼가 아니라 호출자가 주입(매퍼에 `Clock` 없음 → 결정성). 네 필드 모두 **기본값 없는 필수 인자**다(DR-1 폐쇄, §3-4) — 보존-임계 필드의 재주입 누락을 컴파일 에러로 강제해 M4 read-modify-write의 silent 북마크 소실·unpin을 막는다. — 이 비대칭·시계 외부화가 M4 upsert 정책과 정합하는지 확인. 대안(매퍼가 `Clock` 소유·기본 `source` 가정, 혹은 `isBookmarked`/`seenAt` 기본값 유지)은 테스트 비결정·정책 누수·silent-corruption이라 기각 제안.
 4. **in-memory 테스트 의존성(`sqlite-driver` JdbcSqliteDriver) 배치**: §6-B DB 왕복 가드를 `androidUnitTest`(JVM)에만 둔다(네이티브엔 JDBC 없음) — M1 번들 fixture 테스트와 동일 배치. 필수 DR-1 실측(§6-A)은 `commonTest`(드라이버 무관)에 남긴다. — 이 이원 배치(필수=commonTest 순수, 보조=androidUnitTest DB)가 비준 기준에 맞는지 확인. `sqldelight` 테스트 좌표(`app.cash.sqldelight:sqlite-driver:2.3.2`) 추가는 착수 시 Maven 확인.
 5. **반응형 재방출 검증 깊이 — M2는 `.executeAsList()`, 재방출은 M4/M5 (제안)**: M2는 `bookmarked`/`recent` 쿼리를 정의하고 결과·정렬을 직접 실행으로 실측한다. `.asFlow()`가 DB 변경 시 자동 재방출하는 *행위*는 coroutines-extensions·`runTest`가 필요하고 본질적으로 repository/VM 관심사라 M4/M5로 미룬다. — 이 경계가 ADR-0003의 "반응형 쿼리 필수"를 M2에서 과소 측정하는지 비준 판정(대안: M2에 `runTest` 스모크 1건 추가). **미월 시 명시**: `.asFlow()` 배선이 컴파일은 되나 재방출 행위는 M2에서 무측정 — M4/M5 DoD로 상속.
 
