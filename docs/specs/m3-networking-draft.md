@@ -102,11 +102,23 @@ class ClaudeApi(
             }
         } catch (e: HttpRequestTimeoutException) {
             throw ClaudeException.Timeout
-        } catch (e: IOException) {                          // 연결 실패 등
+        } catch (e: IOException) {                          // 연결 실패 등(Ktor 멀티플랫폼 IOException — §3-4·DR-2)
             throw ClaudeException.Network(e)
         }
+        // status를 body 디코드 전에 먼저 검사한다(DR-1). 429는 한도, 그 밖 non-2xx(529 Overloaded·
+        // 프록시(Cloudflare) 앞단 502/503/524 HTML 오류페이지)는 ClaudeResponse가 아니므로 디코드에
+        // 태우지 않고 매핑한다 — 디코드에 태우면 try 밖 SerializationException으로 uncaught 크래시.
         if (res.status.value == 429) throw ClaudeException.DailyLimitExceeded
-        return res.body<ClaudeResponse>().toTermResult()    // tool_use 3분기
+        if (!res.status.isSuccess()) throw ClaudeException.InvalidResponse   // non-2xx non-429 → 매핑(크래시 금지)
+        return try {
+            res.body<ClaudeResponse>().toTermResult()       // tool_use 3분기
+        } catch (e: HttpRequestTimeoutException) {           // 바디 수신 중 타임아웃
+            throw ClaudeException.Timeout
+        } catch (e: IOException) {                            // 바디 수신 중 연결끊김
+            throw ClaudeException.Network(e)
+        } catch (e: SerializationException) {                // 2xx인데 비JSON/스키마 불일치 바디
+            throw ClaudeException.InvalidResponse
+        }
     }
 }
 ```
@@ -117,7 +129,7 @@ class ClaudeApi(
 
 **응답 파싱 — `tool_use` 3분기(설계 불변식):** `content` 배열에서 첫 `tool_use` 블록을 찾아 도구 이름으로 분기.
 
-- **content-block DTO는 `tool_use` 아닌 블록에 관용적이어야 한다(네이티브 디코드 필수 조건).** 요청이 `thinking`(enabled)이므로 **실 Anthropic 응답의 `content` 배열은 항상 `thinking`(및 흔히 `text`) 블록이 `tool_use` 앞에 온다** — `tool_use` 단일 블록 응답은 프로덕션에서 오지 않는다. 따라서 content 원소 DTO는 **비다형 flat DTO**(`type: String` + `tool_use` 필드만 nullable, thinking/text 등의 필드는 미선언 → `ignoreUnknownKeys`가 무시)로 두거나, 다형(`@JsonClassDiscriminator("type")` sealed)으로 갈 경우 **미지 변이를 흡수하는 polymorphic-default(catch-all)를 필수로 둔다** — 개별 변이(thinking/text/redacted_thinking …)를 열거 등록만 하는 것은 금지다(default 없는 다형 금지). 개별 등록은 catch-all default 위에 선택적으로만 얹는다. ⚠️ 이 한정(default 필수)이 없으면: 구현이 다형+개별등록을 택해 자주 오는 `thinking`/`text`만 등록하고 **드문 `redacted_thinking`(thinking이 플래그될 때만 프로덕션에 드물게 등장) 변이를 누락**해도, 그 변이를 태우는 canned 응답이 없어 4축 green이 전부 통과한다 — 그런데 실기기 첫 호출에서 미지의 discriminator *값*이 나타나면 `ignoreUnknownKeys`가 구제하지 못하고(그건 *키* 무시일 뿐) 네이티브에서 디코드 예외를 던져(§3-2 `generate`의 `try` 밖 `res.body<>()` 경로라 uncaught) `ClaudeException`으로 매핑되지 않은 채 크래시한다. catch-all default를 필수로 못박으면 미등록 변이가 default로 흡수돼 이 크래시 경로가 데이터 변이(새 canned 픽스처)에 의존하지 않고 닫힌다. **비다형 flat DTO를 우대**(단언·경로 최소).
+- **content-block DTO는 `tool_use` 아닌 블록에 관용적이어야 한다(네이티브 디코드 필수 조건).** 요청이 `thinking`(enabled)이므로 **실 Anthropic 응답의 `content` 배열은 항상 `thinking`(및 흔히 `text`) 블록이 `tool_use` 앞에 온다** — `tool_use` 단일 블록 응답은 프로덕션에서 오지 않는다. 따라서 content 원소 DTO는 **비다형 flat DTO**(`type: String` + `tool_use` 필드만 nullable, thinking/text 등의 필드는 미선언 → `ignoreUnknownKeys`가 무시)로 두거나, 다형(`@JsonClassDiscriminator("type")` sealed)으로 갈 경우 **미지 변이를 흡수하는 polymorphic-default(catch-all)를 필수로 둔다** — 개별 변이(thinking/text/redacted_thinking …)를 열거 등록만 하는 것은 금지다(default 없는 다형 금지). 개별 등록은 catch-all default 위에 선택적으로만 얹는다. ⚠️ 이 한정(default 필수)이 없으면: 구현이 다형+개별등록을 택해 자주 오는 `thinking`/`text`만 등록하고 **드문 `redacted_thinking`(thinking이 플래그될 때만 프로덕션에 드물게 등장) 변이를 누락**해도, 그 변이를 태우는 canned 응답이 없어 4축 green이 전부 통과한다 — 그런데 실기기 첫 호출에서 미지의 discriminator *값*이 나타나면 `ignoreUnknownKeys`가 구제하지 못하고(그건 *키* 무시일 뿐) 네이티브에서 디코드 예외를 던진다 — DR-1 fix로 이제 그 예외는 §3-2 `generate`의 body 디코드 `try`가 `SerializationException`으로 잡아 크래시 대신 `InvalidResponse`로 매핑되나, **자주 오는 프로덕션 shape(정상 `Found`)가 미등록 변이 하나 때문에 통째로 `InvalidResponse` 오류로 격하**된다(정상 응답의 거짓 오류화). catch-all default를 필수로 못박으면 미등록 변이가 default로 흡수돼 이 격하 경로가 데이터 변이(새 canned 픽스처)에 의존하지 않고 닫힌다. **비다형 flat DTO를 우대**(단언·경로 최소).
 
 | 도구 | 결과 |
 |---|---|
@@ -126,6 +138,7 @@ class ClaudeApi(
 | `return_possible_typo` | `input.suggestion` → `PossibleTypo(suggestion)` |
 
 - **`tool_use` 블록 없음/알 수 없는 도구명/`input` 디코드 실패** → `ClaudeException.InvalidResponse`.
+- **non-2xx(429 제외)·비JSON/스키마 불일치 바디** → `ClaudeException.InvalidResponse`(DR-1). 새 오류 변이를 더하지 않고 기존 `InvalidResponse`로 접는다(단언·경로 최소) — 5xx/HTML 오류페이지는 클라 관점에서 "쓸 수 없는 응답"이라 이 버킷이 정합이고, 재시도 정책은 downstream(M4/M5) 소관이라 M3는 오류 세분을 얹지 않는다.
 - `not_dev_term`/`possible_typo`는 **예외가 아니라 `TermResult`로** 반환(정상 분기, spec 2-2).
 - **category는 pass-through**(M1·M2 상속): `return_term_entry.input`의 `category`가 6집합 밖이라도 M3는 거부·정규화하지 않고 그대로 `TermEntry`로 디코드한다. **AI 응답 경로의 category 정규화/clamp는 M4**(오케스트레이터가 upsert 직전, INV-13이 서버에서 하는 것과 대칭 지점)로 이월(§4·§7-4).
 
@@ -135,7 +148,7 @@ sealed class ClaudeException : Exception() {
     data object DailyLimitExceeded : ClaudeException()   // HTTP 429
     data object Timeout : ClaudeException()
     data class Network(val cause: Throwable) : ClaudeException()
-    data object InvalidResponse : ClaudeException()      // tool_use 없음/디코드 실패
+    data object InvalidResponse : ClaudeException()      // tool_use 없음/디코드 실패·non-2xx(429 제외)·비JSON 바디(DR-1)
 }
 ```
 
@@ -158,7 +171,8 @@ fun createHttpClient(json: Json): HttpClient = HttpClient(httpEngine()) {
 // androidMain: actual fun httpEngine() = OkHttp.create() (또는 Android 엔진)
 // iosMain:     actual fun httpEngine() = Darwin.create()
 ```
-- **actual의 검증은 컴파일/링크**(M1·M2 규율): iOS actual은 `linkDebugFrameworkIosSimulatorArm64`, Android actual은 `assembleDebug`. 단위테스트는 이 actual 엔진을 실행하지 않고 **`MockEngine`**(common)을 주입한다(§6-A). 실 플랫폼 엔진(Darwin/OkHttp)의 소켓 IO는 §5 링크 green + M8 실기기가 커버(§4 이월).
+- **actual의 검증은 컴파일/링크**(M1·M2 규율): iOS actual은 `linkDebugFrameworkIosSimulatorArm64`, Android actual은 `assembleDebug`. 단위테스트는 이 actual 엔진을 실행하지 않고 **`MockEngine`**(common)을 주입한다(§6-A). 실엔진(Darwin/OkHttp) 연결실패·타임아웃 예외가 `ClaudeApi.generate`의 `catch` 분기(Network/Timeout)로 실제 발화하는지의 **분기 매핑 검증**은 §5 링크 green + M8 실기기가 커버(§4 이월, DR-2).
+- **`generate`가 `catch`할 `IOException` 타입 확정(DR-2)**: `commonMain`의 `catch (e: IOException)`는 **`java.io.IOException`이 아니라 Ktor의 멀티플랫폼 `IOException`**이다 — `java.io.IOException` import는 iOS 네이티브에서 미컴파일(프로파일 D-2 KMP 최대 실패원)이라 4축이 loud로 잡는다. 착수 시 확정할 Ktor 버전의 멀티플랫폼 타입을 명시 import한다(**Ktor 3.x = `kotlinx.io.IOException`, 2.x = `io.ktor.utils.io.errors.IOException`** — §5에서 Ktor 버전 실빌드 확정과 동시에 고정). **단 `MockEngine` 오라클은 이 `catch`가 실엔진 예외타입을 실제로 서브타입하는지 검증하지 못한다**(무측정 클래스) — MockEngine은 예외를 임의 주입할 뿐 실 소켓 예외 타입을 재현하지 않으므로, 이 매핑 정합은 위 M8 이월로 정직히 넘긴다.
 
 **공유 `Json` wire 정책 확정(M1 §7-3 이월 결착):**
 ```kotlin
@@ -182,7 +196,7 @@ val AppJson = Json {
 
 - `BundleDbSource`·`ClaudeApi`·프롬프트/도구·HttpClient 엔진 `expect`/`actual`·`AppJson`이 **Android·iOS 양쪽에서 컴파일**된다: `:shared:testDebugUnitTest` + `:androidApp:assembleDebug` + `:shared:linkDebugFrameworkIosSimulatorArm64` green(M0~M2의 3축).
 - **⊕ 4번째 축 — 네이티브 실행(M2 B1 선례 계승, 핸드오프 §2 선제 폐쇄)**: `:shared:iosSimulatorArm64Test` green. §6-A(엔진 무관 `commonTest`: `BundleDbSource` 매칭 + `ClaudeApi`×`MockEngine` 3분기)가 **네이티브 타깃에서 실행**되어 (a) Native `kotlinx.serialization`의 **Anthropic 응답 shape 디코드**(**프로덕션 shape의 중첩 content 배열 = `thinking`(및 `text`) 선행 블록 + `tool_use`**·`tool_use.input`→`TermEntry`)와 (b) Native **문자열 정규화**(공유 `normalizeKeyword` = `trim().lowercase()` 매칭·prefix)를 **링크가 아니라 실행으로** 실측한다. (a)의 측정 타당성은 §6-A canned 응답이 `tool_use` 앞에 선행 thinking/text 블록을 실은 실 shape여야 성립한다 — tool_use 단일 블록이면 선행 블록 디코드를 안 태워 무효 오라클(§6-A 주석). 이로써 네이티브 실행 갭(M1·M2에서 비준 blocker였던 것)을 **M3는 선제 폐쇄**한다.
-  - **네이티브 잔여 이월(명시)**: `MockEngine`은 엔진을 대체하므로 **실 플랫폼 HTTP 엔진(Darwin) 소켓 IO**와 **`Res.readBytes` 바이트 획득 런타임**은 §6-A로 무측정 — 컴파일/링크 + **M8 통합/실기기 DoD**로 상속(M2가 `NativeSqliteDriver` 실행을 M8로 이월한 것과 동형).
+  - **네이티브 잔여 이월(명시)**: `MockEngine`은 엔진을 대체하므로 **실엔진(Darwin) 연결실패·타임아웃 예외의 `ClaudeException` 분기(Network/Timeout) 매핑 검증**(DR-2 — 진짜 무측정 클래스는 '소켓 IO'가 아니라 '실엔진 예외타입→분기 매핑'이다: MockEngine은 실 소켓 예외 타입을 재현하지 않아 `catch` 서브타입 정합을 원리상 검증 못 함)과 **`Res.readBytes` 바이트 획득 런타임**은 §6-A로 무측정 — 컴파일/링크 + **M8 통합/실기기 DoD**로 상속(M2가 `NativeSqliteDriver` 실행을 M8로 이월한 것과 동형).
 - 아래 §6 테스트가 전부 통과. **§6-B(실 번들 로더 INV-A 실측)는 DoD 필수 항목** — 이것이 없으면 DR-1 로더측이 무측정으로 남는다.
 - **버전 정렬을 사실로 확인(load-bearing, 핸드오프 §2)**: Ktor 좌표(엔진·`content-negotiation`·`serialization-kotlinx-json`)가 **Kotlin 2.3.21 × kotlinx.serialization 1.9.0에서 klib 소비된다는 것을 실빌드로 확인**한다 — 특히 `linkDebugFrameworkIosSimulatorArm64`·`iosSimulatorArm64Test`가 Ktor 네이티브(Darwin/MockEngine) klib를 소비해 green이어야 한다. **Ktor 버전은 하드코딩하지 말고 착수 시 Maven에서 2.3.21 호환 최신을 실빌드로 확정**(M1 serialization·M2 SQLDelight와 동일 규율). 버전 카탈로그 헤더의 '빌드 확인' 표기를 이 확인의 대체물로 삼지 말 것.
 
@@ -208,6 +222,8 @@ val AppJson = Json {
 - `test_generate_notDevTerm_NotDevTerm` — `return_not_dev_term` → `NotDevTerm`(예외 아님).
 - `test_generate_possibleTypo_PossibleTypo` — `return_possible_typo`(`input.suggestion`) → `PossibleTypo(suggestion)`.
 - `test_generate_429_DailyLimitExceeded` — MockEngine이 HTTP 429 → `ClaudeException.DailyLimitExceeded`.
+- `test_generate_5xx_InvalidResponse` — MockEngine이 HTTP 503(또는 529 Overloaded) + **비JSON HTML 오류 바디**(프록시 앞단 오류페이지 shape) → `ClaudeException.InvalidResponse`. body 디코드 *전* status 매핑이라 크래시가 아님을 네이티브 실행으로 실측(DR-1 — status 검사가 try 밖 SerializationException 크래시를 선제 차단).
+- `test_generate_비JSON바디_InvalidResponse` — MockEngine이 HTTP 200 + **비JSON/스키마 불일치 바디** → `ClaudeException.InvalidResponse`. 2xx인데 `ClaudeResponse`로 디코드 불가한 경우 body 디코드 `try`가 `SerializationException`을 잡아 매핑함을 실측(무매핑 크래시 금지).
 - `test_generate_toolUse없음_InvalidResponse` — `tool_use` 블록 없는 응답 → `ClaudeException.InvalidResponse`.
 - `test_generate_집합밖category_passThrough` — `return_term_entry.input.category="네트웤"`(오타)가 **거부·정규화 없이** `TermEntry`로 디코드(정규화는 M4, §4). 
 - `test_generate_XDeviceId헤더_전송` — MockEngine이 수신 요청의 `X-Device-Id` 헤더 = 주입된 deviceId 값임을 단언(프록시 한도 키잉 계약).
@@ -255,4 +271,4 @@ val AppJson = Json {
 - [ ] (미봉·이월) **BundleDbSource alias 정규화-유일성 + 가려진 엔트리 발견성** — `normalizeKeyword`(=`trim().lowercase()`)로 접힌 alias가 서로 다른 엔트리에 중복되면(실 번들 3건: `집계`→{aggregate, aggregation}·`분기`→{branch, fork}·`샤딩`→{shard, sharding}) `search`가 번들 순서 첫 매칭만 반환하고 나머지를 가린다(`autocomplete`은 alias 비대상이라 대체 발견 경로 없음). M3는 §3-1대로 **결정적 반환만** 보증(first-wins). 해소책 택일 — (i) 번들 린트로 중복 정규화 alias(keyword 포함)를 빌드 게이트에서 거부(데이터 de-dup 강제), (ii) alias-aware autocomplete로 가려진 엔트리 발견성 회복, (iii) 결정적-반환 유지(현행) — 는 비준/후속(데이터·M4) 트랙 판정.
 - [ ] (선상속·서버 트랙) INV-13(정규화-후-캐시쓰기)·서버 `devetym-proxy` 전체 — §0 스코핑상 클라 M3 밖, 서버 트랙 DoD로 상속(§4·§7-6).
 - [ ] (선상속·M4) AI 응답 category 정규화(§7-4)·fetch 3단 오케스트레이션·로컬 AI 캐시 조회·upsert 정책·pinning 스킵 — M4 DoD로 상속.
-- [ ] (선상속·M8) 실 플랫폼 HTTP 엔진(Darwin/OkHttp) 소켓 IO·`Res.readBytes` 바이트 획득 런타임 — §6-A `MockEngine`·§6-B `File`로 무측정, M8 통합/실기기 DoD로 상속(§5).
+- [ ] (선상속·M8) 실엔진(Darwin/OkHttp) 연결실패·타임아웃 예외의 `ClaudeException` 분기(Network/Timeout) 매핑 검증(DR-2 — MockEngine은 실 소켓 예외타입 미재현이라 이 매핑 원리상 무측정)·`Res.readBytes` 바이트 획득 런타임 — §6-A `MockEngine`·§6-B `File`로 무측정, M8 통합/실기기 DoD로 상속(§5).
