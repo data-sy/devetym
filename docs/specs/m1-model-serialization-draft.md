@@ -47,6 +47,7 @@ data class TermEntry(
 )
 ```
 - **버전 필드는 옵셔널**: 현재 번들 DB·AI 응답 어디에도 없으므로 역직렬화 시 default(`null`). 서버 캐시 트랙 착수 전까지 채우지 않되, 지금 필드만 확보해 이후 `@Serializable` DTO 마이그레이션을 회피(INV-9).
+- **wire 키 계약**: JSON 키 = Kotlin 프로퍼티명(camelCase)이 M1의 명시 계약이다(`@SerialName` 별도 지정 없음 = 프로퍼티명이 곧 wire 키). 외부 생산자(§1 소비처 a 번들 `terms.json`·b 서버)는 이 키 이름으로 내보내야 하며, 다른 naming(예: `alias` 단수·`aliases` 생략)으로 내보내면 `aliases`가 default `emptyList()`로 예외 없이 조용히 떨어져 별칭이 소실된다(INV-A 위반 경로). M1 §6 오라클은 **자기 왕복**(encode→decode 동등성)만 실측하므로 이 계약을 외부 픽스처로 실측하지 않는다 — aliases를 담은 실제 `terms.json`/서버 응답을 디코드해 계약 준수를 실측하는 것은 **번들 로더(M3)** 소관으로 이월(§7-4).
 
 ### 3-2. `Source` / `TermResult` (`commonMain/model/`)
 ```kotlin
@@ -84,8 +85,9 @@ sealed interface TermResult {
 ## 7. 열린 질문 (비준이 판정할 항목)
 
 1. **매퍼 소속 경계 (ROADMAP↔spec 정합)** — ROADMAP은 M1에 "매퍼"를 명시하나, spec 1-1의 매퍼(`TermEntry.toEntity()`/`TermEntity.toDto()`)는 `TermEntity`(spec 1-2, **M2** 로컬 DB 로우)에 의존한다. 제안: **DB-엔티티 매퍼는 M2로 이관**하고, M1은 *직렬화* 계약(JSON↔`TermEntry`)과 보존 불변식(INV-A)만 소유. 대안: M1에 엔티티 타입을 선정의하고 매퍼까지 포함(단 M2 스키마와 결합). — **비준 판정 필요.** 매퍼를 M2로 이관하면 **INV-A의 매핑측(`toEntity`/`toDto`) `aliases`(순서)·`category` 보존 테스트를 M2 DoD로 반드시 상속**한다(carry-forward): M1 오라클(§6)은 JSON 왕복만 실측하므로 매핑 경계 보존은 M1에서 무측정이며, INV-A가 M1 오라클보다 넓게 걸려 있음을 M2 비준자가 인지해야 이 도메인의 헤드라인 불변식(DTO↔엔티티 `aliases` 누락)이 어느 마일스톤에서도 실측되지 않은 채 조용히 소실되는 것을 막는다.
-2. **카테고리 강제 지점 — 결착(round 2): M1은 강제하지 않는다.** M1 계약은 `category: String` pass-through로, 집합 밖 값도 손실 없이 보존한다(§3-3·INV-A). 6개 집합에 대한 검증/정규화는 집합 밖 값이 유입되는 각 지점이 소유한다: (a) AI 응답 경로(M3·M4)는 유입되는 집합 밖 값을 강제/정규화한다; (b) 사람이 큐레이션하는 번들 `terms.json`은 번들 저작 계약과 번들 로더/린트(M3 `BundleDbSource` 로드 경로)가 6개 집합 in-set를 보장한다 — 저작 오타로 집합 밖 값이 들어가면 downstream 버킷팅에서 조용히 누락되므로, 번들 경로의 category 무결성은 무주공산이 아니라 번들 로더/린트 소관이다. M1 자신은 어느 경로에도 강제를 걸지 않는다(pass-through 유지). 자율 구간에서 enum 강제 여부를 임의로 굳히지 않는다 — M1 오라클(§6 `test_카테고리_집합밖값_처리`)은 pass-through 보존으로 확정.
+2. **카테고리 강제 지점 — 결착(round 2): M1은 강제하지 않는다.** M1 계약은 `category: String` pass-through로, 집합 밖 값도 손실 없이 보존한다(§3-3·INV-A). 6개 집합에 대한 검증/정규화는 집합 밖 값이 유입되는 각 지점이 소유한다: (a) AI 응답 경로(M3·M4)는 유입되는 집합 밖 값을 강제/정규화한다; (b) 사람이 큐레이션하는 번들 `terms.json`은 번들 저작 계약과 번들 로더/린트(M3 `BundleDbSource` 로드 경로)가 6개 집합 in-set를 보장한다 — 저작 오타로 집합 밖 값이 들어가면 downstream 버킷팅에서 조용히 누락되므로, 번들 경로의 category 무결성은 무주공산이 아니라 번들 로더/린트 소관이다. (c) 서버 read-through 배달 경로(§1 소비처 b)는 M1이 소유하지 않는다 — 서버가 정규화 이전 원응답을 캐시해 캐시-히트로 되돌려주면 집합 밖 category가 클라이언트(M3·M4) 정규화를 우회해 downstream 버킷팅에서 조용히 누락될 수 있다. 이 경로의 category 소유자(정규화-후-캐시쓰기 순서 고정)는 **캐시·딜리버리 트랙**으로 이월한다(M1 범위 밖 — M1은 순서를 고정하지 않는다). M1 자신은 어느 경로에도 강제를 걸지 않는다(pass-through 유지). 자율 구간에서 enum 강제 여부를 임의로 굳히지 않는다 — M1 오라클(§6 `test_카테고리_집합밖값_처리`)은 pass-through 보존으로 확정.
 3. **직렬화 설정 위치 — 결착(round 2): M3로 미룬다.** 소비처가 공유할 `Json` 인스턴스 설정(`encodeDefaults`·`ignoreUnknownKeys` 등, 서버 향후 필드 추가 시 하위호환)은 M1이 확정하지 않는다(§1). M1 왕복 테스트는 테스트-로컬 `Json`으로 **객체 동등성**을 검증하므로(§6) 이 설정과 무관하게 결정적이다. 인스턴스 정책은 네트워크 슬라이스(M3)에서 확정한다.
+4. **wire 키 계약 실측 이월 (번들 로더 M3) — 결착(round 5).** M1 §6은 자기 왕복(encode→decode 동등성)만 검증하고 aliases를 담은 실제 외부형 JSON(번들 `terms.json` shape·서버 응답)을 디코드하지 않는다. JSON 키=프로퍼티명(camelCase) 계약(§3-1)이 실제 외부 문서에서 지켜지는지 — 특히 `aliases`가 다른 키·생략으로 default `emptyList()`에 조용히 떨어져 별칭이 소실(INV-A 위반)되지 않는지 — 의 실측은 실제 픽스처를 로드하는 **번들 로더(M3 `BundleDbSource`)** DoD로 이월한다. 이는 §7-1이 매핑측(`toEntity`/`toDto`) 보존을 M2로 이월한 것과 대칭인, 디코드 wire측 이월이다: M1은 계약을 *명시*(§3-1)하되 외부 픽스처로 *실측*하지는 않으므로, M3 비준자가 이 실측 상속을 인지해야 헤드라인 불변식(aliases 누락 금지)이 어느 마일스톤에서도 실측되지 않은 채 소실되는 것을 막는다.
 
 ## 8. 안전·규율
 - 마일스톤 경계 **사람 비준** 없이 다음으로 넘어가지 않는다. **하네스는 push·머지·`-draft` 제거를 하지 않는다.**
