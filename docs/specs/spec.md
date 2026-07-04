@@ -24,8 +24,14 @@ data class TermEntry(
     val summary: String,
     val etymology: String,
     val namingReason: String,
+    // 버전 태깅 (INV-9, 서버 캐시·딜리버리 트랙 선반영) — 옵셔널·default로 기존 번들 DB/AI 응답과 호환.
+    // 서버 배달 항목의 선택적 무효화·재생성을 위한 프롬프트/스키마 버전. null = 버전 이전(pre-versioning) 항목.
+    val schemaVersion: Int? = null,
+    val promptVersion: String? = null,
 )
 ```
+
+> **버전 필드는 옵셔널이다**: 현재 번들 DB·AI 응답 어디에도 없으므로 역직렬화 시 default(`null`)로 채워진다. 서버 캐시 트랙(→ [`../cache-delivery-milestones.md`](../cache-delivery-milestones.md)) 착수 전까지는 채우지 않는다. 지금 필드만 미리 확보해 이후 서버 통합 시 `@Serializable` DTO·DB 스키마 마이그레이션을 회피한다.
 
 **Source / TermResult** — 결과 출처는 문자열이 아니라 타입으로(컴파일 타임 분기 강제)
 ```kotlin

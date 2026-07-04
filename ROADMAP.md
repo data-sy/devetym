@@ -37,6 +37,8 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 - **[Data] 번들 DB 추가 확장** — 출시 후 검색 빈도 데이터를 우선순위 입력으로.
 - **[Arch] AI 스트리밍 도입 검토** — 현재 단발 응답. 토큰 스트리밍(`Flow<String>`)은 이후 선택지(architecture §4.3).
 - **[Arch] 프롬프트 서버 이전 검토** — 현재 클라이언트(`commonMain`) 소유. 프롬프트 핫픽스 필요성 커지면 재검토([ADR-0004](docs/adr/0004-backend-proxy-boundary.md) 유보 항목).
+- **[Track] 서버 캐시·딜리버리 트랙** — AI 생성 항목 서버 캐싱(read-through·write-once)·릴리즈별 번들 승격으로 Claude API 의존도 축소. 별도 코드베이스(Cloudflare Worker·D1·db-expand)·**고유 마일스톤 M0~M7**(이 로드맵의 CMP M0~M8과 번호만 겹치는 별개 트랙). 확정 불변식 INV-1~12. → [`docs/cache-delivery-milestones.md`](docs/cache-delivery-milestones.md).
+  - 이 CMP repo와의 접점: 트랙 M0(entry 데이터 계약)·M4(클라이언트 local-first pinning). **INV-9(버전 태깅)는 M1(모델)에서 선반영** — `TermEntry`에 `schemaVersion`/`promptVersion` 옵셔널 필드로 미리 수용(spec 1-1).
 - **[UI] 디자인 후속** — 다크/라이트 폴리시·대비·플랫폼별 미세 조정.
 - (아이디어 추가 시 여기로)
 
