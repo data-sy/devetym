@@ -17,6 +17,7 @@ captures/
 
 # Kotlin/Native · Xcode
 *.hprof
-iosApp/**/xcuserdata/
-iosApp/**/*.xcworkspace/xcuserdata/
 iosApp/build/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcworkspace/xcuserdata/

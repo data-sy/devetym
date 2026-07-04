@@ -87,14 +87,15 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64    # iOS 프레임워크(Kotlin/Native + SKIE)
 ```
 
+iOS 앱 시뮬레이터 실행(Apple Silicon)은 [`iosApp/README.md`](iosApp/README.md) 참조 — `xcodebuild` + `simctl`.
+
 - iOS interop은 **SKIE**로 `Shared.framework`의 Swift API를 개선한다(suspend→async/await, Flow→AsyncSequence 등).
 - ⚠️ **SKIE 0.10.12는 Kotlin 최대 2.3.21까지만** 지원 — Kotlin을 앞질러 올리지 말 것.
-- 전체 iOS 앱 시뮬레이터 실행은 `iosApp.xcodeproj` 생성이 남았다([`iosApp/README.md`](iosApp/README.md)).
 
 ---
 
 ## 현재 상태
 
-**M0(KMP 골격) 완료 — green 루프 확립.** `shared + androidApp + iosApp` 골격이 서고, 위 세 오라클이 모두 통과한다
-(공유 `Greeting`을 Koin으로 배선해 양 플랫폼 Compose 화면에 표시). 다음은 [`ROADMAP.md`](ROADMAP.md)의 **M1(모델·직렬화)**
-— 진행 상태 정본은 로드맵.
+**M0(KMP 골격) 완료 — 양 플랫폼 실제 실행 확인.** `shared + androidApp + iosApp` 골격이 서고, 공유 `Greeting`을
+Koin으로 배선해 **Android APK + iOS 시뮬레이터** 둘 다에서 공유 Compose 화면이 뜬다(green 루프 3축 통과). 다음은
+[`ROADMAP.md`](ROADMAP.md)의 **M1(모델·직렬화)** — 진행 상태 정본은 로드맵.

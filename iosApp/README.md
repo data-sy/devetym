@@ -6,26 +6,27 @@
 ## 구성
 - `iosApp/iOSApp.swift` — 앱 진입. `AppModuleKt.doInitKoin()`으로 Koin 배선.
 - `iosApp/ContentView.swift` — `MainViewControllerKt.MainViewController()`를 SwiftUI에 호스팅.
-- `iosApp/Info.plist` — 번들 메타.
+- `iosApp/Info.plist` — 번들 메타. ⚠️ `CADisableMinimumFrameDurationOnPhone=true` 필수
+  (Compose iOS의 고주사율 성능 가드 — 없으면 실행 즉시 abort).
+- `project.yml` — Xcode 프로젝트 **정본 스펙**(XcodeGen). `iosApp.xcodeproj`는 이걸로 생성되며 repo에 함께 커밋한다.
 
 ## Shared 프레임워크 (SKIE 경유, ADR-0005)
 `:shared`는 iOS용 정적 프레임워크 `Shared`를 낸다. SKIE가 이 프레임워크의 Swift API를 개선한다
-(suspend→async/await, Flow→AsyncSequence, sealed→enum).
+(suspend→async/await, Flow→AsyncSequence, sealed→enum). Xcode 빌드 시 `project.yml`의 preBuildScript가
+`./gradlew :shared:embedAndSignAppleFrameworkForXcode`를 돌려 프레임워크를 빌드·임베드한다.
 
-**M0 iOS 컴파일 오라클**(Xcode 없이 검증):
+## 빌드·실행 (시뮬레이터, Apple Silicon)
+```bash
+# (프로젝트 재생성이 필요할 때만) brew install xcodegen && xcodegen generate --spec iosApp/project.yml --project iosApp
+UDID=$(xcrun simctl list devices available | grep -m1 'iPhone 16 (' | grep -oE '[0-9A-F-]{36}')
+xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator \
+  -destination "platform=iOS Simulator,id=$UDID" -derivedDataPath iosApp/build/DerivedData \
+  CODE_SIGNING_ALLOWED=NO build
+xcrun simctl boot "$UDID"; open -a Simulator
+xcrun simctl install "$UDID" iosApp/build/DerivedData/Build/Products/Debug-iphonesimulator/iosApp.app
+xcrun simctl launch "$UDID" com.robin.devetym
 ```
-./gradlew :shared:linkDebugFrameworkIosSimulatorArm64
-```
-→ Kotlin/Native AOT + SKIE 변환이 도는지 확인. green 루프의 iOS 축.
+✅ M0 검증됨: 시뮬레이터에서 공유 Compose 화면("Hello, iOS …")이 렌더된다.
 
-## Xcode 프로젝트 (남은 셸 단계)
-전체 앱 실행(시뮬레이터)은 `iosApp.xcodeproj`가 필요하다. 아직 커밋 안 됨 — 다음 방법 중 하나:
-1. Xcode에서 iOS App 생성(Interface: SwiftUI) 후 위 `.swift`/`.plist`로 교체,
-2. Build Phases에 Run Script 추가:
-   ```
-   cd "$SRCROOT/.."
-   ./gradlew :shared:embedAndSignAppleFrameworkForXcode
-   ```
-   그리고 Framework Search Paths에 `$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)` 추가.
-
-> M0 DoD는 여기까지 셸 배선을 정의하고, 실제 시뮬레이터 실행 확인은 Xcode 프로젝트 생성 후. 프레임워크 링크는 위 gradle 태스크로 자동 검증된다.
+> 실기기 배포(서명·프로비저닝)는 이후 단계. `.xcodeproj`는 커밋돼 있어 xcodegen 없이도 빌드된다
+> (스펙을 바꿀 때만 xcodegen으로 재생성).
