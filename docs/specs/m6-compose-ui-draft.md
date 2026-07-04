@@ -180,4 +180,5 @@ object AppScheme { val colors @Composable get() = LocalAppColors.current; val ty
 
 - [ ] (비준 대기) §7 열린 질문 1~5 판정.
 - [ ] (선상속·M7) Koin `viewModel { }` 실배선·앱 셸 연결·온보딩 게이트.
+- [ ] (선상속·M7/하드닝) **DR5-2 쓰기 내구성 이월분**: `DetailViewModel.toggleBookmark()`를 앱/repository 스코프(또는 `NonCancellable`)로 내구화하고 확정 피드백을 얹는다. 근거: 별표 탭 직후 즉시 이탈 시 fire-and-forget launch가 `onCleared→viewModelScope.cancel()` 취소로 DB 미변경·무피드백으로 **조용히 유실**되는 창(§3-8)은 에러가 없어 시각 천장/아침 사람 게이트가 못 본다 — 명시 트래킹으로 이월분이 프로즈에 묻혀 누락되지 않게 남긴다.
 - [ ] (선상속·M8) 플랫폼 seam actual·아이콘/스플래시 자산·폰트 라이선스 고지·접근성 감사·에러 통합 실측·실기기 시각 검증.
