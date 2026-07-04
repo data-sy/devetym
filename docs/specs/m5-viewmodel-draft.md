@@ -105,12 +105,13 @@ class BookmarkViewModel(private val repository: TermRepository) : ViewModel() {
     fun removeBookmark(entry: TermEntry)             // toggleBookmark — Flow로 자동 반영
 }
 class HistoryViewModel(private val repository: TermRepository) : ViewModel() {
-    val history: StateFlow<List<SearchHistory>>      // repository.recentSearches(limit).stateIn(...)
+    val history: StateFlow<List<SearchHistory>>      // repository.recentSearches(limit).stateIn(...) — limit ≠ recentSearchLimit(DR5-3, 아래 불릿)
     fun delete(keyword: String)                      // deleteSearchHistory — Flow 자동 반영
     fun clearAll()                                   // clearAllSearchHistory
 }
 ```
 - **목록은 전부 반응형 `Flow` → `stateIn`**. 삭제·토글 후 **수동 재조회 코드 없음** — DB 변경이 `Flow`로 자동 반영(ADR-0002·M4 반응형 쿼리). 이것이 iOS SwiftData 수동 재조회 우회를 삭제하는 지점이다.
+- **⚠️ `HistoryViewModel.history`의 `limit`은 `Constants.recentSearchLimit`(5)가 **아니다** (DR5-3).** History 화면은 개별 `delete`·`clearAll`을 가진 **전체 관리** 성격이라 최근 5개가 아니라 저장된 히스토리 **전량**을 노출해야 한다. 그런데 M4 유일 인터페이스(`TermRepository.recentSearches(limit)`·`LocalTermStore.recent(limit)`)엔 한도 없는 조회가 없고 **유일 쿼리가 limit-bound**다 — `limit`을 비워두면 자율 구현자가 `SearchViewModel.recent`와 같은 패턴으로 `recentSearchLimit`(5)를 재사용해 히스토리가 **5개로 조용히 절단**된다(에러 없음, 삭제 대상도 5개로 잘림). 따라서 §3-4의 `limit` 토큰은 **`recentSearchLimit` 재사용을 금지**한다. 구체 한도값(전용 상수 도입 vs M4에 한도 없는 쿼리 추가 vs 충분히 큰 상한)은 이 스펙이 임의 매직넘버로 못박지 않고 **Open Questions의 미결 결정으로 사람 게이트에 이월**한다 — M5는 '최근 5개가 아닌 전량'이라는 제약만 확정해 오추론(무성 절단)을 차단한다.
 
 ### 3-5. ⚠️ M4 단일-writer 계약 상속 (DR-2) — 정규화 키 Mutex(제안 메커니즘) · 강제는 이월
 
@@ -154,6 +155,7 @@ M4 `TermRepository`는 **같은 `normalizeKeyword(keyword)`에 대한 `fetch`/`r
 - `test_load_ClaudeException_Error매핑` — Fake fetch가 `DailyLimitExceeded` throw → `state == Error(DailyLimitExceeded)`.
 - `test_load_NotDevTerm_Result아닌Error아님` — Fake fetch가 `NotDevTerm` → `state == Result(NotDevTerm)`(오류 아님).
 - `test_load_재진입_이전job취소` — `load(a)` 진행 중 `load(b)` → 최종 `state`가 b의 결과(a의 늦은 방출이 b를 덮지 않음).
+- `test_load_취소_Error로전이안함` (DR5-4 — §4 취소 불변식 실측) — `load(a)`가 Fake fetch에서 suspend 중일 때 진행 job/`viewModelScope`를 **취소(후속 `load` 없이)** → `advanceUntilIdle()` → **최종 `state`가 `Error`가 아님**(취소 직전 `Loading` 유지). §4 「`CancellationException`을 오류 상태로 만들지 않는다」를 **discriminating하게** 실측한다: `catch(CancellationException){ throw }`보다 `catch(Throwable){ state = Error(e.toErrorKind()) }`를 **먼저** 두는 흔한 회귀(취소도 `Throwable`이라 조용히 `Error(Unknown)`으로 접힘)면 취소된 로드가 `Error(Unknown)`을 잔류시켜 이 단정이 red. 최종 state만 보는 `test_load_재진입_이전job취소`는 후속 job이 그 `Error`를 곧바로 덮어 이 회귀를 놓치므로, 후속 job 없는 이 케이스가 그 사각을 닫는다.
 - `test_refresh_repository_refresh호출` — `refresh` → Fake의 `refresh` 호출(pinning 우회 경로).
 - `test_toggleBookmark_Result_Found일때_위임` — `load` 성공으로 `state == Result(Found(entry))`인 상태에서 `toggleBookmark()` → Fake `repository.toggleBookmark`가 **그 `entry`로 정확히 1회 호출**된다(현재 상태에서 entry 추출·위임 실측).
 - `test_toggleBookmark_상태가Found아님_no-op` — `state`가 `Loading`(또는 `Error`/`Result(NotDevTerm)`)일 때 `toggleBookmark()` → Fake `toggleBookmark` **미호출**(예외 없음). guard 없이 강제 추출하면 이 케이스가 크래시/오호출로 발화한다(discriminating).
@@ -199,5 +201,6 @@ M4 `TermRepository`는 **같은 `normalizeKeyword(keyword)`에 대한 `fetch`/`r
 - [ ] (선상속·DR-2 강제 미검증·M7 게이트) 정규화 키 `Mutex`(§3-5)는 하드닝의 제안 메커니즘일 뿐이며 **M5는 이 Mutex 코드를 `TermRepositoryImpl`에 넣지 않고 문서상 제안으로만 두고 전면 이월한다**(§2 OUT — 검증 오라클 없는 동시성 코드 무증거 착지 금지). 강제는 **M5에서 증명되지 않는다**: (a) `TermRepository`=`single` 배선은 M7 미검증·미게이트 전제이고(factory/화면-scoped 배선 시 Mutex가 아무것도 직렬화 못 함), (b) §6 교차-VM 테스트는 단일스레드·손배선 공유라 Mutex 유무를 구분 못 하는 비-discriminating 스모크다. 실제 강제 실측은 (i) M7에 두 VM이 동일 인스턴스를 받는지 확인하는 배선 게이트를 두거나 (ii) 다중스레드 실측 또는 SQLDelight `transaction` 원자화로 이월.
 - [ ] (선상속·AD-1 계승 정정) `TermRepository.kt` KDoc(line 25-26)의 'refresh RMW 창=네트워크 왕복 전체' 문구는 impl 실제(RMW 읽기가 `buildAiRow`의 post-network `selectByKeyword`)와 어긋난 과장이다(§3-5에서 M5 서술은 정정). M4 정본 KDoc도 같은 정정 대상 — 소스 편집은 이 세션 스코프(스펙 저작) 밖이라 이월.
 - [ ] (M6 이월·DR-4/DR5-2) 상세 화면 북마크 현재값 상태 소스 — `DetailUiState.Result`/`TermEntry`에 `isBookmarked`가 없어 `DetailViewModel`이 현재 용어 북마크 여부를 노출하지 않는다(§3-2). M6가 `bookmarkedTerms()` Flow를 keyword로 교차조회해 파생하거나 `DetailUiState.Result`에 `isBookmarked`를 얹는 방식 중 택일 — 상태 소스 부재를 M5에서 정직히 이월(별표가 토글해도 갱신 안 되는 회귀를 M6가 닫음). **+ DR5-2 병기:** `toggleBookmark()`가 `viewModelScope` fire-and-forget이라 별표 탭 직후 상세 이탈 시 `onCleared` 취소로 쓰기가 **무피드백으로 유실**될 수 있는 창이 있다(§3-2 DR-4 문단). M6는 이 상태 소스를 얹을 때 **쓰기 유실 방지(앱/repository 스코프 launch 등)와 확정 성공/실패 피드백을 함께** 착지시켜 이 창까지 닫는다.
+- [ ] (DR5-3·사람 게이트) `HistoryViewModel.history`가 쓸 구체 `limit` 값·메커니즘. §3-4가 `recentSearchLimit`(5) 재사용을 금지하고 '전량 노출' 제약만 확정했으므로, 실제 한도는 **전용 상수 도입**(예: `Constants.historyLimit`) vs **M4 인터페이스에 한도 없는 조회 추가**(현재 유일 쿼리가 limit-bound) vs **충분히 큰 상한** 중 택일이 미결이다. 임의 매직넘버 착지 금지 — 사람 게이트가 결정.
 - [ ] (선상속·M6) Compose UI·collectAsStateWithLifecycle·로딩 애니메이션(iOS LoadingPhase)·문구(오프라인 구분)·네비게이션.
 - [ ] (선상속·M7) Koin `viewModel { }` 배선.
