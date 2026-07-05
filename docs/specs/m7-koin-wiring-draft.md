@@ -14,7 +14,7 @@
 
 지금까지 각 계층은 인터페이스·생성자 주입 형태로만 서 있고 **연결돼 있지 않다**(앱 셸은 여전히 M0 `App()`을 그린다 — `App()`은 commonMain `ui/App.kt`에서 Koin으로 `Greeting`을 해석해 텍스트만 렌더). M7은 **Koin 그래프**로 전 계층(번들·네트워크·로컬·오케스트레이터·분석·seam·ViewModel)을 조립하고, **앱 셸**(`MainActivity`/iOS `MainViewController`)이 현재의 `App()` 호출 대신 `AppRoot(deps)`를 그리도록 연결한다. 이로써 앱이 **처음으로 실행 가능한 전체**가 된다(런타임 시각 검증은 천장).
 
-동시에 **M4/M5/M6가 이월한 두 항목을 다룬다**: **DR-2 단일-writer**(정규화 키 Mutex + `TermRepository`를 `single`로 배선하는 게이트)는 **구조로만 담보**하고 진짜 병렬 강제(맵-가드 원자성의 실행-검증)는 실기기까지 미검증으로 남긴다(OQ-2 잔여, §3-5·§7-2 — '닫음' 자칭 금지), **DR5-2 쓰기 내구성**(`toggleBookmark`가 화면 이탈에도 유실되지 않게 앱 스코프 쓰기)은 판별 네이티브 테스트(§6)로 닫는다.
+동시에 **M4/M5/M6가 이월한 두 항목을 다룬다**: **DR-2 단일-writer**(정규화 키 Mutex + `TermRepository`를 `single`로 배선하는 게이트)는 **구조로만 담보**하고 진짜 병렬 강제(맵-가드 원자성의 실행-검증)는 실기기까지 미검증으로 남긴다(OQ-2 잔여, §3-5·§7-2 — '닫음' 자칭 금지), **DR5-2 쓰기 내구성**(`toggleBookmark` 쓰기를 화면 수명과 분리된 스코프로)은 **메커니즘 하드닝(취소 내성 확보)까지만** 하고 '닫음/마감'은 자칭하지 않는다 — 실 셸이 `DetailViewModel`을 plain `remember`로 만들어 `onCleared()`가 발화하지 않으므로(§3-6·§7-6) DR5-2가 기술한 유실 창 자체가 배포 셸엔 없다. 판별 네이티브 테스트(§6)는 취소 내성만 실측한다.
 
 ## 2. 스코프
 
@@ -26,7 +26,7 @@
 - **앱 셸 연결**: `MainActivity.setContent { AppRoot(deps) }` + iOS `MainViewController = ComposeUIViewController { AppRoot(deps) }`. `initKoin`에 플랫폼 모듈 추가.
 - **온보딩 게이트**: `AppRoot`의 `onboarded`를 seam(`AppearanceStore`류의 온보딩 플래그 저장)으로 승격하거나 M8까지 in-memory 유지 — 최소 게이트만(§7).
 - **DR-2 구조 담보**: `TermRepositoryImpl`에 정규화 키 Mutex(fetch/refresh/toggleBookmark 전 구간 직렬화) + Koin `single` 배선으로 **모든 소비자 동일 인스턴스**. 게이트 테스트(같은 인스턴스 해석)·동시성 스모크. 진짜 병렬 강제는 자칭 안 함(OQ-2 잔여).
-- **DR5-2 마감**: `DetailViewModel`이 선택적 `writeScope`(앱 스코프)로 `toggleBookmark`를 launch — 화면 이탈(`onCleared`)에도 쓰기가 취소되지 않는다. 기본값은 M5 동작 보존(테스트 무영향).
+- **DR5-2 메커니즘 하드닝(마감 자칭 안 함)**: `DetailViewModel`이 선택적 `writeScope`(앱 스코프)로 `toggleBookmark`를 launch — `viewModelScope`가 취소되는 경우에도 쓰기가 취소되지 않는 **취소 내성**을 확보한다. 다만 실 셸은 VM을 plain `remember`로 만들어 `onCleared`가 발화하지 않으므로 유실 창 자체가 배포 셸엔 없다(§3-6·§7-6). 기본값은 M5 동작 보존(테스트 무영향).
 - **그래프 검증 테스트**(`androidUnitTest`): 테스트 Koin(실 공통 모듈 + 테스트 플랫폼 모듈: in-memory JDBC 드라이버·MockEngine)으로 `TermRepository`·VM·`AppDependencies` 해석 + **단일-scope 실측**(동일 `TermRepository` 인스턴스). + DR-2 동시성·DR5-2 내구성 테스트(네이티브 포함 가능한 것은 commonTest).
 
 **OUT (M8/트랙):**
@@ -95,10 +95,11 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 - **Mutex 비재진입 주의**: op 최상단 1회 획득, 락 보유 중 같은 키 재획득 금지(데드락 — `orchestrate`가 `buildAiRow`를 부르되 후자는 락을 다시 잡지 않음).
 - **single-scope 게이트**: Koin이 `TermRepository`를 `single`로 제공 → 모든 VM이 동일 인스턴스·동일 잠금 맵 공유(M5 OQ-3 전제 a 충족). §6 게이트 테스트가 실측.
 
-### 3-6. DR5-2 마감 — 쓰기 내구성 (`DetailViewModel`)
+### 3-6. DR5-2 메커니즘 하드닝 — 쓰기 취소 내성 (`DetailViewModel`)
 
-- `DetailViewModel(repository, writeScope: CoroutineScope? = null)`: `toggleBookmark()`가 `(writeScope ?: viewModelScope).launch { repository.toggleBookmark(entry) }`. **M7이 앱 스코프(`SupervisorJob`+`Dispatchers.Default`, `onCleared`와 무관) 주입** → 별표 탭 직후 화면 이탈해도 토글 launch가 취소되지 않아 DB에 반영된다. 기본값 `null`=viewModelScope(M5 동작·테스트 보존).
-- **주의(정직)**: 앱 스코프 쓰기는 유실을 막지만 **확정 UI 피드백**(성공/실패 표시)은 상세 이탈 후엔 표시할 화면이 없어 별도다 — 리스트 화면 재진입 시 반응형 Flow로 반영된다(STAY는 M6가 이미 즉시 반영). M7은 **내구성**을 닫고, 이탈-후-피드백의 완결(예: 스낵바)은 필요 시 M8.
+- `DetailViewModel(repository, writeScope: CoroutineScope? = null)`: `toggleBookmark()`가 `(writeScope ?: viewModelScope).launch { repository.toggleBookmark(entry) }`. **M7이 앱 스코프(`SupervisorJob`+`Dispatchers.Default`, `onCleared`와 무관) 주입** → `viewModelScope`가 취소되는 경우에도 토글 launch가 취소되지 않아 DB에 반영되는 **취소 내성**을 확보한다. 기본값 `null`=viewModelScope(M5 동작·테스트 보존).
+- **실 셸에선 `onCleared`가 발화하지 않음(정직 — '닫음' 철회)**: 배포 `AppRoot`는 `DetailViewModel`을 `remember(tab, detailKey) { deps.createDetailViewModel() }`(plain `remember`, ViewModelStoreOwner 아님)으로 만든다(정본 `ui/AppRoot.kt`). `androidx.lifecycle.ViewModel`은 `RememberObserver`가 아니므로 key 블록이 컴포지션을 떠나도 `onCleared()`가 호출되지 않고 `viewModelScope`도 취소되지 않는다. 따라서 DR5-2가 기술한 '취소가 toggle launch를 먹는' 유실 창은 **실 셸에서 발생하지 않으며**(취소될 스코프 취소 자체가 없음), M7의 writeScope 주입은 유실 시나리오를 '제거'하는 게 아니라 **메커니즘을 취소에 견디게 하드닝**할 뿐이다 — '닫음/마감' 자칭 철회. 반대로 실재하는 잠복 결함은 상세 진입마다 `remember`로 만든 `DetailViewModel`/`viewModelScope`가 clear되지 않아 **누적 leak**이며, 이 leak이 (M8에서) VM 수명주기/ViewModelStore로 해소되면 **비로소 DR5-2 유실 창이 실재화**된다(§7-6·Open Questions 이월).
+- **주의(정직)**: 앱 스코프 쓰기는 유실을 막지만 **확정 UI 피드백**(성공/실패 표시)은 상세 이탈 후엔 표시할 화면이 없어 별도다 — 리스트 화면 재진입 시 반응형 Flow로 반영된다(STAY는 M6가 이미 즉시 반영). M7은 **취소 내성**만 확보하고, 이탈-후-피드백의 완결(예: 스낵바)은 필요 시 M8.
 
 ## 4. 설계 불변식
 
@@ -111,7 +112,7 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 ## 5. 완료 조건 (DoD)
 
 - **컴파일·조립·링크 green(3축)**: `:shared:testDebugUnitTest` + `:androidApp:assembleDebug`(셸이 `AppRoot`+Koin 조립) + `:shared:linkDebugFrameworkIosSimulatorArm64`(iOS 셸·플랫폼 모듈 링크). **shared는 koin-core만** 의존(`Context`는 `initKoin` 파라미터로 전달 — koin-android `androidContext` 불필요), koin 좌표가 Kotlin 2.3.21에서 소비됨을 실빌드로 확정.
-- **⊕ 그래프·결착 네이티브/JVM 실행**: `:shared:iosSimulatorArm64Test` green(DR-2 Mutex 직렬화·DR5-2 내구성 등 commonTest 네이티브 실행) + `androidUnitTest` 그래프 테스트(테스트 Koin 해석·단일-scope).
+- **⊕ 그래프·결착 네이티브/JVM 실행**: `:shared:iosSimulatorArm64Test` green(DR-2 Mutex 직렬화·DR5-2 취소 내성 등 commonTest 네이티브 실행) + `androidUnitTest` 그래프 테스트(테스트 Koin 해석·단일-scope).
 - §6 테스트 통과.
 - **명시적 비-보증**: 런타임 화면·상호작용·seam actual 동작은 이 DoD가 보증하지 않음 → 「코드 완료·실기기 검증 필요」.
 
@@ -124,8 +125,8 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 **DR-2 단일-writer (`commonTest` — 네이티브 실행):**
 - `test_mutex_동일키_직렬화` — 실 `TermRepositoryImpl`(지연 generator·in-memory store), **다중스레드 실측 불가 시 결정적 대체**: 같은 키 `refresh`+`toggleBookmark`를 인터리브해도 최종 상태 일관(스모크) + Mutex 보유 중 재진입이 데드락 없이 완료(비재진입 경로 실측). ⚠️ 단일스레드 오라클 한계는 M5 기록대로 — 이 테스트는 데드락 부재·계약 준수를 보증하고 진짜 병렬 강제는 구조(single+Mutex)로 담보.
 
-**DR5-2 내구성 (`commonTest` — 네이티브 실행):**
-- `test_toggleBookmark_외부스코프_이탈해도_반영` — `DetailViewModel(repo, writeScope=외부스코프)`로 `load`→`toggleBookmark()` 직후 `viewModelScope`를 취소(이탈 모사)해도, 외부 writeScope가 살아 있어 `repository.toggleBookmark`가 완료돼 store에 반영(기본 `null`=viewModelScope 경로면 취소로 미반영 — discriminating).
+**DR5-2 취소 내성 (`commonTest` — 네이티브 실행):**
+- `test_toggleBookmark_외부스코프_취소내성` — **테스트가 통제·join하는 writeScope를 주입한다**(실제 `Dispatchers.Default` 앱 스코프를 그대로 넣지 말 것 — runTest 가상시계가 그 백그라운드 코루틴을 자동 await하지 못해 '반영' 단정이 레이스/flaky가 된다). M5 관례(§146, `Dispatchers.setMain(StandardTestDispatcher())`+`runTest`)를 따라 writeScope를 **테스트가 명시적으로 `job.join()`하는 별도 `Job` 기반 스코프**(또는 테스트 디스패처 스코프)로 준다. `load`→`toggleBookmark()` 직후 `viewModelScope`를 취소(이탈 모사)한 뒤 **writeScope의 job을 `join`**하면 `repository.toggleBookmark`가 완료돼 store에 반영됨을 assert. **판별력(결정성)**: 기본 `null`=viewModelScope 경로는 `toggleBookmark`가 **`StandardTestDispatcher`의 지연-launch**로 취소가 완료를 **선행**하도록 대비시켜 취소로 **결정적 미반영**임을 대조한다 — `UnconfinedTestDispatcher`/즉시실행 스코프를 쓰면 launch가 취소 이전에 완료돼 null 경로도 반영되며 판별이 false-green으로 무너지므로 금지.
 
 ## 7. 열린 질문 (비준이 판정할 항목)
 
@@ -134,12 +135,13 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 3. **DR5-2 앱 스코프 — 선택적 `writeScope` 주입(제안) vs `toggleBookmark`를 repository 스코프로 이관** — 제안: VM 선택 주입(M5 기본 보존). 비준 판정.
 4. **seam·deviceId 스텁 — M7 스텁 바인딩(제안) vs 최소 actual 당김** — 제안: 스텁 바인딩(조립 green), 실 actual M8. 비준이 스텁이 거짓 green(런타임 작동한 척)인지 판정 — M7은 seam '동작'을 보증 안 함을 명시.
 5. **온보딩 게이트 영속 — in-memory(제안, M8 영속) vs M7 seam 저장** — 제안: 최소 in-memory(재시작 시 재노출), 영속은 M8. 비준 판정.
+6. **DR5-2 '닫음' 격하 + 실 셸 VM 수명주기 이월** — 실 `AppRoot`(`ui/AppRoot.kt`)는 `DetailViewModel`을 `remember(tab, detailKey) { deps.createDetailViewModel() }`(plain `remember`, ViewModelStoreOwner 아님)로 만들어 `onCleared()`가 발화하지 않는다. 따라서 (a) DR5-2 유실 창은 배포 셸에 실재하지 않고 M7 writeScope 주입은 '유실 제거'가 아니라 **취소 내성 하드닝**이며('닫음' 자칭 철회 — §3-6), (b) 실재 잠복 결함은 상세 진입마다 VM/`viewModelScope`가 clear 안 돼 **누적 leak**이다. 이 leak을 ViewModelStore/VM 수명주기로 해소하면 비로소 DR5-2 창이 실재화되므로 VM 수명주기 결착(ViewModelStore 도입·DR5-2 실 창 대응)을 **M8로 이월**. 비준이 이 격하가 정직한지·이월 범위가 맞는지 판정.
 
 ## 8. 안전·규율
 
 - **검증 천장 정직**(§0·§5): 런타임·시각·seam 동작 green 자칭 금지. **거짓 green 금지.**
 - **셸 편집 범위**: M7은 `androidApp`/`iosApp` 셸의 진입점만 편집(`AppRoot` 연결·`initKoin`). 서명·심사·매니페스트 확장은 M8.
-- **M4/M5/M6 이월 처리**: DR5-2(§3-6)는 이 슬라이스가 판별 테스트로 닫음. DR-2(§3-5)는 **구조(single+키 Mutex)로만 담보**하며 맵-가드 원자성의 진짜 병렬 강제는 실기기까지 미검증(OQ-2 잔여) — '닫음/마감' 자칭 금지. 비준자 확인.
+- **M4/M5/M6 이월 처리**: DR5-2(§3-6)는 이 슬라이스가 **메커니즘 하드닝(취소 내성)까지만** 하고 '닫음/마감'은 자칭하지 않는다 — 실 셸이 VM을 plain `remember`로 만들어 `onCleared`가 발화하지 않아 유실 창 자체가 배포 셸엔 없다(§3-6·§7-6). 잠복 VM/스코프 leak은 §7-6/Open Questions로 M8 이월. DR-2(§3-5)는 **구조(single+키 Mutex)로만 담보**하며 맵-가드 원자성의 진짜 병렬 강제는 실기기까지 미검증(OQ-2 잔여) — '닫음/마감' 자칭 금지. 비준자 확인.
 - 마일스톤 경계 **사람 게이트 완화**(메모리 `milestone-human-gate-relaxed`). 하네스는 push·머지·`-draft` 제거 안 함.
 - **브랜치 보존·push 금지·젠더중립 네이밍·진행상태는 ROADMAP(디스크)**.
 
@@ -149,4 +151,5 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 
 - [ ] (비준 대기) §7 열린 질문 1~5 판정.
 - [ ] (선상속·M8) seam actual 실구현·deviceId 영속 고유화·온보딩 영속·아이콘/스플래시·폰트 라이선스 고지·접근성·에러 통합·실기기 검증.
+- [ ] (이월·M8) **실 셸 VM 수명주기·DR5-2 실 창**: `AppRoot`가 `DetailViewModel`을 plain `remember`로 만들어 `onCleared` 미발화 → (a) DR5-2 유실 창 배포 셸 부재·M7은 취소 내성 하드닝만('닫음' 철회), (b) VM/`viewModelScope` 누적 leak. ViewModelStore 도입으로 leak 해소 시 DR5-2 창 실재화 — 수명주기 결착 M8(§7-6).
 - [ ] (이월·M8/실기기) **실 androidMain/iosMain 플랫폼 Koin 그래프 해석**(DeviceIdProvider·DriverFactory·createDatabase·seam actual 바인딩 완전성) 실기기 스모크 — M7 그래프 테스트는 테스트-플랫폼 스텁으로 대체 해석하므로 실 플랫폼 바인딩 누락/시그니처 불일치는 런타임 사건(§4)으로 이월. 이 잔여를 실기기 첫 검색·Settings 진입 스모크로 닫는다.
