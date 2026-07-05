@@ -12,7 +12,7 @@
 
 ## 1. 목표
 
-지금까지 각 계층은 인터페이스·생성자 주입 형태로만 서 있고 **연결돼 있지 않다**(앱 셸은 여전히 M0 `Greeting`을 그린다). M7은 **Koin 그래프**로 전 계층(번들·네트워크·로컬·오케스트레이터·분석·seam·ViewModel)을 조립하고, **앱 셸**(`MainActivity`/iOS `MainViewController`)이 `Greeting` 대신 `AppRoot(deps)`를 그리도록 연결한다. 이로써 앱이 **처음으로 실행 가능한 전체**가 된다(런타임 시각 검증은 천장).
+지금까지 각 계층은 인터페이스·생성자 주입 형태로만 서 있고 **연결돼 있지 않다**(앱 셸은 여전히 M0 `App()`을 그린다 — `App()`은 commonMain `ui/App.kt`에서 Koin으로 `Greeting`을 해석해 텍스트만 렌더). M7은 **Koin 그래프**로 전 계층(번들·네트워크·로컬·오케스트레이터·분석·seam·ViewModel)을 조립하고, **앱 셸**(`MainActivity`/iOS `MainViewController`)이 현재의 `App()` 호출 대신 `AppRoot(deps)`를 그리도록 연결한다. 이로써 앱이 **처음으로 실행 가능한 전체**가 된다(런타임 시각 검증은 천장).
 
 동시에 **M4/M5/M6가 이월한 두 결착을 닫는다**: **DR-2 단일-writer 강제**(정규화 키 Mutex + `TermRepository`를 `single`로 배선하는 게이트)와 **DR5-2 쓰기 내구성**(`toggleBookmark`가 화면 이탈에도 유실되지 않게 앱 스코프 쓰기).
 
@@ -42,7 +42,7 @@
 val appModule = module {
     single<Json> { AppJson }
     single { appWriteScope() }                                   // CoroutineScope(SupervisorJob()+Dispatchers.Default) — DR5-2
-    single<BundleDbSource> { runBlocking { loadBundleDbSource(get()) } }  // terms.json 1회 로드(§7 판정)
+    single<BundleDbSource> { readyBundle }                       // startKoin 이전 suspend preload한 ready 값(아래 주의)
     single<LocalTermStore> { SqlDelightTermStore(get()) }        // DevEtymDatabase 주입
     single { createHttpClient(get()) }
     single<TermGenerator> { ClaudeApi(get(), deviceId = get<DeviceIdProvider>()::get) }
@@ -55,7 +55,7 @@ val appModule = module {
 }
 ```
 - `DevEtymDatabase`는 플랫폼 모듈이 `single { createDatabase(get()) }`로(드라이버 주입). `clock`은 `epochMillis()`(플랫폼 현재시각 — 기존 없으면 expect/actual 신규, §7).
-- **`runBlocking`으로 번들 로드**는 앱 시작 1회 블로킹 — 대안(지연 `single` + suspend init)은 §7 판정.
+- **번들 로드(정정)**: `di/AppModule.kt`는 commonMain이고 commonMain은 `runBlocking`을 못 쓴다 — `runBlocking`은 kotlinx-coroutines의 concurrent(jvm+native) 소스셋에만 있어 consumer commonMain API 표면에 없다(commonMain에서 미해결 → 3축 전부 컴파일 실패). 따라서 **`startKoin` *이전에* `loadBundleDbSource()`(suspend)를 await해 `readyBundle` 값을 만든 뒤 그 값을 모듈에 주입**한다(플랫폼 진입점을 suspend로: Android `Application.onCreate`에서 코루틴으로 preload 후 initKoin, iOS `iOSApp` 시작 시 suspend preload). commonMain 모듈 정의에는 블로킹 호출을 두지 않는다. (플랫폼별 블로킹이 꼭 필요하면 그 `runBlocking` 바인딩은 androidMain/iosMain 플랫폼 모듈로만 내린다 — commonMain 금지.)
 
 ### 3-2. 플랫폼 Koin 모듈 (`androidMain`/`iosMain` `di/PlatformModule.*.kt`)
 
@@ -80,13 +80,16 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 
 ### 3-4. 앱 셸 연결
 
+- **현재 셸 상태(정정)**: 두 셸은 `Greeting`을 직접 그리지 않는다 — androidApp `MainActivity`는 `setContent { App() }`, iOS `MainViewController`는 `ComposeUIViewController { App() }`로 **commonMain `App()`을 호출**한다(`App()`이 내부에서 Koin으로 `Greeting`을 해석). M7 편집 대상은 이 **`App()` 호출**을 아래 `AppRoot(deps)`로 교체하는 것이다(셸에서 `Greeting` 심볼을 찾지 말 것).
 - **androidApp `MainActivity`**: `setContent { AppRoot(KoinAppDependencies(getKoin())) }`. `Application`에서 `initKoin { androidContext(this@App) }`(or Activity Context) — koin-android.
 - **iOS `MainViewController`**: `ComposeUIViewController { AppRoot(KoinAppDependencies(KoinPlatform.getKoin())) }`. `doInitKoin()`는 iOS 앱 시작(iOSApp.swift)이 호출.
-- 두 셸이 `Greeting` 대신 `AppRoot`를 그린다 — 이 연결 자체가 **조립/링크 green으로 검증**(런타임 시각은 천장).
+- **남겨질 `App()`(commonMain) 처리**: 셸이 더는 `App()`을 호출하지 않으므로 M0 `App()`은 (a) 제거하거나 (b) 향후 미사용 데드코드 경고를 피하려면 삭제한다 — M7은 `App()`을 **제거**한다(셸이 `AppRoot`로 직행하므로 M0 Greeting 렌더 경로는 폐기). `Greeting` 바인딩 자체는 그래프에서 더는 소비되지 않으면 함께 정리(잔존 시 §6 그래프 테스트 미영향).
+- 두 셸이 `App()` 호출 대신 `AppRoot`를 그린다 — 이 연결 자체가 **조립/링크 green으로 검증**(런타임 시각은 천장).
 
 ### 3-5. DR-2 마감 — 정규화 키 단일-writer 강제 (`TermRepositoryImpl`)
 
-- `fetch`/`refresh`/`toggleBookmark`가 각자 맨 앞 `val key = normalizeKeyword(...)`로 **키잉된 `Mutex`를 오퍼레이션 전 구간(refresh 네트워크 왕복 포함) 보유**한 뒤 RMW. 같은 정규화 키의 두 번째 쓰기는 첫 쓰기 완료까지 suspend. 서로 다른 키는 병렬(전역 잠금 아님). 잠금 맵 접근 원자성은 짧은 동기 잠금.
+- `fetch`/`refresh`/`toggleBookmark`가 각자 맨 앞 `val key = normalizeKeyword(...)`로 **키잉된 `Mutex`를 오퍼레이션 전 구간(refresh 네트워크 왕복 포함) 보유**한 뒤 RMW. 같은 정규화 키의 두 번째 쓰기는 첫 쓰기 완료까지 suspend. 서로 다른 키는 병렬(전역 잠금 아님).
+- **잠금 맵 접근 원자성(정정 — commonMain·네이티브 필수)**: 키→`Mutex` 맵을 plain `HashMap.getOrPut`으로 열면 Kotlin/Native(iosSimulatorArm64)에서 두 코루틴이 서로 다른 스레드에서 같은 키를 열 때 데이터 레이스로 **같은 키에 `Mutex` 인스턴스가 둘 생겨 상호배제가 무너진다**(isBookmarked/seenAt lost-update). commonMain엔 JVM `synchronized`가 없으므로 '동기 잠금'을 쓸 수 없다. 맵 접근은 **commonMain 가능한 프리미티브**로 못박는다: 전용 `kotlinx.coroutines.sync.Mutex`(맵 가드용)로 감싼 `getOrPut`(전부 suspend·common 호환) — 또는 atomicfu 도입. DR-2를 **오직 구조로 담보**하므로(§7-2 진짜 병렬 미검증) 이 맵-접근 원자성 지점이 실제 프리미티브로 정확히 실현돼야 담보가 void되지 않는다.
 - **Mutex 비재진입 주의**: op 최상단 1회 획득, 락 보유 중 같은 키 재획득 금지(데드락 — `orchestrate`가 `buildAiRow`를 부르되 후자는 락을 다시 잡지 않음).
 - **single-scope 게이트**: Koin이 `TermRepository`를 `single`로 제공 → 모든 VM이 동일 인스턴스·동일 잠금 맵 공유(M5 OQ-3 전제 a 충족). §6 게이트 테스트가 실측.
 
@@ -98,7 +101,7 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 ## 4. 설계 불변식
 
 - **셸은 얇다**(architecture §3): 진입점은 `initKoin` + `AppRoot`만. 화면·로직은 `shared`.
-- **Koin 그래프 완전성**: 모든 `get()`이 바인딩을 가진다 — §6 그래프 테스트가 미해결 바인딩을 실측(조립은 런타임 미해결을 못 잡음).
+- **Koin 그래프 완전성**: 모든 `get()`이 바인딩을 가진다 — §6 그래프 테스트가 미해결 바인딩을 실측(조립은 런타임 미해결을 못 잡음). **단, `AppDependencies` seam 접근자는 lazy이므로 이 실측은 그래프 테스트가 모든 seam·VM·`now()` 프로퍼티를 eager로 touch할 때만 성립**(§6 참조) — 그러지 않으면 lazy 경로 바인딩 누락이 green을 통과한다.
 - **DR-2 단일-writer**: `TermRepository`=`single` + 키 Mutex. 소비자(VM)는 계약을 신뢰(§3-5).
 - **DR5-2 내구성**: 쓰기는 화면 수명과 분리된 스코프.
 - **검증 천장 정직**: 런타임 시각·상호작용은 green 자칭 금지.
@@ -113,7 +116,7 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 ## 6. 테스트
 
 **그래프(`androidUnitTest` — 테스트 Koin + JDBC/MockEngine):**
-- `test_koin_그래프_해석` — 테스트 모듈로 `startKoin` 후 `TermRepository`·`SearchViewModel`·`DetailViewModel`·`AppDependencies` 해석 성공(미해결 바인딩 없음).
+- `test_koin_그래프_해석` — 테스트 모듈로 `startKoin` 후 `TermRepository`·`SearchViewModel`·`DetailViewModel`·`AppDependencies` 해석 성공(미해결 바인딩 없음). ⚠️ **seam eager touch 필수**: `KoinAppDependencies`의 `actions`/`appearance`/`device`는 **lazy getter**(`get() = koin.get<…>()`)라 해석만 하고 프로퍼티를 안 건드리면 그 바인딩은 resolve되지 않아, 테스트 플랫폼 모듈이 예: `DeviceInfo` 바인딩을 빠뜨려도 green이 나고 실기기 Settings 진입에서 `NoBeanDefFoundException`이 터진다(런타임은 M7 천장이라 false-green이 아침 리뷰를 통과). 따라서 그래프 테스트는 `deps.actions`/`deps.appearance`/`deps.device`/`deps.searchViewModel`/`deps.bookmarkViewModel`/`deps.historyViewModel`·`deps.createDetailViewModel()`·`deps.now()`를 **모두 eager로 접근해 `assertNotNull`** 해야 한다(모든 seam·VM·now 프로퍼티를 실제로 touch). 이렇게 해야 §4 '미해결 바인딩 실측' 주장이 lazy seam 경로에도 참이 된다.
 - `test_koin_repository_single_동일인스턴스` (DR-2 게이트) — `get<TermRepository>() === get<TermRepository>()` 그리고 두 VM(`get<BookmarkViewModel>` 경유 파생 불가라 직접) 해석이 **동일 repository 인스턴스**를 참조(single-scope 실측).
 
 **DR-2 단일-writer (`commonTest` — 네이티브 실행):**
@@ -124,8 +127,8 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 
 ## 7. 열린 질문 (비준이 판정할 항목)
 
-1. **번들 로드 — `runBlocking` 시작 1회(제안) vs 지연 suspend init** — terms.json 로드를 `single { runBlocking { ... } }`로 시작 시 블로킹할지, 지연할지. 제안: 시작 1회(작은 JSON, 단순). 비준 판정.
-2. **DR-2 Mutex 실측 — 단일스레드 스모크+구조 담보(제안) vs 다중스레드 스트레스 테스트** — 제안: 데드락 부재·계약 준수를 결정적으로, 진짜 병렬 강제는 single+Mutex 구조로. 다중스레드 테스트는 flaky. 비준이 이 담보가 정직한지(강제를 자칭 안 하는지) 판정.
+1. **번들 로드 — startKoin 이전 suspend preload(제안)** — terms.json을 `startKoin` 전에 `loadBundleDbSource()`(suspend)로 await해 `readyBundle` 값을 모듈에 주입(플랫폼 진입점이 suspend 준비). 제안: preload 후 주입(작은 JSON, 시작 1회). ⚠️ **폐기된 대안**: (a) commonMain `single { runBlocking { … } }`는 `runBlocking`이 commonMain에 없어 컴파일 불가; (b) '지연 suspend init'은 `BundleDbSource.search(keyword)`가 **non-suspend**라 첫 검색 시점 지연-로드가 불가능. 남는 선택지는 preload 주입 또는 runBlocking을 androidMain/iosMain으로 내리기뿐 — 비준이 preload 주입이 적절한지 판정.
+2. **DR-2 Mutex 실측 — 단일스레드 스모크+구조 담보(제안) vs 다중스레드 스트레스 테스트** — 제안: 데드락 부재·계약 준수를 결정적으로, 진짜 병렬 강제는 single+Mutex 구조로. 다중스레드 테스트는 flaky. 비준이 이 담보가 정직한지(강제를 자칭 안 하는지) 판정. **전제**: 구조 담보가 성립하려면 §3-5의 잠금 맵 접근이 commonMain·네이티브 가능한 프리미티브(맵 가드 `kotlinx.coroutines.sync.Mutex` 또는 atomicfu)로 실현돼야 한다 — JVM `synchronized`류를 암시하면 네이티브에서 맵-접근 레이스로 담보가 조용히 void됨.
 3. **DR5-2 앱 스코프 — 선택적 `writeScope` 주입(제안) vs `toggleBookmark`를 repository 스코프로 이관** — 제안: VM 선택 주입(M5 기본 보존). 비준 판정.
 4. **seam·deviceId 스텁 — M7 스텁 바인딩(제안) vs 최소 actual 당김** — 제안: 스텁 바인딩(조립 green), 실 actual M8. 비준이 스텁이 거짓 green(런타임 작동한 척)인지 판정 — M7은 seam '동작'을 보증 안 함을 명시.
 5. **온보딩 게이트 영속 — in-memory(제안, M8 영속) vs M7 seam 저장** — 제안: 최소 in-memory(재시작 시 재노출), 영속은 M8. 비준 판정.
