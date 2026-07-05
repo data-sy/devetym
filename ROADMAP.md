@@ -22,6 +22,7 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
   4. **접근성 감사**(TalkBack/VoiceOver·Dynamic Type)·**코드 서명·심사·스토어 메타데이터**.
   5. **별도 트랙**: Firebase App Instance ID(instanceId=null 유지)·VM 수명주기(ViewModelStore·M7 DR5-2 실 창)·서버 `devetym-proxy`(TS/Worker read-through 캐시).
   - ⚠️ 스토어 게시·push는 외부 대면이라 **사람 지시 대기**(자율 금지) — 브랜치·공개 전략 및 [milestone-human-gate-relaxed] 안전선과 정합.
+  - 📄 스펙: [M9 슬라이스](docs/specs/m9-release-verification-draft.md). **태그 규율**로 노동 분담 명시 — `[AI]`(자동 실측·CI green)·`[AI→사람]`(AI 지그→사람 컨펌만)·`[사람]`(실기기·서명·심사, 환원 불가). 사람 게이트를 최대한 AI 테스트로 끌어내림(실 Koin 그래프 완전성·B1 네이티브 DB 실행 회수).
 
 ---
 
