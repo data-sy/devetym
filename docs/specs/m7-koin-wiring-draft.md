@@ -39,10 +39,10 @@
 ### 3-1. 공통 Koin 모듈 (`di/AppModule.kt` 확장)
 
 ```kotlin
-val appModule = module {
+fun appModule(readyBundle: BundleDbSource) = module {            // preload한 값을 파라미터로 주입(top-level `val appModule` 금지 — DR-1)
     single<Json> { AppJson }
     single { appWriteScope() }                                   // CoroutineScope(SupervisorJob()+Dispatchers.Default) — DR5-2
-    single<BundleDbSource> { readyBundle }                       // startKoin 이전 suspend preload한 ready 값(아래 주의)
+    single<BundleDbSource> { readyBundle }                       // 파라미터 readyBundle 바인딩(preload 초기값 — 아래 주의)
     single<LocalTermStore> { SqlDelightTermStore(get()) }        // DevEtymDatabase 주입
     single { createHttpClient(get()) }
     single<TermGenerator> { ClaudeApi(get(), deviceId = get<DeviceIdProvider>()::get) }
@@ -55,13 +55,13 @@ val appModule = module {
 }
 ```
 - `DevEtymDatabase`는 플랫폼 모듈이 `single { createDatabase(get()) }`로(드라이버 주입). `clock`은 `epochMillis()`(플랫폼 현재시각 — 기존 없으면 expect/actual 신규, §7).
-- **번들 로드(정정)**: `di/AppModule.kt`는 commonMain이고 commonMain은 `runBlocking`을 못 쓴다 — `runBlocking`은 kotlinx-coroutines의 concurrent(jvm+native) 소스셋에만 있어 consumer commonMain API 표면에 없다(commonMain에서 미해결 → 3축 전부 컴파일 실패). 따라서 **`startKoin` *이전에* `loadBundleDbSource()`(suspend)를 await해 `readyBundle` 값을 만든 뒤 그 값을 모듈에 주입**하되, **이 preload+`initKoin`을 플랫폼 진입점의 `runBlocking`으로 동기 완료**한다(작은 JSON·시작 1회, androidMain/iosMain은 `runBlocking` 사용 가능 — commonMain 금지). 첫 프레임/`getKoin()`은 이 동기 초기화 이후에만 도달하므로 async-init 레이스가 원천 차단된다(§3-4 순서 불변식). commonMain 모듈 정의에는 블로킹 호출을 두지 않는다.
+- **번들 로드(정정)**: `di/AppModule.kt`는 commonMain이고 commonMain은 `runBlocking`을 못 쓴다 — `runBlocking`은 kotlinx-coroutines의 concurrent(jvm+native) 소스셋에만 있어 consumer commonMain API 표면에 없다(commonMain에서 미해결 → 3축 전부 컴파일 실패). 따라서 **`startKoin` *이전에* `loadBundleDbSource()`(suspend)를 await해 `readyBundle` 값을 만든 뒤 그 값을 `appModule(readyBundle)` 파라미터로 주입**(top-level `val appModule`은 런타임 심볼 `readyBundle`를 컴파일 시점에 미해결하므로 금지 — DR-1)하되, **이 preload+`initKoin`을 플랫폼 진입점의 `runBlocking`으로 동기 완료**한다(작은 JSON·시작 1회, androidMain/iosMain은 `runBlocking` 사용 가능 — commonMain 금지). 첫 프레임/`getKoin()`은 이 동기 초기화 이후에만 도달하므로 async-init 레이스가 원천 차단된다(§3-4 순서 불변식). commonMain 모듈 정의에는 블로킹 호출을 두지 않는다.
 
 ### 3-2. 플랫폼 Koin 모듈 (`androidMain`/`iosMain` `di/PlatformModule.*.kt`)
 
-- **androidMain**: `single { DriverFactory(context) }` — **`Context`는 `initKoin(context)`가 플랫폼 모듈 팩토리에 파라미터로 전달**(koin-android `androidContext()` 미사용 → shared androidMain에 koin-android 의존 불필요, koin-core만)·`single { createDatabase(get()) }`·`single<DeviceIdProvider> { ... }`·seam actual 바인딩(M8까지 스텁 허용).
-- **iosMain**: `single { DriverFactory() }`·`single { createDatabase(get()) }`·`single<DeviceIdProvider> { ... }`·seam 바인딩.
-- `initKoin(platformModule)`가 공통+플랫폼 모듈 조립. Android는 `initKoin(context)` 시그니처로 `Context`를 받아 플랫폼 모듈 팩토리에 파라미터로 넘긴다(koin-android `androidContext` 미사용 — shared는 koin-core만).
+- **androidMain**: 플랫폼 모듈을 **팩토리 함수 `androidPlatformModule(context: Context): Module`**로 노출(`android.content.Context`는 androidMain 소스셋에서만 참조 — commonMain 미유입)·`single { DriverFactory(context) }`·`single { createDatabase(get()) }`·`single<DeviceIdProvider> { ... }`·seam actual 바인딩(M8까지 스텁 허용). koin-android `androidContext()` 미사용 → shared androidMain은 koin-core만.
+- **iosMain**: 팩토리 함수 **`iosPlatformModule(): Module`**로 노출·`single { DriverFactory() }`·`single { createDatabase(get()) }`·`single<DeviceIdProvider> { ... }`·seam 바인딩.
+- **commonMain `initKoin`은 `Context`를 모른다(DR-2)**: `suspend fun initKoin(platformModule: Module)`가 preload(`loadBundleDbSource()`)로 `readyBundle`를 만든 뒤 `startKoin { modules(appModule(readyBundle), platformModule) }`로 공통+플랫폼 모듈을 조립한다. 플랫폼 모듈은 **각 플랫폼 소스셋의 팩토리 함수가 빌드**해 넘긴다(Android=`androidPlatformModule(context)`, iOS=`iosPlatformModule()`). `Context` 타입을 commonMain `initKoin` 시그니처에 **넣지 않는다** — 넣으면 `iosSimulatorArm64` 네이티브 컴파일에서 `Context` 미해결로 링크 실패. `Module`은 koin-core commonMain 타입이라 shared는 koin-core만으로 성립.
 
 ### 3-3. `AppDependencies` 실구현 (`di/KoinAppDependencies.kt`)
 
@@ -82,8 +82,9 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 
 - **현재 셸 상태(정정)**: 두 셸은 `Greeting`을 직접 그리지 않는다 — androidApp `MainActivity`는 `setContent { App() }`, iOS `MainViewController`는 `ComposeUIViewController { App() }`로 **commonMain `App()`을 호출**한다(`App()`이 내부에서 Koin으로 `Greeting`을 해석). M7 편집 대상은 이 **`App()` 호출**을 아래 `AppRoot(deps)`로 교체하는 것이다(셸에서 `Greeting` 심볼을 찾지 말 것).
 - **순서 불변식(DR-2)**: 셸은 **preload+`initKoin` 동기 완료 뒤에만** `AppRoot`를 렌더하고 `getKoin()`을 호출한다. 초기화를 async(코루틴 launch)로 뒤로 밀면 첫 프레임이 `getKoin()`을 기동 전에 불러 크래시하므로, 초기화는 플랫폼 진입점에서 `runBlocking`으로 **동기 완료**한다(작은 JSON·시작 1회, androidMain/iosMain 허용 — commonMain 금지). 이로써 async-init/first-frame 레이스가 코드 경로 자체에서 제거된다.
-- **androidApp `MainActivity`**: `setContent { AppRoot(KoinAppDependencies(KoinPlatform.getKoin())) }`. `Application.onCreate`에서 `initKoin(context = this@App)`를 `runBlocking`으로 동기 완료(preload 포함) — `Context`는 **`initKoin`의 파라미터로 전달**해 플랫폼 모듈이 받는다(koin-android `androidContext` 미사용, `getKoin()`도 koin-core `KoinPlatform.getKoin()` 사용). **shared는 koin-core만** 의존하고 셸도 koin-android의 `androidContext`/koin-android API를 쓰지 않는다 — 다만 `androidApp/build.gradle.kts`는 여전히 `implementation(libs.koin.android)`를 선언하며, koin-android가 koin-core를 **transitively 제공**한다(셸 gradle 좌표 교체는 §8 셸 편집 범위 밖 — M8/정리 트랙). onCreate 반환 시 그래프 기동이 끝나 있어 `getKoin()`이 안전하다.
-- **iOS `MainViewController`**: `ComposeUIViewController { AppRoot(KoinAppDependencies(KoinPlatform.getKoin())) }`. iOS 앱 시작(iOSApp.swift)이 부르는 `doInitKoin()`(Kotlin/iosMain)이 `runBlocking { preload; initKoin }`로 **동기 완료 후 반환** → 이후 ComposeUIViewController/AppRoot의 `getKoin()`이 안전(Swift async/시퀀싱 가드 불필요).
+- **androidApp `MainActivity`**: `setContent { AppRoot(KoinAppDependencies(KoinPlatform.getKoin())) }`. `Application.onCreate`에서 `runBlocking { initKoin(androidPlatformModule(context = this@App)) }`로 동기 완료(preload 포함) — `Context`는 **androidMain의 `androidPlatformModule(context)` 팩토리가 받아** 플랫폼 모듈을 빌드하고, commonMain `initKoin`엔 완성된 `Module`만 넘어간다(Context 타입 commonMain 미유입 — DR-2, koin-android `androidContext` 미사용, `getKoin()`도 koin-core `KoinPlatform.getKoin()` 사용). **shared는 koin-core만** 의존하고 셸도 koin-android의 `androidContext`/koin-android API를 쓰지 않는다 — 다만 `androidApp/build.gradle.kts`는 여전히 `implementation(libs.koin.android)`를 선언하며, koin-android가 koin-core를 **transitively 제공**한다(셸 gradle 좌표 교체는 §8 셸 편집 범위 밖 — M8/정리 트랙). onCreate 반환 시 그래프 기동이 끝나 있어 `getKoin()`이 안전하다.
+- **iOS `MainViewController`**: `ComposeUIViewController { AppRoot(KoinAppDependencies(KoinPlatform.getKoin())) }`. iOS 앱 시작(iOSApp.swift)이 부르는 `doInitKoin()`(Kotlin/iosMain)이 `fun doInitKoin() = runBlocking { initKoin(iosPlatformModule()) }`로 **동기 완료 후 반환** → 이후 ComposeUIViewController/AppRoot의 `getKoin()`이 안전(Swift async/시퀀싱 가드 불필요).
+- **Obj-C 파사드명 고정(AD-2)**: `doInitKoin`을 담는 iosMain 파일은 반드시 **`AppModule.kt`로 명명**한다 — Kotlin/Native가 파일명에서 Obj-C 파사드 클래스명을 만들고(commonMain `AppModule.kt`와 **같은 파일명**이면 같은 iOS 컴파일에서 `AppModuleKt` 파사드로 병합), 그 결과 기존 Swift 호출부 `AppModuleKt.doInitKoin()`(iOSApp.swift:8)이 **수정 없이 유지**된다. iosMain 파일을 다른 이름(예: `PlatformModule.ios.kt`)으로 두면 파사드명이 새 `…Kt`로 바뀌어 Swift가 클래스명 불일치로 컴파일 실패하는데, 이 Swift 앱 빌드는 M7 3축 green(`:shared:*`)에 없어 Xcode/실기기에서만 드러난다(3축이 못 잡는 Swift 커플링을 파일명 제약으로 봉인 — Swift 편집 불요).
 - **남겨질 `App()`(commonMain) 처리**: 셸이 더는 `App()`을 호출하지 않으므로 M0 `App()`은 (a) 제거하거나 (b) 향후 미사용 데드코드 경고를 피하려면 삭제한다 — M7은 `App()`을 **제거**한다(셸이 `AppRoot`로 직행하므로 M0 Greeting 렌더 경로는 폐기). `Greeting` 바인딩 자체는 그래프에서 더는 소비되지 않으면 함께 정리(잔존 시 §6 그래프 테스트 미영향).
 - 두 셸이 `App()` 호출 대신 `AppRoot`를 그린다 — 이 연결 자체가 **조립/링크 green으로 검증**(런타임 시각은 천장).
 
