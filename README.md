@@ -64,7 +64,7 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 
 ## 문서
 
-이 repo는 **문서 → 구현** 순서로 채워 나간다. 현재는 설계 단계다.
+이 repo는 **문서 → 구현** 순서로 채워 나간다. **M0~M8 구현 완료**(코드 레벨), 현재 **M9(검증·출시)** 단계다.
 
 | 위치 | 내용 | 상태 |
 |---|---|---|
@@ -78,16 +78,18 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 
 ## 빌드 · green 루프
 
-골격 검증 오라클(세 축 모두 통과해야 green). 버전은 [`gradle/libs.versions.toml`](gradle/libs.versions.toml) 한 곳에서 관리
+검증 오라클(**네 축 모두 통과해야 green**). 버전은 [`gradle/libs.versions.toml`](gradle/libs.versions.toml) 한 곳에서 관리
 (Kotlin 2.3.21 · CMP 1.11.1 · AGP 8.13.0 · Gradle 8.13 · SKIE 0.10.12 — [ADR-0005](docs/adr/0005-ios-interop.md)).
 
 ```bash
-./gradlew :shared:testDebugUnitTest                      # 공유 로직 단위테스트
+./gradlew :shared:testDebugUnitTest                      # 공유 로직 + Robolectric(실 Android 그래프·seam) — androidUnitTest
 ./gradlew :androidApp:assembleDebug                      # Android APK
 ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64    # iOS 프레임워크(Kotlin/Native + SKIE)
+./gradlew :shared:iosSimulatorArm64Test                  # commonTest + iosTest(네이티브 DB·NSUserDefaults) 네이티브 실행
 ```
 
-iOS 앱 시뮬레이터 실행(Apple Silicon)은 [`iosApp/README.md`](iosApp/README.md) 참조 — `xcodebuild` + `simctl`.
+iOS 앱 **시뮬레이터 실 구동**(Apple Silicon)은 M9서 실증 — `xcodebuild -scheme iosApp -sdk iphonesimulator … build` + `simctl boot/install/launch`
+(⚠️ 앱 링크에 `-lsqlite3` 필요 — SQLiter cinterop). 상세는 [실기기/시뮬 스모크 대본](docs/release/m9-device-smoke-script.md).
 
 - iOS interop은 **SKIE**로 `Shared.framework`의 Swift API를 개선한다(suspend→async/await, Flow→AsyncSequence 등).
 - ⚠️ **SKIE 0.10.12는 Kotlin 최대 2.3.21까지만** 지원 — Kotlin을 앞질러 올리지 말 것.
@@ -96,6 +98,8 @@ iOS 앱 시뮬레이터 실행(Apple Silicon)은 [`iosApp/README.md`](iosApp/REA
 
 ## 현재 상태
 
-**M0(KMP 골격) 완료 — 양 플랫폼 실제 실행 확인.** `shared + androidApp + iosApp` 골격이 서고, 공유 `Greeting`을
-Koin으로 배선해 **Android APK + iOS 시뮬레이터** 둘 다에서 공유 Compose 화면이 뜬다(green 루프 3축 통과). 다음은
-[`ROADMAP.md`](ROADMAP.md)의 **M1(모델·직렬화)** — 진행 상태 정본은 로드맵.
+**M0~M8 구현 완료 — 앱 코드 레벨 완성.** 모델·직렬화(M1)·로컬 DB(M2)·네트워킹(M3)·Repository(M4)·ViewModel(M5)·
+Compose UI 6화면(M6)·Koin 배선(M7)·통합·자산·seam actual(M8)까지 **4축 green**으로 닫혔다. 현재 **M9(검증·출시)** —
+`[AI]` 트랙 완료(199 테스트: 실 Android 그래프 완전성·네이티브 DB 왕복·seam 로직·접근성 리포트) + **iOS 시뮬 첫 기동·
+메인 앱·양 테마·반응형 DB 실증**. 남은 것 = 티어형 `[사람]` 게이트(시뮬/에뮬 탭 주행·실기기 하드웨어·코드서명·심사).
+진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md)(M9), 출시 지그·게이트는 [`docs/release/`](docs/release/).

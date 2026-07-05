@@ -1,5 +1,14 @@
 # M9 자율주행 착수 핸드오프 — 출시 준비·실기기 검증 (2026-07-05)
 
+> ## ✅ 완료 (2026-07-05) — 이 forward 계획은 실행됨. 이력 보존용.
+> 아래 `[AI]` 트랙·지그 산출은 **전부 완료**(커밋 `22e3ecf`·`b8699ef`·`b7e2d0b`, 미푸시). 4축 green 회귀 0
+> (androidUnitTest 106·iosSimulatorArm64Test 93). **현재 상태 정본 = [ROADMAP](../../ROADMAP.md)(M9)**.
+> - 신규 좌표: Robolectric + iosTest 세움(§0). Q6 sanity-check 결과 = `iosSimulatorArm64Test` 축은 M2부터 존재(스펙 "미구성"은 부정확), iosTest 소스셋만 추가.
+> - `[AI]` 끌어내리기 §3-1~§3-5 전부 green. §3-1 DB **강등 없이** 실 해석(하중 바인딩 폐쇄).
+> - `[AI→사람]` 지그 5종 = [`docs/release/`](../release/). iOS 시뮬 첫 기동·메인 앱·양 테마·반응형 DB 실증(§4 게이트 티어화).
+> - **다음 작업 핸드오프**: [Android 에뮬 스모크](m9-android-emulator-smoke-handoff.md)(다음 세션) · [티어형 스모크 대본](../release/m9-device-smoke-script.md)(Tier 1 iOS 진행 중, Tier 2·3 잔여).
+> - **아래 원문은 실행 당시 계획 기록** — 진행 상태는 여기 말고 ROADMAP에서 읽을 것.
+
 > **성격: 다음 세션이 읽고 바로 착수하는 forward 실행 계획.** 진행 상태 정본은 [ROADMAP](../../ROADMAP.md)(M9),
 > 산출 명세 정본은 [M9 슬라이스](../specs/m9-release-verification-draft.md). 이 핸드오프는 그 둘로 흡수되는
 > **실행 순서·게이트 지도**다(시점성 상태는 여기 쌓지 말고 ROADMAP에).
