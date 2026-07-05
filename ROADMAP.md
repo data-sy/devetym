@@ -10,7 +10,14 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 ## Now — 진행 중
 
-- **M8 · 통합·자산·마감 착수 준비** — M7 완료(아래 Done). 다음은 `feat/m8-...`를 `feat/m7-koin-wiring` 위에 **스택** 분기(브랜치 보존). 프로세스: M8 스펙 슬라이스 저작 → 적대 비준 → (게이트 완화) Claude eyes-open 수용 → 구현. **seam actual 실구현**(외관모드 영속·mailto·공유·앱평가·클립보드·기기ID 영속 고유화)·**아이콘/스플래시 자산**(SVG→adaptive/appiconset·런치스크린, `~/dev-etymology/docs/design/icon/` 상속)·**폰트 라이선스 고지**(OFL)·**접근성**·**에러 통합**·**온보딩 영속**·**실 셸 VM 수명주기**(ViewModelStore 도입 → M7 이월 DR5-2 실 창·VM leak 결착). **⚠️ 검증 천장 최대**: seam actual·아이콘 렌더·실 플랫폼 Koin 그래프 완전성·Xcode 빌드·실기기 시각/상호작용은 **실기기/사람 검증 필요** — 코드 완료분과 실기기 필요분을 정직히 분리 라벨.
+- **🎉 M0→M8 마일스톤 아크 전체 완료 (코드 레벨) — 2026-07-05.** M3~M8 전부 적대 비준 → eyes-open/RATIFIED → **4축 green(네이티브 실행 포함)** → 로컬 커밋(미푸시). 앱이 데이터 계층(SQLDelight)→네트워킹(Ktor 3계층 read-through)→오케스트레이터→ViewModel→Compose UI(6화면+디자인시스템)→Koin 배선·앱 셸→플랫폼 seam actual·자산·마감까지 **코드 완결**. 브랜치 m0~m8 + main 전부 보존.
+  - **⚠️ 남은 것은 전부 실기기/사람/스토어 게이트 (「코드 완료·실기기 검증 필요」)** — 아침 리뷰 체크리스트:
+    1. **실기기 실행 스모크**: 첫 기동 시 실 `androidPlatformModule`/`iosPlatformModule`이 `KoinAppDependencies` eager-touch 전 seam(actions·appearance·onboarding·device·deviceId)을 해석하는지(그래프 테스트는 테스트-스텁만 해석 — 실 바인딩 누락 시 첫 기동 `NoDefinitionFound`가 4축 green을 조용히 통과). M2 `NativeSqliteDriver` 실행 정확성(B1 잔여 절반)도 여기.
+    2. **seam 런타임 동작**: mailto 앱 열림·공유 시트·앱평가·클립보드·외관모드 실전환(§3-6 배선은 assembleDebug/link 검증이나 set→emit→재구성 전파는 실기기).
+    3. **시각/자산**: Android 런처 아이콘 렌더 모양·iOS appiconset(**Xcode 빌드** — 축 밖)·스플래시·라이선스 화면 실렌더.
+    4. **접근성 감사**(TalkBack/VoiceOver·Dynamic Type)·**코드 서명·심사·스토어 메타데이터**.
+    5. **별도 트랙**: Firebase App Instance ID(instanceId=null 유지)·VM 수명주기(ViewModelStore·M7 DR5-2 실 창)·서버 `devetym-proxy`(TS/Worker read-through 캐시).
+  - **⚠️ 공개 전략**: 브랜치 보존됨 — GitHub 공개 시 마일스톤별 PR 소급 생성(아래 브랜치 규율). push·원격 생성은 **사람 지시 대기**(자율 금지).
   - **⚠️ 정책(2026-07-05): 구현 전 사람 비준 게이트 완화** — M1·M2서 eyes-open 수용이 러버스탬프였음을 경험하고 사용자가 게이트를 제거. **적대 비준 수렴/ESCALATE → Claude가 잔여 residual을 eyes-open 수용 → 구현·4축 green까지 자율 관통**. 사람 리뷰는 **완성물 아침 리뷰**가 체크포인트(수용 residual 로그). 메모리 [milestone-human-gate-relaxed]. 나머지 안전선(push·브랜치보존·하네스 격리)은 유효.
   - **⚠️ 디자인 자산 상속**: M6 토큰·M8 아이콘/스플래시/폰트는 iOS repo(`~/dev-etymology/docs/design` + `Fonts` + `Features`)에 존재 — ROADMAP "작성 예정" 무효. 메모리 [ios-design-assets-inheritable].
 
@@ -73,6 +80,10 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 ## Done — 완료
 
+- **M8 · 통합·자산·마감 (최종 마일스톤)** — 2026-07-05 (브랜치 `feat/m8-integration-assets`, 로컬 커밋 `ed26f51`·미푸시). M7 스텁을 **seam actual**로 대체: androidMain(`AndroidAppActions`·`PrefsAppearanceStore`·`PrefsOnboardingStore`·`PrefsDeviceIdProvider`·`AndroidDeviceInfo`)·iosMain(`IosAppActions`·`UserDefaults*` 3종·`IosDeviceInfo`), 플랫폼 모듈 5종 바인딩 교체. **외관 배선**(`AppRoot`가 `appearance.mode`→`AppTheme(dark)` 소비, `darkMode=true` inert 제거)·**온보딩 영속**(`OnboardingStore` seam)·**in-app OFL 라이선스**(`LicensesScreen`+`Res.readBytes`, `showLicenses` 오버레이)·**Android 런처 아이콘**(`v2/icon.svg`→rsvg 15 PNG+adaptive+colors+manifest, 커밋 PNG). **green 4축**: `:shared:testDebugUnitTest`(97, KoinGraph 온보딩 포함) · `:androidApp:assembleDebug`(**APK ic_launcher 17엔트리 패키징 실증**) · `:shared:linkDebugFrameworkIosSimulatorArm64`(iOS seams UIKit/Foundation 링크) · **`:shared:iosSimulatorArm64Test`(83, 회귀 0)**. 신규 좌표 0(플랫폼 API만). 참조: [M8 슬라이스](docs/specs/m8-integration-assets-draft.md).
+  - **비준 RATIFIED(4R 수렴)**. §7 판정: iOS share=최소 스텁·평가=스토어 url·아이콘=커밋 PNG·Firebase=null 유지·VM수명주기=범위 밖·라이선스=in-app. **정정 반영**: iOS `NSUserDefaults` objectForKey null 체크로 외관 부재시 다크(2) 보장(integerForKey 0 반환 함정)·`UIPasteboard.string` 세터·전 actual 5종 실 모듈 바인딩(그래프 마스킹 방어)·DR-2 carry-forward(라이선스 네비 슬롯) `showLicenses` 오버레이로 마감.
+  - **⚠️ 검증 천장(최대)**: seam 런타임 동작·아이콘 시각 충실도·iOS appiconset(Xcode)·접근성·Firebase·실 플랫폼 Koin 그래프 완전성·실기기 시각/상호작용·코드서명·심사는 4축이 보증 안 함 → 「코드 완료·실기기 검증 필요」(Now 아침 체크리스트).
+  - 🔗 캐시: seam actual이 로컬-first 상태를 플랫폼 저장소(SharedPreferences/NSUserDefaults)에 영속. 서버·프록시는 별도 트랙. 〔캐시 트랙 M8 행위〕
 - **M7 · Koin 배선 + 앱 셸 통합** — 2026-07-05 (브랜치 `feat/m7-koin-wiring`, 로컬 커밋·미푸시). 전 계층을 Koin 그래프로 조립: `di/AppModule`(`appModule(readyBundle)` 팩토리·`suspend initKoin(platformModule)`·`TermRepository`=`single`)·플랫폼 팩토리(`androidPlatformModule(context)`/`iosPlatformModule()`)·`KoinAppDependencies`·`DeviceIdProvider`·`epochMillis` expect/actual·`appWriteScope`. **앱 셸이 처음으로 `AppRoot`를 그린다**(M0 `App()` 삭제): `MainActivity`·`MainViewController`·`DevEtymApp`(`runBlocking { initKoin(...) }`). **green 4축**: `:shared:testDebugUnitTest`(97, KoinGraph 2+M7Concurrency 3) · `:androidApp:assembleDebug` · `:shared:linkDebugFrameworkIosSimulatorArm64` · **`:shared:iosSimulatorArm64Test`(83, M7Concurrency 3 네이티브)**. iosMain `AppModule.kt` facade 병합(`AppModuleKt.doInitKoin()` Swift 무편집)·`iosPlatformModule`·`epochMillis` ios actual 링크 실증. 참조: [M7 슬라이스](docs/specs/m7-koin-wiring-draft.md).
   - **⚠️ 검증 천장(최대)**: green = 컴파일·조립·링크 + 그래프 해석(공통+테스트-플랫폼 스텁, eager touch) + DR-2/DR5-2 순수 실행. **실 androidMain/iosMain 플랫폼 Koin 바인딩 완전성·Xcode 빌드·seam actual·런타임 시각/상호작용은 보증 안 함 → 실기기 이월**. 비준 ESCALATE(6R) 잔여 Blocker DR-1(실 플랫폼 그래프 완전성 4축 결착 불가)=천장 정직 수용.
   - **M4/M5 이월 처리**: **DR-2 단일-writer**=`TermRepositoryImpl` 정규화 키 Mutex(맵-가드 coroutines Mutex·비재진입 데드락 부재) + `single` 배선 **구조 담보**(진짜 병렬 강제는 실기기 이월·자칭 안 함). **DR5-2**=`DetailViewModel` 선택적 `writeScope` **취소 내성 하드닝**('닫음' 철회 — 실 셸 plain `remember` VM leak·DR5-2 실 창은 M8 ViewModelStore 이월). seam·deviceId·온보딩=스텁/in-memory(actual M8).
