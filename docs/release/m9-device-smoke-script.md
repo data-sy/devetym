@@ -33,16 +33,18 @@ xcrun simctl install "$SIM" iosApp/build/dd/Build/Products/Debug-iphonesimulator
 xcrun simctl launch "$SIM" com.robin.devetym
 xcrun simctl io "$SIM" screenshot shot.png     # 임의 시점 캡처
 ```
-시뮬로 닫는 항목(사람이 시뮬 화면에서 탭·확인):
-- ☐ 온보딩 2단계 → 완료 → 재기동 시 스킵(**영속 게이트** 실동작)
-- ☐ 첫 기동 후 **메인 앱 다크 배경**(§3-3(v) 시각 확인 — Tier0서 온보딩은 이미 확인)
-- ☐ 검색: 번들 히트(`mutex`)·alias(`Arne Andersson tree`→`aa-tree`)·미스→AI 경로
-- ☐ 상세→북마크 토글→북마크 탭 즉시 반영→**재기동 후 유지(실 디스크 SQLite 영속, B1 디스크 잔여도 시뮬서 확인)**
-- ☐ 히스토리 누적·삭제
-- ☐ 외관 3모드 실전환(재구성이 색 바꾸는가)
-- ☐ 라이선스 화면 OFL 실스크롤 · 스플래시
+**✅ AI가 상태 주입으로 자율 확인(2026-07-05, 탭 불요)** — `simctl spawn defaults write`·컨테이너 DB `sqlite3` 주입:
+- ✅ **온보딩 영속 게이트** — `onboarding_done=true` 주입 후 실행 → 온보딩 스킵, 메인 앱 진입(실 `UserDefaultsOnboardingStore` 읽음)
+- ✅ **메인 앱 다크 렌더** — DevEtym 세리프 헤더·하단 4탭 네비·다크 Scaffold 배경(#0A0A0A)
+- ✅ **외관 3모드 렌더** — `appearance_mode=1` 주입 → **라이트 테마 실렌더**(흰 배경·다크 텍스트), `=2` → 다크. §3-3(ii) `resolveDarkMode`가 실 iOS 런타임서 시각 렌더로 확인
+- ✅ **실 디스크 SQLite + 반응형 쿼리→UI** — 컨테이너 DB에 searchHistory 3건 주입 → "최근 검색" FlowChip(mutex·daemon·kernel) **searchedAt DESC 렌더**. 실 `NativeSqliteDriver` 디스크 읽기 + `.asFlow()`→StateFlow→Compose 파이프라인 실동작(**B1 디스크 잔여 시뮬 폐쇄**)
+
+**☐ 입력 주입 필요(탭/타이핑) — 사람이 라이브 시뮬서 탭 or idb/XCUITest 도입 시 자동화**(⚠️ Xcode 26 신규 sim은 idb 호환 미확인):
+- ☐ 검색 타이핑: 번들 히트(`mutex`)·alias(`Arne Andersson tree`→`aa-tree`)·미스→AI 경로 — ※ 로직은 199 유닛테스트가 이미 커버, 시뮬은 UI 배선 확인
+- ☐ 상세→북마크 토글→북마크 탭 즉시 반영→재기동 유지(주입한 북마크 term 1건은 DB에 존재 — 북마크 탭 진입만 탭 필요)
+- ☐ 히스토리 탭·삭제 · 설정 탭 외관 토글 실조작 · 라이선스 실스크롤
 - ☐ 아이콘: 시뮬 홈스크린(스프링보드) 렌더 — [아이콘 시트](m9-icon-render-sheet.html) 대조
-- ☐ VoiceOver: 시뮬 Accessibility Inspector로 라벨 훑기([접근성 대본](m9-accessibility-audit-script.md) B — 실기기보다 약하나 대부분 커버)
+- ☐ VoiceOver: 시뮬 Accessibility Inspector([접근성 대본](m9-accessibility-audit-script.md) B)
 
 ### Android 에뮬레이터 — 1회 셋업 후 동일 (현재 미설치)
 ```bash
