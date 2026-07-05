@@ -86,6 +86,7 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 - **[UX] 클립보드 복사 액션 UI 배선** — `copyToClipboard` seam이 양 플랫폼에 구현·유닛테스트돼 있으나 호출하는 UI 버튼이 없음(dead code). 상세 어원 블록에 "복사" 어포던스 추가 검토(M9 Android 에뮬 스모크서 발견).
 - **[Android] 스플래시 화면 배선** — `androidApp`에 splash theme 없음(기본 런처). iOS/디자인 자산과 정합되는 Android 12+ `windowSplashScreen` 또는 core-splashscreen 도입 검토(M8 스플래시 항목의 Android 미완분).
 - **[CI/Test] 셸 배선 회귀 가드** — manifest `android:name` 클래스 실존/기동을 CI가 검증 못 해(4축 green이 `ClassNotFoundException` 첫 기동 크래시를 조용히 통과, M9서 실측 발견). Robolectric로 `MainActivity`/`DevEtymApp` 인스턴스화하는 스모크 테스트 or manifest-vs-소스 정합 체크 검토 — iOS `-lsqlite3` 링크 갭과 동류(실행 오라클 부재).
+- **[Ops] `~/dev-etymology` 이관 스윕 후 폐기** — `dev-etymology`는 원본 네이티브 iOS 앱(`DevEtym/` Xcode 프로젝트) + 문서·스크립트·CI가 든 **병렬 repo**이고, devetym(KMP 리라이트)이 여기서 자산을 상속받아왔다. **이관 완료 시 폐기 예정**이므로, 지우기 전 잔여 이관 대상 전수 확인 필요. 훑을 후보: **`DevEtym/`**(네이티브 iOS — Features·Services·Utils·Assets.xcassets·Resources 중 KMP `iosApp`에 아직 안 넘어온 로직/자산), **`docs/`**(ai-quality·db-expand·design[Fonts 포함]·launch-prep·product·specs·adr 중 devetym에 없는 정본), **`Scripts/`**(db-expand·prompt-probe 파이프라인), `.github/workflows`·`.claude/`(agents·commands)·`site`·`LICENSE`·`README`. ⚠️ 일부는 이미 개별 백로그에 있음([Docs] AI 품질 문서 이관·db-expand 파이프라인 이관) → 중복 말고 연결. specs·ADR 등 데이터/거버넌스면 이관은 승인 게이트(자동수정 금지). 산출물 = 파일별 이관/폐기 결정 원장. 〔선례: 아이콘 파생 SVG 4종 → `docs/design/icon/` 이관 완료(2026-07-05)〕
 - (아이디어 추가 시 여기로)
 
 ---
