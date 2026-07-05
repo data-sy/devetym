@@ -1,5 +1,6 @@
 package com.robin.devetym.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,7 +34,9 @@ fun OnboardingContent(page: Int, onNext: () -> Unit, onComplete: (Boolean) -> Un
     val colors = AppScheme.colors
     val type = AppScheme.type
     Column(
-        Modifier.fillMaxSize().padding(32.dp),
+        // M9(시뮬 스모크 발견): 온보딩은 Scaffold 이전 early-return이라 테마 배경이 안 칠해져
+        // 다크 기본인데 흰 배경 + 밝은 text 토큰이 저대비로 뜬다 → 최상위에서 bg 명시 칠.
+        Modifier.fillMaxSize().background(colors.bg).padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {

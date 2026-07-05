@@ -1,57 +1,84 @@
-# M9 실기기 스모크 대본 (2026-07-05)
+# M9 스모크 대본 — 시뮬레이터/에뮬레이터 우선 (2026-07-05)
 
-> **성격: `[AI→사람]` 대본 → `[사람]` 주행.** ROADMAP 아침 체크리스트를 실기기 주행 순서로 구체화.
-> **이게 M9 DoD의 핵심 사람 게이트.** Android 실기기/에뮬(런북 `../../android-studio-cmp-runbook.md` 경로) +
-> iOS 시뮬/실기기 각 1회 주행·컨펌. `[AI]` green이 **보증 못 하는** 런타임/실렌더/OS 핸드오프를 여기서 닫는다.
+> **성격: 티어형 게이트 지도.** 사용자가 **실기기 없이 시뮬레이터/에뮬레이터로** 최대한 닫는 방향으로 재구성.
+> 이 Mac에는 **Xcode 26.6 + iPhone 시뮬 다수**가 있어 iOS는 즉시 구동 가능(아래 실증). Android 에뮬은 1회 셋업 필요.
 >
-> **왜 필요한가**: `[AI]`가 닫은 것 = 그래프 해석 로직·DB 쿼리 정확성·seam 구성 로직·대비비 계산. 닫지 **못한** 것 =
-> 실 첫 기동·실제 앱 열림·픽셀 전환·홈스크린 렌더. 아래는 그 잔여만 훑는다(거짓 green 금지).
+> **왜 재구성했나**: `[사람]` 게이트의 대부분(첫 기동·코어 플로우·외관 전환·아이콘 렌더·온보딩·라이선스)은 **실
+> 하드웨어가 아니라 앱 런타임**이 오라클이다 → **시뮬/에뮬로 닫힌다**. 진짜 실기기 전용은 **하드웨어 감각**
+> (실제 메일앱 전송·앱간 클립보드·실 DPI 아이콘 선명도·햅틱)과 **외부 대면**(코드서명·심사)뿐이다.
 
-## 0. 사전 (각 플랫폼)
-- Android: 런북대로 에뮬레이터 or 실기기 `:androidApp:installDebug`(또는 release 서명 후 설치)
-- iOS: Xcode로 시뮬레이터/실기기 실행(SKIE 프레임워크 링크 green 전제)
+---
 
-## 1. 첫 기동 — 실 플랫폼 Koin 그래프 (⚠️ 최우선)
-`[AI]` §3-1이 **Android** 실 그래프를 JVM으로 닫았으나 **iOS 실 그래프(`iosPlatformModule`)는 실기기 첫 기동이 유일한 오라클**.
-- ☐ **Android 첫 기동**: 크래시 없이 검색 화면 도달 (전 seam 실 해석 — `NoDefinitionFound` 없음)
-- ☐ **iOS 첫 기동**: 크래시 없이 도달 — **이 항목이 §3-1 iOS 잔여(실-그래프 완전성)를 커버**
-- ☐ **iOS 신규 설치 외관 = 다크** (§3-3(v) `[AI]`가 로직은 닫았으나 실 첫 실행 확인) — 시스템이 아니라 다크로 뜨는가
+## Tier 0 · `[AI]` 이미 닫힘 (자동, 사람 0)
+- 4축 green(199 테스트) — 그래프 해석 로직·DB 쿼리 정확성·seam 구성·대비비·iOS 키부재 다크.
+- **✅ iOS 시뮬 첫 기동 실증(2026-07-05)**: 실 앱이 iPhone 16 시뮬에서 크래시 없이 부팅, **실 `iosPlatformModule`
+  그래프 해석**·온보딩 렌더 확인(스크린샷). §3-1 iOS 잔여(실-그래프 완전성)의 **첫 기동 부분이 시뮬로 닫힘**.
+- **🐛 시뮬이 잡은 실 결함 2건(수정 완료)**:
+  1. **iOS 앱 링크 불가** — SQLiter(네이티브 DB) cinterop 래퍼가 sqlite3 미링크로 undefined. 4축(프레임워크
+     link)은 통과하나 Xcode 앱 빌드는 실패. → `project.yml`/`pbxproj` OTHER_LDFLAGS에 `-lsqlite3` 추가.
+     **M0~M8이 Xcode 앱 빌드를 한 번도 안 돌려 미발견** — 시뮬 게이트의 첫 수확.
+  2. **온보딩 저대비** — 온보딩이 Scaffold 이전 early-return이라 테마 배경 미도색 → 다크 기본인데 흰 배경 +
+     밝은 text 토큰이 거의 안 보임. → `OnboardingScreen`에 `.background(colors.bg)` 추가. 다크 렌더 확인.
 
-## 2. 코어 플로우 (검색→상세→북마크→히스토리)
-- ☐ 검색: 번들 히트 용어(예 `mutex`) → 즉시 결과 / alias 검색(예 `Arne Andersson tree`→`aa-tree`) 성립
-- ☐ 검색: 번들 미스 용어 → AI 생성 경로(네트워크) or 미검색 처리, 크래시 없음
-- ☐ 상세: 어원·명명 이유·카테고리 표시, 뒤로 정상
-- ☐ 북마크 토글 → 북마크 탭에 즉시 반영(반응형 Flow) → 앱 재시작 후에도 유지(**실 DB 영속**)
-- ☐ 히스토리: 검색 기록 누적·최신순, 삭제 동작
-- ☐ **B1 실기기 잔여**: 실 디스크 DB(인메모리 아님)에서 정렬/LIMIT/영속 정상 (§3-2가 쿼리 정확성은 닫음 — 디스크·로케일만)
+## Tier 1 · `[시뮬/에뮬]` — 이 Mac서 구동 가능 (AI 빌드·기동, 사람 탭)
+> AI가 빌드·부팅·스크린샷까지 자동화. **인터랙션(탭·입력)은 사람이 시뮬 위에서** 하거나 XCUITest/idb 도입 시 자동화.
 
-## 3. 외관 3모드
-- ☐ 설정에서 라이트/다크/시스템 전환 → **화면 색이 실제로 바뀌는가**(§3-3 매핑 로직은 `[AI]` green, 실 재구성 전환은 여기)
-- ☐ 시스템 모드에서 OS 다크/라이트 변경 따라가는가
-- ☐ 전환 시 깜빡임·잔상·크래시 없음
+### iOS 시뮬레이터 — 재현 절차 (검증됨)
+```bash
+SIM=$(xcrun simctl list devices available | grep "iPhone 16 (" | grep -o "[0-9A-F-]\{36\}" | head -1)
+xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug \
+  -sdk iphonesimulator -destination "id=$SIM" -derivedDataPath iosApp/build/dd build
+xcrun simctl boot "$SIM"; open -a Simulator
+xcrun simctl install "$SIM" iosApp/build/dd/Build/Products/Debug-iphonesimulator/iosApp.app
+xcrun simctl launch "$SIM" com.robin.devetym
+xcrun simctl io "$SIM" screenshot shot.png     # 임의 시점 캡처
+```
+시뮬로 닫는 항목(사람이 시뮬 화면에서 탭·확인):
+- ☐ 온보딩 2단계 → 완료 → 재기동 시 스킵(**영속 게이트** 실동작)
+- ☐ 첫 기동 후 **메인 앱 다크 배경**(§3-3(v) 시각 확인 — Tier0서 온보딩은 이미 확인)
+- ☐ 검색: 번들 히트(`mutex`)·alias(`Arne Andersson tree`→`aa-tree`)·미스→AI 경로
+- ☐ 상세→북마크 토글→북마크 탭 즉시 반영→**재기동 후 유지(실 디스크 SQLite 영속, B1 디스크 잔여도 시뮬서 확인)**
+- ☐ 히스토리 누적·삭제
+- ☐ 외관 3모드 실전환(재구성이 색 바꾸는가)
+- ☐ 라이선스 화면 OFL 실스크롤 · 스플래시
+- ☐ 아이콘: 시뮬 홈스크린(스프링보드) 렌더 — [아이콘 시트](m9-icon-render-sheet.html) 대조
+- ☐ VoiceOver: 시뮬 Accessibility Inspector로 라벨 훑기([접근성 대본](m9-accessibility-audit-script.md) B — 실기기보다 약하나 대부분 커버)
 
-## 4. seam 실동작 (OS 핸드오프 — `[AI]`가 구성만 닫은 것)
-- ☐ 메일: 액션 → **메일앱 실제 열림**(mailto, 제목/본문 채워짐) — Android ACTION_SENDTO / iOS mailto
-- ☐ 공유: 액션 → **공유 시트 표시**(Android chooser / iOS UIActivityViewController)
-  - ⚠️ **iOS 공유는 현재 no-op**(`IosAppActions.share` 최소 구현, presenting VC 미구현) → iOS는 "미동작" 확인이 정상. 실동작 필요 시 백로그
-- ☐ 클립보드: 복사 → 다른 앱에 **실제 붙여넣기** 됨 (Android 값 확인 `[AI]` green / iOS `UIPasteboard` 세터는 링크만 → 실기기서 첫 실측)
-- ☐ 평가: 액션 → 스토어 페이지/리뷰 프롬프트 (폴백 URL 열림)
+### Android 에뮬레이터 — 1회 셋업 후 동일 (현재 미설치)
+```bash
+# emulator 패키지 + 시스템이미지 설치(약 1GB 다운로드), AVD 생성
+sdkmanager "emulator" "system-images;android-36;google_apis;arm64-v8a" "platforms;android-36"
+avdmanager create avd -n devetym -k "system-images;android-36;google_apis;arm64-v8a"
+emulator -avd devetym -no-snapshot -no-window &   # 헤드리스 부팅
+adb wait-for-device
+./gradlew :androidApp:installDebug
+adb shell am start -n com.robin.devetym/.MainActivity
+adb exec-out screencap -p > shot.png
+adb logcat -d | grep -iE "devetym|AndroidRuntime|FATAL"   # 첫 기동 크래시/NoDefinitionFound 확인
+```
+> ⚠️ 에뮬 미설치 상태 — 셋업 원하면 지시. iOS 시뮬로 이미 크로스플랫폼 공통 로직(shared)은 대부분 커버되므로
+> Android 에뮬은 Android **플랫폼 seam actual**(Intent 실 열림·PrefsStore) 실동작 확인이 주 가치(§3-1 Android는
+> 이미 Robolectric JVM으로 그래프 닫음).
 
-## 5. 온보딩·라이선스·자산
-- ☐ 온보딩: 최초 1회만 표시 → 완료 후 재시작 시 스킵(**영속 게이트** 실동작)
-- ☐ 라이선스: 화면 진입 → OFL 3종 텍스트 **실제 스크롤**(§3-4 로드는 `[AI]` green, 렌더/스크롤은 여기)
-- ☐ 아이콘: **홈스크린 실렌더** — [아이콘 시트](m9-icon-render-sheet.html) 예상과 일치(크롭·배경 대비)
-- ☐ 스플래시/런치스크린 실표시
-- ☐ iOS appiconset(Xcode 빌드 산물) 홈스크린 정상
+## Tier 2 · `[사람]` 실기기 전용 — 하드웨어 감각 (시뮬로 대체 불가)
+- ☐ **메일앱 실제 전송**(시뮬엔 메일 계정 없음) · **앱간 클립보드 실붙여넣기 체감**
+- ☐ iOS 공유시트 실동작 — ⚠️ 현재 `IosAppActions.share`는 no-op(백로그) → iOS는 "미동작"이 정상
+- ☐ **실 DPI 아이콘 선명도**·홈스크린 실렌더(시뮬은 근사)
+- ☐ 햅틱·실 제스처 나uance
+- ☐ TalkBack/VoiceOver **실기기 제스처 주행**(시뮬 Inspector로 상당부분 선검증 후 잔여만)
+- ☐ Dynamic Type 실반영(시뮬로도 상당부분 가능)
 
-## 6. 접근성 (별도 대본 연계)
-- ☐ [접근성 감사 대본](m9-accessibility-audit-script.md) B-1~B-5 주행 완료
-- ☐ TalkBack/VoiceOver 실주행 · Dynamic Type 최대
+## Tier 3 · `[사람/외부]` — 환원 불가 (자율 금지, 지시 대기)
+- ☐ **코드 서명**(실 keystore/인증서 — 시뮬 빌드는 서명 불요이나 배포는 필수) — [서명 가이드](m9-signing-upload-guide.md)
+- ☐ iOS appiconset(Xcode 빌드 산물 — 상속 PNG 배치)
+- ☐ **스토어 심사 제출·게시**(§7 Q5 — 사람 지시 대기)
 
-## 7. 게이트 판정
-- ☐ 1~6 전부 통과 = **M9 실기기 스모크 게이트 통과**
-- ☐ 통과 후에만 [서명·업로드 가이드](m9-signing-upload-guide.md)로 진행
-- ☐ 게시는 **사람 지시 대기**(§7 Q5 — 자율 금지)
+---
 
-> **명시적 비-보증**: 위 항목 중 하나라도 실패면 M9 미완. `[AI]` green(199 테스트)은 실기기 동작·심사 통과를
-> 보증하지 않는다 — 이 대본 통과가 M9의 종결 게이트다.
+## 판정
+- **Tier 0 완료**(자동 + iOS 시뮬 첫 기동 실증).
+- **Tier 1** = 사용자가 시뮬/에뮬서 탭 주행(iOS 즉시 / Android 셋업 후). 이게 **실기기 없이 M9 스모크의 실질 폐쇄**.
+- **Tier 2·3**만 실기기/외부 잔여 — Tier 2는 하드웨어 확보 시, Tier 3는 게시 지시 시.
+
+> **거짓 green 금지**: 시뮬은 실 하드웨어 감각(Tier 2)·외부 심사(Tier 3)를 보증하지 않는다. 그러나 앱 **런타임**
+> (Tier 0·1)은 시뮬이 정직하게 닫는다 — 실제로 M8까지 놓친 링크 결함·저대비 버그를 시뮬이 잡았다.
