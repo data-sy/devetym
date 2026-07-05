@@ -46,7 +46,16 @@ xcrun simctl io "$SIM" screenshot shot.png     # 임의 시점 캡처
 - ☐ 아이콘: 시뮬 홈스크린(스프링보드) 렌더 — [아이콘 시트](m9-icon-render-sheet.html) 대조
 - ☐ VoiceOver: 시뮬 Accessibility Inspector([접근성 대본](m9-accessibility-audit-script.md) B)
 
-### Android 에뮬레이터 — 1회 셋업 후 동일 (현재 미설치)
+### Android 에뮬레이터 — ✅ Tier 1 완주 (2026-07-05, adb 자율 주행)
+> **✅ 셋업·주행 완료** — `system-images;android-36;google_apis;arm64-v8a` AVD 부팅 후 adb `input tap/text`로 전 플로우 자율 주행.
+> **🐛 첫 기동 크래시 포착·수정**(iOS `-lsqlite3`의 Android 판): `AndroidManifest`의 `.DevEtymApp`/`.MainActivity`가 실 클래스
+> 패키지(`com.robin.devetym.android`)를 못 가리켜 `ClassNotFoundException` 즉사 → `.android.*`로 수정. **assembleDebug·Robolectric은
+> 그래프 모듈만 검증해 셸 배선 미검출** — 실 에뮬 기동이 최종 오라클. 주행 green: 온보딩 2단계 다크·영속 · 검색 번들/alias/미스→AI
+> 실 프록시 · 북마크·히스토리 영속(실 디스크 SQLite) · seam actual(메일 `ACTION_SENDTO`→Gmail·공유 chooser·평가 Play URL) ·
+> 외관 3모드(시스템 OS 추종 실증) · 라이선스 OFL 스크롤 · adaptive 아이콘(`#2E5D3A`). **갭 2건**(백로그): 클립보드 dead-seam·스플래시 미배선.
+> 정본 = [ROADMAP](../../ROADMAP.md)(M9). 아래 재현 절차는 이력·재실행용.
+
+원 셋업(재현):
 ```bash
 # emulator 패키지 + 시스템이미지 설치(약 1GB 다운로드), AVD 생성
 sdkmanager "emulator" "system-images;android-36;google_apis;arm64-v8a" "platforms;android-36"
@@ -79,7 +88,7 @@ adb logcat -d | grep -iE "devetym|AndroidRuntime|FATAL"   # 첫 기동 크래시
 
 ## 판정
 - **Tier 0 완료**(자동 + iOS 시뮬 첫 기동 실증).
-- **Tier 1** = 사용자가 시뮬/에뮬서 탭 주행(iOS 즉시 / Android 셋업 후). 이게 **실기기 없이 M9 스모크의 실질 폐쇄**.
+- **Tier 1 Android ✅ 완주**(adb 자율 주행, 크래시 1건 수정) · **Tier 1 iOS** = 입력 주입분(라이브 탭/idb)만 잔여. 시뮬/에뮬이 **실기기 없이 M9 스모크의 실질 폐쇄** + 4축이 못 잡은 **첫 기동 크래시 2건**(iOS `-lsqlite3`·Android manifest 클래스 경로) 포착.
 - **Tier 2·3**만 실기기/외부 잔여 — Tier 2는 하드웨어 확보 시, Tier 3는 게시 지시 시.
 
 > **거짓 green 금지**: 시뮬은 실 하드웨어 감각(Tier 2)·외부 심사(Tier 3)를 보증하지 않는다. 그러나 앱 **런타임**

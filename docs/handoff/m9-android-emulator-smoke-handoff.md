@@ -1,5 +1,15 @@
 # M9 다음 세션 핸드오프 — Android 에뮬레이터 스모크 (Tier 1 Android) (2026-07-05)
 
+> ## ✅ 완료 (2026-07-05) — 이 인계의 작업은 끝났다
+> 이 핸드오프의 청크는 **주행 완료**. 결과 정본은 [ROADMAP](../../ROADMAP.md)(M9 "Tier 1 Android 에뮬 스모크 완주" 불릿).
+> 요약: AVD 셋업→부팅→`installDebug`→adb 탭·타이핑으로 전 플로우 자율 주행. **첫 기동 크래시 1건 포착·수정**
+> (`AndroidManifest`의 `.DevEtymApp`/`.MainActivity`가 `com.robin.devetym.android` 패키지를 못 가리켜 `ClassNotFoundException`
+> 즉사 → `.android.*`로 수정, 커밋 diff). 검색 3경로·북마크/히스토리 영속·seam actual(메일/공유/평가)·외관 3모드·라이선스·
+> 아이콘 전부 green. **갭 2건은 백로그로 이관**: 클립보드 dead-seam·Android 스플래시 미배선(ROADMAP 백로그 참조).
+> **잔여는 실기기/외부만**(하드웨어 감각·서명·심사). 아래 원 계획은 이력 보존용.
+>
+> ---
+>
 > **성격: 다음 세션이 읽고 바로 착수하는 forward 실행 계획.** 진행 상태 정본 = [ROADMAP](../../ROADMAP.md)(M9),
 > 게이트 지도 = [티어형 스모크 대본](../release/m9-device-smoke-script.md). 이 핸드오프는 **Android 에뮬 셋업+주행**
 > 한 청크만 담는다(iOS 시뮬 첫 기동·Tier 1 iOS는 이전 세션서 진행).

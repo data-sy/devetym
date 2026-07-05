@@ -101,5 +101,8 @@ iOS 앱 **시뮬레이터 실 구동**(Apple Silicon)은 M9서 실증 — `xcode
 **M0~M8 구현 완료 — 앱 코드 레벨 완성.** 모델·직렬화(M1)·로컬 DB(M2)·네트워킹(M3)·Repository(M4)·ViewModel(M5)·
 Compose UI 6화면(M6)·Koin 배선(M7)·통합·자산·seam actual(M8)까지 **4축 green**으로 닫혔다. 현재 **M9(검증·출시)** —
 `[AI]` 트랙 완료(199 테스트: 실 Android 그래프 완전성·네이티브 DB 왕복·seam 로직·접근성 리포트) + **iOS 시뮬 첫 기동·
-메인 앱·양 테마·반응형 DB 실증**. 남은 것 = 티어형 `[사람]` 게이트(시뮬/에뮬 탭 주행·실기기 하드웨어·코드서명·심사).
-진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md)(M9), 출시 지그·게이트는 [`docs/release/`](docs/release/).
+메인 앱·양 테마·반응형 DB 실증** + **Android 에뮬 Tier 1 스모크 완주**(adb 탭·타이핑 자율 주행 — 검색 3경로·북마크/히스토리 영속·
+seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 green이 못 잡은 실 첫 기동 크래시 2건 포착·수정**: iOS 앱 링크
+`-lsqlite3` 누락 + **Android manifest 클래스 경로 오류**(`.DevEtymApp`→`.android.DevEtymApp`, `ClassNotFoundException` 즉사).
+남은 것 = 티어형 게이트: **[시뮬]** iOS 입력 주입분(라이브 탭/idb) · **[실기기]** 하드웨어 감각(실 메일 전송·클립보드·DPI·햅틱·
+TalkBack/VoiceOver) · **[외부]** 코드서명·심사·게시. 진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md)(M9), 출시 지그·게이트는 [`docs/release/`](docs/release/).
