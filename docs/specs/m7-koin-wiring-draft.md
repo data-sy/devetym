@@ -14,7 +14,7 @@
 
 지금까지 각 계층은 인터페이스·생성자 주입 형태로만 서 있고 **연결돼 있지 않다**(앱 셸은 여전히 M0 `App()`을 그린다 — `App()`은 commonMain `ui/App.kt`에서 Koin으로 `Greeting`을 해석해 텍스트만 렌더). M7은 **Koin 그래프**로 전 계층(번들·네트워크·로컬·오케스트레이터·분석·seam·ViewModel)을 조립하고, **앱 셸**(`MainActivity`/iOS `MainViewController`)이 현재의 `App()` 호출 대신 `AppRoot(deps)`를 그리도록 연결한다. 이로써 앱이 **처음으로 실행 가능한 전체**가 된다(런타임 시각 검증은 천장).
 
-동시에 **M4/M5/M6가 이월한 두 결착을 닫는다**: **DR-2 단일-writer 강제**(정규화 키 Mutex + `TermRepository`를 `single`로 배선하는 게이트)와 **DR5-2 쓰기 내구성**(`toggleBookmark`가 화면 이탈에도 유실되지 않게 앱 스코프 쓰기).
+동시에 **M4/M5/M6가 이월한 두 항목을 다룬다**: **DR-2 단일-writer**(정규화 키 Mutex + `TermRepository`를 `single`로 배선하는 게이트)는 **구조로만 담보**하고 진짜 병렬 강제(맵-가드 원자성의 실행-검증)는 실기기까지 미검증으로 남긴다(OQ-2 잔여, §3-5·§7-2 — '닫음' 자칭 금지), **DR5-2 쓰기 내구성**(`toggleBookmark`가 화면 이탈에도 유실되지 않게 앱 스코프 쓰기)은 판별 네이티브 테스트(§6)로 닫는다.
 
 ## 2. 스코프
 
@@ -25,7 +25,7 @@
 - **`AppDependencies` 실구현**(`KoinAppDependencies`): Koin에서 VM·seam 해석. `AppRoot(deps)` 소비.
 - **앱 셸 연결**: `MainActivity.setContent { AppRoot(deps) }` + iOS `MainViewController = ComposeUIViewController { AppRoot(deps) }`. `initKoin`에 플랫폼 모듈 추가.
 - **온보딩 게이트**: `AppRoot`의 `onboarded`를 seam(`AppearanceStore`류의 온보딩 플래그 저장)으로 승격하거나 M8까지 in-memory 유지 — 최소 게이트만(§7).
-- **DR-2 마감**: `TermRepositoryImpl`에 정규화 키 Mutex(fetch/refresh/toggleBookmark 전 구간 직렬화) + Koin `single` 배선으로 **모든 소비자 동일 인스턴스**. 게이트 테스트(같은 인스턴스 해석)·동시성 스모크.
+- **DR-2 구조 담보**: `TermRepositoryImpl`에 정규화 키 Mutex(fetch/refresh/toggleBookmark 전 구간 직렬화) + Koin `single` 배선으로 **모든 소비자 동일 인스턴스**. 게이트 테스트(같은 인스턴스 해석)·동시성 스모크. 진짜 병렬 강제는 자칭 안 함(OQ-2 잔여).
 - **DR5-2 마감**: `DetailViewModel`이 선택적 `writeScope`(앱 스코프)로 `toggleBookmark`를 launch — 화면 이탈(`onCleared`)에도 쓰기가 취소되지 않는다. 기본값은 M5 동작 보존(테스트 무영향).
 - **그래프 검증 테스트**(`androidUnitTest`): 테스트 Koin(실 공통 모듈 + 테스트 플랫폼 모듈: in-memory JDBC 드라이버·MockEngine)으로 `TermRepository`·VM·`AppDependencies` 해석 + **단일-scope 실측**(동일 `TermRepository` 인스턴스). + DR-2 동시성·DR5-2 내구성 테스트(네이티브 포함 가능한 것은 commonTest).
 
@@ -82,12 +82,12 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 
 - **현재 셸 상태(정정)**: 두 셸은 `Greeting`을 직접 그리지 않는다 — androidApp `MainActivity`는 `setContent { App() }`, iOS `MainViewController`는 `ComposeUIViewController { App() }`로 **commonMain `App()`을 호출**한다(`App()`이 내부에서 Koin으로 `Greeting`을 해석). M7 편집 대상은 이 **`App()` 호출**을 아래 `AppRoot(deps)`로 교체하는 것이다(셸에서 `Greeting` 심볼을 찾지 말 것).
 - **순서 불변식(DR-2)**: 셸은 **preload+`initKoin` 동기 완료 뒤에만** `AppRoot`를 렌더하고 `getKoin()`을 호출한다. 초기화를 async(코루틴 launch)로 뒤로 밀면 첫 프레임이 `getKoin()`을 기동 전에 불러 크래시하므로, 초기화는 플랫폼 진입점에서 `runBlocking`으로 **동기 완료**한다(작은 JSON·시작 1회, androidMain/iosMain 허용 — commonMain 금지). 이로써 async-init/first-frame 레이스가 코드 경로 자체에서 제거된다.
-- **androidApp `MainActivity`**: `setContent { AppRoot(KoinAppDependencies(KoinPlatform.getKoin())) }`. `Application.onCreate`에서 `initKoin(context = this@App)`를 `runBlocking`으로 동기 완료(preload 포함) — `Context`는 **`initKoin`의 파라미터로 전달**해 플랫폼 모듈이 받는다(koin-android `androidContext` 미사용, `getKoin()`도 koin-core `KoinPlatform.getKoin()` 사용 → shared·셸 모두 koin-core만). onCreate 반환 시 그래프 기동이 끝나 있어 `getKoin()`이 안전하다.
+- **androidApp `MainActivity`**: `setContent { AppRoot(KoinAppDependencies(KoinPlatform.getKoin())) }`. `Application.onCreate`에서 `initKoin(context = this@App)`를 `runBlocking`으로 동기 완료(preload 포함) — `Context`는 **`initKoin`의 파라미터로 전달**해 플랫폼 모듈이 받는다(koin-android `androidContext` 미사용, `getKoin()`도 koin-core `KoinPlatform.getKoin()` 사용). **shared는 koin-core만** 의존하고 셸도 koin-android의 `androidContext`/koin-android API를 쓰지 않는다 — 다만 `androidApp/build.gradle.kts`는 여전히 `implementation(libs.koin.android)`를 선언하며, koin-android가 koin-core를 **transitively 제공**한다(셸 gradle 좌표 교체는 §8 셸 편집 범위 밖 — M8/정리 트랙). onCreate 반환 시 그래프 기동이 끝나 있어 `getKoin()`이 안전하다.
 - **iOS `MainViewController`**: `ComposeUIViewController { AppRoot(KoinAppDependencies(KoinPlatform.getKoin())) }`. iOS 앱 시작(iOSApp.swift)이 부르는 `doInitKoin()`(Kotlin/iosMain)이 `runBlocking { preload; initKoin }`로 **동기 완료 후 반환** → 이후 ComposeUIViewController/AppRoot의 `getKoin()`이 안전(Swift async/시퀀싱 가드 불필요).
 - **남겨질 `App()`(commonMain) 처리**: 셸이 더는 `App()`을 호출하지 않으므로 M0 `App()`은 (a) 제거하거나 (b) 향후 미사용 데드코드 경고를 피하려면 삭제한다 — M7은 `App()`을 **제거**한다(셸이 `AppRoot`로 직행하므로 M0 Greeting 렌더 경로는 폐기). `Greeting` 바인딩 자체는 그래프에서 더는 소비되지 않으면 함께 정리(잔존 시 §6 그래프 테스트 미영향).
 - 두 셸이 `App()` 호출 대신 `AppRoot`를 그린다 — 이 연결 자체가 **조립/링크 green으로 검증**(런타임 시각은 천장).
 
-### 3-5. DR-2 마감 — 정규화 키 단일-writer 강제 (`TermRepositoryImpl`)
+### 3-5. DR-2 — 정규화 키 단일-writer 구조 담보 (`TermRepositoryImpl`)
 
 - `fetch`/`refresh`/`toggleBookmark`가 각자 맨 앞 `val key = normalizeKeyword(...)`로 **키잉된 `Mutex`를 오퍼레이션 전 구간(refresh 네트워크 왕복 포함) 보유**한 뒤 RMW. 같은 정규화 키의 두 번째 쓰기는 첫 쓰기 완료까지 suspend. 서로 다른 키는 병렬(전역 잠금 아님).
 - **잠금 맵 접근 원자성(정정 — commonMain·네이티브 필수)**: 키→`Mutex` 맵을 plain `HashMap.getOrPut`으로 열면 Kotlin/Native(iosSimulatorArm64)에서 두 코루틴이 서로 다른 스레드에서 같은 키를 열 때 데이터 레이스로 **같은 키에 `Mutex` 인스턴스가 둘 생겨 상호배제가 무너진다**(isBookmarked/seenAt lost-update). commonMain엔 JVM `synchronized`가 없으므로 '동기 잠금'을 쓸 수 없다. 맵 접근은 **commonMain 가능한 프리미티브**로 못박는다: 전용 `kotlinx.coroutines.sync.Mutex`(맵 가드용)로 감싼 `getOrPut`(전부 suspend·common 호환) — 또는 atomicfu 도입. DR-2를 **오직 구조로 담보**하므로(§7-2 진짜 병렬 미검증) 이 맵-접근 원자성 지점이 실제 프리미티브로 정확히 실현돼야 담보가 void되지 않는다.
@@ -138,7 +138,7 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 
 - **검증 천장 정직**(§0·§5): 런타임·시각·seam 동작 green 자칭 금지. **거짓 green 금지.**
 - **셸 편집 범위**: M7은 `androidApp`/`iosApp` 셸의 진입점만 편집(`AppRoot` 연결·`initKoin`). 서명·심사·매니페스트 확장은 M8.
-- **M4/M5/M6 이월 마감**: DR-2(§3-5)·DR5-2(§3-6)를 이 슬라이스가 닫음. 비준자 확인.
+- **M4/M5/M6 이월 처리**: DR5-2(§3-6)는 이 슬라이스가 판별 테스트로 닫음. DR-2(§3-5)는 **구조(single+키 Mutex)로만 담보**하며 맵-가드 원자성의 진짜 병렬 강제는 실기기까지 미검증(OQ-2 잔여) — '닫음/마감' 자칭 금지. 비준자 확인.
 - 마일스톤 경계 **사람 게이트 완화**(메모리 `milestone-human-gate-relaxed`). 하네스는 push·머지·`-draft` 제거 안 함.
 - **브랜치 보존·push 금지·젠더중립 네이밍·진행상태는 ROADMAP(디스크)**.
 
@@ -148,3 +148,4 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 
 - [ ] (비준 대기) §7 열린 질문 1~5 판정.
 - [ ] (선상속·M8) seam actual 실구현·deviceId 영속 고유화·온보딩 영속·아이콘/스플래시·폰트 라이선스 고지·접근성·에러 통합·실기기 검증.
+- [ ] (이월·M8/실기기) **실 androidMain/iosMain 플랫폼 Koin 그래프 해석**(DeviceIdProvider·DriverFactory·createDatabase·seam actual 바인딩 완전성) 실기기 스모크 — M7 그래프 테스트는 테스트-플랫폼 스텁으로 대체 해석하므로 실 플랫폼 바인딩 누락/시그니처 불일치는 런타임 사건(§4)으로 이월. 이 잔여를 실기기 첫 검색·Settings 진입 스모크로 닫는다.
