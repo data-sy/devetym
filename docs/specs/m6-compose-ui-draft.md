@@ -182,3 +182,9 @@ object AppScheme { val colors @Composable get() = LocalAppColors.current; val ty
 - [ ] (선상속·M7) Koin `viewModel { }` 실배선·앱 셸 연결·온보딩 게이트.
 - [ ] (선상속·M7/하드닝) **DR5-2 쓰기 내구성 이월분**: `DetailViewModel.toggleBookmark()`를 앱/repository 스코프(또는 `NonCancellable`)로 내구화하고 확정 피드백을 얹는다. 근거: 별표 탭 직후 즉시 이탈 시 fire-and-forget launch가 `onCleared→viewModelScope.cancel()` 취소로 DB 미변경·무피드백으로 **조용히 유실**되는 창(§3-8)은 에러가 없어 시각 천장/아침 사람 게이트가 못 본다 — 명시 트래킹으로 이월분이 프로즈에 묻혀 누락되지 않게 남긴다.
 - [ ] (선상속·M8) 플랫폼 seam actual·아이콘/스플래시 자산·폰트 라이선스 고지·접근성 감사·에러 통합 실측·실기기 시각 검증.
+
+### 비준 명시 이월 (carry-forward — "본다는 걸 적어서 넘긴다")
+
+> 비준 종료(RATIFIED) 시점 미탐색이나 **알려진 클래스**로 확인된 항목. 암묵적으로 넘기지 않고 여기 명시 기록한다.
+
+- [ ] **DR-3 (navigation-compose 네이티브 링크 실증 — 구현 착수 시 선실증 필요)** — 주장: `org.jetbrains.androidx.navigation:navigation-compose`(멀티플랫폼)을 CMP 1.11.1·Kotlin 2.3.21에서 소비하고 `iosSimulatorArm64` 링크가 green. 깨짐 시나리오: navigation-compose 멀티플랫폼 아티팩트가 `iosSimulatorArm64` klib로 실제 링크되는지는 **실빌드 전까지 미확정** — 좌표/네이티브 타깃 커버리지가 어긋나면 §5 3축 중 링크 축이 구현 단계에서 깨진다. 다만 스펙이 **의존성-0 대안(sealed route + `StateFlow` 백스택, §7-1)** 을 명시해 두어 깨져도 **안전 폴백**이 있으므로 목표 실패는 아니다. 구현 착수 시 navigation-compose 링크를 **먼저 실증하지 않고** 화면부터 배선하면 후반 재작업 위험(메모리 `green-oracle-native-execution-gap`이 마일스톤마다 재발 기록). → 착수 순서: 코드 0줄에서 3축 빈 빌드로 좌표 확정 후 화면 배선.
