@@ -178,7 +178,7 @@ object AppScheme { val colors @Composable get() = LocalAppColors.current; val ty
 
 > 비준 착수 전 — 비어 있으며 적대 비준이 채운다.
 
-- [ ] (비준 대기) §7 열린 질문 1~5 판정.
+- [x] (비준 종료·RATIFIED → **구현 완료** 2026-07-05) §7 열린 질문 1~5 판정: **Q1(네비)=의존성-0 상태기반 back stack 채택**(DR-3 carry-forward의 안전 폴백 — navigation-compose 네이티브 링크 리스크 회피, 탭별 sealed Route + StateFlow 백스택). **Q2(DR-4)=`BookmarkViewModel.bookmarks` 파생 교차조회**, 순수 헬퍼 `isBookmarkedFor`가 `normalizeKeyword(entry.keyword)`로 조회(코드 불변식)·DetailScreen 2-VM. DR5-2 쓰기 내구성은 **정직 이월**. **Q3(history limit)=`Int.MAX_VALUE` 전량 유지**. **Q4(seam)=no-op 스텁 기본**(actual M8). **Q5(천장)=순수 헬퍼(색/타이포/상대시간/에러메시지/상태표시매핑/isBookmarkedFor) 네이티브 실측, detailPresentation은 매핑 반환만 보증(렌더 결속 아님)**. `collectAsStateWithLifecycle`는 `lifecycle-runtime-compose:2.9.6`(viewmodel과 동일 family, 네이티브 링크 실증). green 4축 실측. verdict 로그: task `w355v8feh`.
 - [ ] (선상속·M7) Koin `viewModel { }` 실배선·앱 셸 연결·온보딩 게이트.
 - [ ] (선상속·M7/하드닝) **DR5-2 쓰기 내구성 이월분**: `DetailViewModel.toggleBookmark()`를 앱/repository 스코프(또는 `NonCancellable`)로 내구화하고 확정 피드백을 얹는다. 근거: 별표 탭 직후 즉시 이탈 시 fire-and-forget launch가 `onCleared→viewModelScope.cancel()` 취소로 DB 미변경·무피드백으로 **조용히 유실**되는 창(§3-8)은 에러가 없어 시각 천장/아침 사람 게이트가 못 본다 — 명시 트래킹으로 이월분이 프로즈에 묻혀 누락되지 않게 남긴다.
 - [ ] (선상속·M8) 플랫폼 seam actual·아이콘/스플래시 자산·폰트 라이선스 고지·접근성 감사·에러 통합 실측·실기기 시각 검증.
