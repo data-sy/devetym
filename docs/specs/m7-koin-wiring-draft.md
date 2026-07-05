@@ -55,13 +55,13 @@ val appModule = module {
 }
 ```
 - `DevEtymDatabase`는 플랫폼 모듈이 `single { createDatabase(get()) }`로(드라이버 주입). `clock`은 `epochMillis()`(플랫폼 현재시각 — 기존 없으면 expect/actual 신규, §7).
-- **번들 로드(정정)**: `di/AppModule.kt`는 commonMain이고 commonMain은 `runBlocking`을 못 쓴다 — `runBlocking`은 kotlinx-coroutines의 concurrent(jvm+native) 소스셋에만 있어 consumer commonMain API 표면에 없다(commonMain에서 미해결 → 3축 전부 컴파일 실패). 따라서 **`startKoin` *이전에* `loadBundleDbSource()`(suspend)를 await해 `readyBundle` 값을 만든 뒤 그 값을 모듈에 주입**한다(플랫폼 진입점을 suspend로: Android `Application.onCreate`에서 코루틴으로 preload 후 initKoin, iOS `iOSApp` 시작 시 suspend preload). commonMain 모듈 정의에는 블로킹 호출을 두지 않는다. (플랫폼별 블로킹이 꼭 필요하면 그 `runBlocking` 바인딩은 androidMain/iosMain 플랫폼 모듈로만 내린다 — commonMain 금지.)
+- **번들 로드(정정)**: `di/AppModule.kt`는 commonMain이고 commonMain은 `runBlocking`을 못 쓴다 — `runBlocking`은 kotlinx-coroutines의 concurrent(jvm+native) 소스셋에만 있어 consumer commonMain API 표면에 없다(commonMain에서 미해결 → 3축 전부 컴파일 실패). 따라서 **`startKoin` *이전에* `loadBundleDbSource()`(suspend)를 await해 `readyBundle` 값을 만든 뒤 그 값을 모듈에 주입**하되, **이 preload+`initKoin`을 플랫폼 진입점의 `runBlocking`으로 동기 완료**한다(작은 JSON·시작 1회, androidMain/iosMain은 `runBlocking` 사용 가능 — commonMain 금지). 첫 프레임/`getKoin()`은 이 동기 초기화 이후에만 도달하므로 async-init 레이스가 원천 차단된다(§3-4 순서 불변식). commonMain 모듈 정의에는 블로킹 호출을 두지 않는다.
 
 ### 3-2. 플랫폼 Koin 모듈 (`androidMain`/`iosMain` `di/PlatformModule.*.kt`)
 
-- **androidMain**: `single { DriverFactory(androidContext()) }`(koin-android `androidContext()` 또는 `Context` 파라미터)·`single { createDatabase(get()) }`·`single<DeviceIdProvider> { ... }`·seam actual 바인딩(M8까지 스텁 허용).
+- **androidMain**: `single { DriverFactory(context) }` — **`Context`는 `initKoin(context)`가 플랫폼 모듈 팩토리에 파라미터로 전달**(koin-android `androidContext()` 미사용 → shared androidMain에 koin-android 의존 불필요, koin-core만)·`single { createDatabase(get()) }`·`single<DeviceIdProvider> { ... }`·seam actual 바인딩(M8까지 스텁 허용).
 - **iosMain**: `single { DriverFactory() }`·`single { createDatabase(get()) }`·`single<DeviceIdProvider> { ... }`·seam 바인딩.
-- `initKoin(platformModule)`가 공통+플랫폼 모듈 조립. Android는 `Context`를 `initKoin`에 전달(koin-android `androidContext`).
+- `initKoin(platformModule)`가 공통+플랫폼 모듈 조립. Android는 `initKoin(context)` 시그니처로 `Context`를 받아 플랫폼 모듈 팩토리에 파라미터로 넘긴다(koin-android `androidContext` 미사용 — shared는 koin-core만).
 
 ### 3-3. `AppDependencies` 실구현 (`di/KoinAppDependencies.kt`)
 
@@ -81,8 +81,9 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 ### 3-4. 앱 셸 연결
 
 - **현재 셸 상태(정정)**: 두 셸은 `Greeting`을 직접 그리지 않는다 — androidApp `MainActivity`는 `setContent { App() }`, iOS `MainViewController`는 `ComposeUIViewController { App() }`로 **commonMain `App()`을 호출**한다(`App()`이 내부에서 Koin으로 `Greeting`을 해석). M7 편집 대상은 이 **`App()` 호출**을 아래 `AppRoot(deps)`로 교체하는 것이다(셸에서 `Greeting` 심볼을 찾지 말 것).
-- **androidApp `MainActivity`**: `setContent { AppRoot(KoinAppDependencies(getKoin())) }`. `Application`에서 `initKoin { androidContext(this@App) }`(or Activity Context) — koin-android.
-- **iOS `MainViewController`**: `ComposeUIViewController { AppRoot(KoinAppDependencies(KoinPlatform.getKoin())) }`. `doInitKoin()`는 iOS 앱 시작(iOSApp.swift)이 호출.
+- **순서 불변식(DR-2)**: 셸은 **preload+`initKoin` 동기 완료 뒤에만** `AppRoot`를 렌더하고 `getKoin()`을 호출한다. 초기화를 async(코루틴 launch)로 뒤로 밀면 첫 프레임이 `getKoin()`을 기동 전에 불러 크래시하므로, 초기화는 플랫폼 진입점에서 `runBlocking`으로 **동기 완료**한다(작은 JSON·시작 1회, androidMain/iosMain 허용 — commonMain 금지). 이로써 async-init/first-frame 레이스가 코드 경로 자체에서 제거된다.
+- **androidApp `MainActivity`**: `setContent { AppRoot(KoinAppDependencies(KoinPlatform.getKoin())) }`. `Application.onCreate`에서 `initKoin(context = this@App)`를 `runBlocking`으로 동기 완료(preload 포함) — `Context`는 **`initKoin`의 파라미터로 전달**해 플랫폼 모듈이 받는다(koin-android `androidContext` 미사용, `getKoin()`도 koin-core `KoinPlatform.getKoin()` 사용 → shared·셸 모두 koin-core만). onCreate 반환 시 그래프 기동이 끝나 있어 `getKoin()`이 안전하다.
+- **iOS `MainViewController`**: `ComposeUIViewController { AppRoot(KoinAppDependencies(KoinPlatform.getKoin())) }`. iOS 앱 시작(iOSApp.swift)이 부르는 `doInitKoin()`(Kotlin/iosMain)이 `runBlocking { preload; initKoin }`로 **동기 완료 후 반환** → 이후 ComposeUIViewController/AppRoot의 `getKoin()`이 안전(Swift async/시퀀싱 가드 불필요).
 - **남겨질 `App()`(commonMain) 처리**: 셸이 더는 `App()`을 호출하지 않으므로 M0 `App()`은 (a) 제거하거나 (b) 향후 미사용 데드코드 경고를 피하려면 삭제한다 — M7은 `App()`을 **제거**한다(셸이 `AppRoot`로 직행하므로 M0 Greeting 렌더 경로는 폐기). `Greeting` 바인딩 자체는 그래프에서 더는 소비되지 않으면 함께 정리(잔존 시 §6 그래프 테스트 미영향).
 - 두 셸이 `App()` 호출 대신 `AppRoot`를 그린다 — 이 연결 자체가 **조립/링크 green으로 검증**(런타임 시각은 천장).
 
@@ -101,14 +102,14 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 ## 4. 설계 불변식
 
 - **셸은 얇다**(architecture §3): 진입점은 `initKoin` + `AppRoot`만. 화면·로직은 `shared`.
-- **Koin 그래프 완전성**: 모든 `get()`이 바인딩을 가진다 — §6 그래프 테스트가 미해결 바인딩을 실측(조립은 런타임 미해결을 못 잡음). **단, `AppDependencies` seam 접근자는 lazy이므로 이 실측은 그래프 테스트가 모든 seam·VM·`now()` 프로퍼티를 eager로 touch할 때만 성립**(§6 참조) — 그러지 않으면 lazy 경로 바인딩 누락이 green을 통과한다.
+- **Koin 그래프 완전성(범위 정직)**: §6 그래프 테스트는 **공통 모듈 + 테스트 플랫폼 모듈**(in-memory JDBC·MockEngine) 바인딩만 **해석-실측**한다 — 모든 seam·VM·`now()` 프로퍼티를 eager로 touch해(§6 참조, `AppDependencies` seam 접근자는 lazy getter라 eager touch 없이는 lazy 경로 바인딩 누락이 green을 통과) 이 그래프 범위 안에서 '모든 `get()`이 바인딩을 가진다'를 실측한다. **단, 실 androidMain/iosMain 플랫폼 모듈**(DriverFactory·createDatabase·DeviceIdProvider·seam actual)은 조립(assembleDebug)/링크(linkFramework)로 **컴파일-only**이며 Koin '해석'은 어떤 M7 테스트도 실행하지 않는다 — 이 바인딩들의 미해결/시그니처 불일치는 컴파일이 아닌 **런타임 사건**이라 실기기로 이월된다(M7 천장). 따라서 완전성 실측은 **공통+테스트-플랫폼 그래프에 한정**되며, 실 플랫폼 바인딩 완전성은 **자칭하지 않는다**(거짓 green 금지).
 - **DR-2 단일-writer**: `TermRepository`=`single` + 키 Mutex. 소비자(VM)는 계약을 신뢰(§3-5).
 - **DR5-2 내구성**: 쓰기는 화면 수명과 분리된 스코프.
 - **검증 천장 정직**: 런타임 시각·상호작용은 green 자칭 금지.
 
 ## 5. 완료 조건 (DoD)
 
-- **컴파일·조립·링크 green(3축)**: `:shared:testDebugUnitTest` + `:androidApp:assembleDebug`(셸이 `AppRoot`+Koin 조립) + `:shared:linkDebugFrameworkIosSimulatorArm64`(iOS 셸·플랫폼 모듈 링크). koin-android(필요 시)·koin 좌표가 Kotlin 2.3.21에서 소비됨을 실빌드로 확정.
+- **컴파일·조립·링크 green(3축)**: `:shared:testDebugUnitTest` + `:androidApp:assembleDebug`(셸이 `AppRoot`+Koin 조립) + `:shared:linkDebugFrameworkIosSimulatorArm64`(iOS 셸·플랫폼 모듈 링크). **shared는 koin-core만** 의존(`Context`는 `initKoin` 파라미터로 전달 — koin-android `androidContext` 불필요), koin 좌표가 Kotlin 2.3.21에서 소비됨을 실빌드로 확정.
 - **⊕ 그래프·결착 네이티브/JVM 실행**: `:shared:iosSimulatorArm64Test` green(DR-2 Mutex 직렬화·DR5-2 내구성 등 commonTest 네이티브 실행) + `androidUnitTest` 그래프 테스트(테스트 Koin 해석·단일-scope).
 - §6 테스트 통과.
 - **명시적 비-보증**: 런타임 화면·상호작용·seam actual 동작은 이 DoD가 보증하지 않음 → 「코드 완료·실기기 검증 필요」.
@@ -127,7 +128,7 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 
 ## 7. 열린 질문 (비준이 판정할 항목)
 
-1. **번들 로드 — startKoin 이전 suspend preload(제안)** — terms.json을 `startKoin` 전에 `loadBundleDbSource()`(suspend)로 await해 `readyBundle` 값을 모듈에 주입(플랫폼 진입점이 suspend 준비). 제안: preload 후 주입(작은 JSON, 시작 1회). ⚠️ **폐기된 대안**: (a) commonMain `single { runBlocking { … } }`는 `runBlocking`이 commonMain에 없어 컴파일 불가; (b) '지연 suspend init'은 `BundleDbSource.search(keyword)`가 **non-suspend**라 첫 검색 시점 지연-로드가 불가능. 남는 선택지는 preload 주입 또는 runBlocking을 androidMain/iosMain으로 내리기뿐 — 비준이 preload 주입이 적절한지 판정.
+1. **번들 로드 — 플랫폼 진입점에서 preload+initKoin을 `runBlocking` 동기 완료(제안)** — terms.json을 `startKoin` 전에 `loadBundleDbSource()`(suspend)로 await해 `readyBundle`를 모듈에 주입하되, 이 preload+`initKoin`을 androidMain/iosMain 진입점의 `runBlocking`으로 **동기 완료**한다(작은 JSON·시작 1회). 첫 프레임/`getKoin()`이 초기화 완료 이후에만 도달해 async-init 레이스가 원천 차단됨(§3-4 순서 불변식). ⚠️ **폐기된 대안**: (a) commonMain `single { runBlocking { … } }`는 `runBlocking`이 commonMain에 없어 컴파일 불가; (b) '지연 suspend init'은 `BundleDbSource.search(keyword)`가 **non-suspend**라 첫 검색 시점 지연-로드 불가; (c) **suspend 진입점+코루틴 launch**(비동기 preload 후 initKoin)는 initKoin 완료 전 첫 프레임이 `getKoin()`을 불러 기동 크래시(racy) — commonMain 금지의 `runBlocking`을 플랫폼 진입점으로 내려 동기화하는 경로만 안전. 비준이 동기 `runBlocking` 경로가 적절한지 판정.
 2. **DR-2 Mutex 실측 — 단일스레드 스모크+구조 담보(제안) vs 다중스레드 스트레스 테스트** — 제안: 데드락 부재·계약 준수를 결정적으로, 진짜 병렬 강제는 single+Mutex 구조로. 다중스레드 테스트는 flaky. 비준이 이 담보가 정직한지(강제를 자칭 안 하는지) 판정. **전제**: 구조 담보가 성립하려면 §3-5의 잠금 맵 접근이 commonMain·네이티브 가능한 프리미티브(맵 가드 `kotlinx.coroutines.sync.Mutex` 또는 atomicfu)로 실현돼야 한다 — JVM `synchronized`류를 암시하면 네이티브에서 맵-접근 레이스로 담보가 조용히 void됨.
 3. **DR5-2 앱 스코프 — 선택적 `writeScope` 주입(제안) vs `toggleBookmark`를 repository 스코프로 이관** — 제안: VM 선택 주입(M5 기본 보존). 비준 판정.
 4. **seam·deviceId 스텁 — M7 스텁 바인딩(제안) vs 최소 actual 당김** — 제안: 스텁 바인딩(조립 green), 실 actual M8. 비준이 스텁이 거짓 green(런타임 작동한 척)인지 판정 — M7은 seam '동작'을 보증 안 함을 명시.
