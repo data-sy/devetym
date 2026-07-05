@@ -6,9 +6,7 @@ import com.robin.devetym.db.DevEtymDatabase
 import com.robin.devetym.ui.platform.AppActions
 import com.robin.devetym.ui.platform.AppearanceStore
 import com.robin.devetym.ui.platform.DeviceInfo
-import com.robin.devetym.ui.platform.NoopAppActions
-import com.robin.devetym.ui.platform.StubAppearanceStore
-import com.robin.devetym.ui.platform.StubDeviceInfo
+import com.robin.devetym.ui.platform.OnboardingStore
 import kotlinx.coroutines.runBlocking
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -23,10 +21,11 @@ actual fun epochMillis(): Long = (NSDate().timeIntervalSince1970 * 1000).toLong(
  */
 fun iosPlatformModule(): Module = module {
     single<DevEtymDatabase> { createDatabase(DriverFactory()) }
-    single<DeviceIdProvider> { object : DeviceIdProvider { override fun get() = "devetym-ios" } }
-    single<AppActions> { NoopAppActions() }
-    single<AppearanceStore> { StubAppearanceStore() }
-    single<DeviceInfo> { StubDeviceInfo() }
+    single<DeviceIdProvider> { UserDefaultsDeviceIdProvider() }
+    single<AppActions> { IosAppActions() }
+    single<AppearanceStore> { UserDefaultsAppearanceStore() }
+    single<OnboardingStore> { UserDefaultsOnboardingStore() }
+    single<DeviceInfo> { IosDeviceInfo() }
 }
 
 /**

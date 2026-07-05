@@ -12,8 +12,10 @@ import com.robin.devetym.ui.platform.AppActions
 import com.robin.devetym.ui.platform.AppearanceStore
 import com.robin.devetym.ui.platform.DeviceInfo
 import com.robin.devetym.ui.platform.NoopAppActions
+import com.robin.devetym.ui.platform.OnboardingStore
 import com.robin.devetym.ui.platform.StubAppearanceStore
 import com.robin.devetym.ui.platform.StubDeviceInfo
+import com.robin.devetym.ui.platform.StubOnboardingStore
 import org.koin.core.KoinApplication
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
@@ -46,13 +48,14 @@ class KoinGraphTest {
                 single<DeviceIdProvider> { object : DeviceIdProvider { override fun get() = "test" } }
                 single<AppActions> { NoopAppActions() }
                 single<AppearanceStore> { StubAppearanceStore() }
+                single<OnboardingStore> { StubOnboardingStore() }
                 single<DeviceInfo> { StubDeviceInfo() }
             },
         )
     }.also { app = it }
 
     @Test
-    fun test_koin_그래프_해석() {
+    fun test_koin_그래프_해석_온보딩포함() {
         val k = koin().koin
         assertNotNull(k.get<TermRepository>())
         assertNotNull(k.get<SearchViewModel>())
@@ -70,6 +73,7 @@ class KoinGraphTest {
         assertNotNull(deps.actions)
         assertNotNull(deps.appearance)
         assertNotNull(deps.device)
+        assertNotNull(deps.onboarding)   // M8 신규 seam — eager touch(§5 전 seam 대상)
         assertNotNull(deps.now())
     }
 

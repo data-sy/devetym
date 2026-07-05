@@ -17,9 +17,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.robin.devetym.ui.platform.AppActions
 import com.robin.devetym.ui.platform.AppearanceStore
 import com.robin.devetym.ui.platform.DeviceInfo
+import com.robin.devetym.ui.platform.OnboardingStore
+import com.robin.devetym.ui.screens.LicensesScreen
 import com.robin.devetym.ui.screens.BookmarkScreen
 import com.robin.devetym.ui.screens.DetailScreen
 import com.robin.devetym.ui.screens.HistoryScreen
@@ -41,6 +45,7 @@ interface AppDependencies {
     val actions: AppActions
     val appearance: AppearanceStore
     val device: DeviceInfo
+    val onboarding: OnboardingStore
     fun now(): Long
 }
 
@@ -52,11 +57,23 @@ private enum class Tab(val label: String) { Search("검색"), Bookmark("북마�
  */
 @Composable
 fun AppRoot(deps: AppDependencies) {
-    val darkMode = true  // 외관모드 실반영은 M8(appearance seam) — 기본 다크
+    // M8 §3-6 외관 배선: appearance.mode(0=시스템·1=라이트·2=다크)를 실제 테마로 반영(inert 제거).
+    // ⚠️ set→emit·재구성 전파의 실제 테마 전환은 실기기 천장(assembleDebug/link는 매핑 컴파일만 보증).
+    val mode by deps.appearance.mode.collectAsStateWithLifecycle()
+    val darkMode = when (mode) {
+        1 -> false
+        2 -> true
+        else -> isSystemInDarkTheme()
+    }
     AppTheme(dark = darkMode) {
-        var onboarded by rememberSaveable { mutableStateOf(false) }
+        var onboarded by rememberSaveable { mutableStateOf(deps.onboarding.completed) }   // M8 영속 게이트
         if (!onboarded) {
-            OnboardingScreen(onComplete = { onboarded = true })
+            OnboardingScreen(onComplete = { deps.onboarding.complete(); onboarded = true })
+            return@AppTheme
+        }
+        var showLicenses by rememberSaveable { mutableStateOf(false) }   // M8 DR-2: 라이선스 오버레이
+        if (showLicenses) {
+            LicensesScreen(onBack = { showLicenses = false })
             return@AppTheme
         }
         var tab by rememberSaveable { mutableStateOf(Tab.Search) }
@@ -107,7 +124,7 @@ fun AppRoot(deps: AppDependencies) {
                                 device = deps.device,
                                 consentGiven = consent,
                                 onConsentChange = { consent = it },
-                                onOpenLicenses = { deps.actions.openUrl("https://devetym.app/licenses") },
+                                onOpenLicenses = { showLicenses = true },   // M8: in-app OFL 고지
                             )
                         }
                     }

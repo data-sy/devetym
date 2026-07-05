@@ -25,6 +25,12 @@ interface DeviceInfo {
     suspend fun instanceId(): String?
 }
 
+/** 온보딩 최초 1회 게이트 영속 (M8 §3-2·§3-4). */
+interface OnboardingStore {
+    val completed: Boolean
+    fun complete()
+}
+
 /** M6 조립용 no-op 스텁(M8이 실 actual로 대체). */
 class NoopAppActions : AppActions {
     override fun sendMail(to: String, subject: String, body: String) {}
@@ -43,4 +49,9 @@ class StubAppearanceStore(initial: Int = 2) : AppearanceStore {
 class StubDeviceInfo : DeviceInfo {
     override fun appVersion(): String = "1.0.0"
     override suspend fun instanceId(): String? = null
+}
+
+class StubOnboardingStore(private var done: Boolean = false) : OnboardingStore {
+    override val completed: Boolean get() = done
+    override fun complete() { done = true }
 }
