@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- adaptive icon 배경: full-bleed 단색 드로어블.
+     맨 @color 참조 대신 명시적 드로어블로 두어 런처가 배경을 108dp 풀블리드로
+     인식하게 함(일부 런처가 bare @color 배경을 인셋+플레이트로 처리하는 문제 회피). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#2E5D3A" android:pathData="M0,0h108v108h-108z"/>
+</vector>
