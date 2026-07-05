@@ -153,3 +153,10 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 - [ ] (선상속·M8) seam actual 실구현·deviceId 영속 고유화·온보딩 영속·아이콘/스플래시·폰트 라이선스 고지·접근성·에러 통합·실기기 검증.
 - [ ] (이월·M8) **실 셸 VM 수명주기·DR5-2 실 창**: `AppRoot`가 `DetailViewModel`을 plain `remember`로 만들어 `onCleared` 미발화 → (a) DR5-2 유실 창 배포 셸 부재·M7은 취소 내성 하드닝만('닫음' 철회), (b) VM/`viewModelScope` 누적 leak. ViewModelStore 도입으로 leak 해소 시 DR5-2 창 실재화 — 수명주기 결착 M8(§7-6).
 - [ ] (이월·M8/실기기) **실 androidMain/iosMain 플랫폼 Koin 그래프 해석**(DeviceIdProvider·DriverFactory·createDatabase·seam actual 바인딩 완전성) 실기기 스모크 — M7 그래프 테스트는 테스트-플랫폼 스텁으로 대체 해석하므로 실 플랫폼 바인딩 누락/시그니처 불일치는 런타임 사건(§4)으로 이월. 이 잔여를 실기기 첫 검색·Settings 진입 스모크로 닫는다.
+
+### 비준 종료 이월 기록 (ratify carry-forward)
+
+> **결과: ESCALATE** (cap 6 소진·전이 라운드 없음). 종료 라운드(6)의 carry-forward를 **명시 기록**한다("본다는 걸 적어서 넘긴다" — 암묵 이월 금지). 정본 verdict 로그: `~/dev/agent-harnesses/runs/m7-koin-wiring-draft-verdict.json`.
+
+- [ ] (이월·명시) **종료 라운드 carry-forward = 0건.** 이번 ESCALATE 종료 라운드에서 새로 미탐색으로 넘기는 known-class 항목은 **없다**(빈 목록을 명시 기록). 앞선 라운드가 이월한 항목은 위 (이월·M8) 체크박스로 이미 상재.
+- [ ] (상신·사람 게이트) **잔여 Blocker DR-1** — 실 플랫폼 Koin 그래프 해석 완전성은 M7 검증 천장(런타임·실기기 제외) 내에서 코드로 결착 불가라 사람 게이트로 상신. `-draft` 제거 승인 = 이 천장 한계(실 플랫폼 바인딩 완전성 M8/실기기 이월) 수용 판단. 잔여 Caution 1건(DR-4: seam·deviceId 스텁 바인딩·런타임 동작 M8)은 humanGateReceivable known-class.
