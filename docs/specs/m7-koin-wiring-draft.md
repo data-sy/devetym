@@ -149,7 +149,7 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
 
 > 비준 착수 전 — 비어 있으며 적대 비준이 채운다.
 
-- [ ] (비준 대기) §7 열린 질문 1~5 판정.
+- [x] (비준 종료·ESCALATE → **eyes-open 수용·구현 완료** 2026-07-05) §7 열린 질문 판정: **OQ-1** 번들=플랫폼 진입점 `runBlocking`으로 preload+initKoin 동기 완료(`appModule(readyBundle)` 팩토리·commonMain runBlocking 금지). **OQ-2** DR-2=구조 담보(single+키 Mutex, 맵-가드=`kotlinx.coroutines.sync.Mutex`)·진짜 병렬 강제 미검증(정직). **OQ-3** DR5-2=선택적 `writeScope` 취소 내성 하드닝(닫음 자칭 철회). **OQ-4** seam/deviceId=스텁 바인딩(actual M8). **OQ-5** 온보딩=in-memory(영속 M8). **OQ-6** 실 셸 plain `remember` VM leak·DR5-2 실 창=M8 이월. **ESCALATE 잔여 Blocker DR-1**(실 androidMain/iosMain 플랫폼 Koin 그래프 완전성은 4축으로 결착 불가 — 런타임/실기기 사건) = **검증 천장 정직 수용**: M7 그래프 테스트는 공통+테스트-플랫폼 스텁 해석만 실측(eager touch), 실 플랫폼 바인딩 완전성은 「코드 완료·실기기 검증 필요」로 이월. `initKoin(platformModule: Module)`·플랫폼 팩토리(`androidPlatformModule(context)`/`iosPlatformModule()`)로 `Context`를 commonMain에서 격리. verdict 로그: task `wr6tfdcc0`.
 - [ ] (선상속·M8) seam actual 실구현·deviceId 영속 고유화·온보딩 영속·아이콘/스플래시·폰트 라이선스 고지·접근성·에러 통합·실기기 검증.
 - [ ] (이월·M8) **실 셸 VM 수명주기·DR5-2 실 창**: `AppRoot`가 `DetailViewModel`을 plain `remember`로 만들어 `onCleared` 미발화 → (a) DR5-2 유실 창 배포 셸 부재·M7은 취소 내성 하드닝만('닫음' 철회), (b) VM/`viewModelScope` 누적 leak. ViewModelStore 도입으로 leak 해소 시 DR5-2 창 실재화 — 수명주기 결착 M8(§7-6).
 - [ ] (이월·M8/실기기) **실 androidMain/iosMain 플랫폼 Koin 그래프 해석**(DeviceIdProvider·DriverFactory·createDatabase·seam actual 바인딩 완전성) 실기기 스모크 — M7 그래프 테스트는 테스트-플랫폼 스텁으로 대체 해석하므로 실 플랫폼 바인딩 누락/시그니처 불일치는 런타임 사건(§4)으로 이월. 이 잔여를 실기기 첫 검색·Settings 진입 스모크로 닫는다.
