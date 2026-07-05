@@ -12,6 +12,7 @@ androidxActivityCompose = "1.11.0"
 skie = "0.10.12"                       # Touchlab SKIE (2026-05)
 sqldelight = "2.3.2"                    # ADR-0003. Kotlin 2.3.21×2.3.2 klib 소비 빌드 실측(M2 §5). native-driver iosArm64/iosSimulatorArm64 klib 배포 확인.
 lifecycleViewmodel = "2.9.6"           # M5 ViewModel+viewModelScope(멀티플랫폼). CMP 1.11.1의 lifecycle-viewmodel-compose와 동일 2.9 라인 → 정합. Kotlin 2.3.21 네이티브 klib 소비를 링크·테스트로 실측(M5 §5).
+robolectric = "4.14.1"                 # M9 §3-1·§3-3 — androidUnitTest에서 실 Context/Intent/ClipboardManager 해석(순수 JVM "not mocked" 회피). @Config(sdk=34)로 android-all 가용 API 핀.
 # Android SDK 레벨
 compileSdk = "36"
 minSdk = "26"
@@ -41,6 +42,7 @@ lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecyc
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }  # JdbcSqliteDriver(IN_MEMORY) — androidUnitTest §6-B 전용
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }  # M9 §3-1·§3-3 — 실 androidPlatformModule/Intent/클립보드 해석(androidUnitTest)
 
 [plugins]
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

@@ -52,6 +52,16 @@ interface AppDependencies {
 private enum class Tab(val label: String) { Search("검색"), Bookmark("북마크"), History("히스토리"), Settings("설정") }
 
 /**
+ * 외관 mode→dark 매핑 (M9 §3-3 ii) — `AppRoot`의 `@Composable` 인라인에서 추출한 순수 함수(테스트 대상).
+ * 0=시스템(`systemDark` 위임)·1=라이트(false)·2=다크(true)·그 외=시스템. Compose 무의존이라 계약 테스트 가능.
+ */
+fun resolveDarkMode(mode: Int, systemDark: Boolean): Boolean = when (mode) {
+    1 -> false
+    2 -> true
+    else -> systemDark
+}
+
+/**
  * 앱 루트 (M6 §3-8) — 의존성-0 상태기반 네비(탭별 단일 push 스택 + 온보딩 게이트). navigation-compose
  * 네이티브 링크 리스크 회피(§7-1 안전 폴백). 온보딩·동의 영속은 M7/M8 seam.
  */
@@ -60,11 +70,7 @@ fun AppRoot(deps: AppDependencies) {
     // M8 §3-6 외관 배선: appearance.mode(0=시스템·1=라이트·2=다크)를 실제 테마로 반영(inert 제거).
     // ⚠️ set→emit·재구성 전파의 실제 테마 전환은 실기기 천장(assembleDebug/link는 매핑 컴파일만 보증).
     val mode by deps.appearance.mode.collectAsStateWithLifecycle()
-    val darkMode = when (mode) {
-        1 -> false
-        2 -> true
-        else -> isSystemInDarkTheme()
-    }
+    val darkMode = resolveDarkMode(mode, isSystemInDarkTheme())
     AppTheme(dark = darkMode) {
         var onboarded by rememberSaveable { mutableStateOf(deps.onboarding.completed) }   // M8 영속 게이트
         if (!onboarded) {

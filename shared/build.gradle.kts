@@ -62,8 +62,12 @@ kotlin {
         val androidUnitTest by getting {
             dependencies {
                 implementation(libs.sqldelight.sqlite.driver)  // JdbcSqliteDriver(IN_MEMORY)
+                implementation(libs.robolectric)               // M9 §3-1·§3-3 — 실 Context/Intent/클립보드 해석
             }
         }
+        // M9 §3-2·§3-3(v) 네이티브 실행 test는 `src/iosTest/kotlin`(기본 계층 iosTest 소스셋, 디렉터리 규약)에
+        // 둔다 — iosMain 심볼(NativeSqliteDriver·NSUserDefaults) 참조. ⚠️ `:shared:iosSimulatorArm64Test`
+        // 축은 M2부터 commonTest를 네이티브 실행해 왔다(신설 아님); iosTest는 그 축에 iosMain-참조 test를 착지시킨다.
     }
 }
 
@@ -94,5 +98,12 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    // M9 §3-1·§3-3 — Robolectric가 매니페스트/리소스로 실 Context를 조립하도록(unit test JVM 실행).
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
     }
 }
