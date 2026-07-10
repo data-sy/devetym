@@ -99,12 +99,7 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 - **[Arch] AI 스트리밍 도입 검토** — 현재 단발 응답. 토큰 스트리밍(`Flow<String>`)은 이후 선택지(architecture §4.3).
 - **[Arch] 프롬프트 서버 이전 검토** — 현재 클라이언트(`commonMain`) 소유. 프롬프트 핫픽스 필요성 커지면 재검토([ADR-0006](docs/adr/0006-server-cache-boundary.md) 유보 항목).
 - **[UI] 디자인 후속** — 다크/라이트 폴리시·대비·플랫폼별 미세 조정.
-- **[Arch] 크래시 리포팅 commonMain 단일 KMP 배선으로 통합 (WU-4 후속 · 근본 해결)** — 현재는 **플랫폼 seam 분리**(Android=`sentry-android` 실배선 / iOS=Swift·Sentry Cocoa SPM). 기능은 양 플랫폼 정상이나 배선이 이원화. **근본 해결 = commonMain 단일 `sentry-kotlin-multiplatform` 배선**인데, iOS는 Sentry Cocoa 링크가 전제라 이 프로젝트(비cocoapods 정적 프레임워크) setup에서 막힌다. 후보:
-  - **① Kotlin Cocoapods 플러그인 도입**(Sentry 공식·가장 완결적) — `cocoapods { pod("Sentry") }`가 Kotlin/Native 테스트·앱 링크에 프레임워크를 공급해 `:shared:iosSimulatorArm64Test`까지 green 유지. ⚠️ 현 XcodeGen+SKIE+`embedAndSign` 파이프라인과 이중화·iOS 빌드 시스템 교체급 변경(회귀 범위 큼).
-  - **② Sentry KMP Gradle 플러그인 + SPM**(`frameworkPath`) — cocoapods 없이 모던하나, 순수 gradle 테스트 축은 프레임워크가 Xcode/SPM로 **선빌드**돼 있어야 해석 가능(닭-달걀) → 테스트 축 green 보장이 까다로움.
-  - **③ Sentry.xcframework 벤더링 + linkerOpts** — 완전 통합 가능하나 대용량 바이너리 커밋·수동 버전 관리(워크어라운드).
-  - **판정**: ①이 "단일 commonMain 배선" 목표엔 가장 근본적·완결적이나 가장 침습적. **출시 필수 아님**(현 seam 분리로 크래시 리포팅은 양 플랫폼 작동). 단, **iOS Sentry Cocoa 활성화(Swift/SPM) 자체는 출시 전(WU-11)** — 위 Now M9 트랙 참조(별개 항목).
-  - **▶ 앞당겨 실행 지시(2026-07-10)**: 사람 병목 회피 위해 사용자가 이 통합을 **지금 자율 시도**하도록 지시 → 새 세션 실행 프롬프트 = [`docs/handoff/26-07-10-wu4b-unified-kmp-crash-prompt.md`](docs/handoff/26-07-10-wu4b-unified-kmp-crash-prompt.md). 자동화·검증 표면=5축 green(특히 `iosSimulatorArm64Test`가 Sentry Cocoa 해석). ⚠️ 되돌리기 가드: 실패 시 seam 분리(커밋 `eb939a7`)로 백아웃.
+- ~~**[Arch] 크래시 리포팅 commonMain 단일 KMP 배선으로 통합 (WU-4 후속)**~~ — ✅ **완료(WU-4B, 2026-07-10)**. Approach A(Kotlin Cocoapods)는 `pod` CLI 부재로 스킵 → **Approach B(Sentry.xcframework 벤더링 + linkerOpts + Swift 백호환 라이브러리 경로)** 채택. commonMain 단일 `sentry-kotlin-multiplatform` 0.27.0(iOS Cocoa 8.58.2 정적 xcframework, 비커밋 gradle 다운로드) 배선 + **5축 green** + **Xcode 시뮬 빌드 SUCCEEDED**(iOS도 Sentry 실링크 — WU-11 SPM 절차 대체). seam 이원화 해소. 정본 상세 = [WU-4 원장 §5](docs/handoff/26-07-10-wu4-crash-reporting-ledger.md).
 - (아이디어 추가 시 여기로)
 
 ---

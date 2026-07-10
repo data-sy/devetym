@@ -1,5 +1,7 @@
 # WU-4B · 크래시 리포팅 commonMain 단일 KMP 통합 — 새 세션 실행 프롬프트 (2026-07-10 작성)
 
+> ✅ **실행 완료(2026-07-10)** — Approach B(Sentry.xcframework 벤더링 + linkerOpts + Swift 백호환 라이브러리 경로)로 성공. 5축 green + Xcode 시뮬 빌드 SUCCEEDED. 결과 정본 = [WU-4 원장 §5](26-07-10-wu4-crash-reporting-ledger.md). 아래는 실행 당시의 프롬프트(기록 보존).
+
 > **이 문서는 새 독립 세션에 그대로 붙여 넣을 실행 프롬프트다.** WU-4(플랫폼 seam 분리)의 후속 — "근본 해결"인
 > commonMain 단일 `sentry-kotlin-multiplatform` 배선을 **자동화 가능한 범위(5축 green)** 내에서 시도한다.
 > ROADMAP Later의 "[Arch] 크래시 리포팅 commonMain 단일 KMP 배선으로 통합"을 앞당겨 실행하는 작업.

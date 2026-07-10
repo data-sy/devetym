@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -10,6 +11,36 @@ plugins {
     alias(libs.plugins.sqldelight)              // 로컬 DB(ADR-0003) — .sq → 타입세이프 Kotlin API 생성
 }
 
+// ── M9 WU-4B · 크래시 리포팅 commonMain 단일 KMP 배선용 Sentry Cocoa 정적 xcframework ──────────────
+// `sentry-kotlin-multiplatform`은 iOS에서 Sentry Cocoa 심볼을 참조한다. 이 프로젝트는 cocoapods 없이
+// 정적 프레임워크로 iOS를 빌드하므로, 네이티브 **테스트 실행파일 링크**(:shared:iosSimulatorArm64Test)가
+// Sentry Cocoa 프레임워크를 못 찾아 깨졌었다(seam 분리의 원인). 여기서 Sentry 정적 xcframework를 gradle이
+// 다운로드(비커밋)하고 iOS 바이너리 링크에 -F/-framework로 공급해 심볼을 해석한다. KMP 0.27.0 ↔ Cocoa 8.58.2.
+val sentryCocoaVersion = "8.58.2"
+// Sentry Cocoa는 ObjC+**Swift 혼합** 프레임워크다. Kotlin/Native 실행파일(iosSimulatorArm64Test)에 정적 링크하면
+// Swift 백호환 정적 라이브러리(swiftCompatibilityConcurrency/Packs/56)와 Swift 런타임 심볼이 필요하다. 이 검색
+// 경로들을 현 Xcode 툴체인/SDK에서 동적으로 계산(하드코딩 회피)해 링커에 -L로 공급한다.
+fun shellOut(vararg cmd: String): String =
+    providers.exec { commandLine(*cmd) }.standardOutput.asText.get().trim()
+val xcodeToolchainLibSwift = "${shellOut("xcode-select", "-p")}/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift"
+val downloadSentryCocoa by tasks.registering(Exec::class) {
+    val sentryDir = layout.buildDirectory.dir("sentry").get().asFile
+    val xcframework = File(sentryDir, "Sentry.xcframework")
+    outputs.dir(xcframework)
+    onlyIf { !xcframework.exists() }
+    doFirst { sentryDir.mkdirs() }
+    workingDir = layout.buildDirectory.asFile.get().also { it.mkdirs() }
+    commandLine(
+        "bash", "-lc",
+        "set -e; cd sentry; " +
+            "curl -sSL -o Sentry.xcframework.zip " +
+            "https://github.com/getsentry/sentry-cocoa/releases/download/$sentryCocoaVersion/Sentry.xcframework.zip; " +
+            "rm -rf Sentry.xcframework; unzip -q Sentry.xcframework.zip; rm -f Sentry.xcframework.zip"
+    )
+}
+// K/N 링크(테스트 실행파일 포함)는 Sentry.xcframework가 있어야 심볼을 해석한다.
+tasks.withType<KotlinNativeLink>().configureEach { dependsOn(downloadSentryCocoa) }
+
 kotlin {
     androidTarget {
         compilerOptions {
@@ -20,9 +51,30 @@ kotlin {
     // iOS 타깃 — Kotlin/Native. SKIE가 이 프레임워크의 Swift API를 개선(ADR-0005).
     // iosX64(구 Intel 시뮬)는 CMP 1.11에서 미배포 → 제외. 기기(arm64)+Apple Silicon 시뮬만.
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
+        // WU-4B: Sentry Cocoa 정적 슬라이스를 이 타깃의 모든 바이너리(프레임워크+테스트 실행파일) 링크에 공급.
+        val isSim = iosTarget.name == "iosSimulatorArm64"
+        val sentrySlice = if (isSim) "ios-arm64_x86_64-simulator" else "ios-arm64_arm64e"
+        val swiftPlatform = if (isSim) "iphonesimulator" else "iphoneos"
+        val sentryFrameworksDir =
+            layout.buildDirectory.dir("sentry/Sentry.xcframework/$sentrySlice").get().asFile.absolutePath
+        val sdkSwiftDir = "${shellOut("xcrun", "--sdk", swiftPlatform, "--show-sdk-path")}/usr/lib/swift"
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
+        }
+        iosTarget.binaries.all {
+            // Sentry 정적 프레임워크 + Sentry Cocoa가 요구하는 시스템 프레임워크/라이브러리(정적 링크라 명시 필요) +
+            // Swift 백호환/런타임 라이브러리 검색 경로(Sentry의 Swift 심볼 해석).
+            linkerOpts(
+                "-F", sentryFrameworksDir, "-framework", "Sentry",
+                "-framework", "Security",
+                "-framework", "SystemConfiguration",
+                "-framework", "CoreGraphics",
+                "-framework", "UIKit",
+                "-L", "$xcodeToolchainLibSwift/$swiftPlatform", // libswiftCompatibility*.a (백호환 정적)
+                "-L", sdkSwiftDir,                              // Swift 런타임(libswiftCore 등)
+                "-lc++", "-lz"
+            )
         }
     }
 
@@ -44,6 +96,7 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.lifecycle.viewmodel)         // M5 ViewModel + viewModelScope(멀티플랫폼)
             implementation(libs.lifecycle.runtime.compose)   // M6 collectAsStateWithLifecycle
+            implementation(libs.sentry.kotlin.multiplatform)  // M9 WU-4B — 크래시 리포팅 commonMain 단일 배선
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -53,7 +106,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.sqldelight.android.driver)   // AndroidSqliteDriver (M2 §3-3 actual)
             implementation(libs.ktor.client.okhttp)          // M3 엔진 actual (androidMain)
-            implementation(libs.sentry.android)              // M9 WU-4 — 크래시 리포팅 actual(Android SDK)
+            // M9 WU-4B — Sentry Android actual은 commonMain의 sentry-kotlin-multiplatform가 전이 제공(직접 의존 제거)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)    // NativeSqliteDriver (M2 §3-3 actual)

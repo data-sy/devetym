@@ -53,3 +53,24 @@ iosMain no-op이라 **iOS 실 크래시는 아직 미포착**. iOS 스토어 출
 - ③ Sentry.xcframework 벤더링 + linkerOpts — 워크어라운드(대용량 바이너리).
 
 **출시 필수 아님**(seam 분리로 크래시 리포팅 양 플랫폼 작동). iOS 네이티브 활성화(§3)는 출시 전(WU-11)이나 이 통합은 출시 후.
+
+## 5. 단일 통합 완료 — WU-4B (2026-07-10, Approach B 채택)
+
+§4의 "근본 해결"을 **앞당겨 실행**(사람 병목 회피 지시). Approach A(Kotlin Cocoapods 플러그인)는 **CocoaPods CLI 부재**(`pod` not found)로 스킵 → **Approach B(Sentry.xcframework 벤더링 + linkerOpts)** 채택. **성공**: commonMain 단일 `sentry-kotlin-multiplatform` 0.27.0 배선 + 5축 green + 기존 iOS Xcode 빌드 무손상(실검증).
+
+**핵심 해소** — §1이 막혔던 `:shared:iosSimulatorArm64Test` 네이티브 테스트 실행파일 링크를 성립시킨 방법:
+1. **Sentry Cocoa 정적 xcframework 8.58.2**(KMP 0.27.0 매핑) 다운로드 — `shared/build.gradle.kts`의 `downloadSentryCocoa` Exec 태스크가 `shared/build/sentry/`에 받아 압축해제(**비커밋** — `shared/build/`는 gitignore). `KotlinNativeLink` 태스크 전체가 이 태스크에 `dependsOn`.
+2. **linkerOpts**(`binaries.all`)로 iOS 전 바이너리(프레임워크+테스트 실행파일)에 Sentry 정적 슬라이스를 공급: `-F <slice> -framework Sentry` + Sentry Cocoa 의존 시스템 프레임워크(Security·SystemConfiguration·CoreGraphics·UIKit)·`-lc++ -lz`.
+3. **Swift 백호환/런타임 라이브러리 경로** — Sentry Cocoa는 ObjC+**Swift 혼합**이라 정적 링크 시 `swiftCompatibilityConcurrency/Packs/56` 미해결이 났다. Xcode 툴체인/SDK에서 `xcrun`으로 동적 계산한 `-L <toolchain>/usr/lib/swift/{iphonesimulator,iphoneos}`·`-L <sdk>/usr/lib/swift` 추가로 해소. **이게 B의 진짜 관문이었다**(핸드오프가 예상 못한 2차 링크 장벽).
+
+**배선 구조 변화**(§2 대비):
+- commonMain `crash/CrashReporter.kt` = **plain object**(expect/actual 제거), `io.sentry.kotlin.multiplatform.Sentry` 직접 사용. androidMain/iosMain actual **삭제**.
+- Android DSN 경로 불변(BuildConfig→initKoin). **iOS DSN**: iosMain `doInitKoin()`이 `NSBundle.mainBundle.objectForInfoDictionaryKey("SentryDsn")`을 읽어 `initKoin(crashDsn=…)`으로 전달 → 공통 `CrashReporter.init`이 iOS에서 Sentry 초기화(**Swift `SentrySDK.start` 불요** — §3 WU-11 SPM 절차는 폐기).
+- iOS Xcode 앱: `Shared.framework`가 이제 Sentry 심볼 참조 → `iosApp/project.yml`에 `dependencies: - framework: ../shared/build/sentry/Sentry.xcframework`(link·no-embed) 추가. `xcodegen generate`로 `.xcodeproj` 재생성(diff 27줄, Sentry 링크 배선만). preBuildScript의 gradle embedAndSign이 `downloadSentryCocoa`를 선행하므로 링크 시점 xcframework 항상 존재.
+- 카탈로그: `sentry-android`/`sentryAndroid` 제거(KMP가 전이 배선), `sentry-kotlin-multiplatform`/`sentryKmp=0.27.0` 추가.
+
+**실검증(2026-07-10)**:
+- 5축 green(회귀 0): `:shared:testDebugUnitTest` · `:androidApp:assembleDebug` · `:androidApp:testDebugUnitTest` · `:shared:linkDebugFrameworkIosSimulatorArm64` · `:shared:iosSimulatorArm64Test`(`CrashReporterTest` 2건 네이티브 실행·통과).
+- **Xcode 시뮬 빌드 SUCCEEDED**(`xcodebuild -scheme iosApp -sdk iphonesimulator -destination 'iPhone 17 Pro' ONLY_ACTIVE_ARCH=YES` — arm64 전용. ⚠️ 제네릭 시뮬 대상은 x86_64를 요구해 gradle 프레임워크 빌드가 깨지는데 이는 프로젝트가 `iosSimulatorArm64`만 지원하는 **기존 제약**·Sentry 무관). 앱에 Sentry Cocoa가 실제 링크됨 → iOS 크래시 포착이 no-op이 아니게 됨(WU-11 SPM 절차 대체).
+
+**되돌리기**: 실패 시 커밋 revert로 seam 분리(`eb939a7`) 복귀 가능하도록 원자적 커밋. (이번엔 성공이라 백아웃 불요.)

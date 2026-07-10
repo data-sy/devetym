@@ -37,25 +37,16 @@ targets:
           # 정적 Shared.framework를 앱에 링크할 때 -lsqlite3 없으면 wrapper 심볼 undefined(앱 link 실패).
           # 4축(framework link)은 통과하나 Xcode 앱 빌드는 이게 있어야 성립(M9 실기기/시뮬 게이트서 최초 발견).
           - -lsqlite3
-    # ── M9 WU-4 · iOS 크래시 리포팅(Sentry Cocoa) 활성화 — WU-11(Xcode/실기기)에서 켠다 ──────────────
-    # 현재 상태: Kotlin iosMain `CrashReporter`는 no-op(commonMain에 Sentry KMP를 두면 iOS 테스트 링크가
-    # 깨져서 — commonMain CrashReporter KDoc 참조). iOS 실 크래시 포착은 **Swift 층 Sentry Cocoa(SPM)**로
-    # 켠다. 아래를 활성화하면 이 XcodeGen setup(cocoapods 없음)에 자연스럽게 붙는다:
-    #   ① packages: 블록에 Sentry SPM 패키지 추가:
-    #        packages:
-    #          Sentry:
-    #            url: https://github.com/getsentry/sentry-cocoa
-    #            majorVersion: 8
-    #   ② 위 targets.iosApp에 dependencies 추가:
-    #        dependencies:
-    #          - package: Sentry
-    #   ③ iOSApp.swift에서 doInitKoin() 이전에 SentrySDK.start(Info.plist `SentryDsn` 사용, PII off):
-    #        import Sentry
-    #        SentrySDK.start { $0.dsn = Bundle.main.object(forInfoDictionaryKey: "SentryDsn") as? String ?? ""
-    #                          $0.sendDefaultPii = false }
-    #   ④ xcodegen generate → Xcode SPM resolve → 시뮬 스모크로 테스트 크래시 도달 확인.
-    # ⚠️ 지금 켜지 않는 이유: SPM 패키지 없는 현 커밋 .xcodeproj에서 `import Sentry`가 컴파일 실패 →
-    #    시뮬 스모크가 깨진다. iOS Xcode 통합은 축 밖(실기기 게이트)라 WU-11로 스코프. 상세=WU-4 핸드오프.
+    # ── M9 WU-4B · iOS 크래시 리포팅 = commonMain 단일 KMP 배선(Sentry Cocoa) ────────────────────────
+    # Kotlin `CrashReporter`(commonMain)가 `sentry-kotlin-multiplatform`으로 iOS에서 Sentry를 초기화한다
+    # (Swift `SentrySDK.start` 불요 — doInitKoin이 Info.plist `SentryDsn`을 읽어 넘김). 따라서 Shared.framework가
+    # Sentry Cocoa 심볼을 참조하므로 **앱도 Sentry.xcframework를 링크**해야 한다(정적 → 링크만, embed 불요).
+    # xcframework는 gradle이 shared/build/sentry/에 다운로드(비커밋) — preBuildScript의 embedAndSign 실행 시
+    # downloadSentryCocoa 태스크가 선행하여 링크 시점엔 항상 존재한다. 슬라이스 선택은 Xcode가 SDK로 자동 처리.
+    dependencies:
+      - framework: ../shared/build/sentry/Sentry.xcframework
+        link: true
+        embed: false
     preBuildScripts:
       - name: "Build & embed Shared.framework (Kotlin/Native + SKIE)"
         basedOnDependencyAnalysis: false
