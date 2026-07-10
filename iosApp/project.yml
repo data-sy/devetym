@@ -22,6 +22,9 @@ targets:
         INFOPLIST_FILE: iosApp/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: com.robin.devetym
         SWIFT_VERSION: "5.0"
+        # M9 WU-4 — 크래시 DSN 주입(Info.plist `SentryDsn`=$(SENTRY_DSN)). 빈값이면 CrashReporter no-op.
+        # 시크릿 미커밋: 배포 시 xcconfig/CI 시크릿으로 override(예: xcodebuild SENTRY_DSN=...).
+        SENTRY_DSN: ""
         # gradle이 여기로 프레임워크를 복사(embedAndSign) → 링커 검색 경로
         FRAMEWORK_SEARCH_PATHS:
           - $(inherited)
@@ -34,6 +37,25 @@ targets:
           # 정적 Shared.framework를 앱에 링크할 때 -lsqlite3 없으면 wrapper 심볼 undefined(앱 link 실패).
           # 4축(framework link)은 통과하나 Xcode 앱 빌드는 이게 있어야 성립(M9 실기기/시뮬 게이트서 최초 발견).
           - -lsqlite3
+    # ── M9 WU-4 · iOS 크래시 리포팅(Sentry Cocoa) 활성화 — WU-11(Xcode/실기기)에서 켠다 ──────────────
+    # 현재 상태: Kotlin iosMain `CrashReporter`는 no-op(commonMain에 Sentry KMP를 두면 iOS 테스트 링크가
+    # 깨져서 — commonMain CrashReporter KDoc 참조). iOS 실 크래시 포착은 **Swift 층 Sentry Cocoa(SPM)**로
+    # 켠다. 아래를 활성화하면 이 XcodeGen setup(cocoapods 없음)에 자연스럽게 붙는다:
+    #   ① packages: 블록에 Sentry SPM 패키지 추가:
+    #        packages:
+    #          Sentry:
+    #            url: https://github.com/getsentry/sentry-cocoa
+    #            majorVersion: 8
+    #   ② 위 targets.iosApp에 dependencies 추가:
+    #        dependencies:
+    #          - package: Sentry
+    #   ③ iOSApp.swift에서 doInitKoin() 이전에 SentrySDK.start(Info.plist `SentryDsn` 사용, PII off):
+    #        import Sentry
+    #        SentrySDK.start { $0.dsn = Bundle.main.object(forInfoDictionaryKey: "SentryDsn") as? String ?? ""
+    #                          $0.sendDefaultPii = false }
+    #   ④ xcodegen generate → Xcode SPM resolve → 시뮬 스모크로 테스트 크래시 도달 확인.
+    # ⚠️ 지금 켜지 않는 이유: SPM 패키지 없는 현 커밋 .xcodeproj에서 `import Sentry`가 컴파일 실패 →
+    #    시뮬 스모크가 깨진다. iOS Xcode 통합은 축 밖(실기기 게이트)라 WU-11로 스코프. 상세=WU-4 핸드오프.
     preBuildScripts:
       - name: "Build & embed Shared.framework (Kotlin/Native + SKIE)"
         basedOnDependencyAnalysis: false

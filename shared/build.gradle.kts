@@ -53,6 +53,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.sqldelight.android.driver)   // AndroidSqliteDriver (M2 §3-3 actual)
             implementation(libs.ktor.client.okhttp)          // M3 엔진 actual (androidMain)
+            implementation(libs.sentry.android)              // M9 WU-4 — 크래시 리포팅 actual(Android SDK)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)    // NativeSqliteDriver (M2 §3-3 actual)

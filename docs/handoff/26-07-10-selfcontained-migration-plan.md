@@ -5,7 +5,7 @@
 > 진행 상태 정본 = [ROADMAP](../../ROADMAP.md)(Now: 이관 트랙·코드 갭 트랙 / M9 [외부]). 시점성 상태는 여기 쌓지 말고 ROADMAP에.
 > 세션 워킹 체크리스트(폐기가능) = [`26-07-10-to-do-list.md`](../../26-07-10-to-do-list.md).
 > ✅ 커밋 상태: 이 계획 세션 산출(§0)은 **`315ea55`로 커밋됨**. 이후 각 WU 실행분은 그 세션에서 커밋한다 —
-> 예: **코드 갭 트랙 WU-8·9·10 → 2026-07-10 커밋**(5축 green). **✅ 이관 트랙 WU-2·3·5·6 → 2026-07-10 완료**(WU-6 = 네이티브 iOS 전수 스윕·자기완결성 확증·안전 이관 2건). 잔여: **WU-1(Pages — 착수·⚠️ 보류: private+무료 플랜 활성화 불가·[PR #10] 스테이징, §2 WU-1 참조)**·WU-4(Sentry·방침 사인오프)·WU-7(폐기·사람 게이트).
+> 예: **코드 갭 트랙 WU-8·9·10 → 2026-07-10 커밋**(5축 green). **✅ 이관 트랙 WU-2·3·5·6 → 2026-07-10 완료**(WU-6 = 네이티브 iOS 전수 스윕·자기완결성 확증·안전 이관 2건). **✅ WU-4(크래시 리포팅 Sentry) → 2026-07-10 완료**(플랫폼 seam 분리·5축 green·방침 사인오프 완료 — §2 WU-4 참조). 잔여: **WU-1(Pages — 착수·⚠️ 보류: private+무료 플랜 활성화 불가·[PR #10] 스테이징, §2 WU-1 참조)**·WU-7(폐기·사람 게이트).
 
 ---
 
@@ -59,11 +59,13 @@
 - DoD: docs/ai-quality/ 이관, ADR-0007 존재, ROADMAP/architecture에서 참조. 내용 = 아침 리뷰.
 - 의존: WU-2(prompt-probe 참조) 느슨.
 
-**WU-4 · 크래시 리포팅 도입 `[사람→AI, SDK=Sentry D1·D2]`**
-- 목표: Sentry KMP 배선 + 방침 갱신.
-- 스코프: ① `sentry-kotlin-multiplatform` 의존 추가(commonMain), `initKoin`/앱 셸 초기화 ② DSN 주입 경로(BuildConfig/xcconfig) ③ 최소 crash capture 실증(테스트 크래시) ④ **방침 §4 "미수집"→"크래시 진단 최소 수집" 갱신** + 이용약관/스토어 라벨 동기화 ⑤ 4축 green.
-- DoD: 양 플랫폼 크래시가 Sentry에 도달(수동 트리거), 방침/라벨 정합, green 회귀 0.
-- 의존: **방침 갱신 = 사용자 최종 사인오프**(D2 ⚠️). 실기기 실크래시 확인은 M9 트랙(WU-11)과 연계 가능.
+**WU-4 · 크래시 리포팅 도입 `[사람→AI, SDK=Sentry D1·D2]` — ✅ 완료(2026-07-10)**
+- 목표: Sentry 배선 + 방침 갱신.
+- **⚠️ D1 실측 정정 → 플랫폼 seam 분리(사람 결정)**: `sentry-kotlin-multiplatform`을 commonMain에 넣으니 `:shared:iosSimulatorArm64Test`(네이티브 테스트 실행파일 링크)가 `ld: framework 'Sentry' not found`로 깨짐 — 비cocoapods 정적 프레임워크(XcodeGen+SKIE) setup 탓(정적 앱-프레임워크 링크는 `-lsqlite3`처럼 통과, 테스트 실행파일은 완전 해석 필요). D1의 "commonMain 단일 배선" 전제가 iOS 네이티브 링크 현실과 충돌 → **seam 분리** 채택.
+- **실행분(5축 green)**: ① commonMain `expect object CrashReporter`(Sentry 무참조) + androidMain actual=`io.sentry:sentry-android` 8.48.0(미포착 예외 핸들러) + iosMain actual=no-op(iOS는 Swift/Sentry Cocoa SPM·WU-11) ② `initKoin(platformModule, crashDsn)` 최상단 배선 ③ DSN 주입: Android=`BuildConfig.SENTRY_DSN`(gradle 프로퍼티/env, 비면 no-op·시크릿 미커밋) / iOS=Info.plist `SentryDsn`=`$(SENTRY_DSN)`(project.yml) ④ `sendDefaultPii=false`(방침 정합) ⑤ `CrashReporterTest` 2건(미설정 no-op·멱등, 양 플랫폼 실행) ⑥ **방침 갱신**(사인오프 완료): privacy-policy §2-2 신설·§3·§4 정합·스토어 라벨(Play/App Store) 반영.
+- **iOS 잔여(WU-11 연계·출시 전 필수)**: iosMain no-op이라 iOS 실 크래시 미포착 → Swift/SPM으로 Sentry Cocoa 활성화([project.yml](../../iosApp/project.yml) 주석 절차). Android은 실 배선 완료.
+- **근본 해결(출시 후)**: commonMain 단일 KMP 배선(cocoapods 등) → ROADMAP Later 백로그.
+- 원장: [WU-4 ledger](26-07-10-wu4-crash-reporting-ledger.md). DoD 충족(방침/라벨 정합·5축 green 회귀 0). 사인오프=사용자 사전 승인(2026-07-10).
 
 **WU-5 · launch-prep 대조·잔여 이관 `[AI]`**
 - 목표: `docs/launch-prep/` 중 devetym `docs/release/`로 **미승계분만** 이관(중복 방지).
@@ -103,7 +105,7 @@
 ## 3. 의존·순서 지도
 
 - **독립·즉시(병렬 OK)**: ~~WU-1~~(⚠️ **활성화 블로커 — public 전환/Pro 대기**, 파일 스테이징만 완료), WU-2, WU-5, WU-8, WU-9, WU-10.
-- **결정 완료 후 실행**: WU-3(D3 승인됨), WU-4(D1·D2 확정 — 단 방침 갱신 사인오프).
+- **결정 완료 후 실행**: WU-3(D3 승인됨 ✅), ~~WU-4~~(✅ 완료 2026-07-10 — D1을 seam 분리로 실측 정정, 방침 사인오프 완료. iOS 네이티브 활성화만 WU-11 연계).
 - **후행**: WU-6(문서 이관 후) → WU-7(스윕 후, 사람) → WU-12(전부 후, 외부).
 - 각 WU는 착수 시 자기 세부 핸드오프를 `docs/handoff/`에 만들어도 됨(이 문서는 방향·인덱스).
 
