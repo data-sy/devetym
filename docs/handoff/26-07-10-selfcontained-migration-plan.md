@@ -5,7 +5,7 @@
 > 진행 상태 정본 = [ROADMAP](../../ROADMAP.md)(Now: 이관 트랙·코드 갭 트랙 / M9 [외부]). 시점성 상태는 여기 쌓지 말고 ROADMAP에.
 > 세션 워킹 체크리스트(폐기가능) = [`26-07-10-to-do-list.md`](../../26-07-10-to-do-list.md).
 > ✅ 커밋 상태: 이 계획 세션 산출(§0)은 **`315ea55`로 커밋됨**. 이후 각 WU 실행분은 그 세션에서 커밋한다 —
-> 예: **코드 갭 트랙 WU-8·9·10 → 2026-07-10 커밋**(5축 green). **✅ 이관 트랙 WU-2·3·5 → 2026-07-10 실행**(순수 [AI]·문서/Scripts만·코드 무변경). 잔여: WU-1(Pages 활성화·사람)·WU-4(Sentry·방침 사인오프)·WU-6·7(사람 게이트).
+> 예: **코드 갭 트랙 WU-8·9·10 → 2026-07-10 커밋**(5축 green). **✅ 이관 트랙 WU-2·3·5·6 → 2026-07-10 완료**(WU-6 = 네이티브 iOS 전수 스윕·자기완결성 확증·안전 이관 2건). 잔여: **WU-1(Pages — 착수·⚠️ 보류: private+무료 플랜 활성화 불가·[PR #10] 스테이징, §2 WU-1 참조)**·WU-4(Sentry·방침 사인오프)·WU-7(폐기·사람 게이트).
 
 ---
 
@@ -38,11 +38,14 @@
 
 ### 이관·자기완결화 트랙
 
-**WU-1 · GitHub Pages 실배포 `[AI→사람]`** — M9 blocker 닫기
+**WU-1 · GitHub Pages 실배포 `[AI→사람]` — 착수·⚠️ 보류(2026-07-10)** — M9 blocker 닫기
 - 목표: devetym `site/`(방침·약관)를 실제 배포해 **공개 방침 URL** 확보.
 - 스코프: `pages.yml`은 이미 이관·커밋됨(`315ea55`). ① pages.yml + site/를 main에 커밋·push(스택 규율상 별도 브랜치→PR) ② repo Settings→Pages Source=GitHub Actions 활성(`[사람]` 또는 `gh api`) ③ Actions 배포 성공 확인 ④ 방침 URL을 [스토어 라벨](../release/m9-store-metadata-draft.md)·site 링크에 반영.
-- DoD: `https://data-sy.github.io/devetym/privacy-policy` 류 URL 200 응답. default-deny 확인(site/ 밖 미발행).
-- 의존: 없음(독립·최우선 권장 — M9 blocker).
+- **✅ Phase A 완료(2026-07-10)**: `origin/main`(M8, `d8a7aaa`) 위 별도 브랜치 `chore/pages-deploy`에 `pages.yml` + `site/` 4파일만 얹어 **[PR #10](https://github.com/data-sy/devetym/pull/10)** 오픈(diff=인프라 5파일뿐·M9 스택 독립·미머지). site/ 시크릿 스윕 clean(방침·약관은 발행 의도 콘텐츠, 지원 이메일 `oddmuffinstudio@gmail.com` 정합).
+- **⛔ Phase B 블로커(활성화 불가)**: `gh api -X POST repos/data-sy/devetym/pages -f build_type=workflow` → `422 Your current plan does not support GitHub Pages for this repository`. 원인 = repo **private** + 계정 **GitHub 무료 플랜**. **무료 플랜은 public repo만 Pages 허용**(private Pages는 Pro/Team/Enterprise). → **활성화 = ① public 전환**(사람·환원불가·시크릿/`local.properties`/keystore 스윕 선행) **또는 ② GitHub Pro**(private 유지·유료)에 의존. **사용자 결정으로 보류**.
+- **재개 절차(택1 후)**: public 전환 or Pro 확정 → (public이면) 시크릿 스윕·전환 → PR #10 병합(push main → `pages.yml` 트리거) → Pages Source=Actions 확인 → 아래 DoD 검증 → 방침 URL 스토어 라벨 반영.
+- DoD: `https://data-sy.github.io/devetym/privacy-policy/` 류 URL 200 응답. default-deny 확인(site/ 밖 미발행).
+- 의존: **⚠️ public 전환 또는 GitHub Pro**(무료+private에선 활성화 자체가 막힘 — 2026-07-10 실측). 파일 스테이징(Phase A)은 완료.
 
 **WU-2 · Scripts 파이프라인 이관 검증 `[AI]`**
 - 목표: 이관한 `Scripts/{db-expand, prompt-probe}`가 devetym 컨텍스트에서 성립.
@@ -99,7 +102,7 @@
 
 ## 3. 의존·순서 지도
 
-- **독립·즉시(병렬 OK)**: WU-1(최우선·M9 blocker), WU-2, WU-5, WU-8, WU-9, WU-10.
+- **독립·즉시(병렬 OK)**: ~~WU-1~~(⚠️ **활성화 블로커 — public 전환/Pro 대기**, 파일 스테이징만 완료), WU-2, WU-5, WU-8, WU-9, WU-10.
 - **결정 완료 후 실행**: WU-3(D3 승인됨), WU-4(D1·D2 확정 — 단 방침 갱신 사인오프).
 - **후행**: WU-6(문서 이관 후) → WU-7(스윕 후, 사람) → WU-12(전부 후, 외부).
 - 각 WU는 착수 시 자기 세부 핸드오프를 `docs/handoff/`에 만들어도 됨(이 문서는 방향·인덱스).
