@@ -114,6 +114,7 @@ fun AppRoot(deps: AppDependencies) {
                             onBack = back,
                             onSelectSuggestion = { detailKeys[tab] = it },
                             onShare = deps.actions::share,
+                            onCopy = deps.actions::copyToClipboard,
                             onReport = { deps.actions.sendMail("data.sy.2@gmail.com", "DevEtym 오류 제보: $it", "") },
                         )
                     }

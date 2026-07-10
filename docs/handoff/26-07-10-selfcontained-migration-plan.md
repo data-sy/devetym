@@ -3,8 +3,9 @@
 > **성격: 여러 세션에 걸쳐 실행할 forward 계획.** 이 세션은 **실행이 아니라 계획·설계 + 결정/승인 확정**만 했다.
 > 각 작업단위(WU)는 **독립 세션 하나로 끊어 실행**하도록 스코프됐다 — 미래 세션은 해당 WU 절만 읽고 바로 착수한다.
 > 진행 상태 정본 = [ROADMAP](../../ROADMAP.md)(Now: 이관 트랙·코드 갭 트랙 / M9 [외부]). 시점성 상태는 여기 쌓지 말고 ROADMAP에.
-> 세션 워킹 체크리스트(미커밋·폐기가능) = [`26-07-10-to-do-list.md`](../../26-07-10-to-do-list.md).
-> ⚠️ 이 세션 산출은 **전부 미커밋**(사용자 지시 커밋X). 사용자 리뷰 후 커밋.
+> 세션 워킹 체크리스트(폐기가능) = [`26-07-10-to-do-list.md`](../../26-07-10-to-do-list.md).
+> ✅ 커밋 상태: 이 계획 세션 산출(§0)은 **`315ea55`로 커밋됨**. 이후 각 WU 실행분은 그 세션에서 커밋한다 —
+> 예: **코드 갭 트랙 WU-8·9·10 → 2026-07-10 커밋**(5축 green). 잔여 WU(1~7)는 미실행.
 
 ---
 
@@ -12,7 +13,7 @@
 
 1. **리모트 공개 실행** — private repo `data-sy/devetym` 생성 → 전 브랜치(11) push → `feat/m1`~`feat/m8` 스택 PR(#1~#8) merge-commit 순차 병합 → **main = M8**. m9 = draft PR #9(미머지). **브랜치 11개 전부 보존**(삭제 안 함, 소급 PR 소스).
 2. **ROADMAP 재편** — Now에 "이관·자기완결화 트랙" + "코드 갭 수정 트랙" 신설. 기존 12 백로그 재배치: #1·#3·#4·#12 → 이관 트랙 / #2 → M9 [외부] / #9·#10·#11 → 코드 갭 트랙 / #5·#6·#7·#8 → "Later — 출시 후 백로그".
-3. **순수 [AI] 이관** (미커밋) — `.github/workflows/pages.yml`, `Scripts/{db-expand, prompt-probe, generate_db.py}`, `docs/db-expand/`.
+3. **순수 [AI] 이관** (`315ea55` 커밋) — `.github/workflows/pages.yml`, `Scripts/{db-expand, prompt-probe, generate_db.py}`, `docs/db-expand/`.
 
 ---
 
@@ -39,7 +40,7 @@
 
 **WU-1 · GitHub Pages 실배포 `[AI→사람]`** — M9 blocker 닫기
 - 목표: devetym `site/`(방침·약관)를 실제 배포해 **공개 방침 URL** 확보.
-- 스코프: `pages.yml`은 이미 이관됨(미커밋). ① pages.yml + site/를 main에 커밋·push(스택 규율상 별도 브랜치→PR) ② repo Settings→Pages Source=GitHub Actions 활성(`[사람]` 또는 `gh api`) ③ Actions 배포 성공 확인 ④ 방침 URL을 [스토어 라벨](../release/m9-store-metadata-draft.md)·site 링크에 반영.
+- 스코프: `pages.yml`은 이미 이관·커밋됨(`315ea55`). ① pages.yml + site/를 main에 커밋·push(스택 규율상 별도 브랜치→PR) ② repo Settings→Pages Source=GitHub Actions 활성(`[사람]` 또는 `gh api`) ③ Actions 배포 성공 확인 ④ 방침 URL을 [스토어 라벨](../release/m9-store-metadata-draft.md)·site 링크에 반영.
 - DoD: `https://data-sy.github.io/devetym/privacy-policy` 류 URL 200 응답. default-deny 확인(site/ 밖 미발행).
 - 의존: 없음(독립·최우선 권장 — M9 blocker).
 

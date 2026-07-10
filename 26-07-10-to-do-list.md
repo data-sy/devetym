@@ -1,4 +1,4 @@
-# 2026-07-10 To-Do (작업 트래킹용 · 커밋 안 함)
+# 2026-07-10 To-Do (작업 트래킹용 · 폐기가능 스크래치)
 
 > devetym이 dev-etymology 의존 없이 **자기 완결적**이 되게 만드는 스윕 + 리모트 공개 + M9 잔여 마감.
 > 상태 정본은 ROADMAP. 이 파일은 이번 세션 워킹 체크리스트(끝나면 폐기 가능).
@@ -23,8 +23,8 @@
 6. [→WU-6] **미기재 잔여 점검** — DevEtym/ 네이티브 iOS 전수 스윕.
 7. [→WU-11·12] **M9 잔여 마감** — 실기기/서명/심사(환원 불가).
 
-## 병행 코드 갭 → WU-8·9·10 ([AI], 미래 세션)
-- [→WU-8] #9 클립보드 UI 배선 · [→WU-9] #10 스플래시 · [→WU-10] #11 셸 배선 회귀 가드
+## 병행 코드 갭 → WU-8·9·10 ([AI]) — ✅ 3건 완료 (2026-07-10, 커밋·5축 green)
+- [x] WU-8 #9 클립보드 UI 배선 · [x] WU-9 #10 스플래시 · [x] WU-10 #11 셸 배선 회귀 가드(신규 `:androidApp:testDebugUnitTest` 축)
 
 ## 결정/승인 (이 세션에 확정 — 원장 = 핸드오프 §1)
 - **D1** 크래시 SDK = **Sentry KMP** (commonMain 단일 배선·공식 KMP SDK). Crashlytics override 가능.
@@ -37,11 +37,11 @@
 - [ ] `[사람]` **리모트 안전 확인 후 public 전환** — private `data-sy/devetym`가 안전하게 올라간 것 확인되면(빌드/자산/시크릿 노출 점검 후) repo를 public으로. ⚠️ 되돌리기 어려움(인덱싱·캐시) → 전환 전 시크릿·`local.properties`·키 노출 스윕 먼저. (ROADMAP 브랜치 전략의 "public 전환은 추후 사람 결정"과 정합.)
 - [ ] `[AI]` **운영 문서 최신화 `/refresh-ops-docs`** — 로드맵·백로그·핸드오프·**README 상태부**를 실제 상태(git·파일트리)와 대조해 stale 제거. ※ 별도 "README 정리" 항목 없음 — README 상태부는 이 명령이 커버(거버넌스·specs는 손 안 대고 승인 요청). 이번 세션 대량 변경(원격 생성·이관·트랙 재편) 반영 겸 한 번 돌리면 좋음.
 
-## 병행: 진행할 버그성 백로그 (이관 아님)
+## 병행: 진행할 버그성 백로그 (이관 아님) — ✅ 전건 완료 (2026-07-10, 커밋)
 
-- [ ] #9 클립보드 복사 액션 UI 배선 (dead code)
-- [ ] #10 Android 스플래시 화면 배선
-- [ ] #11 셸 배선 회귀 가드 (CI/Test)
+- [x] #9 클립보드 복사 액션 UI 배선 (WU-8 — DetailScreen "어원 복사")
+- [x] #10 Android 스플래시 화면 배선 (WU-9 — core-splashscreen, iOS UILaunchScreen 정합)
+- [x] #11 셸 배선 회귀 가드 (WU-10 — ShellWiringManifestTest, manifest↔소스 정합)
 
 ## 출시 후로 미룰 것 (ROADMAP에서 분리)
 

@@ -46,6 +46,7 @@ fun DetailScreen(
     onBack: () -> Unit,
     onSelectSuggestion: (String) -> Unit,
     onShare: (String) -> Unit,
+    onCopy: (String) -> Unit,
     onReport: (String) -> Unit,
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
@@ -58,6 +59,7 @@ fun DetailScreen(
         onBack = onBack,
         onSelectSuggestion = onSelectSuggestion,
         onShare = onShare,
+        onCopy = onCopy,
         onReport = onReport,
     )
 }
@@ -71,6 +73,7 @@ fun DetailContent(
     onBack: () -> Unit,
     onSelectSuggestion: (String) -> Unit,
     onShare: (String) -> Unit,
+    onCopy: (String) -> Unit,
     onReport: (String) -> Unit,
 ) {
     val colors = AppScheme.colors
@@ -91,7 +94,7 @@ fun DetailContent(
             }
 
             is DetailUiState.Result -> when (val r = state.result) {
-                is TermResult.Found -> FoundBody(r.entry, r.source, isBookmarked, onToggleBookmark, onShare, onReport)
+                is TermResult.Found -> FoundBody(r.entry, r.source, isBookmarked, onToggleBookmark, onShare, onCopy, onReport)
                 is TermResult.NotDevTerm -> MessageBody("?", "개발 용어를 검색해주세요", "검색으로 돌아가기", onBack)
                 is TermResult.PossibleTypo -> Column(
                     Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally,
@@ -117,6 +120,7 @@ private fun FoundBody(
     isBookmarked: Boolean,
     onToggleBookmark: () -> Unit,
     onShare: (String) -> Unit,
+    onCopy: (String) -> Unit,
     onReport: (String) -> Unit,
 ) {
     val colors = AppScheme.colors
@@ -136,6 +140,9 @@ private fun FoundBody(
             Text(entry.etymology, style = type.bodyBlock, color = colors.text,
                 modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(dim.radiusBlock))
                     .background(colors.surface2).padding(dim.cardPadding))
+            // WU-8: copyToClipboard seam 호출처(어원 블록 복사 어포던스). seam은 구현·유닛테스트되나
+            // 이전엔 호출 UI가 없어 dead code였다(M9 에뮬 스모크 발견).
+            ActionText("어원 복사", { onCopy(entry.etymology) })
         }
         Section("왜 이 이름인가") {
             Text(entry.namingReason, style = type.body, color = colors.text)

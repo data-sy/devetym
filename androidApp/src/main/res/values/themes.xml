@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  M9 WU-9 — Android 스플래시 배선.
+  iOS UILaunchScreen(UIColorName=Theme/brand + UIImageName=LaunchLogo) 정합:
+  brand 배경(#2E5D3A) + 런처 foreground 아이콘. core-splashscreen이 Android 12+ SplashScreen API를
+  minSdk 26까지 백포트한다. installSplashScreen()이 postSplashScreenTheme로 스왑한다.
+-->
+<resources>
+    <!-- 앱 본 테마(스플래시 종료 후). 기존 manifest 테마(Material.Light.NoActionBar) 계승 —
+         실 배경/대비는 Compose AppTheme가 칠한다(온보딩 early-return 배경 버그는 M9서 .background로 마감). -->
+    <style name="Theme.DevEtym" parent="@android:style/Theme.Material.Light.NoActionBar" />
+
+    <!-- 런치 시 적용되는 스플래시 테마. -->
+    <style name="Theme.DevEtym.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/ic_launcher_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.DevEtym</item>
+    </style>
+</resources>

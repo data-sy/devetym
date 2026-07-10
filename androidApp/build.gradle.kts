@@ -36,9 +36,11 @@ kotlin {
 dependencies {
     implementation(project(":shared"))
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core.splashscreen)   // M9 WU-9 — Android 스플래시(iOS UILaunchScreen 정합)
     implementation(compose.runtime)
     implementation(compose.foundation)
     implementation(compose.material3)
     implementation(compose.ui)
     implementation(libs.koin.android)
+    testImplementation(libs.junit)   // M9 WU-10 — 셸 배선 회귀 가드(순수 JVM)
 }
