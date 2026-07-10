@@ -20,7 +20,7 @@
    - [→WU-5] launch-prep/e2e-checklist 대조.
    - [→WU-3] ai-quality → ADR-0007 (**D3 승인 완료**).
    - [→WU-4] 크래시 리포팅 (**D1 SDK=Sentry KMP·D2 도입 확정**).
-6. [→WU-6] **미기재 잔여 점검** — DevEtym/ 네이티브 iOS 전수 스윕.
+6. [x] **미기재 잔여 점검** — DevEtym/ 네이티브 iOS 전수 스윕. ✅ WU-6 완료(2026-07-10, `f4b2a9c`): 자기완결성 확증(dev-etymology 의존 0)·안전이관 2건(이메일 버그·LICENSE)·[원장](docs/handoff/26-07-10-wu6-native-sweep-ledger.md). 잔여는 원장 §3(UX 포트·거버넌스·M9 iOS 자산).
 7. [→WU-11·12] **M9 잔여 마감** — 실기기/서명/심사(환원 불가).
 
 ## 병행 코드 갭 → WU-8·9·10 ([AI]) — ✅ 3건 완료 (2026-07-10, 커밋·5축 green)
