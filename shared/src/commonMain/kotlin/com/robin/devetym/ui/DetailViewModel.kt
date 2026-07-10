@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.robin.devetym.model.TermResult
 import com.robin.devetym.repository.TermRepository
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +24,12 @@ sealed interface DetailUiState {
 /**
  * 상세 화면 ViewModel (§3-2). `TermRepository`만 주입(architecture §4.5). fetch→상태 전이·job 취소·오류 매핑.
  */
-class DetailViewModel(private val repository: TermRepository) : ViewModel() {
+class DetailViewModel(
+    private val repository: TermRepository,
+    // DR5-2 취소 내성(M7 §3-6): null이면 viewModelScope(M5 동작·테스트 보존), M7이 앱 스코프 주입 시 화면
+    // 이탈에도 toggle 쓰기가 취소되지 않는다. ⚠️ '유실 제거'가 아니라 취소 내성 하드닝(실 셸 VM leak은 M8 이월).
+    private val writeScope: CoroutineScope? = null,
+) : ViewModel() {
 
     private val _state = MutableStateFlow<DetailUiState>(DetailUiState.Loading)
     val state: StateFlow<DetailUiState> = _state.asStateFlow()
@@ -58,6 +64,6 @@ class DetailViewModel(private val repository: TermRepository) : ViewModel() {
     fun toggleBookmark() {
         val result = (_state.value as? DetailUiState.Result)?.result
         val entry = (result as? TermResult.Found)?.entry ?: return
-        viewModelScope.launch { repository.toggleBookmark(entry) }
+        (writeScope ?: viewModelScope).launch { repository.toggleBookmark(entry) }  // DR5-2 취소 내성
     }
 }

@@ -15,6 +15,8 @@ import com.robin.devetym.model.Source
 import com.robin.devetym.model.TermEntry
 import com.robin.devetym.model.TermResult
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * 3계층 read-through 오케스트레이터 (M4 슬라이스 §3, spec 2-3). ViewModel(M5)이 의존하는 **유일 인터페이스**.
@@ -44,10 +46,26 @@ class TermRepositoryImpl(
     private val clock: () -> Long,   // createdAt/seenAt/searchedAt 주입(매퍼에 Clock 없음 — M2 §3-4)
 ) : TermRepository {
 
-    override suspend fun fetch(keyword: String): TermResult = orchestrate(keyword, useCache = true)
+    // DR-2 단일-writer 강제(M7 §3-5): 정규화 키로 키잉된 Mutex로 fetch/refresh/toggleBookmark를 직렬화한다.
+    // 맵-가드 원자성은 commonMain·네이티브 가능한 coroutines Mutex로(JVM synchronized 금지 — 네이티브 레이스).
+    // 비재진입 — op 최상단 1회 획득(orchestrate→buildAiRow는 같은 락 재획득 안 함, 데드락 없음).
+    // ⚠️ 진짜 병렬 강제는 구조(single 배선 + 이 Mutex)로 담보하며 4축으로 자칭하지 않는다(실기기 이월).
+    private val keyLocksGuard = Mutex()
+    private val keyLocks = mutableMapOf<String, Mutex>()
+
+    private suspend fun <T> withKeyLock(rawKeyword: String, block: suspend () -> T): T {
+        val key = normalizeKeyword(rawKeyword)
+        if (key.isEmpty()) return block()   // 빈 키는 저장/RMW 없음 — 잠금 불필요
+        val lock = keyLocksGuard.withLock { keyLocks.getOrPut(key) { Mutex() } }
+        return lock.withLock { block() }
+    }
+
+    override suspend fun fetch(keyword: String): TermResult =
+        withKeyLock(keyword) { orchestrate(keyword, useCache = true) }
 
     /** 명시적 새로고침 — 로컬 AI 캐시(3단)를 건너뛰고 네트워크로 서버 최신본 강제, pinned `seenAt` 갱신(INV-6). */
-    override suspend fun refresh(keyword: String): TermResult = orchestrate(keyword, useCache = false)
+    override suspend fun refresh(keyword: String): TermResult =
+        withKeyLock(keyword) { orchestrate(keyword, useCache = false) }
 
     private suspend fun orchestrate(keyword: String, useCache: Boolean): TermResult {
         // 1. 정규화 — 빈 입력이면 네트워크·저장 없이 즉시 NotDevTerm.
@@ -112,10 +130,10 @@ class TermRepositoryImpl(
 
     override fun autocomplete(prefix: String): List<TermEntry> = bundle.autocomplete(prefix)
 
-    override suspend fun toggleBookmark(entry: TermEntry): Boolean {
+    override suspend fun toggleBookmark(entry: TermEntry): Boolean = withKeyLock(entry.keyword) {
         val key = normalizeKeyword(entry.keyword)   // 조회·저장 키 단일 정본(§3-4)
         val existing = store.selectByKeyword(key)
-        return if (existing != null) {
+        if (existing != null) {
             val newValue = existing.isBookmarked == 0L
             store.upsertTerm(existing.copy(isBookmarked = if (newValue) 1L else 0L)) // 나머지 필드 전부 보존
             newValue
