@@ -44,8 +44,8 @@ sealed class ClaudeException(cause: Throwable? = null) : Exception(cause) {
 class ClaudeApi(
     private val client: HttpClient,
     private val deviceId: () -> String,
-) {
-    suspend fun generate(keyword: String): TermResult {
+) : TermGenerator {
+    override suspend fun generate(keyword: String): TermResult {
         val res = try {
             client.post(Constants.proxyBaseUrl) {
                 header("X-Device-Id", deviceId())          // 프록시 한도 카운터 키
