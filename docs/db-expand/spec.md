@@ -1,6 +1,7 @@
 # DB 번들 확장 — 실행 스펙
 
-> 번들 `DevEtym/DevEtym/Resources/terms.json` 확장. 기존 `Scripts/generate_db.py` 파이프라인의 deterministic 부분(validator·merge)은 재사용하고, 생성 방식만 Reflexion 패턴(Generator + Critic) 기반 claude.ai chat batch로 전환.
+> 번들 `shared/src/commonMain/composeResources/files/terms.json` 확장. 기존 `Scripts/generate_db.py` 파이프라인의 deterministic 부분(validator·merge)은 재사용하고, 생성 방식만 Reflexion 패턴(Generator + Critic) 기반 claude.ai chat batch로 전환.
+> ⚠️ 아래 "현재 상태 (2026-05-26)"·`rounds/`·`archive/`의 경로/수치는 그 시점 **dev-etymology(iOS)** 컨텍스트의 불변 히스토리 기록이다(당시 번들 경로 `DevEtym/DevEtym/Resources/terms.json`). 재실행 시 위 devetym 경로 사용.
 
 ## 목표
 

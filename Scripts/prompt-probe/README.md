@@ -44,7 +44,7 @@ API 키 — Anthropic 콘솔 발급 키를 셸 환경변수로:
 export ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-> ⚠️ 과거에는 `DevEtym/Config.xcconfig`에서 키를 awk로 추출했으나, **백엔드 프록시 전환(H2b) 이후 앱은 키를 보관하지 않는다**(`Config.xcconfig` 비어 있음). 이 dev 툴은 위처럼 **직접 환경변수로** 키를 넣어 쓴다. 프록시 서버용 키(Console 발급)와 같은 키를 재사용해도 되지만, 셸 히스토리에 남지 않도록 주의할 것.
+> ⚠️ **앱은 Claude API 키를 보관하지 않는다**(백엔드 프록시 `devetym-proxy` 경유 — [ADR-0006](../../docs/adr/0006-server-cache-boundary.md)). 이 dev 툴은 앱과 무관하게 위처럼 **직접 환경변수로** 키를 넣어 쓴다. 프록시 서버용 키(Console 발급)와 같은 키를 재사용해도 되지만, 셸 히스토리에 남지 않도록 주의할 것.
 
 ### 2. Sanity check 먼저 (API 호출 없음)
 
@@ -75,7 +75,7 @@ python probe_prompt.py
 ### 4. ⚠️ 실행 전 확인
 
 `probe_prompt.py` 상단의 `MODEL` 상수가 본인 production 코드
-(`ClaudeAPIService.swift`의 `Constants.claudeModel`)와 일치하는지 확인.
+(`shared/src/commonMain/kotlin/com/robin/devetym/Constants.kt`의 `Constants.claudeModel`)와 일치하는지 확인.
 다르면 측정값을 production과 비교할 수 없음.
 
 ```python

@@ -1,6 +1,6 @@
 # 번들 DB 확장 (db-expand) — 인덱스
 
-개발 어원 사전의 번들 DB(`DevEtym/DevEtym/Resources/terms.json`)를 출시 전 확장한 작업의 문서함.
+개발 어원 사전의 번들 DB(`shared/src/commonMain/composeResources/files/terms.json`)를 출시 전 확장한 작업의 문서함.
 
 ## 상태: ✅ 종결 (2026-06-20)
 

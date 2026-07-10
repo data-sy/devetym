@@ -21,3 +21,9 @@ iosApp/build/
 *.xcodeproj/xcuserdata/
 *.xcodeproj/project.xcworkspace/xcuserdata/
 *.xcworkspace/xcuserdata/
+
+# Python (Scripts/ 파이프라인 — WU-2 이관)
+__pycache__/
+*.pyc
+.venv/
+Scripts/**/.env.local

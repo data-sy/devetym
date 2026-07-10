@@ -5,8 +5,8 @@ DevEtym 번들 DB 배치 생성 스크립트.
 사용법:
     export ANTHROPIC_API_KEY=sk-ant-...
     python Scripts/generate_db.py \\
-        --input DevEtym/DevEtym/Resources/terms.json \\
-        --output DevEtym/DevEtym/Resources/terms.json \\
+        --input shared/src/commonMain/composeResources/files/terms.json \\
+        --output shared/src/commonMain/composeResources/files/terms.json \\
         --keywords Scripts/db-expand/keywords-round-004.txt   # keyword 목록(한 줄 1개)
 
 동작:

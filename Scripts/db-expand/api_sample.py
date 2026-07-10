@@ -6,7 +6,7 @@ Phase 2B — chat↔API drift 검증 (API 필요).
 claude.ai 채팅 탭에서 생성한 round-001.json과 비교한다.
 
 production 일치 (drift를 재려면 생성 조건이 production과 같아야 함):
-  - 모델 id: Scripts/generate_db.py(CLAUDE_MODEL) / ClaudeAPIService.swift(Constants.claudeModel)
+  - 모델 id: Scripts/generate_db.py(CLAUDE_MODEL) / shared/.../Constants.kt(Constants.claudeModel)
             = "claude-sonnet-4-6"
   - anthropic-version: 2023-06-01
   - max_tokens 8192, system에 cache_control ephemeral — generate_db.py call_claude와 동일
@@ -40,7 +40,7 @@ import urllib.error
 from pathlib import Path
 from typing import Any
 
-# production 값과 일치 (generate_db.py / ClaudeAPIService.swift)
+# production 값과 일치 (generate_db.py / shared/.../Constants.kt Constants.claudeModel)
 CLAUDE_MODEL = "claude-sonnet-4-6"
 API_URL = "https://api.anthropic.com/v1/messages"
 API_VERSION = "2023-06-01"

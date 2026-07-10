@@ -8,7 +8,7 @@ Scripts/generate_db.py의 load_existing() + 점진적 저장 로직을 fork.
     python merge.py <existing.json> <batch.json> <output.json>
 
 동작:
-    1) existing 로드 (DevEtym/DevEtym/Resources/terms.json)
+    1) existing 로드 (shared/src/commonMain/composeResources/files/terms.json)
     2) batch와 keyword 충돌 검사 (Phase 0-2 dedup 안전망 — 충돌 시 종료)
     3) merged = existing + batch, keyword.lower() 알파벳 정렬
     4) output(terms.next.json)에 저장

@@ -1,7 +1,7 @@
 """
 Claude tool 정의 — 세 도구 모두 8 cell 공통.
 
-TermEntry 스키마는 DevEtym iOS의 ClaudeAPIService.swift와 동기화.
+TermEntry 스키마는 devetym KMP의 shared/.../data/remote/ClaudePrompt.kt·ClaudeDto.kt와 동기화.
 """
 
 ALLOWED_CATEGORIES = ["동시성", "자료구조", "네트워크", "DB", "패턴", "기타"]

@@ -40,12 +40,12 @@ from metrics import compute_metrics
 
 
 # ──────────────────────────────────────────────────────────────────
-# 설정 — 본인의 production 코드(ClaudeAPIService.swift Constants)와 동기화
+# 설정 — 본인의 production 코드(shared/.../Constants.kt Constants)와 동기화
 # ──────────────────────────────────────────────────────────────────
 
 MODEL = "claude-sonnet-4-6"     # ⚠️ 본인 Constants.claudeModel과 일치 확인 필요
 MAX_TOKENS = 4096
-THINKING_BUDGET = 2000          # ClaudeAPIService.swift와 동일
+THINKING_BUDGET = 2000          # shared/.../ClaudePrompt.kt와 동일
 
 # 재시도 정책
 MAX_RETRIES = 3

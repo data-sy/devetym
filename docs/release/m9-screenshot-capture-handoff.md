@@ -26,6 +26,20 @@ Same order as the smoke script's flow. Aim for 5–8 shots (both stores cap at 8
 
 **Deterministic state injection** (avoid typing on camera): the smoke script already documents injecting SQLite state via `simctl` container `sqlite3` (iOS) and `adb` for Android. Pre-seed bookmarks/history rather than performing them live, so the screens are clean. For the AI-generated shot, either use a real proxy round-trip (network) or pre-seed the cached result row.
 
+### 1b. 캡션 카피 (dev-etymology 초안 계승 — WU-5)
+
+프레이밍(§4)에서 캡션을 얹을 때 쓸 한 줄 카피. 원본은 iOS App Store 초안이나 문구는 양 스토어 공통. **과장 금지**(스토어가 misleading 스크린샷 리젝) — 아래는 사실 기반.
+
+| 매핑 컷 | 화면 | 캡션 | 판다 메시지 |
+|---|---|---|---|
+| #2/#3 | 검색 결과(예: `bug`) | **"왜 버그일까? 어원부터 알려줘요"** | 후크·핵심 차별점 |
+| #2 | 자동완성/검색창 | **"650개 용어, 오프라인에서 즉시"** | 규모·오프라인 속도 |
+| #3 | 상세(어원·작명) | **"정의가 아니라 '이름의 이유'까지"** | 깊이 |
+| #4 | AI 생성 결과 | **"없는 용어는 AI가 그 자리에서"** | 커버리지 확장 |
+| #5/#6 | 북마크/검색 기록 | **"면접·복습용으로 모아두기"** | 타깃 유스케이스 |
+
+첫 컷(온보딩 또는 검색 후크)이 첫인상이므로 가장 공들일 것. 다크 기본 + 라이트 1장 섞으면 완성도 인상↑.
+
 ## 2. iOS — required sizes & capture
 
 Apple currently requires **one 6.9" (or 6.7") iPhone** set; it can auto-scale down to smaller iPhones. Provide iPad shots **only if the app supports iPad** (confirm target — this app is iPhone-first).
