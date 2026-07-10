@@ -1,5 +1,6 @@
 package com.robin.devetym.ui
 
+import com.robin.devetym.Constants
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -115,7 +116,7 @@ fun AppRoot(deps: AppDependencies) {
                             onSelectSuggestion = { detailKeys[tab] = it },
                             onShare = deps.actions::share,
                             onCopy = deps.actions::copyToClipboard,
-                            onReport = { deps.actions.sendMail("data.sy.2@gmail.com", "DevEtym 오류 제보: $it", "") },
+                            onReport = { deps.actions.sendMail(Constants.supportEmail, "DevEtym 오류 제보: $it", "") },
                         )
                     }
                 } else {
