@@ -24,8 +24,14 @@ data class TermEntry(
     val summary: String,
     val etymology: String,
     val namingReason: String,
+    // 버전 태깅 (INV-9, 서버 캐시·딜리버리 트랙 선반영) — 옵셔널·default로 기존 번들 DB/AI 응답과 호환.
+    // 서버 배달 항목의 선택적 무효화·재생성을 위한 프롬프트/스키마 버전. null = 버전 이전(pre-versioning) 항목.
+    val schemaVersion: Int? = null,
+    val promptVersion: String? = null,
 )
 ```
+
+> **버전 필드는 옵셔널이다**: 현재 번들 DB·AI 응답 어디에도 없으므로 역직렬화 시 default(`null`)로 채워진다. 서버 캐시 트랙(→ [`../cache-delivery-milestones.md`](../cache-delivery-milestones.md)) 착수 전까지는 채우지 않는다. 지금 필드만 미리 확보해 이후 서버 통합 시 `@Serializable` DTO·DB 스키마 마이그레이션을 회피한다.
 
 **Source / TermResult** — 결과 출처는 문자열이 아니라 타입으로(컴파일 타임 분기 강제)
 ```kotlin
@@ -57,7 +63,11 @@ CREATE TABLE term (
   namingReason TEXT NOT NULL,
   source       TEXT NOT NULL,                 -- 'BUNDLE' | 'AI'
   isBookmarked INTEGER NOT NULL DEFAULT 0,
-  createdAt    INTEGER NOT NULL
+  createdAt    INTEGER NOT NULL,
+  -- 서버 캐시·딜리버리 빌트인 (처음부터, 마이그레이션 회피) — ADR-0006
+  seenAt        INTEGER,                       -- 사용자가 본 시각. NOT NULL이면 pinned(INV-6, 본 항목 불변)
+  schemaVersion INTEGER,                       -- INV-9 버전 태깅(서버 배달 항목의 선택적 무효화)
+  promptVersion TEXT                           -- INV-9. null = 버전 이전(pre-versioning) 항목
 );
 
 CREATE TABLE searchHistory (
@@ -75,6 +85,7 @@ SELECT * FROM searchHistory ORDER BY searchedAt DESC LIMIT :limit;
 
 - **드라이버만 플랫폼별**: `AndroidSqliteDriver`(androidMain) / `NativeSqliteDriver`(iosMain), `expect`/`actual`로 주입.
 - 저장 정책(**설계 불변식**): lazy 저장(AI 응답 시 `source=AI`, 북마크 시 번들 용어를 `source=BUNDLE`으로), upsert(동일 keyword 갱신·`isBookmarked`/`source` 보존), `searchHistory`는 검색 성공 시에만.
+- **local-first pinning (INV-6, ADR-0006 빌트인)**: 사용자가 본 항목은 `seenAt` 기록 → 그 사용자에겐 **불변**. upsert 시 `seenAt`이 있는 로우는 서버 갱신본으로 덮어쓰지 않는다(명시적 새로고침 경로만 예외). 번들 DB = 로컬 "head" 계층(INV-12). 이 컬럼들은 서버 캐시 착수 전엔 채우지 않되 **스키마엔 처음부터 존재**(나중 마이그레이션 회피).
 
 ### 1-3. 상수 (`commonMain`)
 ```kotlin
@@ -136,7 +147,7 @@ interface BundleDbSource {
 
 ### 2-2. ClaudeApi (`data/remote/`) — Ktor
 
-> **백엔드 계약 계승([ADR-0004](../adr/0004-backend-proxy-boundary.md)).** 앱에 키 없음. 프록시가 키 주입 + 기기당 일일 한도.
+> **백엔드 계약([ADR-0006](../adr/0006-server-cache-boundary.md), ADR-0004 대체).** 앱에 키 없음. 프록시가 키 주입 + 기기당 일일 한도. **프록시는 이제 read-through 캐시** — 서버가 D1 조회→미스 시 생성·write-back(INV-1·2). **클라엔 투명**하다: `Source`는 여전히 `BUNDLE` vs 네트워크(→`AI`), D1 히트 여부는 서버 내부 사정이라 이 호출 형태는 그대로다. 응답의 `schemaVersion`/`promptVersion`(INV-9)만 `TermEntry`로 왕복 디코드.
 
 ```kotlin
 class ClaudeApi(private val client: HttpClient, private val deviceId: () -> String) {
@@ -182,6 +193,7 @@ sealed class ClaudeException : Exception() {
 ```kotlin
 interface TermRepository {
     suspend fun fetch(keyword: String): TermResult
+    suspend fun refresh(keyword: String): TermResult   // 명시적 새로고침 — pinning 우회, 서버 최신본 강제(INV-6)
     fun autocomplete(prefix: String): List<TermEntry>
     suspend fun toggleBookmark(entry: TermEntry): Boolean
     fun bookmarkedTerms(): Flow<List<Term>>
@@ -194,13 +206,15 @@ interface TermRepository {
 **`fetch` 오케스트레이션 순서 (설계 불변식 — 그대로):**
 1. 입력 정규화(trim + lowercase). 빈 문자열이면 즉시 `NotDevTerm`(네트워크 호출 없음).
 2. **BundleDbSource.search** → 히트 시 히스토리 upsert 후 `Found(BUNDLE)`.
-3. **로컬 캐시** 조회 — **`source == AI`인 `Term`만** 캐시로 취급(북마크용 번들 항목 제외). 히트 시 히스토리 upsert 후 `Found(AI)`.
-4. **ClaudeApi.generate**:
-   - `Found(AI)` → `Term` upsert(`source=AI`, `aliases` 포함) + 히스토리 upsert 후 반환.
+3. **로컬 캐시** 조회 — **`source == AI`인 `Term`만** 캐시로 취급(북마크용 번들 항목 제외). 히트 시 히스토리 upsert 후 `Found(AI)`. **`seenAt`이 있는 pinned 항목은 여기서 그대로 반환(INV-6)** — `refresh()`만 이 단계를 건너뛴다.
+4. **ClaudeApi.generate**(= 프록시 read-through, 서버가 D1 캐시→미스 시 생성; 클라엔 투명 — ADR-0006):
+   - `Found(AI)` → `Term` upsert(`source=AI`, `aliases`·`schemaVersion`·`promptVersion` 포함, 처음 본 항목이면 `seenAt` 기록) + 히스토리 upsert 후 반환.
    - `NotDevTerm` / `PossibleTypo` → 그대로 반환(**히스토리 저장 안 함**).
    - `ClaudeException` → 전파(**히스토리 저장 안 함**). Analytics에 오류 로깅.
 
-**upsert 정책:** `Term`은 동일 keyword 존재 시 필드 갱신(`isBookmarked`·`source` 보존). `searchHistory`는 존재 시 `searchedAt`만 갱신.
+> **3계층 read-through는 이 순서 자체다**(로컬 번들 → 로컬 AI 캐시 → 네트워크[서버 D1 캐시 → API]). 서버 D1 계층은 4단계 네트워크 호출 안에서 **서버가** 처리하므로 클라 순서가 늘지 않는다 — 처음부터 이 형태로 짓고 나중에 계층을 끼워넣는 리팩토링을 하지 않는다(ADR-0006).
+
+**upsert 정책:** `Term`은 동일 keyword 존재 시 필드 갱신(`isBookmarked`·`source` 보존). **`seenAt`이 있는(pinned) 로우는 `fetch` 경로에서 덮어쓰지 않는다 — `refresh()`만 갱신**(INV-6, local-first pinning). `searchHistory`는 존재 시 `searchedAt`만 갱신.
 
 **toggleBookmark:** 로컬에 `Term` 존재 시 `isBookmarked` 토글 후 값 반환. 미존재(번들 용어)면 `Term(source=BUNDLE, isBookmarked=true)` 저장 후 `true`.
 
@@ -209,7 +223,7 @@ interface TermRepository {
 ### 2-4. 테스트 (`commonTest/`)
 Fake `TermRepository` 협력자(Fake BundleDbSource / Fake ClaudeApi / in-memory DB)로 검증. 함수명 `test_[대상]_[조건]_[기대]`.
 
-- Repository: 빈입력→NotDevTerm / 번들히트 즉답 / alias 히트 / 번들미스→AI호출 / 캐시히트→API스킵 / API오류 전파 / NotDevTerm·PossibleTypo 반환 / 성공시 히스토리저장 / 실패시 미저장 / 기존Term 필드갱신·북마크보존 / 북마크토글(기존·번들) / bookmarked·recent 정렬 / 히스토리 삭제·전체삭제.
+- Repository: 빈입력→NotDevTerm / 번들히트 즉답 / alias 히트 / 번들미스→AI호출 / 캐시히트→API스킵 / API오류 전파 / NotDevTerm·PossibleTypo 반환 / 성공시 히스토리저장 / 실패시 미저장 / 기존Term 필드갱신·북마크보존 / 북마크토글(기존·번들) / bookmarked·recent 정렬 / 히스토리 삭제·전체삭제 / **pinned(seenAt) 항목 fetch시 불변·API스킵 / refresh는 pinned 우회해 서버본 갱신 / 버전필드(schema·prompt) 왕복 보존**.
 - BundleDbSource: 정확매칭 / alias매칭 / 대소문자무시 / 미발견 / prefix자동완성 / 빈prefix.
 - ClaudeApi: 정상 tool_use→Found / not_dev_term→NotDevTerm / possible_typo→PossibleTypo / 429→DailyLimitExceeded / 타임아웃 / tool_use없음→InvalidResponse.
 
@@ -295,9 +309,11 @@ sealed interface DetailUiState {
 ### 4-2. 접근성
 - 아이콘·이미지에 contentDescription. Dynamic Type/글꼴 크기 스케일 대응. 다크·라이트 전 화면 렌더링 검증(양 플랫폼).
 
-### 4-3. 번들 DB 확장
+### 4-3. 번들 DB 확장 + 딜리버리 (캐시 빌트인, ADR-0006)
 - 초기 소량 → 650개로 확장(iOS `terms.json` 자산 재사용, keyword/aliases 변경 금지).
 - 각 용어 `category` 필수(6개 집합), `aliases` 최소 1개. 확장 후 JSON 유효성 + `aliases`/`category` 검증(생성·검증 파이프라인은 `docs/db-expand/`, 작성 예정).
+- **seed 승격 잡(INV-12·critic 게이트)**: 릴리즈 시 서버 D1의 hot 항목 → critic 통과분을 번들에 접어넣어 head 커버리지 단조 증가. 번들 = 로컬 head 계층.
+- **콘텐츠 팩 백그라운드 동기화(INV-11)**: 버전드 팩·delta/cursor 증분 pull·로컬 병합(본 항목 불변 규칙과 충돌 금지, INV-6). **메커니즘을 여기서 지어 출시 1일차부터 가동**(데이터는 릴리즈마다 축적). 상세: [`../cache-delivery-milestones.md`](../cache-delivery-milestones.md) M5·M6.
 
 ### 4-4. 앱 아이콘
 - **Android**: adaptive icon(전경/배경 레이어), `mipmap` + `ic_launcher` 배선.

@@ -31,13 +31,22 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
+            implementation(compose.components.resources)   // 번들 terms.json(composeResources) 로드용
             implementation(libs.koin.core)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json)  // M1 JSON 왕복(kotlinx.serialization)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
     }
+}
+
+// 번들 리소스 접근자(Res) 패키지 고정 — commonTest fixture가 실제 terms.json을 로드한다.
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.robin.devetym.resources"
+    generateResClass = always
 }
 
 android {

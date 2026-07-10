@@ -4,15 +4,13 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 구축 원칙: **위험이 낮은 코어부터, UI는 마지막.** 거의 전부 `commonMain`, 플랫폼 조각(엔진·드라이버·셸)만 각자.
 
+**서버 캐시·딜리버리는 별도 트랙이 아니라 M1~M8에 빌트인이다.** 3계층 read-through(`로컬/번들 → 서버 D1 캐시 → Claude API`)·local-first pinning을 처음부터 각 마일스톤 범위에 녹인다 — 나중 마이그레이션·리팩토링·"출시 후" 없음. 확정 불변식 INV-1~13과 마일스톤별 상세 스펙은 [`docs/cache-delivery-milestones.md`](docs/cache-delivery-milestones.md), 서버 코드는 별도 repo **`devetym-proxy`**(read-through 캐시로 확장), 계약 결정은 [ADR-0006](docs/adr/0006-server-cache-boundary.md).
+
 ---
 
 ## Now — 진행 중
 
-- **M0(KMP 골격) 완료 — 양 플랫폼 실제 실행 확인.** `shared + androidApp + iosApp` 골격이 서고,
-  공유 `Greeting`을 Koin으로 배선해 **Android APK + iOS 시뮬레이터** 둘 다에서 공유 Compose 화면이 뜬다.
-  - green 루프 3축: `:shared:testDebugUnitTest` · `:androidApp:assembleDebug` · `:shared:linkDebugFrameworkIosSimulatorArm64`(SKIE 포함).
-  - iOS: `iosApp.xcodeproj`(XcodeGen 스펙 `project.yml`) — 시뮬레이터에서 렌더 검증 완료([`iosApp/README.md`](iosApp/README.md)). 실기기 서명·배포는 이후.
-- **다음 착수 = Next M1(모델·직렬화) — 별도 세션.**
+- **(없음)** — M1 완료(아래 Done). **다음 = M2(로컬 DB·SQLDelight)**, 마일스톤 경계 **사람 비준 후** 착수(안전 규율). M1 브랜치 `feat/m1-model-serialization`는 로컬 커밋 상태(push 안 함).
 
 ---
 
@@ -20,19 +18,29 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 각 마일스톤은 앞 단계 완료를 전제로 순차 진행. 완료 시 Done으로 이관.
 
-- **M0 · KMP 골격** — ✅ **완료**(Android APK + iOS 시뮬레이터 실제 실행 확인). `shared + androidApp + iosApp`, Koin `startKoin` 배선, 공유 `Greeting`을 양 플랫폼 Compose 화면에 표시.
-  - 참조: architecture §3·§5, spec 1-6.
-  - ✅ iOS interop 결정: **SKIE**([ADR-0005](docs/adr/0005-ios-interop.md)). 골격 버전(**빌드 실측 확정**): **Kotlin 2.3.21 · CMP 1.11.1 · AGP 8.13.0 · Gradle 8.13 · SKIE 0.10.12**. ⚠️ **SKIE 0.10.12는 Kotlin 최대 2.3.21**(2.4.0 거부, 실측) — SKIE가 새 Kotlin 지원 전엔 앞질러 올리지 말 것.
-- **M1 · 모델·직렬화** — `TermEntry`(@Serializable)·`Source`·`TermResult`(sealed)·매퍼. 참조: spec 1-1.
+각 마일스톤의 🔗 항목이 그 단계에 빌트인되는 캐시 범위다. **락(안 지키면 나중 리팩토링) 지점은 ⚠️로 표시** — 처음부터 그렇게 짓는다.
+
 - **M2 · 로컬 DB** — 스키마(`term`·`searchHistory`)·반응형 쿼리·드라이버 `expect`/`actual`.
-  - ⚠️ 착수 전: **[ADR-0003](docs/adr/0003-local-storage.md) 확정**(SQLDelight vs Room, `klibs.io`로 iOS 성숙도 재확인). 참조: spec 1-2.
-- **M3 · 네트워킹** — Ktor 클라이언트·Claude 요청/응답(tool_use 3분기)·`X-Device-Id`·429. 프록시 계약 그대로([ADR-0004](docs/adr/0004-backend-proxy-boundary.md)). 참조: spec 2-1·2-2.
-- **M4 · Repository 오케스트레이터** — `fetch` 3단 흐름·upsert·북마크·히스토리·Analytics. Fake 협력자 테스트. 참조: spec 2-3·2-4.
-- **M5 · ViewModel + StateFlow** — 화면 상태를 sealed로 노출. 참조: architecture §4.5.
-- **M6 · Compose UI** — 검색/상세/북마크/히스토리/온보딩/설정. **반응형 `Flow`로 갱신(수동 재조회 없음, [ADR-0002](docs/adr/0002-code-idiom-principle.md))**. 참조: spec 3-x.
+  - 🔗 **캐시 빌트인**: ⚠️ **스키마에 local-first pinning 처음부터** — 본 항목 불변용 `pinned`/`seenAt` + `schemaVersion`/`promptVersion` 컬럼. 번들 DB = 로컬 "head" 계층. (안 넣으면 DB 마이그레이션) 〔INV-6·INV-12 head·캐시 트랙 M4 저장측〕
+  - ⚠️ **INV-A 매핑측 실측 상속(M1 DR-1 바인딩)**: M1 오라클은 JSON 자기왕복만 실측하므로, DTO↔엔티티 매퍼(`TermEntry.toEntity()`/`TermEntity.toDto()`)의 `aliases`(순서 포함)·`category` 무손실 보존은 **M2 DoD에서 반드시 테스트**한다. 안 하면 도메인 헤드라인 불변식(별칭 누락)이 어느 마일스톤에서도 실측되지 않는다. 근거: M1 슬라이스 §7-1·§8, DR-1 eyes-open 수용.
+  - ✅ 착수 전 게이트 닫힘: **[ADR-0003](docs/adr/0003-local-storage.md) Accepted (2026-07-05) — SQLDelight 2.3.2**. Kotlin 2.3.21(SKIE 상한) 호환·iOS Native 성숙도 근거(Room 3.0은 버전 호환하나 4일 전 재작성이라 최신성 리스크로 보류). 좌표는 ADR Implementation Notes. 참조: spec 1-2.
+- **M3 · 네트워킹 + 서버 read-through** — Ktor 클라이언트·Claude 요청/응답(tool_use 3분기)·`X-Device-Id`·429.
+  - 🔗 **캐시 빌트인**: ⚠️ **클라를 read-through 프록시 계약에 맞춰 작성**(Claude 직접 호출 아님 — 안 하면 계약 교체 리팩토링). **서버(`devetym-proxy`) 신규 구축**: D1 스키마·Worker read-through(D1→API·write-back·first-write-wins)·single-flight(DO)·validator write-게이트·rate-limit/남용/무효화. 〔캐시 트랙 M0서버·M1·M2·M3write·M7〕
+  - ⚠️ 계약 변경: 프록시 → read-through 캐시. [ADR-0006](docs/adr/0006-server-cache-boundary.md)(ADR-0004 대체). 참조: spec 2-1·2-2.
+  - ⚠️ **INV-A wire측 로더 실측 상속(M1 DR-1 바인딩)**: M1이 실제 `terms.json` 디코드로 wire 키 계약을 fixture 실측했으나(슬라이스 §6), **번들 로더(`BundleDbSource`)의 실제 로드 경로**가 aliases 내용을 보존하는지는 **M3 DoD에서 회귀 가드로 테스트**한다 — 실제 배포 `terms.json`을 로더로 로드해 알려진 term의 aliases *내용*을 단언(성공 디코드는 무효 오라클). 근거: M1 슬라이스 §7-4·§8, DR-1 eyes-open 수용.
+  - ⚠️ **서버 read-through category 소유(M1 DR-2 바인딩)**: 서버가 정규화 이전 원응답을 캐시-히트로 되돌려 클라 정규화를 우회하지 않도록 **정규화-후-캐시쓰기 순서**를 고정한다(집합 밖 category clamp 후 write-back). 정본 불변식: [cache-delivery-milestones](docs/cache-delivery-milestones.md) **INV-13**. 근거: M1 슬라이스 §7-2, DR-2 eyes-open 수용.
+- **M4 · Repository 오케스트레이터** — `fetch` 3단 흐름·upsert·북마크·히스토리·Analytics. Fake 협력자 테스트.
+  - 🔗 **캐시 빌트인**: ⚠️ **3계층 read-through를 처음부터**(로컬/번들 → 네트워크 → 서버 D1 캐시 → API, 2계층으로 짓고 확장 금지). **local-first pinning + 명시적 새로고침** 경로 내장. 〔INV-1·INV-2·INV-6·캐시 트랙 M1소비·M4행위〕 참조: spec 2-3·2-4.
+- **M5 · ViewModel + StateFlow** — 화면 상태를 sealed로 노출.
+  - 🔗 pinned/refresh 상태 노출. 참조: architecture §4.5.
+- **M6 · Compose UI** — 검색/상세/북마크/히스토리/온보딩/설정. **반응형 `Flow`로 갱신(수동 재조회 없음, [ADR-0002](docs/adr/0002-code-idiom-principle.md))**.
+  - 🔗 **명시적 "새로고침" 어포던스**(INV-6, 본 항목 불변 + 사용자 트리거 갱신)·pinned 표시. 참조: spec 3-x.
   - 선행: **디자인 토큰 확정**(`docs/design/`, 작성 예정) — 색·타이포 값. iOS dark-first·DM 서체를 출발점으로.
-- **M7 · 배선·셸** — Koin 조립 마무리, 셸별 권한·진입점. 참조: architecture §3·§4.7.
-- **M8 · 통합·마무리** — 오류 처리 통합·접근성·번들 DB 650 확장(iOS 자산 재사용)·앱 아이콘(Android adaptive + iOS)·스플래시. 참조: spec 4-x.
+- **M7 · 배선·셸** — Koin 조립 마무리, 셸별 권한·진입점.
+  - 🔗 서버 배포 배선(`devetym-proxy` wrangler). 참조: architecture §3·§4.7.
+- **M8 · 통합·마무리** — 오류 처리 통합·접근성·번들 DB 650(iOS 자산 재사용)·앱 아이콘(Android adaptive + iOS)·스플래시.
+  - ℹ️ **번들은 이미 완성돼 있다**(저술 불필요, *재사용*만): `~/dev-etymology/DevEtym/DevEtym/Resources/terms.json` — **650개**, M1 `TermEntry`와 스키마 정합(6필드 + 버전 필드는 없음 → INV-B null default 경로). 카테고리 6집합 분포 균등. 배치는 **M1 구현 착수 시** `commonMain/composeResources`(spec 1-5)로.
+  - 🔗 **캐시 빌트인**: **seed 승격 잡**(critic 배치, D1 hot 항목 → 번들 승격 플라이휠)·**콘텐츠 팩 백그라운드 동기화**(버전드 팩·delta/cursor 증분·로컬 병합) 메커니즘 내장 → **출시 1일차부터 가동**(데이터는 릴리즈마다 축적, 리팩토링 아님). 〔INV-11·INV-12·캐시 트랙 M5·M6·M3critic〕 참조: spec 4-x.
 
 ---
 
@@ -41,9 +49,9 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 - **[Ops] Android 첫 배포** — Play Console·AAB·keystore. 새로 배우는 영역(iOS 배포는 기존 경험 자산). CI(GitHub Actions)로 양쪽 빌드 자동화 검토.
 - **[Docs] AI 품질 문서 이관** — 시스템 프롬프트 원문·도구 스키마를 `docs/ai-quality/` 정본으로(현재는 iOS 검증본을 `commonMain`에 계승). ADR로 흡수.
 - **[Docs] db-expand 파이프라인 이관** — 번들 DB 생성·검증 파이프라인 문서(`docs/db-expand/`). claude.ai 정액 수동 경로 유지(API 종량 회피).
-- **[Data] 번들 DB 추가 확장** — 출시 후 검색 빈도 데이터를 우선순위 입력으로.
+- **[Data] 번들 DB 추가 확장** — 검색 빈도 데이터를 우선순위 입력으로(승격 잡의 hot 선정 입력, M8 플라이휠과 연동).
 - **[Arch] AI 스트리밍 도입 검토** — 현재 단발 응답. 토큰 스트리밍(`Flow<String>`)은 이후 선택지(architecture §4.3).
-- **[Arch] 프롬프트 서버 이전 검토** — 현재 클라이언트(`commonMain`) 소유. 프롬프트 핫픽스 필요성 커지면 재검토([ADR-0004](docs/adr/0004-backend-proxy-boundary.md) 유보 항목).
+- **[Arch] 프롬프트 서버 이전 검토** — 현재 클라이언트(`commonMain`) 소유. 프롬프트 핫픽스 필요성 커지면 재검토([ADR-0006](docs/adr/0006-server-cache-boundary.md) 유보 항목).
 - **[UI] 디자인 후속** — 다크/라이트 폴리시·대비·플랫폼별 미세 조정.
 - (아이디어 추가 시 여기로)
 
@@ -51,6 +59,11 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 ## Done — 완료
 
+- **M1 · 모델·직렬화** — 2026-07-05 (브랜치 `feat/m1-model-serialization`, 로컬 커밋·미푸시). `commonMain/model/`에 `TermEntry`(@Serializable, 버전 필드 옵셔널·INV-9)·`Source` enum·`TermResult` sealed interface·`Category` 정본 6어휘(pass-through, 강제 안 함). kotlinx.serialization JSON 왕복. 번들 `terms.json`(650) → `commonMain/composeResources/files/`(compose-resources 배선). `commonTest` §6 5종 + `androidUnitTest` fixture 1종(실제 번들 aliases 내용 단언). green 3축 실측: `:shared:testDebugUnitTest`(6 pass) · `:androidApp:assembleDebug` · `:shared:linkDebugFrameworkIosSimulatorArm64`. **serialization 1.9.0 ↔ Kotlin 2.3.21 호환 빌드로 실측**(§5 load-bearing). 참조: [M1 슬라이스](docs/specs/m1-model-serialization-draft.md), spec 1-1.
+  - **비준 결과 = ESCALATE → 사람 eyes-open 수용**(재비준 안 함). Blocker 3 결착: **DR-3**(sealed `when` else 금지) 슬라이스 §6에서 닫음 · **DR-1**(INV-A 실측 범위) M1 fixture로 wire측 부분 폐쇄 + 매핑측(M2)·로더 회귀(M3) 바인딩 상속(위 M2·M3 ⚠️ 항목) · **DR-2**(서버 캐시-히트 정규화 우회) [cache-delivery-milestones](docs/cache-delivery-milestones.md) **INV-13**(정규화-후-캐시쓰기)로 이관. 상세는 슬라이스 §8·Open Questions.
+  - 🔗 캐시 빌트인: entry 계약 = read-through 응답 shape. INV-9 버전 태깅 반영(`schemaVersion`/`promptVersion` 옵셔널). 〔캐시 트랙 M0-클라측〕
+- **M0 · KMP 골격** — 2026-07-04 (`feat/m0-kmp-scaffold` → `main`, no-ff 병합). Android APK + iOS 시뮬레이터 실제 실행 확인. `shared + androidApp + iosApp`, Koin `startKoin` 배선, 공유 `Greeting`을 양 플랫폼 Compose 화면에 표시. green 루프 3축: `:shared:testDebugUnitTest` · `:androidApp:assembleDebug` · `:shared:linkDebugFrameworkIosSimulatorArm64`(SKIE 포함). 참조: architecture §3·§5, spec 1-6.
+  - ✅ iOS interop 결정: **SKIE**([ADR-0005](docs/adr/0005-ios-interop.md)). 골격 버전(**빌드 실측 확정**): **Kotlin 2.3.21 · CMP 1.11.1 · AGP 8.13.0 · Gradle 8.13 · SKIE 0.10.12**. ⚠️ **SKIE 0.10.12는 Kotlin 최대 2.3.21**(2.4.0 거부, 실측) — SKIE가 새 Kotlin 지원 전엔 앞질러 올리지 말 것.
 - **프로젝트 문서 세트 수립** — 2026-07-04
   - **그린필드 CMP 설계로** README·[PRD](docs/product/prd.md)·[아키텍처 설계서](docs/architecture.md)·[ADR 0001~0004](docs/adr/)·[Spec](docs/specs/spec.md) 작성.
   - 동일 제품의 iOS(`dev-etymology`, SwiftUI) 구현에서 **검증된 데이터 흐름·설계 불변식을 계승**(fetch 3단·lazy 저장·upsert·aliases 보존·tool_use 3분기·프록시 계약), 관용구는 **코틀린으로**([ADR-0002](docs/adr/0002-code-idiom-principle.md): 리터럴 포팅 금지, 우회 패턴은 삭제).
