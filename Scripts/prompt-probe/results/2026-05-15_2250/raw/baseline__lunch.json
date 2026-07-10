@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "cell": "baseline",
+    "keyword": "lunch",
+    "group": "branch_check",
+    "prompt_hash": "037754b355208bf3db2f2e58c5f32c9ddde4a8a13c511b973606f3ff6e30b0ca",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:52:13.959304",
+    "latency_ms": 2350
+  },
+  "expected": {
+    "keyword": "lunch",
+    "group": "branch_check",
+    "expected_branch": "not_dev_term"
+  },
+  "response": {
+    "id": "msg_01LHEdoiAJAr9EYy5v1bqZoN",
+    "container": null,
+    "content": [
+      {
+        "signature": "Et8BClsIDRgCKkDgCLXOljTlhR/RRZtqou2Xb/d+/a0XMj4eC8He0KxR6Q1bSL0p7OaGQCC85HZDyowAi504VUddBN9kiXFueGPmMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgye71WPNZLKbu7kLB8aDN7OPqdbHJp1LvpGuyIwGeQjKKnVb14zVpTMJCEqAM3l+qePawcv1jC318TlOM95p2HENELK1hdurd2gu4lRKjJbk5MsWKV/wIQc2+qP5FvS/Zy3Hd3spkFcgqdOa5hkVMnElMOcIKi8tW+X6JaP21v4VhgB",
+        "thinking": "\"lunch\" is not a development term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_018UEhkXnR7F8BVk88LJTPW8",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {},
+        "name": "return_not_dev_term",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3364,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 57,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

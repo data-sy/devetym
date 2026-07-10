@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "selfcheck",
+    "keyword": "idempotent",
+    "group": "out_of_shot",
+    "prompt_hash": "547cd6ba99746461d391eea735cf999712969f7bc12fa82f23cd4e5ad978f287",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:55:29.708683",
+    "latency_ms": 32827
+  },
+  "expected": {
+    "keyword": "idempotent",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01QukNRTcCvRTZth9xjraQXV",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The user input is \"idempotent\" - this is a development/computer science term related to operations that can be applied multiple times without changing the result beyond the initial application. Let me analyze it.\n\n1. It's a development term - used in REST APIs, distributed systems, database operations, etc.\n2. Category: It's used across networking (HTTP methods), DB, patterns... I'd say \"네트워크\" or \"기타\" or \"패턴\". It's most commonly discussed in the context of HTTP/REST API design and distributed systems. I'll go with \"네트워크\" since it's heavily used in HTTP context, but actually it's a broader mathematical/CS concept. \n\nI'm leaning toward \"기타\" since idempotency spans multiple domains - it's a mathematical property that applies to REST APIs, database operations, and message queues. The concept ultimately traces back to Latin roots meaning \"same\" and \"powerful,\" making it a fundamental principle rather than fitting neatly into one category. Benjamin Peirce coined the term in 1870 for elements satisfying e² = e. In practice, this mathematical property translates to REST APIs where PUT, DELETE, and GET are idempotent—multiple identical requests don't change the server state after the first execution. This becomes crucial in distributed systems when designing retry logic to handle network failures. 수학의 이 성질이 개발 분야로 옮겨져 실제로 적용되고 있다. REST API에서 PUT, DELETE, GET 같은 메서드들이 멱등성을 만족하도록 설계되어 있고, 이를 통해 동일한 요청을 여러 번 전송해도 서버 상태가 변하지 않음을 보장한다. 분산 시스템에서 네트워크 장애로 인한 재시도 상황에서도 중복 실행의 부작용을 방지하는 핵심 설계 원칙으로 활용된다. 멱등성의 정의와 역사, REST API에서의 적용을 설명했으니, 이제 aliases를 정할 차례다. \"멱등\"은 영어 idempotent의 한국어 번역이지만, 개발 커뮤니티에서 널리 사용되는 표준 용어이므로 포함하는 게 맞겠다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_017GewGzXoLSBMiCEeVdoBLX",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "idempotent",
+          "aliases": [
+            "멱등",
+            "멱등성"
+          ],
+          "category": "기타",
+          "summary": "동일 연산을 반복해도 결과가 바뀌지 않는 성질",
+          "etymology": "라틴어 idem(동일한)과 potens(힘 있는, 어근 potere에서)의 합성어. 직역하면 '같은 효력을 가진'. 수학자 Benjamin Peirce가 1870년 f(f(x)) = f(x)를 만족하는 연산을 지칭하기 위해 조어한 것으로 알려진다.",
+          "namingReason": "수학에서 동일 연산을 반복 적용해도 결과가 첫 번째 실행 이후 변하지 않는 성질을 가리키던 개념이 개발 영역으로 이식되었다. REST API 설계에서 PUT·DELETE·GET은 멱등 메서드로 분류되며, 동일 요청을 여러 번 전송해도 서버 상태가 달라지지 않음을 보장한다. 분산 시스템에서 네트워크 오류로 재시도가 발생하는 상황에서, 멱등성이 확보된 연산은 중복 실행에 따른 부작용을 방제하는 설계 기준이 된다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3536,
+      "inference_geo": "global",
+      "input_tokens": 334,
+      "output_tokens": 2122,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

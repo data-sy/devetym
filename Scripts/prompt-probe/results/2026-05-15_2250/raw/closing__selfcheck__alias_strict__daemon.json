@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck__alias_strict",
+    "keyword": "daemon",
+    "group": "in_shot",
+    "prompt_hash": "d2be35897b3d540d7d9da0024812d073ee1e3e3b9bc5b9181b12c813f839d753",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:08:23.796784",
+    "latency_ms": 6487
+  },
+  "expected": {
+    "keyword": "daemon",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01UHfeVMBb4ATextPHyAFrYX",
+    "container": null,
+    "content": [
+      {
+        "signature": "EtsHClsIDRgCKkDj4ICgqSiR0Sg+DwqvHAK4ZTnqYjiqtei+Xj4P1zt/PByhdg+b7+jrZkY9h7CCr8HJ/R1gXIkIIUAKueMWGQSmMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgzGIEsU19teBgnwu3MaDMwxmUX2oFu2gng0TyIwbjPP0pV9HSTTqiOcHwy17Y3CHFw/SOnf8KTyY34/JwDIYYBkyHXL8EiVQJcyj+4JKq0GTjgM54duH2Hr7NMi3LXxqsDkkQTI2MuEeG7cNwfERoKRoEryv9PfRja29Xe0vFQU/q2vW5pknhjVPnYHfcUfjzdDyOmt0Hub5R1Anbd2Sng+jf7vkF5qEA8op5hAgdlk8mCKhxicm1bRH04prm6h2TvoFETzSuV/Uds57s4gQIQ0zbExY5Lup/TAwnKOJsKX3BfesEtTQSbPp1NQdaEFRGOuXvMNNKFg7gz2R7dKMx/8NDWOfv6w0EwRIe+nz4ewMgaUVLd16mfbd0gnGTcl1UY0KyQQ2iEAI+RqTTYPFpRbyOJc45Kdp+nEa0s6XbHgpSYkntMTOPX79ZTmTk01agP6ZWiwjEP5GQHIfCqixl9rKbE+/ppW4WKatSrypGpDEkIxDXA3A/zjbx4MUgq104fv3+NIKxPc9jKUguph1gqtIbACnD/fgvb5JUPAFB7VvAGPtPLGf2FIxVL74sHJm6IQLsCPKaE4o6K5HtUUfAwzlZstg9rz28qc/iSIxSbc2aLrzOfc7WV9T9XC5XzrvAWZNb07iDPjrlaadpkpIjnUR7ZF4HwRJFbIonca/L6fFEyDO83p1NfYJP8cifIedcX76SQ8UGsScSRm8xo+U2U3u4G0ub/phG6CDXa4o07AjPwvPLJHc84Y7QjEKOMp0252OEKp9KZiWCeTplteccOq1FjCK5Tum5dlSn8sZlPr8bjU8xp2FT8AFEE3/4Vrds+UC6WoCwT30lynHA+2Q0wtN6Okg+XI8k6bnKOURwdSMuRB+t75ChpnGJCgzq3wy0FDaOpdKb72IpzhSgiYT7ROWasbikrZnOxjn/UNmPRWnMTkyFzczZJ9eFQgj/OBU5GkgG8UEwb+XzkQSjH+++xtukMIbxy1OiOU0PCJ6iNTdckChR2FbOXA/k6luBdbiwEokRecXBzroAzbx/lQn6tf5KKjUKkLuL7pXSe9xUo+Vsccgxb15kLPuSYM+tlgWyh/Z8vcu0lZ8/u+V2/T53NmMf+VWg9pJkVX45QppdTYG/tBeccPYuXWABw2taxVqkyL24qr4fd/y88r+kA3O9elEzuAB5K2AiCP7XtSGAE=",
+        "thinking": "The input is \"daemon\", which is a development term referring to a background process. Let me fill in the fields.\n\netymology: 그리스어 δαίμων(daimōn)에서 유래. 본래 '신과 인간 사이의 중개 영혼'을 뜻하는 종교·철학 용어로, 사람 눈에 보이지 않으면서 일을 대신 처리하는 존재를 가리켰다.\n\n\nnamingReason: The term was coined at MIT's Project MAC in 1963, drawing from Maxwell's demon thought experiment. It's a metaphorical reference to invisible intermediaries that work behind the scenes without user interaction, mirroring the original philosophical meaning. Unix convention adds a 'd' suffix to daemon process names like httpd and sshd.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01TQxXgqhGqj5z2f74i9n9Xi",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "daemon",
+          "aliases": [
+            "데몬",
+            "demon"
+          ],
+          "category": "기타",
+          "summary": "백그라운드에서 지속 실행되는 프로세스",
+          "etymology": "그리스어 δαίμων(daimōn)에서 유래. 본래 '신과 인간 사이의 중개 영혼'을 뜻하는 종교·철학 용어로, 사람 눈에 보이지 않으면서 일을 대신 처리하는 존재를 가리켰다.",
+          "namingReason": "1963년 MIT의 Project MAC에서 Maxwell의 악마(Maxwell's demon) 사고실험에 영감을 받아 명명되었다. 사용자 상호작용 없이 시스템 뒤편에서 스스로 작업을 처리하는 프로세스를 '보이지 않는 중개자'라는 원의미에 빗댄 은유적 전이다. Unix 관습에 따라 프로세스 이름 끝에 'd'를 붙인다(httpd, sshd)."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3783,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 733,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

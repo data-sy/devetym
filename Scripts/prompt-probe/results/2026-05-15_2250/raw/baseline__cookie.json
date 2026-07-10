@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "cell": "baseline",
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "prompt_hash": "037754b355208bf3db2f2e58c5f32c9ddde4a8a13c511b973606f3ff6e30b0ca",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:51:09.245838",
+    "latency_ms": 10241
+  },
+  "expected": {
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01ToQzY1nkswFcLXyXrJhqBD",
+    "container": null,
+    "content": [
+      {
+        "signature": "EvYCClsIDRgCKkBha9EGKZnS1SvUyiqGj1OovQfSspExNDdye2QMThgY3pbn75gamiKRi8fU8ZHG87y+uvSFPunhrrUeuPAjZ6DjMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgzt3I7P1VHBUWD2yicaDG5psbIK1z+eXm6BxyIwaUP0qbitFVDdean1DaTcR/xf94RQ/BJ7gqAJWZ8WyGvdV6nxHU/yx2sVy64yIeldKsgBzUdyUlnvovk9N89Aj3vyy4A9h4JfyxaNs1tbkuVXOYd6ZWvlOBFS6/OlxmhB0huo80QmmvoHR595oUVHUIiFJlYjyc06EZYvQK5SQCvWBCUsBViwbTvfZLh+a9Mk4IQ/pACYPC9AUfYd6tRj6D40hF92JT9zKA28d/tbThPpesuvU09WOI9U1cAViKl9EriVk0WXlhCizyxqxn3RZKCgyiCcowbVt8c5zT41FmLmEz1utXGM6lAyiAWKHahLNRPeoQpM5QWe+s0YAQ==",
+        "thinking": "The user input is \"cookie\", which is a development term related to web/network technology - specifically HTTP cookies used for session management and state persistence in web browsers.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_017WwG7QAf8ZhQkdfSHhnChM",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "cookie",
+          "aliases": [
+            "쿠키",
+            "HTTP 쿠키",
+            "HTTP cookie"
+          ],
+          "category": "네트워크",
+          "summary": "서버가 클라이언트에 저장하는 소규모 상태 데이터",
+          "etymology": "영어 'cookie'(쿠키, 작은 과자)에서 유래. 컴퓨터 용어로는 1970~80년대 Unix 프로그래밍 세계에서 '프로그램 간에 전달되는 작은 불투명 데이터 덩어리'를 뜻하는 속어 'magic cookie'로 먼저 쓰였다.",
+          "namingReason": "1994년 넷스케이프의 루 몬툴리(Lou Montulli)가 HTTP 상태 관리 메커니즘을 설계하면서 기존 Unix 속어 'magic cookie'에서 이름을 따왔다. 'magic cookie'는 내용을 직접 해석하지 않고 그대로 돌려주는 작은 데이터 토큰을 가리키는 개념이었다. HTTP는 기본적으로 무상태(stateless) 프로토콜이기 때문에, 서버가 클라이언트에게 작은 데이터 조각을 건네주고 이후 요청마다 그것을 그대로 되돌려 받아 상태를 식별하는 방식이 'magic cookie'의 원래 의미와 정확히 일치했다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3364,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 586,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

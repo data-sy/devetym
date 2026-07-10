@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck",
+    "keyword": "boolean",
+    "group": "out_of_shot",
+    "prompt_hash": "b0396852d6b88ba3bbe9657fed3a73fac75ed7ae06f2c3035db7ec760d72f425",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:01:57.946987",
+    "latency_ms": 21020
+  },
+  "expected": {
+    "keyword": "boolean",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01A5KVK8y25TETv7pcoPABAB",
+    "container": null,
+    "content": [
+      {
+        "signature": "Ev0WClsIDRgCKkAIBMB5Q4zgCvzmAPymoFq2MB1NU9gq0/XySsUuLsf1DNcDNRR/OprGmGNd826k2VRVXxKnJp6VwrscsVwJN8waMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgyM1FMWB2xKeUwHUh4aDCXEXSKUwRkBGSR77CIw/1xZdehncrYA3jRy7UfpbfXLFzb0iozx1/ggfEN2trptQ0geFahnbQNS1t3dL8v2Ks8Vp5pEP2unSgQtuDnInD7Rg7byc0N/IYywXLDKLQL5itXhs/ydHuxK7qKzZ6qotqkov5wKkLHQl77OhOk7vX1w+O2RlCZ/3VoyfpqGB7VvcFXkem0v4eW9YrlnieALqLCDlWBukZFAgz8U5414Vtb0dpLsepRU/xTOl0MU2SvbG4nn6sq96G39pVxL4esH4e6aVdfZgzU7tS4yviY6yPrd89IZ8B10TBpwyg79+l9cGsb7lalIL//stfGbc2q5V731nlhY2b4vjFMz7P8xdbk+H882M7q1p77eBHzJmukTPkRrc3/wzCMGVSqG4fUm7iDSDpF2SKN7lx7yEiA+wYemCiFxF39Q9aCHSeUsVyFxQYOONzWIVhMc6Pyrf2OldIu2tNaK5ElsE2lrf30GwwXs497xvSBNbg7/SOUiFotvtz97IIqOAvjbTNq5StrnATuYL9TK3hBM/EaicDDsZKWr3CG1xXfDhzTFdyGlSzZAq3q/MlNtlI1NLDJCF5E1ZWAox6wD3XpWswdDvLtHebEo1lfSZfoRsGyT7gDMQ1hCuBejSFuLI1iwD7ah+4WnvmC34jCFga/C3QG9rKOugZkVyR2Oe4wAGyJfAr+8cRIDFOnruH9KJng+nfYSmCCXSNEJsUiSaHM61SOTCW12fDIxYV7U96/7j2o6QUH8bBhziEbBcH7RFrvFkxMt7SvSpnPxow5tX1hqiU+X5rvqCl7mQkEAVvEaNowjP+d1JHSOaM9dJk8fyZHTv05KiWQjhjt+wM8LybdDu9snhqqLPw4GFOsSZlsbE0Iyz285BeHqoQJ7G2dspdswa+qpCoo6XSL9l+jv32gojQlPM7trZS6OuKmCP+EygiQPza2Pkcqn33ZTyChuQQ3Zw9+cdgbV1z4/wmHGelsK68xtjMnh9jcd0fNMkLwZwBH2mDuVr1arh8OyXBLCZGb35Li8H7yUGI8LT1kyMyzaxb25UZyCWJbZhh49lj4iRvf9myafPmq0L7m2ZKfddW1sxft0UmACY0W/+ookw7z4f4x9vGJ+jFeW51Uf/SnjL0IBPpV5/tZtuHbx6dHht+5svbTOTEcZUslpyzFdULWw8c2KgSgzvNPpqIxtMYD8wWuTQPEsvoqtUyq6xkQZ2LqtHXmyxfU/By1r3pB/znB8iXGkbiQZgCN3KQq6OL/TUzVS2ISKcCml8pKfLb88wOJbkq4tllpbN4U6Ui0WUQcbwda23SaFLdpK6i8JaEIRFdFuCyyTp3AAA4ltQP0XNoJL5R4+azx5agpRF4QWrhmN0W+lUAlrC12JFoXgVnSoLjMGUH7PUvi7FWTGzE6uqksGsI535MOHaTtcNygJMatKW5H3It9ljV9kuCMjg5gPmHZU3vDxMQTFE63N7qbq8VeCx54MSeJiNOcNwaEze11tr5RnQ9pIETDaegRvVqREfbd2t1yLa/faOlWScnDzUqlu9Nh1NXurc0qaSeTaeyynPX5lMD7O1Z/Q3J90wrfBHhScSXN1vk+Kdiy9Oi/smn6FfoUw2A9oz/y16mhRi4yH0HXnAc9LdPv9j7XupjikPbsV6BCU2sOl37IeU2+nw5CxTdmaQLISPJbG1zlfW6hZOPN78yJ8ZOWOZZHS9LiJRBV3wT5oIiQRz0wkFUPBVz1OcpHOHW9COb5gRQYBULkM8/V+flyPOROKPqWokBIVJ4h+RRQDLKsSZ6y8AHb8dKpBeET5ep0t+qzcVxyFk0uTfMhzTtbM4DLcaFbvWYsG0Jd8XMTMK9Z+DKmKqAJUtReBJFI/V97//rM3BLrcH6AC9/klq5/XVYgKeFhHSHsHelM7Q4ZfcxH21jvx10vc0GBMFYnh/kDpqLHUxxiIf0C6kzdALjOsbFBkZZFlYGwjlhScrOAmMnxBnhWP1YIx4t1Msc/IZhM6idXauL+L4n6E84j4/ra/7SsJnGQquHDQilahkluTmmUC/qzclhp+1R14si/4bYT8IdVlV/L+lgGsZ2Qql9xRzRAynuGkR/szbcfQ84Po+HBLaahW1H+GCqKvfZjp8RCzcXc0FNqGLWb5IBWG8rB+0JH9zyiN0gr/ETAa/1FLPgU8htYt8SrgVK71EpmO4sQNi+B3ppb70nqReeT04gN8LmqB22t+amsk9dl8LJDIZN96WI2cDTHnGrln4hSCQFewHoP9xSUE29SDHRmwD8pBmSLMred45MMR4Vw61Jvkt03Kv1MWLSVeJM6TuAtKruK3YFQsNKbxac6zPY8a27dAyb0jFTSBgJv1ERF9qKbABhZigcTuS1RxS3yr+BE7JbFzZvkVNwbx5itHQeI0cs7NFPXNaJ7HtS6Egc//nCjuufx8IgMMDJPe/C2ek/0VHCsbkq1WbDH2gcHMjy1X/BNb/45WmWxoIiPRh8kpREpVu0FCFAD53lz6U9/W1OgzUIs7Ah4DvcZf5mQhVyPUBDPScRXol6FbTgmjLaiRMAMWTdSuWM2dT1Y9AmnVXTkY/4+dghTD9+YhZhtSfVW0yg7+6ASA+I/e6OlpbRW3PxPy8rlur5VAwCofvbT8WgEwnFuppfVjSP6DRPUwil+FFDsaIvS1J22eqC1SfJEAT9G+fWIIa85ZMq1S8yDW+u/dS8FjB8T0kCriUP6oc6ewAOYvfYinV0pDEjQ9SqE2XMUIj6gk7/BvLBS4x6I67F8G1HOLQctyXHXjK8XHJy2e4BVBrQ6PWt13T+hJ6Vj/GRe1BwgBjDJIT6W94+I2BapJ13EH2d87/PVzdzikCJFJdR1+EvB8TikxBTigWTLHoOMn5y1ZrFycecyU0nYSkBADsIYg0PXrWoZ7U6VTqfhNkv6n5oK/NHF7NLZtrawMKp50HTL26JnEJpNF98vGa3299DWkr06E7Kha6vEUzbjb1Nj8QUlQYvakVTCVBEuw69KcinEAlTTxNfsdj0lW1R9OKETG8dOMWuMpPXUH/hZYgRe0fIJtFA+ddX7u9X9sALbezAvYHwRhGXmyXwH82x8ynCuLA/qYJe7Wjy7EUChK73bjUrufzJzwq3EcNoZcvG1NCRjxjX3EbBrcnKOZlNtjzv8xBZG9R0bsg8xzjqa+B6k5dK0Tel2AwNnG+c+fEe6Uxn3dWu7AF1FZ+Lwbu7vgQyXnYq8KhY97HQBAOP8xXgOylgG1ZRrplx499GTermf3vUomryk/ZXUhBr/rzXEBSu0Ild6hum2EgG9AX9vUIeuFpmns/kucCMGfq9cr1A80+hZboWSY0I6AOL1nB5QSJIFMUO1Yz+XuPZLyZXzIPurG2XGHa7eb3+9p1pk3qrHFyX5PAXg6JWKWwY1XjEvt/SDF4W7WU2qJ3/VLBpGkX8EFy5weeRj38RWcFHPrBFp/dkXPfCIVqRu14uP86T/PK8l4N+tKUh4L+/65xhbKtOU1CHMuE/v4+v5gSjxj6SVBj/jW18vZ7I5nIZ2Lff7SKw8KnUGuGzxrxwsyba2aK9slynBHtSujhTxMisJtvtB1r1eqrpxnYoIdNFXNqFb5fhq0UdGPwUnYBgVpRyQ6wHPDKknJ+KXq5e2shAvE7LHxAFOzygUPpcyLROO23FoUDLsc5vuxp4QgIp5TKb77wfRZlTaQqJvxC8vGVuAoRSq+8SN6lbYIKZfCn3De7oO7U6oRPAUu6/3kfcquZzHPV361blybry1p0ISfJ1TMGV/VgNZfxRgB",
+        "thinking": "The input is \"boolean\" - a fundamental development term. Let me work through the steps.\n\n1. It's clearly a development term.\n\n2. Etymology draft:\nBoolean comes from the name of mathematician George Boole (1815–1864), who developed Boolean algebra in his 1854 work \"An Investigation of the Laws of Thought.\" The suffix \"-an\" or \"-ean\" is an English adjectival suffix meaning \"of or relating to.\" So \"boolean\" = \"of or relating to Boole.\"\n\n3. NamingReason draft:\nGeorge Boole created an algebraic system where variables could only take two values (true/false, 0/1) and defined logical operations (AND, OR, NOT) on them. \n\nWhen computer scientists built early programming languages, they adopted this binary logic as a core data type and named it after Boole's work. The term emerged in mid-20th century as computers were built around binary logic circuits. Claude Shannon's 1937 thesis demonstrated that Boolean algebra could model electrical switching circuits, creating a direct line from Boole's mathematics through hardware design to the boolean data type we use in software today.\n\nNow I'm working through the character counts for the Korean translation sections. The etymology section looks good at around 100 characters. For the naming reason, I need to hit the 150-270 character target, so I'm drafting something that explains how Boole developed his algebra with true/false values and logical operations, then connects it to Shannon's 1937 work on electrical circuits.\n\nContinuing with that narrative, Shannon's proof that binary logic could describe switching circuits became foundational for computer hardware, and programming language designers adopted this binary logic as a data type, naming it after the mathematician who created it. ALGOL 60 in 1960 is one of the earliest recorded uses of \"boolean\" as an official data type name.\n\nNow I'm refining the metadata for this entry—setting up the aliases like \"bool\" which is the common abbreviation across most languages, categorizing it under general fundamentals since it doesn't fit the other specific categories, and adjusting the summary to be more precise about it being a fundamental logical data type rather than just any logical type.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_017kcH1ksaTDp3icCeG5BYmQ",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "boolean",
+          "aliases": [
+            "불리언",
+            "bool"
+          ],
+          "category": "기타",
+          "summary": "참과 거짓 두 값만 가지는 기본 논리 자료형",
+          "etymology": "영국 수학자 조지 불(George Boole, 1815–1864)의 성 Boole에 영어 형용사 접미사 -an/-ean을 붙인 고유명사 파생어. Boole은 1854년 저서 『사고의 법칙』에서 참·거짓 두 값만 다루는 대수 체계를 정립했다.",
+          "namingReason": "조지 불은 모든 명제를 참(1)·거짓(0) 두 값으로 환원하고, AND·OR·NOT 연산으로 처리하는 불 대수를 고안했다. 1937년 클로드 섀넌이 불 대수로 전기 스위칭 회로를 기술할 수 있음을 증명하면서 이진 논리는 컴퓨터 하드웨어 설계의 토대가 되었다. 프로그래밍 언어 설계자들은 이 이진 자료형에 그 토대를 만든 수학자의 이름을 붙였으며, ALGOL 60(1960)에서 boolean이 정식 자료형 키워드로 채택된 것이 초기 기록 중 하나로 꼽힌다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3691,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1411,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

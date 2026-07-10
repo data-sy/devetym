@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing",
+    "keyword": "idempotent",
+    "group": "out_of_shot",
+    "prompt_hash": "a375f07f70512ed802370765aaeda70d0278f7253f21cbdd2bfef2268c398ad2",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:53:11.510673",
+    "latency_ms": 15770
+  },
+  "expected": {
+    "keyword": "idempotent",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01G2SHjcLLRYXXtidZCyNQSY",
+    "container": null,
+    "content": [
+      {
+        "signature": "EpcKClsIDRgCKkCqPamUGeRICg3ZDi9XHWVJ3VvpM/0KyS7pyXbGG6GWgrTksZ5DrqsvYxxqbbkCRxV5Be7eOfYyl/oLq5RqBktWMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxO1ri7vRrXo3dE9sYaDKjRZQEMwtasAlk0vyIwcJYziLBksFq+Ok73vw6pdySg9BejIE4vgnaABiw8z6qqjlj/u/osP3ZYVQ6LSW8iKukIKcvABVWhmzqw5yyyOszXNWIKnZLQuOdLlCVS/pFGhl92mNLwWhs9zpTMFavm6PNqvh8kPsdMq8pl2n1mTwKwuu98qfVVpnjTeAzjuBrugyEY+pmS5JhUn/JvyGnUrVUQM+uJz1NMml3UwQpuoAfFGbAE8BPIRJEuT1ePkgg/vDeLCUP5StJtH9iewXfGdVgdoGyjvDC0/MihQZFPJB1NSbMrvvPjjRMIZ3WF36q9TQM4AnaQiwMW4LXy7Ggwx19dCmVQtJRZOLprcXQrmLp4ma7RAog78EyPvuB96dpgaFvbVbMz6jCM2F5iI7gItRqE6mvG4p6r93kzpAn/97veVgSUVKM2NLJkJ6bX36nqOWLCk4AfruVDNyCPsvj4QbCfN/FI3aCiQFE4wo/PELHmZPK7Gbo59Z5vsB/d5yV9u5TAgrxtAdpoG0mDxBEFgzCHSVjqm8yNRadyrL/pvGG7xPRayQX1rdqqDBcslSgOiTzsbOYaybKMJAHNh4uQHPbVXlEXa4ljmiGXH0ySR6gReR08BzFYzc8Vo0f7c1hNbRveb9QjRwjjol+f0tejoAfsfZb0org4yxcsMDrTcCkdCwDSwGJuZNd7Ah/nwmEZDWtut/Nl4K/indCte8eCuD3zacf9WDhMSSZrChzj1r90yoQmyXxOGtVtEFmjXJMVEH+bke35ZyaO+98bwWRGnQD4pUQoklx7AKr/wX5pdx/VU+s42YIQKeBY0/iMX73i82zMvs3cOfRjV6sRzHZj2tc2VrjX1LtlFy/2fdSOTM14uOmwrneEow85KPMDkHY9ix0poVZHaYWO0hXBGESBvtB1tjGJr4baPyG9oMeVD+Q/litlFwRHbyb9mjbLmtbCPXtna6qEYTbU33gIbNZh0CSdZ+Rcp5YdnmpeJNcZH/S6lf128hP/yt3f2NsM1xoeio+v6Cc7MKj/apHEATRjsd1ZC4BoB2P5iDmzVniG9A9bERi/IgQwoeUzOEqB1j6Qqxs0Qul7XdtpRjggrkce1wqhGNuRWvxJn2cXXhqXZ9PUZ6jyQewAYaQSfA778lJtT9ElpSuE4UOkoo4VOqWQ+HKVMkEsM6I+iH9asTs3ueu+63+8X/HpcP6kkY1kQpPhkEE7v9SmaeajoXA28R9o7sEwDmvaVcI6OsdBXJAlx6qul7IimRd8bUuJXh1kW92kdPsNH0XjYGwrPrG4k1++H4AdIjr77RORlO7/Brxa2IcNqmy6D7g2SC0aokUlun4lptiFhZhHEbpEQwCOs7tU1RLEngLxFyTVd7RsBWIlmQHB5j7jvexN2XMk5AG37T9rDhW33wGHF6tRcw1PChy4KMh5cPYv9m4mIGU2MZFNKUYgs9/PCt8OCfh01q9KC2oDBeYSzKh3V6/gGU/UkSmezCgwLtVwBRXusQiw+IugX7KziCZzmlS8lz7MCV0sKdK+7SxFpjzn8HA2VWsBA2NwiZU5313NCD6s8RdzIV+9iRCbYAfQyBUXQonkbxgB",
+        "thinking": "The user input is \"idempotent\" - this is a development/computer science term related to API design, HTTP methods, and distributed systems. Let me analyze it and call return_term_entry.\n\nIdempotent comes from Latin: \"idem\" (same) + \"potens\" (power/having power). It means an operation that produces the same result no matter how many times it's applied.\n\nCategory: 네트워크 or 기타 - it's used broadly in HTTP/REST API context, but also in math and DB contexts. I'll go with 네트워크 since it's most commonly encountered in HTTP/REST API discussions in dev contexts.\n\n\nActually, the term has roots in mathematics going back to Benjamin Peirce in 1870, so while it spans multiple domains, I'll stick with 네트워크 as the primary category since HTTP methods are the most common context developers encounter it in.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_013HRCJBAneQx8b9PJAaNkTC",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "idempotent",
+          "aliases": [
+            "멱등성",
+            "멱등"
+          ],
+          "category": "네트워크",
+          "summary": "같은 요청을 여러 번 실행해도 결과가 동일한 성질",
+          "etymology": "라틴어 idem(동일한)과 potens(힘을 가진, 효력 있는)의 합성어. \"동일한 효력을 가진\"이 원뜻이다. potens는 영어 potent(강력한)·potential(잠재적)과 같은 어근을 공유한다.",
+          "namingReason": "수학에서 1870년 수학자 Benjamin Peirce가 \"자기 자신에게 거듭 적용해도 결과가 바뀌지 않는 연산\"을 지칭하기 위해 처음 사용했다(예: f(f(x)) = f(x)). \"동일한 효력\"이라는 어원이 핵심을 정확히 담고 있다. HTTP 명세(RFC 7231)는 이 개념을 그대로 차용하여, GET·PUT·DELETE처럼 동일 요청을 N번 보내도 서버 상태가 한 번 보낸 결과와 같은 메서드를 idempotent로 규정한다. 네트워크 장애로 인한 재시도(retry) 설계에서 중요한 속성으로, \"몇 번 보내도 부작용이 없다\"는 보장이 분산 시스템의 안전한 재전송 전략의 근거가 된다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3519,
+      "inference_geo": "global",
+      "input_tokens": 334,
+      "output_tokens": 871,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

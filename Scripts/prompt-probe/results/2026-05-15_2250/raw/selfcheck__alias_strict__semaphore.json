@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "selfcheck__alias_strict",
+    "keyword": "semaphore",
+    "group": "out_of_shot",
+    "prompt_hash": "4008c10903ca57f9d7fd33e5647635c88267624ec0171e04942fd35755670e0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:06:40.326116",
+    "latency_ms": 24321
+  },
+  "expected": {
+    "keyword": "semaphore",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01XAdZg4U3VRAtxNKWtuzswr",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"semaphore\" - this is a development term related to concurrency/synchronization.\n\nLet me think about etymology and naming reason:\n\n**Etymology:**\n- From French \"sémaphore,\" from Greek \"sēma\" (σῆμα, sign/signal) + \"phoros\" (φορός, bearer/carrier, from pherein, to carry).\n- Originally referred to a visual signaling device (flag signals, railway signals) used to communicate between distant points.\n\n**Naming Reason:**\n- Edsger Dijkstra introduced the concept in 1965 in his paper \"Cooperating Sequential Processes.\"\n\n\n- The metaphor is apt: just as a railway semaphore signals whether a track is clear or occupied, a semaphore in computing uses a counter to signal whether a shared resource is available. Both control access and prevent conflicts.\n- Dijkstra also named the two core operations P and V after Dutch words—\"proberen\" (to test) and \"verhogen\" (to increment)—reflecting his background and the elegance of the abstraction. 소프트웨어 세마포어는 정수 카운터로 공유 자원의 가용 수량을 추적하면서, 자원이 부족하면 접근을 차단하고 반납되면 대기 중인 프로세스에 신호를 보내는 방식으로 작동한다. 이는 철도 신호기가 선로 상태를 표시하는 원리와 정확히 같다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01JmZTNwEtBJ5f9SEBN5cD1Q",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "semaphore",
+          "aliases": [
+            "세마포어",
+            "세마포"
+          ],
+          "category": "동시성",
+          "summary": "정수 카운터로 공유 자원 접근을 제어하는 동기화 기본형",
+          "etymology": "그리스어 sēma(σῆμα, 신호·표지)와 phoros(φορός, 전달자, pherein '나르다'에서 파생)의 합성어. 프랑스어 sémaphore를 영어가 차용했으며, 원래는 철도·선박에서 쓰이던 시각적 신호 전달 장치를 가리켰다.",
+          "namingReason": "1965년 에츠허르 데이크스트라(Edsger Dijkstra)가 논문 「Cooperating Sequential Processes」에서 이 용어를 도입했다. 철도 세마포어는 선로의 사용 가능 여부를 기계적 신호로 표시해 열차 충돌을 막는 장치다. 소프트웨어 세마포어도 정수 카운터로 공유 자원의 가용 수량을 나타내고, 가용 자원이 없으면 진입을 차단하며, 자원이 반납되면 대기 중인 쪽에 신호를 보낸다. '신호를 전달해 접근을 조율한다'는 물리적 신호기의 역할이 동시성 제어 메커니즘에 그대로 이식된 작명이다. 데이크스트라는 조작 연산을 네덜란드어로 P(proberen, 시험하다)와 V(verhogen, 증가시키다)로 명명했다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3628,
+      "inference_geo": "global",
+      "input_tokens": 333,
+      "output_tokens": 1402,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "cell": "closing__alias_strict",
+    "keyword": "redus",
+    "group": "branch_check",
+    "prompt_hash": "1fe8a1815b90d220dd1a0b048772ca32c437b58fbbf90bdda9a2814b2bce11bf",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:04:21.823915",
+    "latency_ms": 2315
+  },
+  "expected": {
+    "keyword": "redus",
+    "group": "branch_check",
+    "expected_branch": "possible_typo",
+    "expected_suggestion": "redis"
+  },
+  "response": {
+    "id": "msg_013wCsnhiBKDJuSWRHzK638G",
+    "container": null,
+    "content": [
+      {
+        "signature": "EpoCClsIDRgCKkBKYxswnl4SnK6fOxLQSwBDQcordXlw9lI2vwkHLoukIaeCWoiYZ6OqemRerCfdgVu+uTLdhw0TnAMuQrg1Uuy5MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgzlkgdnkoSLudx0jPAaDOMXMOp1QBJ1WMoLACIwdJSgrygLhYAmlM73lYqnpqA0pQsjCbvZq/gbpAwRH+FaPyV2C02T6jwVBZTS7xivKm0SM4bum8+5FsTZ5ZVPUqcnIhCGZkohVYaVDMDYHZPrSUwNdCb5B3nV/G+5zTm458WEbvCnOTHFTAkzVTUfJWyMcoPUEHhh8Cu6wAYCMpiHbmfQ6/1dOGoY/sO+cYlmt+Id9XVDX/OCz3pziLzfGAE=",
+        "thinking": "The input \"redus\" looks like a typo for \"Redis\" (the popular in-memory data structure store).",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01KnGoQF1DwpuRre9ndMnzxE",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "suggestion": "Redis"
+        },
+        "name": "return_possible_typo",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3611,
+      "inference_geo": "global",
+      "input_tokens": 332,
+      "output_tokens": 89,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

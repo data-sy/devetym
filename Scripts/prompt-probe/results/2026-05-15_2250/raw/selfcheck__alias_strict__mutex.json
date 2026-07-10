@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "selfcheck__alias_strict",
+    "keyword": "mutex",
+    "group": "in_shot",
+    "prompt_hash": "4008c10903ca57f9d7fd33e5647635c88267624ec0171e04942fd35755670e0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:04:39.434745",
+    "latency_ms": 15415
+  },
+  "expected": {
+    "keyword": "mutex",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01HabQHLxJPyzkWvPa8axtck",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"mutex\", which is a development term related to concurrency. Let me fill in the fields.\n\n1. keyword: \"mutex\"\n2. aliases: [\"뮤텍스\", \"mutual exclusion\"]\n3. category: \"동시성\"\n4. summary: \"여러 스레드의 동시 접근을 막는 잠금 장치\"\n5. etymology: 라틴어 mutuus(상호의)와 영어 exclusion(배제)의 합성어 'mutual exclusion'의 축약어. \n\nThe naming comes from how mutexes prevent race conditions by ensuring that when one thread accesses a shared resource, all other threads are blocked from doing the same—the \"mutual exclusion\" concept directly reflects this synchronization mechanism. 락을 해제하기 전까지 다른 스레드는 대기 상태에 있으며, 세마포어와 달리 락을 건 스레드만이 이를 해제할 수 있다는 소유권 개념이 있다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01XSLqwDmdtz6J9YvcftAPYR",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "mutex",
+          "aliases": [
+            "뮤텍스",
+            "mutual exclusion"
+          ],
+          "category": "동시성",
+          "summary": "여러 스레드의 동시 접근을 막는 잠금 장치",
+          "etymology": "라틴어 mutuus(상호의)와 영어 exclusion(배제)을 합친 'mutual exclusion'의 축약어. 서로 다른 주체가 서로를 배제한다는 의미를 두 단어의 앞글자를 따서 압축한 형태다.",
+          "namingReason": "한 스레드가 공유 자원을 점유하는 동안 다른 스레드의 접근을 '상호 배제'하여 경쟁 조건(race condition)을 방지하는 동기화 기본형이다. 어원의 '서로를 배제한다'는 의미가 동시성 제어 메커니즘에 직접 이식되었다. 락을 획득한 스레드만이 공유 자원에 접근 가능하며, 해제 전까지 다른 스레드는 대기 상태에 놓인다. 세마포어와 달리 소유권 개념이 있어, 락을 건 스레드만이 해제할 수 있다는 설계 원칙이 여기서 비롯된다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 3628
+      },
+      "cache_creation_input_tokens": 3628,
+      "cache_read_input_tokens": 0,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1098,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

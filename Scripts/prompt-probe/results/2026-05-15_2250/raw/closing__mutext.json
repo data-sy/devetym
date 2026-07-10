@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "cell": "closing",
+    "keyword": "mutext",
+    "group": "branch_check",
+    "prompt_hash": "a375f07f70512ed802370765aaeda70d0278f7253f21cbdd2bfef2268c398ad2",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:54:09.513170",
+    "latency_ms": 2089
+  },
+  "expected": {
+    "keyword": "mutext",
+    "group": "branch_check",
+    "expected_branch": "possible_typo",
+    "expected_suggestion": "mutex"
+  },
+  "response": {
+    "id": "msg_01S92GbFeFQU6xWKtr1RC3zy",
+    "container": null,
+    "content": [
+      {
+        "signature": "Eu4BClsIDRgCKkAxJPAiy2XeMVMk1KVJduyd0lIlNxFonLxK/7iC53WHAmc8dW5VpiXxzuyDBjr+qTYEH4aLEz4soXVxLEzr42+SMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgz+0wGoSFLRucRHLRUaDEHMxafwXfWeKvb7YCIwbVQqgF1Gwf0Ctg9DjiFkdd5WDG4DC5DeUhz2zj9stoJSanV2T3rPIeROLv4AZ3DoKkEFrpZaOj/NILdkzO7hhR2LImiV3i4TFMQkWTyGkPO4kfejN4h99ZG+dhNCmk6Kw7cvADNh7UayaJfCEHKWsyCPnhgB",
+        "thinking": "The input \"mutext\" looks like a typo for \"mutex\".",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_015yjMg3X4qXDtRQHeaKF3eC",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "suggestion": "mutex"
+        },
+        "name": "return_possible_typo",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3519,
+      "inference_geo": "global",
+      "input_tokens": 332,
+      "output_tokens": 79,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

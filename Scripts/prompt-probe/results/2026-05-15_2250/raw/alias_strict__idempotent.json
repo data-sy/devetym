@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "idempotent",
+    "group": "out_of_shot",
+    "prompt_hash": "a26d467de6d1f81437daf4a7edc0f5559ddbf78c55c7481ed3c8e2f1cf948c0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:58:13.075912",
+    "latency_ms": 10648
+  },
+  "expected": {
+    "keyword": "idempotent",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01VxGPM743PPF8hTr8xugVKj",
+    "container": null,
+    "content": [
+      {
+        "signature": "EtwCClsIDRgCKkBRRHBPgJTFQwI3BWZWuV2KIdlskfWRGA3FDAFdga9bpgcjB7QkFC2I81AIXdbmvJmUpoa5lrqXwGHquPztPwkrMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgy/gdhc+NsX59CUlpYaDK5gvOE+S6up8Fld9yIwZTcQR6zdA6kwXwo3RX4fOoOCBxPmrxfwgN4WMNCZMNu0YHzSiXaBZi7JHKziuxVQKq4BGgvVN9x/eVD8ZVSh2QrGo1a7z/ZRRgST/z30KCdKplMycmEqC8uS0+2nQPO1FvvkieOlBeiVh8vseGn1dyZXsBtm8LNsezeMii9iwQ6Pp/haWvOnePv0e78ohOU4k+YecG/cMRZFN0KbuqVUAZv8SnKB9cV/IqGcsE2Jkg6NOZxIy4RKCGQvCWVvIT7g9lo5XRFNwFjogNlRNnXElyaXbgmMkklc4YxD6y67S7g1GAE=",
+        "thinking": "The user input is \"idempotent\", which is a development term used in HTTP methods, APIs, and distributed systems. Let me analyze it and call return_term_entry.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_0173hN5bnGK3qvcmG6go1vr7",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "idempotent",
+          "aliases": [
+            "멱등성",
+            "멱등"
+          ],
+          "category": "네트워크",
+          "summary": "동일 요청을 반복해도 결과가 변하지 않는 성질",
+          "etymology": "라틴어 idem(같은)과 potens(힘·능력, 영어 potent의 어원)의 합성어. '같은 힘을 반복해도 결과가 동일하다'는 수학 용어에서 비롯되었다. f(f(x)) = f(x)가 성립하는 연산을 가리킨다.",
+          "namingReason": "수학에서는 어떤 연산을 여러 번 적용해도 결과가 처음 한 번 적용한 것과 같을 때 '멱등'이라 한다. 이 성질이 네트워크·분산 시스템에서 결정적 개념으로 이식된 이유는, 요청이 네트워크 오류로 중복 전송되더라도 서버 상태가 달라지지 않아야 안전하게 재시도할 수 있기 때문이다. HTTP 명세(RFC 7231)는 GET·PUT·DELETE를 멱등 메서드로 규정하고, POST는 비멱등으로 구분한다. 어원의 '같은 힘을 반복해도 결과가 동일하다'는 의미가 '몇 번 호출해도 부작용이 누적되지 않는다'는 API 설계 원칙으로 그대로 연결된다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3456,
+      "inference_geo": "global",
+      "input_tokens": 334,
+      "output_tokens": 615,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

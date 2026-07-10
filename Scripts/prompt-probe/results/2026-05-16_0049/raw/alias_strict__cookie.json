@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "prompt_hash": "956ba44a7c48f75b2abbcf7faecda24ac6d0fdca7c4e1d0bd1da3b5452801ad7",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-16T00:50:11.597470",
+    "latency_ms": 11489
+  },
+  "expected": {
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_015zBg71R6eMXC7QgpCfdfJv",
+    "container": null,
+    "content": [
+      {
+        "signature": "EqACClsIDRgCKkA5Qsn7CwNYUy8vOM2Y54TBfzGORSMIWz5XnLh67eIcfc4Iq16XZNhmAuyFvGJ/7lVZ1w/x94C1RdU3kKIA/GTMMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgwdvKWwkezSJ3opdPQaDPUT9cEJmRgqusQ04iIwBAVfwEnnBH4px+ufnaTYpsD1d13+UxfYPE1qRtR22KVViYq7itJQSMGoq8dVOb6LKnMtfzdBE/LgcT5K47yGdqbppRMvNTlOOkd2UNPhX6Le7pq4sa9WNWchQN6bp6r0gU+nWvLGclWFIoc3xlhN7jG2+WKT3dvH7Uv74IFHFUO+fr5qMpHajFXzDZzlbtLVewG1qrwPNSBFtiX29cBky6glBMu9GAE=",
+        "thinking": "The user input is \"cookie\", which is a development term (HTTP cookie). I'll call return_term_entry.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_015w8aSt5ao4Q8gk1v8yinhX",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "cookie",
+          "aliases": [
+            "쿠키"
+          ],
+          "category": "네트워크",
+          "summary": "서버가 클라이언트에 저장하는 소규모 상태 데이터",
+          "etymology": "영어 'cookie'(과자)에서 비유적으로 차용. 컴퓨팅에서는 1970~80년대 유닉스 프로그래밍 관행인 '매직 쿠키(magic cookie)'에서 먼저 쓰였으며, 이는 프로그램 간 교환되는 불투명한 식별 토큰을 가리켰다.",
+          "namingReason": "1994년 넷스케이프의 루 몬툴리(Lou Montulli)가 HTTP 쿠키를 설계할 때 유닉스의 'magic cookie' 관용어에서 직접 이름을 가져왔다. 매직 쿠키란 한쪽이 건네고 상대방이 나중에 그대로 돌려주는 작은 데이터 조각으로, 서버가 클라이언트에게 토큰을 '쥐여주고' 이후 요청마다 그것을 '다시 받아 확인'하는 HTTP 쿠키의 동작과 정확히 일치한다. 무상태(stateless) 프로토콜인 HTTP에서 세션·로그인 정보를 유지하는 수단으로 정착하면서 오늘날의 표준 용어가 되었다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3540,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 583,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

@@ -1,0 +1,55 @@
+# Round-003 keyword 40개 (수동 라운드, claude.ai 정액)
+# 카테고리 배분 (목표 N=650 코어 균등화 결손비례, 기타 0): 자료구조+11 동시성+9 DB+7 네트워크+7 패턴+6
+# 발주안: docs/db-expand/handoff-round-003.md + ROADMAP "Now". 550 → 590.
+# dedup: 기존 terms.json(550)의 {keyword} ∪ {모든 alias} 완전매칭 차집합으로 충돌 0 확인.
+#   (정규화 비교도 informational로 0. round-002 교훈 — 완전매칭 기준.)
+
+# 자료구조 (76 → +11 → 87)
+dancing-links
+scapegoat-tree
+leftist-heap
+skew-heap
+van-emde-boas-tree
+wavelet-tree
+unrolled-linked-list
+xor-linked-list
+hash-array-mapped-trie
+order-statistic-tree
+aa-tree
+
+# 동시성 (80 → +9 → 89)
+peterson-algorithm
+dekkers-algorithm
+test-and-set
+fetch-and-add
+ticket-lock
+mcs-lock
+double-checked-locking
+transactional-memory
+epoch-based-reclamation
+
+# DB (85 → +7 → 92)
+write-amplification
+covering-index
+surrogate-key
+quorum
+hinted-handoff
+read-repair
+bcnf
+
+# 네트워크 (86 → +7 → 93)
+silly-window-syndrome
+selective-acknowledgment
+explicit-congestion-notification
+split-horizon
+count-to-infinity
+karns-algorithm
+spanning-tree-protocol
+
+# 패턴 (86 → +6 → 92)
+interpreter
+blackboard
+outbox
+scatter-gather
+fluent-interface
+balking

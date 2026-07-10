@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "semafore",
+    "group": "branch_check",
+    "prompt_hash": "a26d467de6d1f81437daf4a7edc0f5559ddbf78c55c7481ed3c8e2f1cf948c0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:59:07.655944",
+    "latency_ms": 2455
+  },
+  "expected": {
+    "keyword": "semafore",
+    "group": "branch_check",
+    "expected_branch": "possible_typo",
+    "expected_suggestion": "semaphore"
+  },
+  "response": {
+    "id": "msg_01WwB6oqMdTkquxRRjhYk65x",
+    "container": null,
+    "content": [
+      {
+        "signature": "EskCClsIDRgCKkB+bx9/EFds3QNllO0PK6mY4oTe56Mu1x8oCx/Dnb9juXWo3u6i18i2M86uQMo7LBvMGiXCjO8GiaqvfHKHxtNSMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgzZh9nChsx2PYSqRiIaDIWlI9qp3EYpBUHejyIwdP0MlNe9ecQqaOQz4E9+qKpqdCi+100u8vzwlsqZsV6DcYu67KEhwg7Fi1yJE91kKpsB6gHMZ+dQTpCuVh4Ohx7Soj/TMwMOpy7+vnbRZ6UE6TfGviLUE4j7GDApka6mY2Ouaapd2oZIp+rm9XGRngko+gke7YUjILMaetXGaa9ec7gQDRuzSU4ixVa6pU1aPxaVcYMO90nqVLrLTCXjvyNvoOLy6mugsprk9xOHCqdURynYUhJnDS+b5OqSxgioBkfZtjmg83UXsMAXId4YAQ==",
+        "thinking": "The input \"semafore\" looks like a typo of the development term \"semaphore\". I should call return_possible_typo with suggestion \"semaphore\".",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01QYWayFpzHHbewdsVESv8aN",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "suggestion": "semaphore"
+        },
+        "name": "return_possible_typo",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3456,
+      "inference_geo": "global",
+      "input_tokens": 333,
+      "output_tokens": 103,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

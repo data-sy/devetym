@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "boolean",
+    "group": "out_of_shot",
+    "prompt_hash": "a26d467de6d1f81437daf4a7edc0f5559ddbf78c55c7481ed3c8e2f1cf948c0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:58:53.326555",
+    "latency_ms": 10039
+  },
+  "expected": {
+    "keyword": "boolean",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01MwmgNsUHcwgCoyeXUz5zBE",
+    "container": null,
+    "content": [
+      {
+        "signature": "EvUBClsIDRgCKkBhQRZv/z4b22dAufnQOJ+zpWImU3v1WQPsz570SmVWTvF6tPw5q+zRbSmCK55Xtr/27pCKfKtcS+hGCOdBwRW6MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgyxeVjHu3bq5xAbm0caDHEzUnDfF7ne89bddiIwNtIKqyhn8H7QaOYpA47foXCU69yef/XFJdGUl6Wc5PX+d9KZGjN84J2zcLc4czPfKkhqC+vCsEycEzJaRNdWvf7HI0u/lyZvEB/K4/6vOeJhYfKiyv/aNvO5Cqz2ZpKq+GTil+lRCCMCZZlozRAwn0fLut8eBYxBuWQYAQ==",
+        "thinking": "The user input is \"boolean\" which is a development term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01KjKKcuFdkw2ona7RvoZs2Z",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "boolean",
+          "aliases": [
+            "불리언",
+            "부울",
+            "bool"
+          ],
+          "category": "기타",
+          "summary": "참(true)과 거짓(false) 두 값만 갖는 논리 자료형",
+          "etymology": "19세기 영국 수학자 조지 불(George Boole)의 성(姓)에서 파생된 형용사형. Boole이 1854년 저서 『An Investigation of the Laws of Thought』에서 논리 연산을 대수 체계로 정식화하였고, 그 체계를 '불 대수(Boolean algebra)'라 부른 데서 유래한다.",
+          "namingReason": "불 대수는 모든 명제를 참(1)과 거짓(0)으로만 표현하고, AND·OR·NOT 세 연산으로 논리 관계를 계산하는 체계다. 컴퓨터 회로 설계와 프로그래밍 언어가 이 이진 논리 체계를 그대로 채택하면서, 참·거짓 두 상태만 갖는 자료형에 창시자의 이름을 딴 'Boolean'이라는 명칭을 붙였다. 사람 이름에서 비롯된 용어이므로 원래는 대문자 Boolean으로 표기하지만, 현대 언어(C, Python, Rust 등)에서는 소문자 bool 또는 boolean으로 관습화된 경우가 많다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3456,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 559,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

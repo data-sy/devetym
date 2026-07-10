@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "baseline",
+    "keyword": "idempotent",
+    "group": "out_of_shot",
+    "prompt_hash": "037754b355208bf3db2f2e58c5f32c9ddde4a8a13c511b973606f3ff6e30b0ca",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:50:59.002837",
+    "latency_ms": 9416
+  },
+  "expected": {
+    "keyword": "idempotent",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01BZH7VggTDmcZmLoZ5fZvpb",
+    "container": null,
+    "content": [
+      {
+        "signature": "ErMCClsIDRgCKkCftT+nlr4oKMAesaiBjBssnFCCEoF2h9gEhE+HrtLEovAb3IF500OusjFp4rf82svFcLtSKzJYPzQsb8GgZSmAMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgyvrq00dZj+4zcKtJgaDHL0DlEUFn2HNnVm2CIwEQm7nGCNpM919YJ8d7J2YqoE5Fclwn7ejGRqyRwXTixfNAOpS3buDIqdR0wlHzaXKoUBRNnlwhj1E/mSxvNLr3y+YuzAJUPuCm9J8dLXlAB4k9v7PJBhCldiPep5VmUt2P14bg0t6MoYLkcHhl4NHAVJNbEN8XHL9EixbDcCI2MaSL/4eXLs88yJPYBsGzeKj1zdGNN6ayLzlytzlJ7OAHxd+oXk2AOSeEYZeg7cKXa4zM0z2SBvfRgB",
+        "thinking": "The user input is \"idempotent\" which is a development term used in HTTP methods, API design, and distributed systems.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01BC15G3DeejNNV9G6YvA8s5",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "idempotent",
+          "aliases": [
+            "멱등성",
+            "idempotency"
+          ],
+          "category": "네트워크",
+          "summary": "같은 연산을 여러 번 실행해도 결과가 동일한 성질",
+          "etymology": "라틴어 idem(같은)과 potens(힘·효력)의 합성어. 직역하면 '같은 효력을 내는'이 된다. 19세기 수학자 벤저민 피어스가 대수학에서 f(f(x)) = f(x)를 만족하는 연산을 지칭하기 위해 처음 사용한 용어다.",
+          "namingReason": "수학에서의 정의인 '몇 번을 적용해도 결과가 달라지지 않는 연산'이 HTTP와 분산 시스템 설계에 그대로 이식되었다. 네트워크 요청은 응답 유실·타임아웃 등으로 재시도가 불가피한데, 같은 요청을 여러 번 보내도 서버 상태가 처음 한 번과 동일하게 유지되어야 안전한 재시도가 가능하다. 이 성질을 수학적 어원 그대로 가져와 멱등성이라 부른다. HTTP 명세(RFC 7231)는 GET·PUT·DELETE를 멱등 메서드로, POST를 비멱등 메서드로 규정한다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3364,
+      "inference_geo": "global",
+      "input_tokens": 334,
+      "output_tokens": 570,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

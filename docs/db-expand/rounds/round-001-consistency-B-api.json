@@ -1,0 +1,116 @@
+[
+  {
+    "keyword": "priority-inversion",
+    "aliases": [
+      "우선순위 역전",
+      "priority inversion"
+    ],
+    "category": "동시성",
+    "summary": "낮은 우선순위 스레드가 높은 우선순위 스레드를 간접적으로 블로킹하는 현상",
+    "etymology": "영어 priority(우선순위, 라틴어 prior '앞선'에서 유래)와 inversion(역전, 라틴어 inversio '뒤집음'에서 유래)의 합성어. '순서가 뒤집힌다'는 뜻이다.",
+    "namingReason": "높은 우선순위 스레드가 낮은 우선순위 스레드가 쥔 락을 기다리는 동안, 중간 우선순위 스레드가 낮은 우선순위 스레드를 선점하여 결과적으로 실행 순서가 '뒤집히는' 상황을 가리킨다. 어원의 '역전·뒤집음'이 스케줄링 우선순위의 역전 현상에 정확히 대응한다. 1997년 화성 탐사선 패스파인더(Pathfinder)의 소프트웨어 장애 분석 보고서에서 이 용어가 널리 알려졌으며, 해결책으로 우선순위 상속(priority inheritance)과 우선순위 천장(priority ceiling) 프로토콜이 제안되었다."
+  },
+  {
+    "keyword": "aba-problem",
+    "aliases": [
+      "ABA 문제",
+      "ABA problem"
+    ],
+    "category": "동시성",
+    "summary": "CAS 연산에서 값이 A→B→A로 바뀌었음에도 변경을 감지하지 못하는 문제",
+    "etymology": "세 글자 A, B, A는 값의 상태 전이를 순서대로 나열한 약칭이다. 값이 A에서 B로 바뀌었다가 다시 A로 돌아온 패턴을 직접 표기한 명명이다.",
+    "namingReason": "Compare-And-Swap(CAS) 연산은 현재 값이 기대값과 같을 때만 교체하는데, 다른 스레드가 값을 A→B→A 순으로 바꿔놓으면 CAS는 '변화 없음'으로 판단하여 잘못된 교체를 수행한다. 값의 내용이 아니라 변경 이력을 추적하지 못한다는 점에서, 상태 전이 순서 자체를 이름으로 삼아 문제를 직관적으로 표현했다. 해결책으로 버전 태그를 값과 함께 관리하는 스탬프드 레퍼런스(stamped reference) 기법이 사용된다."
+  },
+  {
+    "keyword": "merkle-tree",
+    "aliases": [
+      "머클 트리",
+      "hash tree"
+    ],
+    "category": "자료구조",
+    "summary": "각 노드가 자식 노드들의 해시값을 저장하는 트리 구조",
+    "etymology": "발명자인 미국 암호학자 랄프 머클(Ralph Merkle)의 성에서 유래한 고유명사 기반 명칭이다. 대안 명칭 hash tree는 각 노드가 해시값을 담는다는 구조적 특성을 직접 기술한 것이다.",
+    "namingReason": "1979년 랄프 머클이 특허로 출원하고 1988년 논문으로 발표한 자료구조로, 발명자의 이름을 붙이는 관행에 따라 머클 트리로 명명되었다. 루트 해시 하나만으로 전체 데이터의 무결성을 검증할 수 있다는 특성 덕분에 Git의 커밋 구조, BitTorrent의 블록 검증, Bitcoin의 트랜잭션 검증 등에 채택되었다."
+  },
+  {
+    "keyword": "persistent-data-structure",
+    "aliases": [
+      "영속 자료구조",
+      "persistent data structure",
+      "불변 자료구조"
+    ],
+    "category": "자료구조",
+    "summary": "수정 후에도 이전 버전을 모두 유지하는 자료구조",
+    "etymology": "라틴어 persistere(per '계속' + sistere '서 있다')에서 유래한 영어 persistent(지속되는, 유지되는)와 data structure의 합성어. '변경 후에도 이전 상태가 계속 존재한다'는 의미이다.",
+    "namingReason": "일반 자료구조는 수정 시 이전 상태를 덮어쓰지만, 영속 자료구조는 각 수정 연산이 새 버전을 만들면서 이전 버전을 보존한다. '변경 이후에도 과거 상태가 지속된다'는 어원의 의미가 버전 이력 보존이라는 핵심 특성을 그대로 가리킨다. 1986년 드리스콜(Driscoll) 등의 논문 「Making Data Structures Persistent」에서 partial persistence, full persistence 등의 분류 체계와 함께 이 용어가 정착되었다."
+  },
+  {
+    "keyword": "sni",
+    "aliases": [
+      "Server Name Indication",
+      "서버 이름 표시"
+    ],
+    "category": "네트워크",
+    "summary": "TLS 핸드셰이크 시 클라이언트가 목적지 도메인을 미리 알리는 확장",
+    "etymology": "Server Name Indication의 약어. Server(서버), Name(이름·도메인명), Indication(표시·알림, 라틴어 indicare '가리키다'에서 유래)으로 구성된 두문자어다.",
+    "namingReason": "하나의 IP에 여러 도메인이 공존하는 환경에서, 서버는 TLS 인증서를 선택하기 전에 클라이언트가 요청하는 도메인 이름을 알아야 한다. SNI는 TLS 핸드셰이크 ClientHello 메시지에 목적지 서버의 이름을 '표시(indication)'하여 서버가 알맞은 인증서를 고를 수 있도록 한다. 어원의 '이름을 가리키다'가 프로토콜 동작을 직접 묘사한다. RFC 3546(2003)에서 TLS 확장으로 표준화되었으며, 도메인명이 평문으로 노출된다는 문제를 해결하기 위해 암호화된 버전인 ESNI(Encrypted SNI), 이후 ECH(Encrypted Client Hello)가 제안되었다."
+  },
+  {
+    "keyword": "hsts",
+    "aliases": [
+      "HTTP Strict Transport Security",
+      "HSTS"
+    ],
+    "category": "네트워크",
+    "summary": "브라우저가 해당 도메인에 HTTPS만 사용하도록 강제하는 보안 정책",
+    "etymology": "HTTP Strict Transport Security의 약어. HTTP(HyperText Transfer Protocol), Strict(엄격한, 라틴어 strictus '단단히 조인'), Transport(전송), Security(보안)로 구성된 두문자어다.",
+    "namingReason": "'엄격한(Strict)' 전송 보안이라는 명칭은, 예외 없이 HTTPS만 허용한다는 정책의 강제성을 직접 표현한다. 서버가 Strict-Transport-Security 응답 헤더를 보내면, 브라우저는 지정된 기간(max-age) 동안 해당 도메인에 대한 HTTP 요청을 자동으로 HTTPS로 업그레이드하여 다운그레이드 공격을 차단한다. RFC 6797(2012)로 표준화되었으며, 브라우저 제조사들이 사전 등록 도메인 목록(HSTS Preload List)을 관리하여 최초 접속 시의 취약 구간도 제거하는 방식으로 발전했다."
+  },
+  {
+    "keyword": "sharding",
+    "aliases": [
+      "샤딩",
+      "horizontal partitioning"
+    ],
+    "category": "DB",
+    "summary": "데이터를 여러 독립 노드에 분산 저장하는 수평 분할 기법",
+    "etymology": "영어 shard(파편, 깨진 조각)에 동명사형 접미사 -ing가 붙은 형태. shard는 고대 영어 sceard(깨진 그릇 조각)에서 유래했다.",
+    "namingReason": "대규모 데이터셋을 하나의 DB에 담지 않고, 각각 독립적으로 운영되는 여러 노드(샤드)에 조각조각 나누어 저장한다. '파편·깨진 조각'이라는 어원이 하나의 큰 데이터 덩어리를 여러 작은 조각으로 분산시킨다는 개념과 대응한다. 온라인 게임 Ultima Online(1997)이 서버 부하 분산을 위해 병렬 게임 세계를 '샤드'라고 부른 것이 DB 분야에 전용된 기원으로 알려져 있다."
+  },
+  {
+    "keyword": "materialized-view",
+    "aliases": [
+      "구체화된 뷰",
+      "실체화 뷰",
+      "materialized view"
+    ],
+    "category": "DB",
+    "summary": "쿼리 결과를 실제 데이터로 디스크에 저장해두는 뷰",
+    "etymology": "라틴어 materialis(물질의, matter '재료·물질'에서 유래)에서 온 영어 materialize(실체화하다)의 과거분사 materialized와 view(조회, 관점)의 합성어. '실제 물질로 만들어진 뷰'를 뜻한다.",
+    "namingReason": "일반 뷰(view)는 실행할 때마다 기저 테이블을 조회하는 가상의 정의이지만, 구체화된 뷰는 그 결과를 디스크에 물리적으로 '실체화'하여 저장한다. 가상의 정의(view)를 실제 데이터(materialized)로 만든다는 대비가 이름에 직접 담겨 있다. Oracle이 1990년대 중반 데이터 웨어하우스 기능으로 도입하면서 이 용어를 사용했으며, 이후 PostgreSQL·SQL Server 등으로 확산되었다."
+  },
+  {
+    "keyword": "command-pattern",
+    "aliases": [
+      "커맨드 패턴",
+      "명령 패턴",
+      "command pattern"
+    ],
+    "category": "패턴",
+    "summary": "요청을 객체로 캡슐화하여 실행·취소·큐잉을 가능하게 하는 디자인 패턴",
+    "etymology": "라틴어 commandare(com '함께' + mandare '위임하다·명령하다')에서 유래한 영어 command(명령)와 pattern(패턴, 그리스어 patronus '모형'에서 유래)의 합성어.",
+    "namingReason": "호출자(invoker)가 수신자(receiver)에게 직접 메서드를 호출하는 대신, 실행할 행위를 command 객체 하나에 캡슐화한다. '명령을 위임하다'는 어원처럼, 요청 자체를 독립된 객체로 분리하여 호출 시점과 실행 시점을 분리하고 취소(undo)·재실행(redo)·큐잉을 가능하게 한다. GoF의 『Design Patterns』(1994)에서 23개 패턴 중 하나로 정의되었다."
+  },
+  {
+    "keyword": "aggregate-root",
+    "aliases": [
+      "애그리거트 루트",
+      "집합체 루트",
+      "aggregate root"
+    ],
+    "category": "패턴",
+    "summary": "연관 객체 집합의 일관성을 책임지는 진입점 엔티티",
+    "etymology": "라틴어 aggregare(ad '~에' + gregare '무리 짓다')에서 유래한 aggregate(집합체)와 고대 영어 rot(뿌리, 나무의 기반)에서 유래한 root의 합성어. '무리의 뿌리·기반'을 뜻한다.",
+    "namingReason": "도메인 주도 설계(DDD)에서 연관된 객체들을 하나의 집합체(aggregate)로 묶고, 외부에서는 오직 루트 엔티티를 통해서만 내부 객체에 접근하도록 강제한다. '무리를 짓는'다는 aggregate의 어원과 '뿌리·기반'을 뜻하는 root가 합쳐져, 여러 객체를 하나로 묶고 그 무리의 유일한 진입점 역할을 한다는 개념을 담는다. 에릭 에반스(Eric Evans)가 2003년 저서 『Domain-Driven Design』에서 정의했으며, 트랜잭션 경계와 불변식(invariant) 보호의 단위로 사용된다."
+  }
+]

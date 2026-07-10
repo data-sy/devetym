@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck",
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "prompt_hash": "b0396852d6b88ba3bbe9657fed3a73fac75ed7ae06f2c3035db7ec760d72f425",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:00:50.569046",
+    "latency_ms": 25291
+  },
+  "expected": {
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_011b3p6V575HnSCsb451ogkU",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"cookie\" - this is a development term related to web/network programming. Let me analyze it.\n\n1. It's a development term (HTTP cookie, web cookie)\n2. Etymology: The term \"cookie\" in computing derives from \"magic cookie\" - a Unix concept from the 1970s. The word cookie itself comes from Dutch \"koekje\" (little cake). In computing, \"magic cookie\" was used to describe a token or piece of data passed between programs.\n3. Naming reason: Lou Montulli of Netscape coined the term \"cookie\" for web cookies in 1994, drawing from the Unix concept of \"magic cookie.\" The idea of a small piece of data that gets passed around and returned matches the metaphor of a cookie token.\n\n\n4. Now I'm categorizing this as a networking term and drafting the Korean translations. For the etymology section, I'm explaining how the English word \"cookie\" (from Dutch \"koekje\") connects to the Unix \"magic cookie\" concept of small data tokens passed between programs. For the naming reason, I need to cover Lou Montulli's 1994 coining of the term at Netscape and how it drew from that Unix metaphor. 케이프의 Lou Montulli가 HTTP 상태 유지 메커니즘을 구현하면서 Unix의 'magic cookie'에서 이름을 빌렸다. Magic cookie란 프로그램이 건네받은 뒤 나중에 그대로 돌려주는 불투명한 데이터 조각을 가리키는 Unix 속어였는데, 브라우저가 서버로부터 받아 저장했다가 다음 요청 시 되돌려 보내는 작은 텍스트 데이터가 정확히 이 동작과 일치한다. RFC 2109와 RFC 6265를 거쳐 웹 표준으로 성문화되었다. 이제 세 번째 문장이 실제로 새로운 정보를 담고 있다는 걸 확인했다. 단순한 재진술이 아니라 어원이 실제 동작과 어떻게 연결되는지 설명하는 부분이니까 유지하는 게 맞다. RFC 표준화 과정도 역사적 맥락을 더해주는 새로운 정보고. 요약은 \"브라우저와 서버 사이에서 상태를 유지하는 소형 데이터\" 정도면 충분하고, 별칭으로는 쿠키의 다양한 표현들을 포함시키자.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_014ApvqyBiHoNetkvpBL9CB6",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "cookie",
+          "aliases": [
+            "쿠키",
+            "HTTP 쿠키"
+          ],
+          "category": "네트워크",
+          "summary": "브라우저와 서버 사이에서 상태를 유지하는 소형 데이터",
+          "etymology": "영어 'cookie'(작은 과자)에서 유래. 컴퓨팅에서는 Unix의 'magic cookie' 개념—프로그램 간에 건네고 돌려받는 작은 불투명 데이터 토큰—을 거쳐 웹 맥락으로 이어졌다.",
+          "namingReason": "1994년 넷스케이프의 Lou Montulli가 HTTP 상태 유지 메커니즘을 구현하면서 Unix의 'magic cookie'에서 이름을 빌렸다. Magic cookie란 프로그램이 건네받은 뒤 나중에 그대로 돌려주는 불투명한 데이터 조각을 가리키는 Unix 속어였다. 브라우저가 서버로부터 받아 저장했다가 다음 요청 시 되돌려 보내는 동작이 이 개념과 구조적으로 일치한다. 이후 RFC 2109(1997)와 RFC 6265(2011)를 거쳐 웹 표준으로 성문화되었다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3691,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1820,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

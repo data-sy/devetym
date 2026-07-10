@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "selfcheck",
+    "keyword": "boolean",
+    "group": "out_of_shot",
+    "prompt_hash": "547cd6ba99746461d391eea735cf999712969f7bc12fa82f23cd4e5ad978f287",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:56:54.127387",
+    "latency_ms": 16892
+  },
+  "expected": {
+    "keyword": "boolean",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01DMW1GMVntc81DyhEjXiFTX",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"boolean\" - a fundamental development term in programming.\n\n1. It's a development term (primitive data type / type system concept).\n2. Etymology: From George Boole, the 19th-century mathematician who developed Boolean algebra. Named after him.\n3. Category: \"기타\" fits best since it's a data type/fundamental concept - not fitting neatly into 동시성, 자료구조, 네트워크, DB, 패턴. \"기타\" is appropriate.\n\nEtymology (60~120자): 19세기 영국 수학자 조지 불(George Boole)의 이름에서 유래. \n\n그가 창안한 '불 대수(Boolean algebra)'에서 파생된 형용사·명사형으로, 참(true)과 거짓(false) 두 값만 다루는 논리 체계를 가리킨다.\n\nNow I'm working on the naming reason section - I need to explain how Boole formalized logical operations using 0 and 1 in his 1847 work, and how this mathematical framework became the foundation for boolean values in computing. bool은 C, C++, Rust 같은 많은 언어에서 흔히 쓰이는 약칭 형태다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01RHP7hx85nzU4nSpeM2fnDa",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "boolean",
+          "aliases": [
+            "불리언",
+            "bool"
+          ],
+          "category": "기타",
+          "summary": "참(true)과 거짓(false) 두 값만 갖는 논리 타입",
+          "etymology": "19세기 영국 수학자 조지 불(George Boole)의 이름에서 파생된 형용사·명사형. 그가 창안한 '불 대수(Boolean algebra)'에서 유래하며, 참과 거짓 두 값만으로 논리 연산을 수식화한 체계를 가리킨다.",
+          "namingReason": "조지 불은 1847년 저서 『논리의 수학적 분석』에서 논리 명제를 0과 1의 대수식으로 표현하는 체계를 고안했다. 이후 1937년 클로드 섀넌이 이 불 대수를 전기 회로 설계에 적용하면서 디지털 컴퓨팅의 이론적 토대가 마련되었다. 프로그래밍 언어에서 boolean 타입은 이 두 값 체계를 직접 구현한 것으로, 발명자의 이름을 그대로 빌려 개념의 출처를 명시했다. 조건문·비교 연산의 결과값으로 쓰이며, 디지털 회로의 논리 게이트 동작과 일대일로 대응한다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3536,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1120,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

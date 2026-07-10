@@ -1,0 +1,121 @@
+cell,keyword,group,expected_branch,actual_branch,branch_correct,category,aliases,aliases_count,aliases_has_qualifier,summary_len,etymology_len,naming_len,naming_under_270,naming_last_sentence,naming_last_sentence_len,typo_suggestion,typo_suggestion_correct,thinking_chars,input_tokens,output_tokens,cache_read_tokens,cache_create_tokens,stop_reason,latency_ms
+baseline,mutex,in_shot,term_entry,term_entry,True,동시성,뮤텍스 | mutual exclusion,2,False,23,121,282,False,1965년 에츠허르 다이크스트라가 상호 배제 문제를 정식화한 이후 해당 개념의 축약어 'mutex'가 운영체제 설계에서 표준 용어로 굳어졌다.,79,,,55,331,563,0,3364,tool_use,7681
+baseline,jpa,in_shot,term_entry,term_entry,True,DB,Java Persistence API | 자바 영속성 API,2,True,25,151,290,False,'Persistence'라는 단어 선택 자체가 ORM의 본질인 '객체 생존 기간의 연장'을 직접적으로 드러낸다.,62,,,53,332,532,3364,0,tool_use,6275
+baseline,daemon,in_shot,term_entry,term_entry,True,기타,데몬 | demon,2,False,20,100,285,False,"Unix 관습에 따라 데몬 프로세스 이름 끝에 'd'를 붙이며(httpd, sshd, cron'd), 현대 운영체제에서도 네트워크 요청 수신, 로그 수집, 스케줄링 등 배경 작업의 표준 용어로 자리 잡고 있다.",117,,,56,331,540,3364,0,tool_use,5972
+baseline,bug,in_shot,term_entry,term_entry,True,기타,버그,1,False,21,122,226,True,기계 속을 기어다니며 예측 불가능한 고장을 일으키는 '벌레'라는 은유가 소프트웨어의 숨은 결함에 그대로 이식되어 오늘날 표준 용어로 자리 잡았다.,81,,,53,331,508,3364,0,tool_use,7371
+baseline,idempotent,out_of_shot,term_entry,term_entry,True,네트워크,멱등성 | idempotency,2,False,27,123,255,True,"HTTP 명세(RFC 7231)는 GET·PUT·DELETE를 멱등 메서드로, POST를 비멱등 메서드로 규정한다.",64,,,117,334,570,3364,0,tool_use,9416
+baseline,cookie,out_of_shot,term_entry,term_entry,True,네트워크,쿠키 | HTTP 쿠키 | HTTP cookie,3,True,26,125,292,False,"HTTP는 기본적으로 무상태(stateless) 프로토콜이기 때문에, 서버가 클라이언트에게 작은 데이터 조각을 건네주고 이후 요청마다 그것을 그대로 되돌려 받아 상태를 식별하는 방식이 'magic cookie'의 원래 의미와 정확히 일치했다.",135,,,184,331,586,3364,0,tool_use,10241
+baseline,semaphore,out_of_shot,term_entry,term_entry,True,동시성,세마포어 | 세마포,2,False,28,113,311,False,P(감소·대기)와 V(증가·신호) 연산은 네덜란드어 passeren(통과하다)과 vrijgeven(해제하다)의 첫 글자에서 왔다.,72,,,105,333,618,3364,0,tool_use,11464
+baseline,request,out_of_shot,term_entry,term_entry,True,네트워크,리퀘스트 | 요청,2,False,23,119,304,False,어원의 '구하다'는 능동적 행위성이 통신에서 항상 클라이언트가 먼저 메시지를 보낸다는 방향성을 명확히 드러낸다.,62,,,333,331,635,3364,0,tool_use,10851
+baseline,boolean,out_of_shot,term_entry,term_entry,True,기타,불리언 | 불린 | bool,3,False,34,148,305,False,ALGOL 60(1960)이 최초로 boolean을 공식 예약어로 채택하면서 프로그래밍 언어 전반의 표준 용어로 정착했다.,68,,,57,331,617,3364,0,tool_use,26727
+baseline,null,out_of_shot,term_entry,term_entry,True,기타,널 | 널 값,2,False,23,133,295,False,"Hoare 본인은 훗날 이를 ""10억 달러짜리 실수""라고 표현했는데, null 참조를 역참조할 때 발생하는 런타임 오류가 수십 년간 막대한 장애를 유발했기 때문이다.",92,,,73,331,601,3364,0,tool_use,10239
+baseline,apple,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,69,331,68,3364,0,tool_use,3071
+baseline,lunch,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,34,331,57,3364,0,tool_use,2350
+baseline,mutext,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,mutex,True,49,332,79,3364,0,tool_use,2560
+baseline,redus,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,redis,True,99,332,92,3364,0,tool_use,2612
+baseline,semafore,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,semaphore,True,122,333,97,3364,0,tool_use,3423
+closing,mutex,in_shot,term_entry,term_entry,True,동시성,뮤텍스 | mutual exclusion,2,False,23,114,286,False,"락을 소유한 스레드만이 해제 권한을 가진다는 '소유권' 개념이 세마포어(semaphore)와 구별되는 지점이며, 이 소유권 모델이 뮤텍스라는 이름 자체에 이미 내포되어 있다.",97,,,78,331,587,0,3519,tool_use,10035
+closing,jpa,in_shot,term_entry,term_entry,True,DB,Java Persistence API | 자바 영속성 API,2,True,25,151,304,False,현재는 Jakarta EE로 이관되어 Jakarta Persistence라는 이름으로도 불린다.,53,,,76,332,535,3519,0,tool_use,9624
+closing,daemon,in_shot,term_entry,term_entry,True,기타,데몬 | demon,2,False,20,98,301,False,"Unix 관습에 따라 데몬 프로세스 이름 끝에 'd'를 붙이며(httpd, sshd), 종교적 의미의 'demon'과 구별하기 위해 'daemon' 철자를 유지하는 경우가 많다.",99,,,90,331,542,3519,0,tool_use,7575
+closing,bug,in_shot,term_entry,term_entry,True,기타,버그,1,False,21,122,247,True,"기계 속을 기어다니며 예측 불가능한 고장을 일으키는 '벌레'라는 은유가 소프트웨어의 숨은 결함을 가리키는 데 전용되었으며, 해당 나방 표본은 현재 미국 국립역사박물관에 보존되어 있다.",102,,,53,331,527,3519,0,tool_use,5937
+closing,idempotent,out_of_shot,term_entry,term_entry,True,네트워크,멱등성 | 멱등,2,False,27,113,330,False,"네트워크 장애로 인한 재시도(retry) 설계에서 중요한 속성으로, ""몇 번 보내도 부작용이 없다""는 보장이 분산 시스템의 안전한 재전송 전략의 근거가 된다.",88,,,796,334,871,3519,0,tool_use,15770
+closing,cookie,out_of_shot,term_entry,term_entry,True,네트워크,쿠키 | HTTP 쿠키 | 웹 쿠키,3,True,26,134,427,False,"이후 RFC 2109(1997)와 RFC 6265(2011)를 통해 표준화되었으며, 세션 관리·개인화·추적 등 다양한 용도로 확장 사용되고 있다.",81,,,134,331,730,3519,0,tool_use,13309
+closing,semaphore,out_of_shot,term_entry,term_entry,True,동시성,세마포어 | 세마포,2,False,29,93,370,False,"뮤텍스가 소유권 개념을 가진 이진 잠금인 반면, 세마포어는 소유자 없이 카운트만으로 동작하므로 생산자-소비자 문제처럼 접근 허용 수가 복수인 상황에 폭넓게 적용된다.",92,,,100,333,666,3519,0,tool_use,13627
+closing,request,out_of_shot,term_entry,term_entry,True,네트워크,리퀘스트 | 요청,2,False,23,124,278,False,웹뿐 아니라 OS 커널·IPC·RPC 등 계층을 가리지 않고 '호출자가 피호출자에게 처리를 위임하는 행위' 전반을 지칭하는 범용 용어로 확장되었다.,82,,,149,331,576,3519,0,tool_use,10784
+closing,boolean,out_of_shot,term_entry,term_entry,True,기타,불리언 | bool | 논리형,3,False,33,139,330,False,"C언어에서는 오랫동안 int로 대체되다가 C99에서 _Bool 타입이 공식 도입되었고, 각 언어마다 bool·Boolean·boolean 등 표기가 조금씩 다르다.",91,,,86,331,620,3519,0,tool_use,11955
+closing,null,out_of_shot,term_entry,not_dev_term,False,,,0,False,0,0,0,False,,0,,,115,331,81,3519,0,tool_use,2342
+closing,apple,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,69,331,68,3519,0,tool_use,1959
+closing,lunch,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,69,331,68,3519,0,tool_use,1919
+closing,mutext,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,mutex,True,49,332,79,3519,0,tool_use,2089
+closing,redus,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,redis,True,46,332,104,3519,0,tool_use,2738
+closing,semafore,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,semaphore,True,83,333,90,3519,0,tool_use,2144
+selfcheck,mutex,in_shot,term_entry,term_entry,True,동시성,뮤텍스 | mutual exclusion,2,False,23,130,242,True,"'서로를 밖으로 밀어낸다'는 어원의 의미가 설계 원칙에 그대로 반영되어, 한 스레드가 락을 쥐고 있는 동안 다른 모든 스레드는 진입이 차단된다.",80,,,909,331,1225,0,3536,tool_use,16407
+selfcheck,jpa,in_shot,term_entry,term_entry,True,DB,Java Persistence API | 자바 영속성 API,2,True,25,151,242,True,'Persistence'라는 단어 선택 자체가 ORM의 본질인 '객체의 생존 기간을 프로세스 경계 너머로 연장한다'는 개념을 직접적으로 드러낸다.,81,,,507,332,846,3536,0,tool_use,8659
+selfcheck,daemon,in_shot,term_entry,term_entry,True,기타,데몬 | demon,2,False,20,97,213,True,"Unix 관습에 따라 이런 프로세스의 이름 끝에 'd'를 붙이는 방식(httpd, sshd, cron'd)이 정착하였다.",67,,,827,331,920,3536,0,tool_use,9876
+selfcheck,bug,in_shot,term_entry,term_entry,True,기타,버그,1,False,21,122,226,True,기계 속을 기어다니며 예측 불가능한 고장을 일으키는 '벌레'라는 은유가 소프트웨어의 숨은 결함에 그대로 이식되어 오늘날 표준 용어로 자리 잡았다.,81,,,459,331,882,3536,0,tool_use,7527
+selfcheck,idempotent,out_of_shot,term_entry,term_entry,True,기타,멱등 | 멱등성,2,False,25,138,230,True,"분산 시스템에서 네트워크 오류로 재시도가 발생하는 상황에서, 멱등성이 확보된 연산은 중복 실행에 따른 부작용을 방제하는 설계 기준이 된다.",77,,,1637,334,2122,3536,0,tool_use,32827
+selfcheck,cookie,out_of_shot,term_entry,term_entry,True,네트워크,쿠키 | HTTP 쿠키,2,True,26,123,256,True,이 이름은 이후 RFC 2109 등 공식 표준 문서에 그대로 채택되었다.,40,,,815,331,1270,3536,0,tool_use,18548
+selfcheck,semaphore,out_of_shot,term_entry,term_entry,True,동시성,세마포어,1,False,27,132,353,False,"다익스트라는 대기 연산을 P(네덜란드어 Proberen, '시도하다'), 해제 연산을 V(Verhogen, '올리다')로 명명했는데, V가 신호 팔을 '올리는' 동작에서 직접 파생된 점도 이 은유를 뒷받침한다.",117,,,1654,333,1796,3536,0,tool_use,26143
+selfcheck,request,out_of_shot,term_entry,term_entry,True,네트워크,리퀘스트 | HTTP request,2,True,21,129,284,False,"RFC 2616(HTTP/1.1 명세)에서 클라이언트→서버 방향 메시지를 공식적으로 'request'로 정의하면서 웹 개발 표준 용어로 굳었고, 이후 프레임워크 객체명(HttpServletRequest, Flask의 request 등)과 REST API 문서에도 같은 단어가 그대로 쓰인다.",162,,,1826,331,1569,3536,0,tool_use,22826
+selfcheck,boolean,out_of_shot,term_entry,term_entry,True,기타,불리언 | bool,2,False,32,123,255,True,"조건문·비교 연산의 결과값으로 쓰이며, 디지털 회로의 논리 게이트 동작과 일대일로 대응한다.",51,,,827,331,1120,3536,0,tool_use,16892
+selfcheck,null,out_of_shot,term_entry,term_entry,True,기타,널,1,False,22,122,303,False,"Hoare 본인은 훗날 이 도입을 ""10억 달러짜리 실수(billion-dollar mistake)""라고 회고했는데, null 참조 역참조 시 발생하는 NullPointerException 등의 런타임 오류가 수십 년간 소프트웨어 결함의 주요 원인이 되었기 때문이다.",149,,,1314,331,1085,3536,0,tool_use,17509
+selfcheck,apple,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,159,331,89,3536,0,tool_use,3681
+selfcheck,lunch,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,119,331,80,3536,0,tool_use,2455
+selfcheck,mutext,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,mutex,True,109,332,122,3536,0,tool_use,3070
+selfcheck,redus,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,redis,True,162,332,107,3536,0,tool_use,2660
+selfcheck,semafore,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,semaphore,True,139,333,103,3536,0,tool_use,2663
+alias_strict,mutex,in_shot,term_entry,term_entry,True,동시성,뮤텍스 | mutual exclusion,2,False,23,124,276,False,락을 획득한 스레드가 해제하기 전까지는 다른 스레드가 블로킹 상태에서 대기해야 한다는 동작 방식이 이 이름에 압축되어 있다.,69,,,78,331,593,0,3456,tool_use,10749
+alias_strict,jpa,in_shot,term_entry,term_entry,True,DB,Java Persistence API | 자바 영속성 API,2,True,25,151,307,False,'Persistence'라는 단어 선택 자체가 ORM의 본질인 '객체 생존 기간의 연장'을 정확히 드러낸다.,60,,,76,332,557,3456,0,tool_use,10033
+alias_strict,daemon,in_shot,term_entry,term_entry,True,기타,데몬 | demon,2,False,20,100,275,False,"Unix 관습에 따라 데몬 프로세스 이름 끝에 'd'를 붙이며(httpd, sshd, cron'd), 부팅 시 자동 시작되어 요청이 올 때까지 대기하거나 주기적 작업을 수행한다.",99,,,90,331,537,3456,0,tool_use,9725
+alias_strict,bug,in_shot,term_entry,term_entry,True,기타,버그,1,False,21,122,235,True,기계 속을 기어다니며 예측 불가능한 고장을 일으키는 '벌레'라는 은유가 소프트웨어의 숨은 결함 개념에 그대로 이식되어 오늘날 표준 용어로 자리 잡았다.,84,,,53,331,516,3456,0,tool_use,5731
+alias_strict,idempotent,out_of_shot,term_entry,term_entry,True,네트워크,멱등성 | 멱등,2,False,25,116,300,False,어원의 '같은 힘을 반복해도 결과가 동일하다'는 의미가 '몇 번 호출해도 부작용이 누적되지 않는다'는 API 설계 원칙으로 그대로 연결된다.,78,,,158,334,615,3456,0,tool_use,10648
+alias_strict,cookie,out_of_shot,term_entry,term_entry,True,네트워크,쿠키,1,False,27,102,291,False,'과자 조각'처럼 작고 눈에 잘 띄지 않게 브라우저에 남겨 두었다가 다음 요청 시 서버로 다시 건네진다는 동작 방식이 이 은유와 맞아떨어졌다.,79,,,97,331,572,3456,0,tool_use,10546
+alias_strict,semaphore,out_of_shot,term_entry,term_entry,True,동시성,세마포어 | 세마포,2,False,33,111,268,True,"'몇 개까지 동시에 허용할 것인가'를 숫자로 표현한다는 점에서, 통행 가능 여부를 시각적 신호로 알리는 원래 장치의 역할과 정확히 대응된다.",78,,,105,333,586,3456,0,tool_use,10625
+alias_strict,request,out_of_shot,term_entry,term_entry,True,네트워크,리퀘스트 | 요청,2,False,24,107,231,True,요청-응답(request-response) 쌍을 축으로 하는 클라이언트-서버 아키텍처에서 통신의 시작점을 가리키는 핵심 단어로 자리 잡았다.,78,,,171,331,520,3456,0,tool_use,9031
+alias_strict,boolean,out_of_shot,term_entry,term_entry,True,기타,불리언 | 부울 | bool,3,False,33,173,270,True,"사람 이름에서 비롯된 용어이므로 원래는 대문자 Boolean으로 표기하지만, 현대 언어(C, Python, Rust 등)에서는 소문자 bool 또는 boolean으로 관습화된 경우가 많다.",105,,,56,331,559,3456,0,tool_use,10039
+alias_strict,null,out_of_shot,term_entry,not_dev_term,False,,,0,False,0,0,0,False,,0,,,105,331,76,3456,0,tool_use,2448
+alias_strict,apple,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,69,331,68,3456,0,tool_use,2149
+alias_strict,lunch,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,34,331,57,3456,0,tool_use,2529
+alias_strict,mutext,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,mutex,True,60,332,82,3456,0,tool_use,2281
+alias_strict,redus,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,redis,True,44,332,79,3456,0,tool_use,2454
+alias_strict,semafore,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,semaphore,True,139,333,103,3456,0,tool_use,2455
+closing__selfcheck,mutex,in_shot,term_entry,term_entry,True,동시성,뮤텍스 | mutual exclusion,2,False,23,89,168,True,한 번에 오직 하나의 소유자만 락을 쥘 수 있다는 설계 원칙이 여기서 비롯된다.,44,,,544,331,740,0,3691,tool_use,7577
+closing__selfcheck,jpa,in_shot,term_entry,term_entry,True,DB,Java Persistence API | 자바 영속성 API,2,True,25,140,251,True,"Java EE 5(2006)에서 EJB 엔티티 빈의 복잡성을 해소하기 위해 JSR-220으로 도입되었으며, Hibernate가 사실상 참조 구현의 토대가 되었다.",90,,,869,332,1165,3691,0,tool_use,13309
+closing__selfcheck,daemon,in_shot,term_entry,term_entry,True,기타,데몬 | demon,2,False,20,98,191,True,"Unix 관습에 따라 프로세스 이름 끝에 'd'를 붙인다(httpd, sshd).",45,,,600,331,740,3691,0,tool_use,6346
+closing__selfcheck,bug,in_shot,term_entry,term_entry,True,기타,버그,1,False,22,125,300,False,Grace Hopper가 해당 나방을 테이프로 붙인 로그북은 현재 스미소니언 박물관에 보관되어 있다.,56,,,1635,331,1701,3691,0,tool_use,19249
+closing__selfcheck,idempotent,out_of_shot,term_entry,term_entry,True,패턴,멱등 | 멱등성,2,False,28,107,262,True,"HTTP에서 GET·PUT·DELETE는 멱등 메서드로 분류되어 네트워크 장애 시 클라이언트가 안전하게 재시도할 수 있으며, POST는 비멱등으로 분류되어 중복 호출 시 별도의 중복 방지 처리가 필요하다.",114,,,2018,334,2506,3691,0,tool_use,31126
+closing__selfcheck,cookie,out_of_shot,term_entry,term_entry,True,네트워크,쿠키 | HTTP 쿠키,2,True,29,104,262,True,이후 RFC 2109(1997)와 RFC 6265(2011)를 거쳐 웹 표준으로 성문화되었다.,52,,,1536,331,1820,3691,0,tool_use,25291
+closing__selfcheck,semaphore,out_of_shot,term_entry,term_entry,True,동시성,세마포어 | 세마포,2,False,28,107,258,True,"다익스트라는 이 기법을 P(네덜란드어 proberen, 시도하다)와 V(verhogen, 증가시키다) 두 연산으로 정의했으며, 현재는 wait/signal이라는 이름으로 이어진다.",100,,,1342,333,1488,3691,0,tool_use,20170
+closing__selfcheck,request,out_of_shot,term_entry,term_entry,True,네트워크,리퀘스트,1,False,28,123,208,True,대부분의 웹 프레임워크는 이 메시지를 req 또는 request 객체로 추상화하여 개발자에게 노출한다.,57,,,1115,331,1924,3691,0,tool_use,26181
+closing__selfcheck,boolean,out_of_shot,term_entry,term_entry,True,기타,불리언 | bool,2,False,24,134,255,True,"프로그래밍 언어 설계자들은 이 이진 자료형에 그 토대를 만든 수학자의 이름을 붙였으며, ALGOL 60(1960)에서 boolean이 정식 자료형 키워드로 채택된 것이 초기 기록 중 하나로 꼽힌다.",110,,,2203,331,1411,3691,0,tool_use,21020
+closing__selfcheck,null,out_of_shot,term_entry,term_entry,True,기타,널,1,False,25,96,237,True,"Hoare 본인은 2009년 이 결정을 ""10억 달러짜리 실수(billion-dollar mistake)""라고 표현했는데, null 역참조가 수많은 런타임 오류와 보안 취약점의 원인이 되었기 때문이다.",112,,,1445,331,1423,3691,0,tool_use,19958
+closing__selfcheck,apple,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,166,331,91,3691,0,tool_use,2974
+closing__selfcheck,lunch,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,69,331,68,3691,0,tool_use,2705
+closing__selfcheck,mutext,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,mutex,True,108,332,126,3691,0,tool_use,3333
+closing__selfcheck,redus,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,redis,True,121,332,97,3691,0,tool_use,2965
+closing__selfcheck,semafore,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,semaphore,True,142,333,107,3691,0,tool_use,2661
+closing__alias_strict,mutex,in_shot,term_entry,term_entry,True,동시성,뮤텍스 | mutual exclusion,2,False,23,113,375,False,"1965년 에츠허르 다익스트라가 임계 구역(critical section) 문제를 정식화하면서 mutual exclusion이라는 표현이 학술 용어로 확립되었고, 이후 축약형 mutex가 운영체제 API 전반에 퍼졌다.",122,,,78,331,622,0,3611,tool_use,11816
+closing__alias_strict,jpa,in_shot,term_entry,term_entry,True,DB,Java Persistence API,1,True,25,151,281,False,"2006년 Java EE 5 사양(JSR-220)의 일부로 표준화되었으며, Hibernate·EclipseLink·OpenJPA 등 구현체가 이 명세를 따른다.",89,,,109,332,519,3611,0,tool_use,9378
+closing__alias_strict,daemon,in_shot,term_entry,term_entry,True,기타,데몬 | demon,2,False,20,98,290,False,"악마(devil)와의 혼동을 피하고 중립적·기술적 의미를 살리기 위해 고대 그리스 철학 용어인 'daemon' 철자를 의도적으로 택했으며, Unix 관습에 따라 해당 프로세스 이름 끝에 'd'를 붙이는 전통(httpd, sshd, cron 등)으로 이어졌다.",144,,,56,331,532,3611,0,tool_use,8601
+closing__alias_strict,bug,in_shot,term_entry,term_entry,True,기타,버그,1,False,21,122,332,False,"나방 일화의 주인공은 프로그래밍 언어 COBOL을 설계한 그레이스 호퍼(Grace Hopper)로, 해당 나방은 실제로 테이프에 붙여 로그 노트에 보관되었으며 현재 미국 국립역사박물관에 소장되어 있다.",112,,,53,331,611,3611,0,tool_use,7915
+closing__alias_strict,idempotent,out_of_shot,term_entry,term_entry,True,네트워크,멱등 | 멱등성,2,False,27,108,283,False,네트워크 재시도 로직이나 메시지 큐 설계에서 중복 전송 시의 안전성을 보장하는 근거로 멱등성 개념이 사용된다.,61,,,147,334,581,3611,0,tool_use,9793
+closing__alias_strict,cookie,out_of_shot,term_entry,term_entry,True,네트워크,쿠키,1,False,27,133,374,False,Montulli는 이 명칭이 기술 문서보다 구현 코드에서 먼저 굳어졌다고 회고한 바 있다.,50,,,111,331,666,3611,0,tool_use,12799
+closing__alias_strict,semaphore,out_of_shot,term_entry,term_entry,True,동시성,세마포어 | 세마포,2,False,33,87,379,False,"뮤텍스가 소유권 개념을 가진 이진(0/1) 잠금인 반면, 세마포어는 소유권 없이 카운터만으로 N개의 동시 접근을 허용하는 더 일반적인 형태다.",79,,,100,333,632,3611,0,tool_use,14025
+closing__alias_strict,request,out_of_shot,term_entry,term_entry,True,네트워크,요청,1,False,23,115,293,False,1991년 HTTP/0.9 명세에서 이 명칭이 공식 채택된 이후 REST·gRPC 등 다양한 통신 패러다임에서도 동일한 용어가 쓰이고 있다.,78,,,466,331,644,3611,0,tool_use,11900
+closing__alias_strict,boolean,out_of_shot,term_entry,term_entry,True,기타,불리언 | 불린 | bool,3,False,33,128,320,False,"인명에서 유래했기 때문에 원칙적으로 대문자 'B'로 표기해야 하지만, Java의 기본형 boolean처럼 소문자 표기가 관용으로 굳은 언어도 다수 존재한다.",87,,,86,331,604,3611,0,tool_use,11239
+closing__alias_strict,null,out_of_shot,term_entry,not_dev_term,False,,,0,False,0,0,0,False,,0,,,105,331,76,3611,0,tool_use,2349
+closing__alias_strict,apple,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,69,331,68,3611,0,tool_use,2338
+closing__alias_strict,lunch,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,34,331,57,3611,0,tool_use,2575
+closing__alias_strict,mutext,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,mutex,True,49,332,79,3611,0,tool_use,2196
+closing__alias_strict,redus,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,redis,True,93,332,89,3611,0,tool_use,2315
+closing__alias_strict,semafore,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,semaphore,True,133,333,100,3611,0,tool_use,2193
+selfcheck__alias_strict,mutex,in_shot,term_entry,term_entry,True,동시성,뮤텍스 | mutual exclusion,2,False,23,109,240,True,"세마포어와 달리 소유권 개념이 있어, 락을 건 스레드만이 해제할 수 있다는 설계 원칙이 여기서 비롯된다.",58,,,625,331,1098,0,3628,tool_use,15415
+selfcheck__alias_strict,jpa,in_shot,term_entry,term_entry,True,DB,Java Persistence API,1,True,29,162,237,True,"구현체가 아닌 '인터페이스 규약'임을 API라는 단어로 명시함으로써, 특정 라이브러리에 종속되지 않는 표준임을 이름 자체에서 드러낸다.",75,,,1143,332,1174,3628,0,tool_use,18938
+selfcheck__alias_strict,daemon,in_shot,term_entry,term_entry,True,기타,데몬 | demon,2,False,20,98,277,False,"Unix 관습에 따라 데몬 프로세스 이름 끝에 'd'를 붙이며(httpd, sshd), 시스템 부팅 시 자동 시작되어 종료 시까지 상주한다는 동작 방식이 '보이지 않는 곳에서 항상 일하는 존재'라는 어원 이미지와 정확히 맞아떨어진다.",130,,,447,331,620,3628,0,tool_use,8701
+selfcheck__alias_strict,bug,in_shot,term_entry,term_entry,True,기타,버그,1,False,21,122,226,True,기계 속을 기어다니며 예측 불가능한 고장을 일으키는 '벌레'라는 은유가 소프트웨어의 숨은 결함에 그대로 이식되어 오늘날 표준 용어로 자리 잡았다.,81,,,498,331,611,3628,0,tool_use,8086
+selfcheck__alias_strict,idempotent,out_of_shot,term_entry,term_entry,True,기타,멱등 | 멱등성,2,False,24,107,241,True,"분산 시스템과 REST API 설계에서는 이 성질이 재시도 안전성(retry-safe)의 근거가 되며, 멱등 키(idempotency key)를 통해 중복 요청을 방어하는 패턴으로도 확장된다.",107,,,1816,334,2008,3628,0,tool_use,33935
+selfcheck__alias_strict,cookie,out_of_shot,term_entry,term_entry,True,네트워크,쿠키,1,False,29,128,281,False,어원의 '주고받는 불투명한 토큰'이라는 의미가 세션 상태를 브라우저 쪽에 위탁하는 HTTP 설계 방식과 직접 연결된다.,66,,,1832,331,1748,3628,0,tool_use,26895
+selfcheck__alias_strict,semaphore,out_of_shot,term_entry,term_entry,True,동시성,세마포어 | 세마포,2,False,30,131,352,False,"데이크스트라는 조작 연산을 네덜란드어로 P(proberen, 시험하다)와 V(verhogen, 증가시키다)로 명명했다.",66,,,1076,333,1402,3628,0,tool_use,24321
+selfcheck__alias_strict,request,out_of_shot,term_entry,term_entry,True,네트워크,리퀘스트,1,False,26,103,244,True,"클라이언트가 능동적으로 먼저 보내고 서버는 그에 대한 Response를 돌려보내는 비대칭 구조가, request라는 단어에 내재된 '요청자 주도'의 뉘앙스와 정확히 일치한다.",97,,,1876,331,1562,3628,0,tool_use,24727
+selfcheck__alias_strict,boolean,out_of_shot,term_entry,term_entry,True,기타,불리언 | bool,2,False,33,106,284,False,"논리 회로 설계부터 프로그래밍 언어의 조건 분기(if, while)까지, 이 자료형은 불 대수의 두 진리값을 프로그램 안으로 직접 이식한 것이다.",81,,,1135,331,1403,3628,0,tool_use,26619
+selfcheck__alias_strict,null,out_of_shot,term_entry,not_dev_term,False,,,0,False,0,0,0,False,,0,,,112,331,111,3628,0,tool_use,3084
+selfcheck__alias_strict,apple,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,152,331,88,3628,0,tool_use,2849
+selfcheck__alias_strict,lunch,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,69,331,68,3628,0,tool_use,2146
+selfcheck__alias_strict,mutext,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,mutex,True,108,332,122,3628,0,tool_use,3998
+selfcheck__alias_strict,redus,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,redis,True,201,332,115,3628,0,tool_use,3070
+selfcheck__alias_strict,semafore,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,semaphore,True,139,333,103,3628,0,tool_use,2520
+closing__selfcheck__alias_strict,mutex,in_shot,term_entry,term_entry,True,동시성,뮤텍스 | mutual exclusion,2,False,23,89,241,True,세마포어(semaphore)와 달리 잠금을 획득한 스레드만 해제할 수 있다는 '소유권' 규칙이 mutex를 구분짓는 핵심 특성이다.,73,,,1046,331,998,0,3783,tool_use,11659
+closing__selfcheck__alias_strict,jpa,in_shot,term_entry,term_entry,True,DB,Java Persistence API | 자바 영속성 API,2,True,29,160,255,True,"2006년 Java EE 5(JSR-220)의 일부로 처음 정의되었으며, Hibernate와 EclipseLink가 이 명세를 구현하는 대표적인 프레임워크다.",88,,,735,332,1212,3783,0,tool_use,16291
+closing__selfcheck__alias_strict,daemon,in_shot,term_entry,term_entry,True,기타,데몬 | demon,2,False,20,98,191,True,"Unix 관습에 따라 프로세스 이름 끝에 'd'를 붙인다(httpd, sshd).",45,,,575,331,733,3783,0,tool_use,6487
+closing__selfcheck__alias_strict,bug,in_shot,term_entry,term_entry,True,기타,버그,1,False,21,122,299,False,당시 나방이 붙어 있던 로그 카드는 현재 스미스소니언 국립 미국사 박물관에 실물로 보관되어 있다.,54,,,929,331,1536,3783,0,tool_use,18365
+closing__selfcheck__alias_strict,idempotent,out_of_shot,term_entry,term_entry,True,네트워크,멱등성 | 멱등,2,False,26,99,237,True,분산 시스템에서 네트워크 오류로 재시도가 발생해도 부작용이 없음을 보장할 때 핵심 설계 기준으로 삼는다.,58,,,1486,334,1784,3783,0,tool_use,26024
+closing__selfcheck__alias_strict,cookie,out_of_shot,term_entry,term_entry,True,네트워크,쿠키,1,False,26,121,293,False,"Unix의 'magic cookie'가 이미 '출처를 알 필요 없이 그냥 돌려주는 불투명한 값'이라는 의미로 쓰이고 있었기 때문에, Montulli는 이를 웹의 세션 유지 문제에 적용하면서 앞의 'magic'을 떼고 'cookie'만 남겼다.",135,,,1392,331,1423,3783,0,tool_use,21534
+closing__selfcheck__alias_strict,semaphore,out_of_shot,term_entry,term_entry,True,동시성,세마포어 | 세마포,2,False,29,107,285,False,"Dijkstra가 원형으로 제시한 연산 이름은 네덜란드어 P(proberen, '시도하다')와 V(verhogen, '증가시키다')였으며, 이후 wait/signal로 표준화되었다.",101,,,576,333,1162,3783,0,tool_use,17055
+closing__selfcheck__alias_strict,request,out_of_shot,term_entry,term_entry,True,네트워크,리퀘스트,1,False,28,100,265,True,"HTTP/1.1(RFC 2616)은 Request-Line을 메서드·URI·프로토콜 버전으로 형식화했으며, GET·POST·DELETE 등 HTTP 메서드가 요청의 의도를 구체적으로 구분한다.",107,,,1266,331,1297,3783,0,tool_use,20844
+closing__selfcheck__alias_strict,boolean,out_of_shot,term_entry,term_entry,True,기타,불리언 | bool,2,False,20,108,255,True,C언어에서는 별도 타입 없이 0/1 정수로 대체되다가 C99에서 _Bool 타입으로 공식 편입되었다.,56,,,1578,331,1266,3783,0,tool_use,19760
+closing__selfcheck__alias_strict,null,out_of_shot,term_entry,not_dev_term,False,,,0,False,0,0,0,False,,0,,,103,331,109,3783,0,tool_use,3268
+closing__selfcheck__alias_strict,apple,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,224,331,106,3783,0,tool_use,3491
+closing__selfcheck__alias_strict,lunch,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,129,331,82,3783,0,tool_use,2252
+closing__selfcheck__alias_strict,mutext,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,mutex,True,109,332,116,3783,0,tool_use,3064
+closing__selfcheck__alias_strict,redus,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,redis,True,150,332,104,3783,0,tool_use,3786
+closing__selfcheck__alias_strict,semafore,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,semaphore,True,186,333,145,3783,0,tool_use,3161

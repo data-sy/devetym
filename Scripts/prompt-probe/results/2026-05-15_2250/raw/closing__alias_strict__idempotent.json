@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing__alias_strict",
+    "keyword": "idempotent",
+    "group": "out_of_shot",
+    "prompt_hash": "1fe8a1815b90d220dd1a0b048772ca32c437b58fbbf90bdda9a2814b2bce11bf",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:03:20.069954",
+    "latency_ms": 9793
+  },
+  "expected": {
+    "keyword": "idempotent",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01XAsevuJ1aTdGcbUFdL3XkZ",
+    "container": null,
+    "content": [
+      {
+        "signature": "EtECClsIDRgCKkDuLB/MAr+dqLtDTKPKyyGwG3LjiN0kVPL+4scoGuMfevwaRWNm1MB46sl55aUHRxgDdAWgP6MbMVRt4FbjbNpEMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgw5R9xdqCGz88NCahUaDH5M7M+T8ye/sW9XEyIwhhI5ai2e2lgeo4WhRjGWzE80vq8xSX+DtyUuYVhbaOy24asNV0PxUw8nZuG/SinoKqMB+/bpGBmxiyHo0sM/20bVjIHPurRqdPK/OmS1W4YP4hWJmt68zoiTJW9Bjg9IbbmJpeAqsc1u5NzaUz65cPZtyuRypKDzJQQYZ6VnTvIe2gWQ07MpX1mbwrxM+SwXGjKmCD/+KQJyabAD8tKYgLdkQi6w5yT+RnGLEK6k1LRdZMhBdG3i6FFeegNQNc6FwFfp5TxmRZaB95pStOJa+MfTtum25BgB",
+        "thinking": "The user is asking about \"idempotent\", which is a development term used in various contexts like HTTP methods, REST APIs, database operations, etc.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01AdYfbr32CWWkGvDwwWukgw",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "idempotent",
+          "aliases": [
+            "멱등",
+            "멱등성"
+          ],
+          "category": "네트워크",
+          "summary": "같은 연산을 여러 번 수행해도 결과가 동일한 성질",
+          "etymology": "라틴어 idem(같은, the same)과 potens(힘·능력, 영어 potent의 어원)의 합성어. '같은 힘을 반복 적용해도 변하지 않는다'는 의미를 담는다. 수학에서 먼저 정립된 용어다.",
+          "namingReason": "수학에서 멱등성은 f(f(x)) = f(x)를 만족하는 함수의 성질을 가리킨다. 예컨대 절댓값 함수는 두 번 적용해도 결과가 달라지지 않는다. 이 수학적 정의가 HTTP 명세(RFC 7231)에 그대로 도입되어, 동일한 요청을 한 번 보내든 여러 번 보내든 서버 상태에 미치는 효과가 같은 메서드를 '멱등하다'고 규정한다. GET·PUT·DELETE가 여기 해당하며, POST는 해당하지 않는다. 네트워크 재시도 로직이나 메시지 큐 설계에서 중복 전송 시의 안전성을 보장하는 근거로 멱등성 개념이 사용된다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3611,
+      "inference_geo": "global",
+      "input_tokens": 334,
+      "output_tokens": 581,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

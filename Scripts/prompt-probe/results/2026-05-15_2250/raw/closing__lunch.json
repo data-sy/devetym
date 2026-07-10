@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "cell": "closing",
+    "keyword": "lunch",
+    "group": "branch_check",
+    "prompt_hash": "a375f07f70512ed802370765aaeda70d0278f7253f21cbdd2bfef2268c398ad2",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:54:07.421577",
+    "latency_ms": 1919
+  },
+  "expected": {
+    "keyword": "lunch",
+    "group": "branch_check",
+    "expected_branch": "not_dev_term"
+  },
+  "response": {
+    "id": "msg_011JpaK2gnQBsGsjwhJLwXKQ",
+    "container": null,
+    "content": [
+      {
+        "signature": "EoICClsIDRgCKkD/mYayRlqK2tn9K7Lrmd1NVGTu3lrPKVaY1coD/gfjKteD2M+dQfFcd8N9GoZahvq0mb3jP4iqGNfoWUTJgz76MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgz/vgMSUZ+PL6aae/MaDLcMBqQWRMnC6ADQSiIwbJvUx3u/ELjaIchS66/7FWUj8qX8kUUBUxjRwJa7xfi+KLtmueOb7GH8KR6qT49GKlVXTTnXIfM9HsMoTMD9T8rLdw/cXViwtLouIZ7tvlK4t+uS0z3guYC3vXJFOFBuRPBXpnabGB0W/Sd4lSo2ifQ9dybd3rd/AFY5sJP9m8JCjuZ+42nVGAE=",
+        "thinking": "\"lunch\" is not a development term. I should call return_not_dev_term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01RtZY6ZZHXjEDsx9L5msoPD",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {},
+        "name": "return_not_dev_term",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3519,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 68,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "selfcheck",
+    "keyword": "jpa",
+    "group": "in_shot",
+    "prompt_hash": "547cd6ba99746461d391eea735cf999712969f7bc12fa82f23cd4e5ad978f287",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:54:39.470594",
+    "latency_ms": 8659
+  },
+  "expected": {
+    "keyword": "jpa",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01TZADywNBEMLof8SAYtyuoQ",
+    "container": null,
+    "content": [
+      {
+        "signature": "ErgJClsIDRgCKkCOuwzTpOs2LYeZpvf3GV7YJ3TRx6TZ75GDouGQ8hEZDdUq5513nlYMfl+1qUlSLzA5yk1B34glC2Np555tOM11MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgwa5jfq+fzsu1G0VOsaDOYgIiadrwDxnFwBCiIwH80710iuFaZ+okgKdsEkdSeha0y7g9dz5BA54ICT5ahxlPYQC7JwZFuwF2MbqkZcKooIv4bWrL4fu1DRrjQ+nw4BbsGq+Jk7xB+9SvGfyAI37WoD28rwz2ycJfTxxAVzijYh8AimfZOaOtNICSHzXotsP4/kwxQSMsRqYHRMB/JSTxvlGfF9jLv3i9jFv/G06enXNzeCqDgEIGUEWLn41ahmbzd53IhOp65HDI24rZaXlwQIrD3o+NcKAHpuUmwXfbXgaD1auLo5SwDtzBVnHSraipLv78lliSm8aFLmgC857AyslFRYzWIj2teeX6QtTkDe1p0cTkOkPA2FOI2tHve0Ptoc81bgzrgQqgdGOvKA6ORO5fOjaivUZOxZSWOJ7TubMPUXQJVTLD8BPLbco9544pr6Ru6J8gYNm6p+EXlopeUu8xO3XczHC63R24nicCuMvfKL8rEZWS7Nl7r8e+hbNAysjAxB+viRmxBqtp5pbZDCJ6E2kmmF05DwWY6pjaW2pXxcHrR4sFjIudWrzDbMC6oKobZy5CJ9In0gLoKgHIuVAJPm6Cw8gJ0qxSUEKD+kDi4S6Xl8vRT8TRakdFSTzbWkJH/xdTB5cC1iGevxKIN+MPZCV7Tv5478XReMWZkKFcOQkj157zA3UkJREIKvy7BZJ3OPpzx2njTo1tHYCwg1CgF5YY7TXuYynN7jlFTIpA6OFuoifpVtTAA4rVnMfRmXv4m8DD/k3V5KjZtMeWNZUsGVkHvlBsJePDRvIblCkSa+hjsfa69qS73Q89v5ivz54ctzXwcJmYZ4TGBKzKMmTg67rZTKeE84iu6XlFMtWKY2mPxl83pVzPhLZGWJHcCGZKWWsZyhkGYShm+xVivzfOGbhuvCjVwuAYX9BS//3/6g3E/nzM1KhSomyU1JM4U3ziXwg2AuLoIFLtCpfiJoMoQ/bVtVFZsXMqWz31swUoxT4DmKKwMei5tF90O9wlaMQrBIFIgY47z1tA4Rc9iCuILmWzZeVR2264Q7UVhilICkg/jsAXxvL+WWsOp3XQ3eDmdUrlHIHi2jaGjeN/DiPoc8xj6PeCy2dw9a7bdxgTTUDROuEEKZ4MRgrIrvbkIyUkylWNM9O2no0qTahaJnxmnPtcyLiFkEr/G+P1XKpamiv8GpiPfNCG372o7FQnrASC8A8+8ZOrbniWtLyaZTmwTTxrX8CEQWkLkc1SitMgS7VnFS7Wd50iKNTXO24TFjr+dV/wupuk3/V/9z6BjyLEjzqpVMMeQXEZ2IVgTyRQGIe4kvaJuTgxjGBZErlmY1WwGufVjuFjvYBVieGtUi+UJmykD+2XpuAmAZjCnHBiEPQEBTDzoxbFbh65YaogTw/iDEssn0kByf11RP8J75g702IZoiv6wLP4t7LKDc38kGV4Fd5JOUkE64G1XDNGMX6d3n0lbeciUYAQ==",
+        "thinking": "The input is \"jpa\" which is a development term - Java Persistence API. Let me fill in the fields.\n\netymology: Java Persistence API의 약어. Java(자바 언어), Persistence(영속성, 프로그램 종료 후에도 데이터가 유지되는 성질), API(Application Programming Interface, 응용 프로그래밍 인터페이스)로 구성된 순수 두문자어.\n\nnamingReason: Persistence(영속성)는 메모리상의 객체를 디스크에 '지속'시킨다는 의미로, 객체 지향 언어와 관계형 DB 사이의 매핑 규약을 가리킨다. \n\nJPA는 2006년 Java EE 5 사양에 포함되어 도입되었으며, Hibernate와 EclipseLink 같은 ORM 구현체들이 이 표준을 따르고 있다. 'Persistence'라는 단어 자체가 ORM의 핵심인 객체의 생존 기간을 연장하는 개념을 잘 드러낸다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01MrVrxDs7tiqGkV47GaMxjQ",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "jpa",
+          "aliases": [
+            "Java Persistence API",
+            "자바 영속성 API"
+          ],
+          "category": "DB",
+          "summary": "자바 객체를 DB에 매핑하는 영속성 표준 명세",
+          "etymology": "Java Persistence API의 약어. Java(자바 언어), Persistence(영속성, 프로그램 종료 후에도 데이터가 유지되는 성질), API(Application Programming Interface, 응용 프로그래밍 인터페이스)로 구성된 순수 두문자어.",
+          "namingReason": "Persistence(영속성)는 메모리상의 객체를 디스크에 '지속'시킨다는 의미로, 객체 지향 언어와 관계형 DB 사이의 매핑 규약을 지칭한다. 2006년 Java EE 5 사양의 일부로 공식 도입되었으며, Hibernate·EclipseLink 등 ORM 구현체들이 이 명세를 따른다. 'Persistence'라는 단어 선택 자체가 ORM의 본질인 '객체의 생존 기간을 프로세스 경계 너머로 연장한다'는 개념을 직접적으로 드러낸다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3536,
+      "inference_geo": "global",
+      "input_tokens": 332,
+      "output_tokens": 846,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

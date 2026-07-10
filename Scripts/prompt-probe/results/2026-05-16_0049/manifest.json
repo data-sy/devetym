@@ -1,0 +1,30 @@
+{
+  "run_id": "2026-05-16_0049",
+  "timestamp": "2026-05-16T00:49:11.266559",
+  "model": "claude-sonnet-4-6",
+  "max_tokens": 4096,
+  "thinking_budget": 2000,
+  "cells": [
+    "alias_strict"
+  ],
+  "n_cells": 1,
+  "keywords": [
+    "mutex",
+    "jpa",
+    "daemon",
+    "bug",
+    "idempotent",
+    "cookie",
+    "semaphore",
+    "request",
+    "boolean",
+    "null",
+    "apple",
+    "lunch",
+    "mutext",
+    "redus",
+    "semafore"
+  ],
+  "n_keywords": 15,
+  "total_calls": 15
+}

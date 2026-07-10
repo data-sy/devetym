@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck__alias_strict",
+    "keyword": "request",
+    "group": "out_of_shot",
+    "prompt_hash": "d2be35897b3d540d7d9da0024812d073ee1e3e3b9bc5b9181b12c813f839d753",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:10:07.630327",
+    "latency_ms": 20844
+  },
+  "expected": {
+    "keyword": "request",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01BiHGTgkn9Zrw7U2y6XKAKu",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"request\". This is a general English word, but it's also heavily used in development contexts (HTTP request, etc.). However, as a standalone term, \"request\" is not specifically a development term — it's a general English word that happens to be used in development. But it's also so foundational to web development (HTTP request) that it could be considered a dev term.\n\nActually, thinking more carefully: \"request\" by itself is a general English word. However, in the context of a development dictionary, it's commonly used as a dev term (HTTP request, API request). But it's not a specific technical term with a specialized meaning unique to development — it's just the regular English word used in a technical context.\n \nI think \"request\" deserves to be treated as a development term given how central it is to web architecture — it's the fundamental message a client sends to a server. The Latin roots of \"seeking\" or \"asking\" align perfectly with what an HTTP request actually does, so I'll categorize it under networking and trace that etymological connection. 라틴어 어원과 HTTP 통신에서의 의미를 연결하면, 클라이언트가 서버에 자원을 요청하는 행위가 \"다시 구한다\"는 원래 뜻과 정확히 부합한다. HTTP/1.1 표준에서는 Request-Line으로 형식화되었고, GET이나 POST 같은 메서드들이 요청의 구체적인 의도를 나타낸다. 별칭은 \"리퀘스트\"만 해당하고, 카테고리는 네트워크다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_013CbdkDCW1x82Sx1pdTRomL",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "request",
+          "aliases": [
+            "리퀘스트"
+          ],
+          "category": "네트워크",
+          "summary": "클라이언트가 서버에 자원이나 처리를 요청하는 메시지",
+          "etymology": "라틴어 requirere(다시 구하다)에서 유래. re-(다시) + quaerere(구하다·묻다)의 합성어로, 고대 프랑스어 requeste를 거쳐 영어 request로 정착했다.",
+          "namingReason": "라틴어 requirere의 '무언가를 적극적으로 구한다'는 의미가 클라이언트가 서버에 자원 또는 동작을 요구하는 단방향 행위에 맞닿아 있다. HTTP 통신에서 request는 클라이언트가 먼저 보내는 메시지로, 서버는 이를 받아 response를 돌려주는 요청-응답 구조를 이룬다. HTTP/1.1(RFC 2616)은 Request-Line을 메서드·URI·프로토콜 버전으로 형식화했으며, GET·POST·DELETE 등 HTTP 메서드가 요청의 의도를 구체적으로 구분한다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3783,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1297,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

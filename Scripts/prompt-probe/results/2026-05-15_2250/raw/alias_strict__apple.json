@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "apple",
+    "group": "branch_check",
+    "prompt_hash": "a26d467de6d1f81437daf4a7edc0f5559ddbf78c55c7481ed3c8e2f1cf948c0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:58:57.927660",
+    "latency_ms": 2149
+  },
+  "expected": {
+    "keyword": "apple",
+    "group": "branch_check",
+    "expected_branch": "not_dev_term"
+  },
+  "response": {
+    "id": "msg_01PCuJYyW36omGtQDCGcDbqZ",
+    "container": null,
+    "content": [
+      {
+        "signature": "EoICClsIDRgCKkD+tTPsNEHFwY9su05qltu0prKh5SdoKqmFh9mW7zMvGZoiVq4IfnVwuLOed3EFpdGkVQDxgGuezTsaBlaQQZchMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgzNm+/emV21C3mh5T4aDL6fmNzSc5uhL/DCqiIw8dMpGHl5Fw8NKzCr/wzbZWhS5g0FUjjjyBnFY4FenrhVqhue/c2wyJ/v9xq/Nh9iKlWG+PXH2FKkesti/kxH98g9IwaVEBGW7xvoXnWLE1xvwBVj4VoWR7eRbLnDOSNH2yvzB+QV5hjhG5szeUutUgY776eDIPwwgyaTYs7eEM80nV30NKFOGAE=",
+        "thinking": "\"apple\" is not a development term. I should call return_not_dev_term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01NfHV5tyz9Qz7mUau92Pv6m",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {},
+        "name": "return_not_dev_term",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3456,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 68,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

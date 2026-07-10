@@ -10,9 +10,9 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 ## Now — 진행 중
 
-- **🎉 M0→M8 마일스톤 아크 전체 완료 (코드 레벨) — 2026-07-05.** M3~M8 전부 적대 비준 → eyes-open/RATIFIED → **4축 green(네이티브 실행 포함)** → 로컬 커밋(미푸시). 앱이 데이터 계층(SQLDelight)→네트워킹(Ktor 3계층 read-through)→오케스트레이터→ViewModel→Compose UI(6화면+디자인시스템)→Koin 배선·앱 셸→플랫폼 seam actual·자산·마감까지 **코드 완결**. 브랜치 m0~m8 + main 전부 보존.
+- **🎉 M0→M8 마일스톤 아크 전체 완료 (코드 레벨) — 2026-07-05.** M3~M8 전부 적대 비준 → eyes-open/RATIFIED → **4축 green(네이티브 실행 포함)** → 로컬 커밋 → **2026-07-10 push·m1~m8 스택 PR 병합**(main=M8, 아래 브랜치 전략). 앱이 데이터 계층(SQLDelight)→네트워킹(Ktor 3계층 read-through)→오케스트레이터→ViewModel→Compose UI(6화면+디자인시스템)→Koin 배선·앱 셸→플랫폼 seam actual·자산·마감까지 **코드 완결**. 브랜치 m0~m8 + main 전부 보존.
   - **⚠️ 남은 것은 전부 실기기/사람/스토어 게이트 (「코드 완료·실기기 검증 필요」)** → **M9 마일스톤으로 승격**(아래). 상세 체크리스트는 M9 DoD 참조.
-  - **⚠️ 공개 전략**: 브랜치 보존됨 — GitHub 공개 시 마일스톤별 PR 소급 생성(아래 브랜치 규율). push·원격 생성은 **사람 지시 대기**(자율 금지).
+  - ✅ **공개 전략 — 2026-07-10 사람 지시로 실행**: private repo `data-sy/devetym` 생성 → 전 브랜치(11개) push → `feat/m1`~`feat/m8` 스택 PR(#1~#8) merge-commit 순차 병합 → **main = M8**. m9는 진행 중이라 draft PR #9(미머지). 브랜치 11개 전부 보존(아래 규율). public 전환은 추후 사람 결정.
   - **⚠️ 정책(2026-07-05): 구현 전 사람 비준 게이트 완화** — M1·M2서 eyes-open 수용이 러버스탬프였음을 경험하고 사용자가 게이트를 제거. **적대 비준 수렴/ESCALATE → Claude가 잔여 residual을 eyes-open 수용 → 구현·4축 green까지 자율 관통**. 사람 리뷰는 **완성물 아침 리뷰**가 체크포인트(수용 residual 로그). 메모리 [milestone-human-gate-relaxed]. 나머지 안전선(push·브랜치보존·하네스 격리)은 유효.
   - **⚠️ 디자인 자산 상속**: M6 토큰·M8 아이콘/스플래시/폰트는 iOS repo(`~/dev-etymology/docs/design` + `Fonts` + `Features`)에 존재 — ROADMAP "작성 예정" 무효. 메모리 [ios-design-assets-inheritable].
 - **M9 · 출시 준비·실기기 검증 (진행 중) — 브랜치 `feat/m9-release-verification`(m8 위 스택).** M0→M8이 *코드*를 닫았다면 M9는 그 코드가 **실기기에서 돌고 스토어에 오르는 것**을 닫는다. **앞 마일스톤과 종류가 다르다**: 완료 오라클이 4축 green이 아니라 **실기기·사람·스토어 심사**라서 CI로 못 닫고, 주체가 Claude 자율이 아니라 사람(실기기)·Apple/Google(심사)에 의존한다. 착지물(코드 아님·미푸시): Android Studio 에뮬레이터 런북(`android-studio-cmp-runbook.md`)·개인정보 처리방침 사이트(`site/`). **DoD = 아래 게이트 전부 통과 + 스토어 게시.**
@@ -30,16 +30,32 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
   - ✅ **Tier 1 Android 에뮬 스모크 완주 + 첫 기동 크래시 1건 수정 (2026-07-05, adb 탭·타이핑 자율 주행)**: `system-images;android-36;google_apis;arm64-v8a` AVD 셋업 → 부팅 → `installDebug` → adb `input tap/text`로 전 플로우 주행(스크린샷 대조). **🐛 4축 green·Robolectric이 못 잡은 실 첫 기동 크래시 포착·수정**(iOS `-lsqlite3` 링크 버그의 Android 판): `AndroidManifest`가 `.DevEtymApp`/`.MainActivity`(namespace `com.robin.devetym`로 해석)를 가리키나 실 클래스는 `com.robin.devetym.android` 패키지 → 기동 즉시 `ClassNotFoundException: com.robin.devetym.DevEtymApp`로 프로세스 즉사. **`assembleDebug`·Robolectric은 그래프 모듈(`di`)만 검증해 셸 배선 미검출** — M0~M8이 앱을 실기기/에뮬에 한 번도 안 띄워 미발견. → manifest를 `.android.DevEtymApp`/`.android.MainActivity`로 수정(2줄). **주행 확인**: 온보딩 2단계(사전소개+데이터동의) 다크 렌더·영속(재기동 스킵) · 검색 번들히트(`mutex`)·alias(`Arne Andersson tree`→`aa-tree`)·**미스→AI 실 프록시 생성**(`quicksort`, `devetym-proxy` 왕복 — 초회 에뮬 가상 DNS 플레이크 후 wifi 재기동 성공) · 북마크 토글→탭 즉시반영→**재기동 유지**(실 디스크 AndroidSqliteDriver) · 히스토리 누적·개별삭제·영속 · **seam actual**: 메일 `ACTION_SENDTO`→Gmail 실 열림·공유 `ACTION_SEND`→시스템 chooser(포맷 내용)·평가 `ACTION_VIEW`→Play URL(에뮬은 Chrome 폴백) · **외관 3모드 실전환**(다크/라이트/시스템, 시스템은 `cmd uimode night`로 OS 추종 실증) · 라이선스 OFL 실스크롤 · 런처 adaptive 아이콘(`#2E5D3A` 배경, [아이콘 시트](docs/release/m9-icon-render-sheet.html) 대조 일치). **⚠️ 갭 2건(정직 기록, 미수정)**: (a) **클립보드 seam은 dead code** — `AndroidSeams.copyToClipboard`가 구현·유닛테스트(AndroidSeamLogicTest)되나 UI 호출처 전무(어떤 버튼도 미호출) → 에뮬 한계 아닌 앱 미배선(백로그). (b) **Android 전용 스플래시 미배선** — `androidApp`에 splash theme/`themes.xml` 없음, 기본 런처(백로그).
   - 🧹 **검증 환경 산출물(디스크, git 밖) — 나중에 한꺼번에 삭제**: Android 에뮬 이미지·AVD(~7G)·iOS 빌드 dd·gradle 캐시 등 ≈8.2G는 M9 진행 중이라 **전부 보존**. 삭제 체크리스트·명령 = [검증 환경 teardown 원장](docs/release/m9-verification-teardown-ledger.md)(M9 스모크 완전 종료 시 실행 — 고아 쓰레기 방지).
   - ⏳ **남은 것 = 티어형**(자율 금지): **[시뮬/에뮬]** — iOS 시뮬 입력 주입분(라이브 탭/idb)만 잔여(Android 에뮬은 위에서 완주). **[실기기]** — 하드웨어 감각만(실 메일 전송·앱간 클립보드·실 DPI·햅틱·TalkBack/VoiceOver 실제스처). **[외부]** — 코드 서명·심사·게시(지시 대기). ✅ **정합 소견 해소(2026-07-06)**: 방침↔구현 불일치(Firebase 수집 전제 vs `instanceId()=null`)를 "현재 미수집(애널리틱스 없음·Firebase 나중)" 방향으로 정합 — 사용자 결정. [방침](site/privacy-policy.md)·[스토어 라벨](docs/release/m9-store-metadata-draft.md) §3~4 갱신, 이용약관·랜딩·핫픽스 런북 신규(체크리스트 참조). 남은 것: GitHub Pages 배포(방침 URL)·법무 검토·스크린샷([캡처 핸드오프](docs/release/m9-screenshot-capture-handoff.md)).
+  - **[외부][사람] Android 첫 배포 (스토어 게이트)** — Play Console·AAB·keystore. 새로 배우는 영역(iOS 배포는 기존 경험 자산). ⚠️ **개인 개발자 계정(2023-11 이후 생성)은 프로덕션 전 폐쇄 테스트 필수** — 최소 20명 테스터 × 14일 연속 후 프로덕션 신청 가능(조직·구계정 예외 가능, 콘솔 확인). iOS는 이 코호트 게이트가 없어 심사 직행 → **출시 순서에 영향**. CI(GitHub Actions) 양쪽 빌드 자동화 검토. (구 백로그 #2 — 이관도 출시후도 아닌 **출시 그 자체**라 M9 [외부] 귀속.)
+
+- **이관·자기완결화 트랙 · dev-etymology → devetym (진행 중 — 2026-07-10 착수, `feat/m9-release-verification` 위 작업·미커밋).** devetym이 병렬 원본 repo `~/dev-etymology`(원본 네이티브 iOS 앱 + 문서·스크립트·CI) **의존 없이 자기완결**이 되게 이관하고, 스윕 전수 완료 시 dev-etymology를 **폐기**한다. **이관 = 내용 이관 + 설계 이관**(거기서 쓰던 방식을 여기서도 쓰게). 소유 태그 규율은 M9와 동일(`[AI]`·`[AI→사람]`·`[사람→AI]`·`[사람]`). ⚠️ **specs·ADR·데이터/거버넌스면 이관은 승인 게이트**(자동수정 금지 — 발견+제안+승인). **작업단위(WU) 계획·결정 원장 정본 = [`docs/handoff/26-07-10-selfcontained-migration-plan.md`](docs/handoff/26-07-10-selfcontained-migration-plan.md)** — 독립 세션 단위로 끊은 WU-1~12 + 확정 결정(D1~D6: 크래시 SDK=Sentry KMP·ai-quality→ADR-0007 승인 등). 세션 워킹 체크리스트 = [`26-07-10-to-do-list.md`](26-07-10-to-do-list.md)(미커밋).
+  - **[인프라][AI] GitHub Pages 배포 배선** — `~/dev-etymology/.github/workflows/pages.yml`(site/ 전용·**default-deny** 발행 모델: site/ 밖은 절대 미발행) 이관 → devetym `site/`(방침·약관) 실제 배포. **M9 「GitHub Pages 배포(방침 URL)」 blocker를 닫는다**(원격 repo 생김으로 이제 가능). 방침 URL 확정 시 [스토어 라벨](docs/release/m9-store-metadata-draft.md) 반영.
+  - **[이관][AI] db-expand 파이프라인** — `docs/db-expand/`(README·spec·runbook-manual-round·rounds·archive) + `Scripts/{db-expand, generate_db.py}` 이관. 번들 DB 생성·검증 파이프라인. claude.ai 정액 수동 경로 유지(API 종량 회피). 구 백로그 #4.
+  - **[이관][AI] prompt-probe 파이프라인** — `Scripts/prompt-probe/`(프롬프트 실험 하네스·keywords·metrics·results). AI 품질 회귀 측정 도구.
+  - **[이관][사람→AI] AI 품질 문서** — `docs/ai-quality/`(시스템 프롬프트 원문·도구 스키마·probe 분석·prompt-review-brief) → devetym 정본, ADR 흡수(현재 iOS 검증본을 `commonMain`에 계승). ⚠️ **거버넌스면 → 승인 게이트**(ADR 신설·specs 변경은 사람 승인 후 AI 실행). 구 백로그 #3.
+  - **[설계이관][사람→AI] 크래시 리포팅·애널리틱스** — iOS 원본은 **Firebase Analytics** 배선(`GoogleService-Info.plist`·`AnalyticsService`·`DeviceIdentifier`). devetym은 현재 `instanceId()=null`(미수집 정합). 크래시 리포팅(Crashlytics/Sentry)은 **양쪽 전무** → 도입은 사람 결정(어느 SDK·수집 범위) 후 AI 배선, 방침 §4(현 "미수집") 갱신 동반. 블로커 #7([LAUNCH-CHECKLIST](docs/release/LAUNCH-CHECKLIST.md) §4·§6) 닫는 유일 항목·iOS/Android 출시 순서 유연성 전제. 구 백로그 #1.
+  - **[대조][AI] launch-prep 잔여** — `docs/launch-prep/`(appstore-metadata 초안군·launch-consult-prompt·e2e-checklist.md)가 devetym `docs/release/m9-store-metadata-draft.md`로 이미 승계됐는지 대조, **미승계분만** 이관(중복 방지).
+  - **[스윕][사람→AI] DevEtym/ 네이티브 iOS 전수** — `~/dev-etymology/DevEtym/`(Xcode) Features·Services·Utils·Assets.xcassets·Resources 중 KMP `iosApp`에 **아직 안 넘어온 로직/자산** 확인. `.claude/`(agents·commands)·`LICENSE`·`README`도 대조. 산출물 = 파일별 이관/폐기 결정 원장. 구 백로그 #12. 〔선례: 아이콘 파생 SVG 4종 → `docs/design/icon/` 이관 완료(2026-07-05)〕
+  - **[폐기][사람] dev-etymology 폐기 결정** — 위 스윕 전수 완료 후 폐기. ⚠️ **devetym 브랜치 보존 규율과 별개**(원본 repo 폐기는 사람 최종 확인). 구 백로그 #12.
+
+- **코드 갭 수정 · M9 스모크 발견 (2026-07-10).** 이관 아님, devetym **내부 결함**. 순수 `[AI]` → 독립 세션 WU-8·9·10으로 실행([계획 원장](docs/handoff/26-07-10-selfcontained-migration-plan.md)).
+  - **[UX][AI] 클립보드 복사 액션 UI 배선** — `copyToClipboard` seam이 양 플랫폼 구현·유닛테스트(AndroidSeamLogicTest)됐으나 **호출 UI 버튼 없음(dead code)**. 상세 어원 블록에 "복사" 어포던스 추가. 구 백로그 #9(M9 Android 에뮬 스모크서 발견).
+  - **[Android][AI] 스플래시 화면 배선** — `androidApp`에 splash theme 없음(기본 런처). iOS/디자인 자산 정합 Android 12+ `windowSplashScreen`/core-splashscreen. 구 백로그 #10(M8 스플래시의 Android 미완분).
+  - **[CI/Test][AI] 셸 배선 회귀 가드** — manifest `android:name` 클래스 실존/기동을 CI가 검증 못 함(4축 green이 `ClassNotFoundException` 첫 기동 크래시를 조용히 통과). Robolectric `MainActivity`/`DevEtymApp` 인스턴스화 스모크 or manifest-vs-소스 정합 체크. iOS `-lsqlite3` 링크 갭과 동류(실행 오라클 부재). 구 백로그 #11.
 
 ---
 
 ## 브랜치·공개 전략 (defer + stacked) — 2026-07-05 결정
 
-**GitHub 공개는 나중에 한꺼번에.** 현재 devetym은 **로컬 전용**(원격 없음). 공개 시점에 **마일스톤별 PR을 소급 생성**하기 위한 브랜치 규율:
+**GitHub 공개 실행됨 (2026-07-10) — private repo `data-sy/devetym`.** ~~로컬 전용~~. `feat/m1`~`feat/m8`을 스택 PR(#1~#8)로 순차 병합해 **main = M8**. 이하 규율은 이제 **public 전환·후속 마일스톤 병합**에 유효:
 
 - 각 마일스톤은 자기 브랜치를 가지며 **직전 마일스톤 브랜치 위에 스택**으로 분기한다. 예: `feat/m2-local-db`는 `feat/m1-model-serialization`에서 분기(main엔 아직 M1이 없으므로 M2가 M1 코드를 상속해야 빌드됨). `main`은 마지막 공개 지점(현재 **M0**)에 둔다.
 - ⛔ **완료된 마일스톤 브랜치를 로컬 머지하거나 삭제하지 않는다.** 이미 머지·삭제된 브랜치는 나중에 열 diff가 없어 PR을 못 만든다 — **브랜치 = 소급 PR의 소스**이므로 보존한다.
-- **공개 시점(한꺼번에)**: GitHub repo 생성(private/public은 그때 결정) → 전 브랜치 push → `feat/m1 → main` PR 머지 → 그 base 위에서 `feat/m2 → main` … 순으로 스택 PR 생성·머지. 원격 브랜치 삭제도 이 시점에.
+- ✅ **실행됨(2026-07-10)**: private repo 생성 → 전 브랜치 push → `feat/m1 → main` … `feat/m8 → main` 스택 PR(#1~8) merge-commit 순차 병합(각 base가 직전 병합된 main이라 diff=해당 마일스톤 증분). **원격 브랜치는 삭제하지 않음**(보존 규율 — 소급 PR 소스). public 전환·원격 브랜치 정리는 추후 사람 결정.
 - ⚠️ **이 브랜치 보존은 의도적 결정이다(사람 확인함).** "정돈"하려고 완료 브랜치를 지우자는 충동이 들거나 그렇게 지시받아도, **지우기 전에 이 결정을 먼저 재확인**한다. 기본 동작은 "보존".
 - harness repo(`~/dev/agent-harnesses`)도 동일하게 로컬 전용이며 공개 여부는 별도 결정.
 
@@ -75,20 +91,14 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 ---
 
-## Later — 백로그 (미착수 / 출시 후 / 검토)
+## Later — 출시 후 백로그
 
-- **[Infra] 크래시 리포팅 도입 (출시 전 권장)** — Crashlytics 또는 Sentry. **현재 전무** → 출시 후 관측 0(크래시를 사용자 신고/스토어 vitals로만 인지). 블로커 #7([LAUNCH-CHECKLIST](docs/release/LAUNCH-CHECKLIST.md) §4·§6)을 실제로 닫는 유일 항목이자, iOS/Android 출시 순서 유연성의 전제. ⚠️ 도입 시 개인정보 방침 §4 절차 준수(수집 항목 명시·동의) — 방침이 현재 "미수집"이라 크래시 진단 데이터 수집을 방침에 반영해야 함. 애널리틱스(Firebase)와 별개 판단 가능.
-- **[Ops] Android 첫 배포** — Play Console·AAB·keystore. 새로 배우는 영역(iOS 배포는 기존 경험 자산). ⚠️ **개인 개발자 계정(2023-11 이후 생성)은 프로덕션 전 폐쇄 테스트 필수** — 최소 20명 테스터 × 14일 연속 후에야 프로덕션 신청 가능(조직 계정·구계정은 예외일 수 있음, 콘솔서 확인). iOS는 이 강제 코호트 게이트가 없어 심사 직행 가능 → **출시 순서에 영향**(아래 소견). CI(GitHub Actions)로 양쪽 빌드 자동화 검토.
-- **[Docs] AI 품질 문서 이관** — 시스템 프롬프트 원문·도구 스키마를 `docs/ai-quality/` 정본으로(현재는 iOS 검증본을 `commonMain`에 계승). ADR로 흡수.
-- **[Docs] db-expand 파이프라인 이관** — 번들 DB 생성·검증 파이프라인 문서(`docs/db-expand/`). claude.ai 정액 수동 경로 유지(API 종량 회피).
+출시 게이트가 아니라 **출시 이후** 착수하는 항목(미착수/검토). 진행 중 트랙(이관·자기완결화·코드 갭)과 M9 외부 게이트는 위 **Now** 참조. 정리: 구 #1·#3·#4·#12 → 이관 트랙 · #2 → M9 [외부] · #9·#10·#11 → 코드 갭 트랙.
+
 - **[Data] 번들 DB 추가 확장** — 검색 빈도 데이터를 우선순위 입력으로(승격 잡의 hot 선정 입력, M8 플라이휠과 연동).
 - **[Arch] AI 스트리밍 도입 검토** — 현재 단발 응답. 토큰 스트리밍(`Flow<String>`)은 이후 선택지(architecture §4.3).
 - **[Arch] 프롬프트 서버 이전 검토** — 현재 클라이언트(`commonMain`) 소유. 프롬프트 핫픽스 필요성 커지면 재검토([ADR-0006](docs/adr/0006-server-cache-boundary.md) 유보 항목).
 - **[UI] 디자인 후속** — 다크/라이트 폴리시·대비·플랫폼별 미세 조정.
-- **[UX] 클립보드 복사 액션 UI 배선** — `copyToClipboard` seam이 양 플랫폼에 구현·유닛테스트돼 있으나 호출하는 UI 버튼이 없음(dead code). 상세 어원 블록에 "복사" 어포던스 추가 검토(M9 Android 에뮬 스모크서 발견).
-- **[Android] 스플래시 화면 배선** — `androidApp`에 splash theme 없음(기본 런처). iOS/디자인 자산과 정합되는 Android 12+ `windowSplashScreen` 또는 core-splashscreen 도입 검토(M8 스플래시 항목의 Android 미완분).
-- **[CI/Test] 셸 배선 회귀 가드** — manifest `android:name` 클래스 실존/기동을 CI가 검증 못 해(4축 green이 `ClassNotFoundException` 첫 기동 크래시를 조용히 통과, M9서 실측 발견). Robolectric로 `MainActivity`/`DevEtymApp` 인스턴스화하는 스모크 테스트 or manifest-vs-소스 정합 체크 검토 — iOS `-lsqlite3` 링크 갭과 동류(실행 오라클 부재).
-- **[Ops] `~/dev-etymology` 이관 스윕 후 폐기** — `dev-etymology`는 원본 네이티브 iOS 앱(`DevEtym/` Xcode 프로젝트) + 문서·스크립트·CI가 든 **병렬 repo**이고, devetym(KMP 리라이트)이 여기서 자산을 상속받아왔다. **이관 완료 시 폐기 예정**이므로, 지우기 전 잔여 이관 대상 전수 확인 필요. 훑을 후보: **`DevEtym/`**(네이티브 iOS — Features·Services·Utils·Assets.xcassets·Resources 중 KMP `iosApp`에 아직 안 넘어온 로직/자산), **`docs/`**(ai-quality·db-expand·design[Fonts 포함]·launch-prep·product·specs·adr 중 devetym에 없는 정본), **`Scripts/`**(db-expand·prompt-probe 파이프라인), `.github/workflows`·`.claude/`(agents·commands)·`site`·`LICENSE`·`README`. ⚠️ 일부는 이미 개별 백로그에 있음([Docs] AI 품질 문서 이관·db-expand 파이프라인 이관) → 중복 말고 연결. specs·ADR 등 데이터/거버넌스면 이관은 승인 게이트(자동수정 금지). 산출물 = 파일별 이관/폐기 결정 원장. 〔선례: 아이콘 파생 SVG 4종 → `docs/design/icon/` 이관 완료(2026-07-05)〕
 - (아이디어 추가 시 여기로)
 
 ---

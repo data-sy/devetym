@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "semaphore",
+    "group": "out_of_shot",
+    "prompt_hash": "a26d467de6d1f81437daf4a7edc0f5559ddbf78c55c7481ed3c8e2f1cf948c0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:58:34.251276",
+    "latency_ms": 10625
+  },
+  "expected": {
+    "keyword": "semaphore",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_014v3ziz2PL7BMxy4gzsSF32",
+    "container": null,
+    "content": [
+      {
+        "signature": "EqYCClsIDRgCKkCS6yeKORM0w/oVG3kfyKnoH9S6ikhiHbg8NcLvdeTH9kJJkiUlw4xVXhazPw6QfvfX7R4/mHMR605C+55JXd//MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgyrCcBesWuDKvs8kKcaDMbFOlPPvAK7xEczmyIw3yVlOOBBmsXKMVATwYZ0rkcOtDZlkKWFCCKxhe86Vg8YovFtQOdOBu7yPp+zA86bKnlMB1wAMb3Ed1iWqGJq+LuxNHUgOXA6aR4+fKFqJ02NkVdN72ATPQdex1OYDNvy6xfTjrOWvVSE6I0Oe9vMAtttMNQUn9A7/keVq1LDRzpFZNEtHi8Cq9EaNJIed1fhmhQ1SLcAf5N7RD5DXlkrMJP3iLr9dNRSYV8oGAE=",
+        "thinking": "The user is asking about \"semaphore,\" which is a development term related to concurrency/synchronization.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01GRzafirfNE1rjMdxtvzqPY",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "semaphore",
+          "aliases": [
+            "세마포어",
+            "세마포"
+          ],
+          "category": "동시성",
+          "summary": "정수 카운터로 공유 자원의 접근 수를 제어하는 동기화 기본형",
+          "etymology": "그리스어 sēma(신호)와 phoros(전달자, 운반자)의 합성어. 직역하면 '신호를 전달하는 것'이며, 19세기 철도·해운에서 깃발이나 봉으로 통행 가능 여부를 알리던 신호 장치의 이름이기도 하다.",
+          "namingReason": "1965년 에츠허르 데이크스트라(Edsger Dijkstra)가 고안하며 명명했다. 철도 세마포어는 선로의 점유 여부를 신호로 알려 열차 충돌을 막는 장치인데, 데이크스트라는 이 은유를 그대로 빌렸다. 정수 카운터가 0이 되면 진입을 막고(열차 정지 신호), 자원이 반환되면 카운터를 올려 대기 중인 스레드를 통과시킨다(열차 출발 신호). '몇 개까지 동시에 허용할 것인가'를 숫자로 표현한다는 점에서, 통행 가능 여부를 시각적 신호로 알리는 원래 장치의 역할과 정확히 대응된다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3456,
+      "inference_geo": "global",
+      "input_tokens": 333,
+      "output_tokens": 586,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

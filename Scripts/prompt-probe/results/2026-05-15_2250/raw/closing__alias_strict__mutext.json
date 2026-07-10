@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "cell": "closing__alias_strict",
+    "keyword": "mutext",
+    "group": "branch_check",
+    "prompt_hash": "1fe8a1815b90d220dd1a0b048772ca32c437b58fbbf90bdda9a2814b2bce11bf",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:04:19.506988",
+    "latency_ms": 2196
+  },
+  "expected": {
+    "keyword": "mutext",
+    "group": "branch_check",
+    "expected_branch": "possible_typo",
+    "expected_suggestion": "mutex"
+  },
+  "response": {
+    "id": "msg_0169kYMpQRJHHdVxy3uRwcG8",
+    "container": null,
+    "content": [
+      {
+        "signature": "Eu4BClsIDRgCKkAxJPAiy2XeMVMk1KVJduyd0lIlNxFonLxK/7iC53WHAmc8dW5VpiXxzuyDBjr+qTYEH4aLEz4soXVxLEzr42+SMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgzcgfYQGQ0h6y6S6c4aDHpecimIkBYipM4hUCIwm7AJKaWh5AcdGM9HSXWdyTGzkfeUpEg1LLC5uRyMvEDmk0k6j66nJJAm2qw6aw0bKkEmYs1A62pEmpJJHMQmR1wUOZnlrELSnPnvUR/YX7RnoOeGvXL80BpBG06+buq9pFNBbT8sX6d0BfwSw+uFyFmdGRgB",
+        "thinking": "The input \"mutext\" looks like a typo for \"mutex\".",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01BSEh8wuhLyMT9JFhkkxgiJ",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "suggestion": "mutex"
+        },
+        "name": "return_possible_typo",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3611,
+      "inference_geo": "global",
+      "input_tokens": 332,
+      "output_tokens": 79,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

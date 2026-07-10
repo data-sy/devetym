@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "daemon",
+    "group": "in_shot",
+    "prompt_hash": "a26d467de6d1f81437daf4a7edc0f5559ddbf78c55c7481ed3c8e2f1cf948c0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:57:56.693173",
+    "latency_ms": 9725
+  },
+  "expected": {
+    "keyword": "daemon",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01NLFfvFUdDqk9KSyMd7AjAA",
+    "container": null,
+    "content": [
+      {
+        "signature": "EpcCClsIDRgCKkAYiSLo+aAasMei1GLGgO7ofcM0ZSd6QO120chqmNf4HdtzK7hcSb2ai4NVHO6ENZtsTGaF2U0l3jmqNhq+b/WOMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgyWhwej47rU2GgpkBEaDGe7U8nLjHw7ybm7YiIweOkLEJX+w08gWcxHCLFjrU4GK1iTAE6SOylOEZYFNJB/Uo0jT7Y2P6wReNXdnh4xKmpoxiQsSXeHi95ygIYexJJpCB5hhH5KYLlDRXnm+T/ao7HIzMnwtZpM1SAs3KuZZJNHALRC2TedrhHU/mKr+xAXHmZIpBAD9UEM3LYGmmQRczRXJdxiFxYhT2bNESE1vfRMozSl7BKaJHfUGAE=",
+        "thinking": "The user input is \"daemon\", which is a development term referring to a background process.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_016eQ7MxDm5uEjGvfUgXFQGC",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "daemon",
+          "aliases": [
+            "데몬",
+            "demon"
+          ],
+          "category": "기타",
+          "summary": "백그라운드에서 지속 실행되는 프로세스",
+          "etymology": "그리스어 δαίμων(daimōn)에서 유래. 본래 '신과 인간 사이의 중개 영혼'을 뜻하는 종교·철학 용어로, 눈에 보이지 않으면서 특정 역할을 묵묵히 수행하는 존재를 가리켰다.",
+          "namingReason": "1963년 MIT의 Project MAC에서 Maxwell의 악마(Maxwell's demon) 사고실험에 영감을 받아 명명되었다. 해당 사고실험 속 존재가 사람 몰래 분자를 분류하듯, 사용자 상호작용 없이 시스템 뒤편에서 묵묵히 작업을 처리하는 프로세스를 '보이지 않는 중개자'라는 원의미에 빗댄 은유적 전이다. Unix 관습에 따라 데몬 프로세스 이름 끝에 'd'를 붙이며(httpd, sshd, cron'd), 부팅 시 자동 시작되어 요청이 올 때까지 대기하거나 주기적 작업을 수행한다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3456,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 537,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

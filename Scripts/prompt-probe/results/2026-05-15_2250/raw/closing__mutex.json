@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing",
+    "keyword": "mutex",
+    "group": "in_shot",
+    "prompt_hash": "a375f07f70512ed802370765aaeda70d0278f7253f21cbdd2bfef2268c398ad2",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:52:32.596095",
+    "latency_ms": 10035
+  },
+  "expected": {
+    "keyword": "mutex",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01MwAgzLEBUpEHBGYS35CWax",
+    "container": null,
+    "content": [
+      {
+        "signature": "EosCClsIDRgCKkCAtoK1x0Laa6JvHyo5JXNE0+HFTbluiN6BQBKNLRitQntscy6soLJlUp+BWZowuo+UEbFMMi5TG3/5o+VC0VbTMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgx9/8qr2C/ZvIbMYlMaDAc2c3LT/8118UkL3iIwLtRT2phoX1ulK/6ntEpLmBGt6PZeUwztsjYRT3v6ySlKznUwhfl9KLuRWTa19qL8Kl7fAibMoDzpa5PQunaFEy6Z3HROP1GplBhlAIWUOtiQmCeSw4JRHip0P+WhV+DDW/ES62LXRFLBpD2iUumULQ8vgq/6T7AulX/0NDzASJuAJmIMo4Xjl23GAtb1YJ+zGAE=",
+        "thinking": "The user input is \"mutex\", which is a development term related to concurrency.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01NP22LPNP9SVj1XsMoMMh8G",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "mutex",
+          "aliases": [
+            "뮤텍스",
+            "mutual exclusion"
+          ],
+          "category": "동시성",
+          "summary": "여러 스레드의 동시 접근을 막는 잠금 장치",
+          "etymology": "라틴어 mutuus(상호의)와 exclusio(배제, 밀어냄)를 합친 영어 'mutual exclusion'의 축약어. 두 주체가 서로를 번갈아 배제하는, 즉 동시에 같은 자원을 점유할 수 없음을 뜻한다.",
+          "namingReason": "한 스레드가 공유 자원을 사용하는 동안 다른 스레드의 접근을 원천 차단하여, 동시에 둘 이상이 같은 자원을 수정하는 경쟁 조건(race condition)을 막는 동기화 기본형이다. '상호 배제'라는 어원이 가리키는 핵심은 단방향 봉쇄가 아닌 상호적 봉쇄, 즉 어느 쪽이 먼저 잠금을 획득하든 나머지는 대기 상태가 된다는 설계 원칙이다. 락을 소유한 스레드만이 해제 권한을 가진다는 '소유권' 개념이 세마포어(semaphore)와 구별되는 지점이며, 이 소유권 모델이 뮤텍스라는 이름 자체에 이미 내포되어 있다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 3519
+      },
+      "cache_creation_input_tokens": 3519,
+      "cache_read_input_tokens": 0,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 587,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

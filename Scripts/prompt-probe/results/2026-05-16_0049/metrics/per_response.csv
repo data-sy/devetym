@@ -1,0 +1,16 @@
+cell,keyword,group,expected_branch,actual_branch,branch_correct,category,aliases,aliases_count,aliases_has_qualifier,summary_len,etymology_len,naming_len,naming_under_270,naming_last_sentence,naming_last_sentence_len,typo_suggestion,typo_suggestion_correct,thinking_chars,input_tokens,output_tokens,cache_read_tokens,cache_create_tokens,stop_reason,latency_ms
+alias_strict,mutex,in_shot,term_entry,term_entry,True,동시성,뮤텍스 | mutual exclusion,2,False,23,122,277,False,semaphore와 달리 락을 획득한 스레드만 해제할 수 있다는 소유권 개념도 이 어원과 맞닿아 있다.,57,,,78,331,570,0,3540,tool_use,11676
+alias_strict,jpa,in_shot,term_entry,term_entry,True,DB,Java Persistence API | 자바 영속성 API,2,True,25,188,286,False,"개발자가 SQL 대신 자바 객체를 다루는 방식으로 데이터를 저장·조회할 수 있게 하며, 'Persistence'라는 단어 선택 자체가 ORM의 본질인 '객체 생존 기간의 연장'을 직접적으로 드러낸다.",111,,,76,332,569,3540,0,tool_use,9383
+alias_strict,daemon,in_shot,term_entry,term_entry,True,기타,데몬 | demon,2,False,20,98,288,False,"Unix 관습에 따라 프로세스 이름 끝에 'd'를 붙여 표기한다(httpd, sshd, cron 등).",57,,,90,331,544,3540,0,tool_use,6855
+alias_strict,bug,in_shot,term_entry,term_entry,True,기타,버그,1,False,21,122,226,True,기계 속을 기어다니며 예측 불가능한 고장을 일으키는 '벌레'라는 은유가 소프트웨어의 숨은 결함에 그대로 이식되어 오늘날 표준 용어로 자리 잡았다.,81,,,53,331,508,3540,0,tool_use,5422
+alias_strict,idempotent,out_of_shot,term_entry,term_entry,True,네트워크,멱등 | 멱등성,2,False,26,89,263,True,이 성질이 보장될 때 클라이언트는 네트워크 장애 후 응답 여부와 무관하게 요청을 안전하게 재시도할 수 있다.,60,,,1148,334,1002,3540,0,tool_use,15464
+alias_strict,cookie,out_of_shot,term_entry,term_entry,True,네트워크,쿠키,1,False,26,124,276,False,무상태(stateless) 프로토콜인 HTTP에서 세션·로그인 정보를 유지하는 수단으로 정착하면서 오늘날의 표준 용어가 되었다.,71,,,99,331,583,3540,0,tool_use,11489
+alias_strict,semaphore,out_of_shot,term_entry,term_entry,True,동시성,세마포어 | 세마포,2,False,34,123,348,False,"뮤텍스가 소유권 기반의 단일 잠금인 반면, 세마포어는 카운터로 동시 접근 허용 수를 조정하므로 자원 풀(pool) 관리 등 더 넓은 상황에 적용된다.",83,,,103,333,684,3540,0,tool_use,12877
+alias_strict,request,out_of_shot,term_entry,term_entry,True,네트워크,리퀘스트 | 요청,2,False,25,98,263,True,'구하는 쪽과 응답하는 쪽'이라는 어원적 대칭 관계가 request-response 패턴의 이름 자체를 결정했다.,63,,,160,331,534,3540,0,tool_use,10648
+alias_strict,boolean,out_of_shot,term_entry,term_entry,True,기타,불리언 | 부울 | bool,3,False,33,130,260,True,"이후 프로그래밍 언어에서 true/false만을 값으로 갖는 자료형에 그의 이름을 붙여 Boolean이라 명명하였고, 조건문·반복문·논리 연산 등 제어 흐름 전반에서 핵심 역할을 담당하게 되었다.",109,,,81,331,555,3540,0,tool_use,10236
+alias_strict,null,out_of_shot,term_entry,term_entry,True,기타,널,1,False,24,92,296,False,오늘날 Java·JavaScript·SQL 등 대부분의 언어가 이 용어를 그대로 채택하여 사용한다.,55,,,160,331,548,3540,0,tool_use,10034
+alias_strict,apple,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,69,331,68,3540,0,tool_use,2043
+alias_strict,lunch,branch_check,not_dev_term,not_dev_term,True,,,0,False,0,0,0,False,,0,,,69,331,68,3540,0,tool_use,1947
+alias_strict,mutext,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,mutex,True,49,332,79,3540,0,tool_use,1937
+alias_strict,redus,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,redis,True,113,332,96,3540,0,tool_use,2975
+alias_strict,semafore,branch_check,possible_typo,possible_typo,True,,,0,False,0,0,0,False,,0,semaphore,True,122,333,97,3540,0,tool_use,2456

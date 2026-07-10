@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck__alias_strict",
+    "keyword": "semaphore",
+    "group": "out_of_shot",
+    "prompt_hash": "d2be35897b3d540d7d9da0024812d073ee1e3e3b9bc5b9181b12c813f839d753",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:09:46.783677",
+    "latency_ms": 17055
+  },
+  "expected": {
+    "keyword": "semaphore",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01M9cgjPqVMNuHfdkhwkamdp",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"semaphore\" - this is a development term related to concurrency/synchronization.\n\nLet me work through the fields:\n\n1. **keyword**: semaphore\n2. **aliases**: 세마포어, 세마포\n3. **category**: 동시성\n4. **summary**: 공유 자원 접근을 제어하는 정수 기반 동기화 도구 (27자)\n\n**etymology**: \n그리스어 sēma(신호, 기호)와 phoros(운반하는 자, 지니는 자)의 합성어. \n\n원래 깃발이나 팔을 이용해 신호를 보내는 시각적 통신 장치를 가리키는 프랑스어 sémaphore에서 유래.\n\n**namingReason**:\n1965년 Dijkstra가 철도 신호기의 작동 원리에서 영감을 받아 공유 자원 접근 제어 메커니즘에 이 이름을 붙였다. 철도 신호기처럼 진입 가능/불가능 상태를 관리한다는 개념이 정확히 부합했기 때문이다. 마지막 문장이 새로운 정보를 담고 있으니 결론이 아니라 본론의 연장이군. 문장 구조와 글자 수 모두 적절해 보인다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01LB4L7n8kYjsBrFnbnutpAw",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "semaphore",
+          "aliases": [
+            "세마포어",
+            "세마포"
+          ],
+          "category": "동시성",
+          "summary": "공유 자원 접근을 정수 카운터로 제어하는 동기화 도구",
+          "etymology": "그리스어 sēma(신호·기호)와 phoros(운반하는 자)의 합성어에서 온 프랑스어 sémaphore가 원형. 본래 깃발이나 팔을 이용해 원거리에 신호를 전달하는 시각적 통신 장치를 가리켰다.",
+          "namingReason": "1965년 Edsger W. Dijkstra가 공유 자원의 동시 접근을 제어하는 개념을 고안하면서 철도 신호기(semaphore)에서 이름을 따왔다. 철도 신호기가 '진입 가능·불가능'을 깃발 상태로 나타내어 열차 충돌을 막듯, 세마포어의 정수 카운터는 '남은 자원이 있는가'를 표시하여 프로세스의 진입을 허가하거나 대기시킨다. Dijkstra가 원형으로 제시한 연산 이름은 네덜란드어 P(proberen, '시도하다')와 V(verhogen, '증가시키다')였으며, 이후 wait/signal로 표준화되었다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3783,
+      "inference_geo": "global",
+      "input_tokens": 333,
+      "output_tokens": 1162,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

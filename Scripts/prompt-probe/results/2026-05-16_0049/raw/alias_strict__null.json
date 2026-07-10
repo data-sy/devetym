@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "null",
+    "group": "out_of_shot",
+    "prompt_hash": "956ba44a7c48f75b2abbcf7faecda24ac6d0fdca7c4e1d0bd1da3b5452801ad7",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-16T00:50:55.400946",
+    "latency_ms": 10034
+  },
+  "expected": {
+    "keyword": "null",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01CkoSao7C1SQkTRHdJ3FdBg",
+    "container": null,
+    "content": [
+      {
+        "signature": "Et4CClsIDRgCKkDODhrBIgtXifTZ3SKwRPufhZsyWLMgHvh+IVEks6Ogy0tcj+H1aTPt2VzCzOH6BAOlyfvo/YmOP/LUNcDwWuc3MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgzL8LJXqSoXeJpqTEsaDPNEnYQqzpQ0VEg/6yIwuyYrWDWd62VHqSEeREm5cvcJYS1vGhSNGnL6WBBQYtndrM4Aw0cnT12qPDXavnUTKrABcQ7L5zfzH4+vr5TzVTs1ch3LFiJ9yuEKkxm/WtWgWKUH6vUSmlxEd0Ih20rO7pDlbyNZ1N/S9eACPSH2/Gfgzm5dR4j2PTRd//DiLpDlGl13X9lRIf2obTg8BkVjG/QCFhEeBezBHmTESlLa+rrho/k3vVsLoMDUxQ0tIJI9lufYsgEhTsEpPt/scv1JsBH2elpwyOzwsxfulAAz2zifPkriNqmWWZeKQfuhaxUKFVUYAQ==",
+        "thinking": "The input is \"null\", which is a programming reserved keyword. According to the instructions, I should treat it as a development term and call return_term_entry.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01YVsWYMW1QghHH3yKb3Lufy",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "null",
+          "aliases": [
+            "널"
+          ],
+          "category": "기타",
+          "summary": "값이 없음을 명시적으로 나타내는 특수 리터럴",
+          "etymology": "라틴어 nullus(아무것도 없는, '단 하나도 없는')에서 유래. ne(아닌) + ullus(어떤)의 합성어로, 수량이 0임을 넘어 '존재 자체가 없음'을 뜻한다.",
+          "namingReason": "1965년 C.A.R. 호어(Tony Hoare)가 ALGOL W 설계 중 \"값이 없는 참조\"를 표현할 방법으로 null 포인터를 도입하며 이 명칭을 사용했다. 호어 자신이 이를 \"billion-dollar mistake\"라 회고할 만큼 이후 수많은 런타임 오류의 원인이 되었다. 어원인 '존재 자체가 없음'은 메모리 주소를 가리키지 않는 포인터, 초기화되지 않은 참조, 혹은 의도적으로 비워 둔 값이라는 개념과 정확히 대응한다. 오늘날 Java·JavaScript·SQL 등 대부분의 언어가 이 용어를 그대로 채택하여 사용한다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3540,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 548,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

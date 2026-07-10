@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "bug",
+    "group": "in_shot",
+    "prompt_hash": "a26d467de6d1f81437daf4a7edc0f5559ddbf78c55c7481ed3c8e2f1cf948c0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:58:02.426745",
+    "latency_ms": 5731
+  },
+  "expected": {
+    "keyword": "bug",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01CENd2aiCThv15crrkC3Jfz",
+    "container": null,
+    "content": [
+      {
+        "signature": "EvIBClsIDRgCKkCAYK3njZfFhOKSuZj3BZcFPrZ6gOm2pkcZHPKTklxuWZ+Vcu15UBq1ShEtltjXmfnXOQ4IYGUdDNMbE1+ET5XaMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxCIs3yy2qqHHGUnwUaDKhSqvy/hyNwZOYnxSIwpnCtnyl7xM8u7y0ebbI8u8EKH/nrRjzJ1s0y6G7vh52axhVLjwZFeBeYCK8LLsf/KkXxnsE+B1IpfbGRHoiTXH2rD4yhZluQOpkP/5DJNneIZVJvV4ti7fTyVJQpEKrtEvr5nOp6BU8t/UGg6Md4YoCdZa8iY58YAQ==",
+        "thinking": "The user input is \"bug\", which is a development term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01Q9r7G6qLZPJmXmp9auWA3U",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "bug",
+          "aliases": [
+            "버그"
+          ],
+          "category": "기타",
+          "summary": "프로그램의 의도치 않은 오작동이나 결함",
+          "etymology": "정확한 어원은 불분명하나, 영어 'bug'(벌레)의 비유적 용법에서 유래한 것으로 본다. 1878년 에디슨이 편지에서 기계 결함을 'bug'로 지칭한 기록이 있어, 소프트웨어 이전 엔지니어링 속어로 이미 쓰이고 있었다.",
+          "namingReason": "1947년 하버드 Mark II 컴퓨터의 릴레이에서 실제 나방이 발견되어 로그에 'first actual case of bug being found'라고 기록된 일화가 널리 알려져 있으나, 이는 기존 은유를 문자 그대로 실행한 농담에 가깝고 용어의 기원 자체는 아니다. 기계 속을 기어다니며 예측 불가능한 고장을 일으키는 '벌레'라는 은유가 소프트웨어의 숨은 결함 개념에 그대로 이식되어 오늘날 표준 용어로 자리 잡았다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3456,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 516,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

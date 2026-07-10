@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "selfcheck",
+    "keyword": "daemon",
+    "group": "in_shot",
+    "prompt_hash": "547cd6ba99746461d391eea735cf999712969f7bc12fa82f23cd4e5ad978f287",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:54:49.349454",
+    "latency_ms": 9876
+  },
+  "expected": {
+    "keyword": "daemon",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01AkHURUVM1hNwD1P44B7vmH",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input \"daemon\" is a development term referring to a background process. Let me fill in the fields.\n\nEtymology: Greek δαίμων (daimōn), meaning a spirit intermediary between gods and humans. 60-120 characters.\n\nnamingReason: 150-270 characters. Bridge between etymology and actual usage.\n\nLet me draft:\n\netymology: \"그리스어 δαίμων(daimōn)에서 유래. 본래 '신과 인간 사이의 중개 영혼'을 뜻하는 철학·종교 용어로, 눈에 보이지 않으면서 배후에서 일을 처리하는 존재를 가리켰다.\" - let me count: roughly 70 characters. Good.\n \nnamingReason: The term was coined at MIT's Project MAC in 1963, drawing from Maxwell's demon thought experiment. It's a metaphorical extension of the original meaning—describing processes that work invisibly in the background without user intervention as \"invisible intermediaries.\" Unix convention then standardized adding 'd' to the end of daemon process names.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01ViNMKij2GSFEpCNvwmD9F6",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "daemon",
+          "aliases": [
+            "데몬",
+            "demon"
+          ],
+          "category": "기타",
+          "summary": "백그라운드에서 지속 실행되는 프로세스",
+          "etymology": "그리스어 δαίμων(daimōn)에서 유래. 본래 '신과 인간 사이의 중개 영혼'을 뜻하는 철학·종교 용어로, 눈에 보이지 않으면서 배후에서 일을 처리하는 존재를 가리켰다.",
+          "namingReason": "1963년 MIT의 Project MAC에서 Maxwell의 악마(Maxwell's demon) 사고실험에 영감을 받아 명명되었다. 사용자 상호작용 없이 시스템 뒤편에서 스스로 작업을 처리하는 프로세스를 '보이지 않는 중개자'라는 원의미에 빗댄 은유적 전이다. Unix 관습에 따라 이런 프로세스의 이름 끝에 'd'를 붙이는 방식(httpd, sshd, cron'd)이 정착하였다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3536,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 920,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck__alias_strict",
+    "keyword": "mutext",
+    "group": "branch_check",
+    "prompt_hash": "d2be35897b3d540d7d9da0024812d073ee1e3e3b9bc5b9181b12c813f839d753",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:10:39.476674",
+    "latency_ms": 3064
+  },
+  "expected": {
+    "keyword": "mutext",
+    "group": "branch_check",
+    "expected_branch": "possible_typo",
+    "expected_suggestion": "mutex"
+  },
+  "response": {
+    "id": "msg_01Fevdjc7ucWVd5ypR45v4JS",
+    "container": null,
+    "content": [
+      {
+        "signature": "EqoCClsIDRgCKkCrp0VGB/OdynfL9TxArTR3OG1cFpSKehU8MFEVUu5nM5gtxWRLTZ7de0V2gqXEwvI+7NO40L1/0X5mMhYTEwm9MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxg4TJZPlXeyPr8rGMaDGaQXx8KUyZxDqNDkCIwOys1Jsl4nicwKIaaRTfvHxVX24XCaDCGpUBertGPw9mBkUPtC8lbye2CDhfi8QYoKn2TTWHnPtMwdPu49cAD0Q7hUoxbC+doc42kzOxwjo1zGyu4d/mkF29RIl9kWWP1J0F3JB4TxdSCopM67al/wKZB8FotxKh0AAzHpI58PxAD0kUGnv829KgtlocSZi+6Q0d/NaPPg09BiBAcQRlOHEt33DHfmIzhe0KMjz2fjxgB",
+        "thinking": "The input \"mutext\" looks like a typo for \"mutex\". I should call return_possible_typo with suggestion \"mutex\".",
+        "type": "thinking"
+      },
+      {
+        "citations": null,
+        "text": "개발 용어 **mutex**의 오타로 추정됩니다.",
+        "type": "text"
+      },
+      {
+        "id": "toolu_01EnMau7FjstTcA3mN5BfbbL",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "suggestion": "mutex"
+        },
+        "name": "return_possible_typo",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3783,
+      "inference_geo": "global",
+      "input_tokens": 332,
+      "output_tokens": 116,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "selfcheck",
+    "keyword": "mutex",
+    "group": "in_shot",
+    "prompt_hash": "547cd6ba99746461d391eea735cf999712969f7bc12fa82f23cd4e5ad978f287",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:54:30.809234",
+    "latency_ms": 16407
+  },
+  "expected": {
+    "keyword": "mutex",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_019DkSfHZa2ZSFNgX3J9ojvL",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"mutex\" - a development term. Let me fill in all fields.\n\n1. keyword: \"mutex\"\n2. aliases: [\"뮤텍스\", \"mutual exclusion\"]\n3. category: \"동시성\"\n4. summary: 여러 스레드의 동시 접근을 막는 잠금 장치\n5. etymology: 라틴어 mutuus(상호의)와 영어 exclusion(배제)이 결합한 'mutual exclusion'의 축약어. mutuus는 '서로 주고받음'을 뜻하는 어근에서, exclusion은 라틴어 excludere(밖으로 밀어내다)에서 유래.\n\n\n6. namingReason: 한 스레드가 자원을 점유하는 동안 다른 스레드를 배제하는 동기화 메커니즘이라는 의미에서 mutual exclusion이라 명명되었으며, 1960년대 다익스트라가 임계 구역 문제를 정식화하면서 이 개념이 정립되고 그 약어인 mutex가 이를 구현하는 잠금 기본형으로 불리게 되었다. 원의 의미가 설계 원칙(한 번에 하나의 소유자)에 직접 반영된 사례다.\n\nLet me check namingReason length: 150~270자.\n\n\"한 스레드가 공유 자원을 점유하는 동안 다른 스레드의 접근을 원천 차단하는 동기화 기본형이다. 1960년대 에츠허르 다익스트라가 임계 구역(critical section) 문제를 정식화하면서 mutual exclusion이라는 조건이 핵심 요건으로 자리잡았고, 이를 구현하는 잠금 원형이 그 약어인 mutex로 불리게 되었다. '상호 배제'라는 어원의 의미는 오늘날에도 설계 원칙 그대로 이어진다—한 번에 오직 하나의 소유자만 락을 쥘 수 있다.\"\n\n마지막 문장이 설계 원칙을 구체적으로 진술하는 새 정보인지 확인하고, 전체 글자 수가 충분한지 검토 중이다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01MXZLVy4hg4KBL6wQR6d7aS",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "mutex",
+          "aliases": [
+            "뮤텍스",
+            "mutual exclusion"
+          ],
+          "category": "동시성",
+          "summary": "여러 스레드의 동시 접근을 막는 잠금 장치",
+          "etymology": "영어 'mutual exclusion'의 축약어. mutual은 라틴어 mutuus(서로 주고받는, 상호의)에서, exclusion은 라틴어 excludere(ex-밖으로 + claudere-닫다, 즉 밖으로 밀어내다)에서 유래했다.",
+          "namingReason": "1960년대 에츠허르 다익스트라가 임계 구역(critical section) 문제를 정식화하면서, 공유 자원에 하나의 주체만 접근할 수 있어야 한다는 조건을 mutual exclusion이라 명명했다. 이 조건을 코드 수준에서 보장하는 잠금 기본형이 그 약어인 mutex로 불리게 되었다. '서로를 밖으로 밀어낸다'는 어원의 의미가 설계 원칙에 그대로 반영되어, 한 스레드가 락을 쥐고 있는 동안 다른 모든 스레드는 진입이 차단된다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 3536
+      },
+      "cache_creation_input_tokens": 3536,
+      "cache_read_input_tokens": 0,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1225,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

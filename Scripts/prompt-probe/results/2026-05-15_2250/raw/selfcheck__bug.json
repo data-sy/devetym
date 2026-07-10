@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "selfcheck",
+    "keyword": "bug",
+    "group": "in_shot",
+    "prompt_hash": "547cd6ba99746461d391eea735cf999712969f7bc12fa82f23cd4e5ad978f287",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:54:56.879552",
+    "latency_ms": 7527
+  },
+  "expected": {
+    "keyword": "bug",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01ApuCvZu4bnKs2yTGAbHxKX",
+    "container": null,
+    "content": [
+      {
+        "signature": "EsEJClsIDRgCKkBCP5+4plkkZP9UmVyAjXz60lO6OhdL1rZHMlju46FAjDjvpdhLwrjVEoELzFbJ4oR5uzsAr7ySNOuOfnPRnrE5MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgzZxa+kAYgf5mhSyo4aDIamLnysPtb4E9F0hyIwY74Rc6n16kphBtxhzCL/Ar67fAaSnoFkfRT3fZo47Knw6Pfb0M07QbS9fInpyRfLKpMI17t2Jg8C4erYf7LYcKhtYToPi28+qriwPohsXIMcmg9N2doI9cMEK70I7yetdQYgbRZTS1voSB54aqjhoBhJX/j09+UaDbI5lW4rnD1PabYqzYUZKwYN/qv72qVK1ZSiTx4n1W1C/FqOhhDfX7DvUOYCzcMOfvTfTJYNRb7y6WTo5YY0x1o6t46qQCjdP4kqB17J+jlq/+vqPWbQB+XrMMmVysJFt/ctN4uu8MfqIW43N0pQok+IvLpTch2oPzugWxLqMJ/e2IZXhwjqnuh61CLDfOC0U6MC04YN0hl6NJHt+4D71I4XESOtIOFprDF01927b2C8mw3FNShyEPZo0W2QGZIBwKmHDj2rLpIG/ekdNWsaamiCx53prmtBxeP0KwJnCpYSiejfQLvnrudLQZZV4mwk5vaj7BfUQRbVdlr5jhmp5oMEO5SosrDuDUnBGi7Pubgmn0UNGKaI1eL4UeVv6znI4yzac1OFEeMS/JM7HLESaCZALa2G/a2Cq/46XAc6W0OBtAgD+4X0Y8fi/oTbnHZRDNVDXSQL+c1tmuHBqth/2RoTu2C5a5CWMOlg6ea+VAwWDbkb9t5y627n0doMYPOy/KSjiat72Df3NhTHUxv4B4AxP7LLDvC3JRdIUQ39cSZg3OWDlsPBhObf6v7McOV4dUOkDEvEZtEn2bo7vPwovI/JVU+kDoYZnhJfy64qr141wqI9+Htd+hjgeLtzJWwgCC8ygXJh2UA5KegiInwDHgNLgKBi6hDYJ5iZPXR7W48JvDFlw45b5yXsB67JTqwE7tWL9wvLLlteKvWVfMg/RGAu6s8X7oqcAOaslkq0xE7Sn9njoIofR65wxJmivEBm8r+KGT3eL/svd7TjIMWGe6puzWlU1RKxWngtZxoUsh8bHxmfQbPEh7gC6SApUB20kEiGwU95RcJYmQoexBeEmaGjNOPt78ScCW4+Sb7rv5VmKjs2LAo0HYZbFNlS5I7bzNiU1oEykL4u9/ocPrtWqWrhH9v9ttwGCAdk1+ID77WnztetY6+PJz/yYJWeb0h2lU/Jhn7CrnehLrSyA5QiP+gNPIc0oHsMVcbiN+zV9fXNP/9vEm2/1pUTcVQ2uhOk3sq70cWlvA5OhxzjVG6rERIWrLfh0plsIWv9WAmhy2uw3EIlDMuHDigl7o3d1tWweAGQ0/dTpv74vw9+etsIQDNz9hQkao/fRerP+V5cU80Of4nEEaIhy7WJ45S3z/ivRaaiXOih2IH5WKgHAS3rsCnfit9MFQ/aft18mbuMOz8kPsGd3dLaGU2yvGe/y8Tb9VoW0V4UzdIN+jcCct2H2gpm7AmDIpSbmlEJ58vUYnUXIh8yJgvA7UVbeaztpmySosQIaSlVnAtnbetPfLgYAQ==",
+        "thinking": "The input is \"bug\" which is a development term referring to a software defect or error. I'll call return_term_entry with the appropriate fields.\n\netymology: 정확한 어원은 불분명하나, 영어 'bug'(벌레)의 비유적 용법에서 유래한 것으로 본다. 1878년 에디슨이 편지에서 기계 결함을 'bug'로 지칭한 기록이 있어, 소프트웨어 이전 엔지니어링 속어로 이미 쓰이고 있었다.\n\n\nnamingReason: 1947년 하버드 Mark II 컴퓨터에서 실제 나방이 발견되어 로그에 기록된 일화가 유명하지만, 이건 기존 은유를 문자 그대로 실행한 농담일 뿐 용어의 진정한 기원은 아니다. 기계 속을 기어다니며 예측 불가능한 고장을 일으키는 '벌레'라는 은유가 소프트웨어의 숨은 결함에 그대로 이식되었다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_0142uBj7hrHg6UZKxxwbbJWs",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "bug",
+          "aliases": [
+            "버그"
+          ],
+          "category": "기타",
+          "summary": "프로그램의 의도치 않은 오작동이나 결함",
+          "etymology": "정확한 어원은 불분명하나, 영어 'bug'(벌레)의 비유적 용법에서 유래한 것으로 본다. 1878년 에디슨이 편지에서 기계 결함을 'bug'로 지칭한 기록이 있어, 소프트웨어 이전 엔지니어링 속어로 이미 쓰이고 있었다.",
+          "namingReason": "1947년 하버드 Mark II 컴퓨터의 릴레이에서 실제 나방이 발견되어 로그에 붙여진 'first actual case of bug being found'라는 일화가 유명하나, 이는 기존 은유를 문자 그대로 실행한 농담에 가깝고 용어의 기원 자체는 아니다. 기계 속을 기어다니며 예측 불가능한 고장을 일으키는 '벌레'라는 은유가 소프트웨어의 숨은 결함에 그대로 이식되어 오늘날 표준 용어로 자리 잡았다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3536,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 882,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

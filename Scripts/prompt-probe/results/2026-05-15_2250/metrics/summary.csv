@@ -1,0 +1,9 @@
+cell,n_total,branch_correct,oos_naming_avg,oos_naming_max,oos_under_270,in_shot_naming_avg,aliases_qualifier,latency_avg_ms,thinking_chars_avg
+baseline,15,15/15,293.7,311,1/6,270.8,2/10,8017,97
+closing,15,14/15,347.0,427,0/5,284.5,2/9,7454,133
+selfcheck,15,15/15,280.2,353,3/6,230.8,3/10,12783,764
+alias_strict,15,14/15,272.0,300,3/5,273.2,1/9,6763,89
+closing__selfcheck,15,15/15,247.0,262,6/6,227.5,2/10,13658,928
+closing__alias_strict,15,14/15,329.8,379,0/5,319.5,1/9,7429,113
+selfcheck__alias_strict,15,14/15,280.4,352,2/5,245.0,1/9,13687,749
+closing__selfcheck__alias_strict,15,14/15,267.0,293,3/5,246.5,1/9,11803,699

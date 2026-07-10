@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck__alias_strict",
+    "keyword": "apple",
+    "group": "branch_check",
+    "prompt_hash": "d2be35897b3d540d7d9da0024812d073ee1e3e3b9bc5b9181b12c813f839d753",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:10:34.156467",
+    "latency_ms": 3491
+  },
+  "expected": {
+    "keyword": "apple",
+    "group": "branch_check",
+    "expected_branch": "not_dev_term"
+  },
+  "response": {
+    "id": "msg_01Cp5y5NETT4b475LETeotK3",
+    "container": null,
+    "content": [
+      {
+        "signature": "Ep4DClsIDRgCKkDBO/QUsRMu3YDaxQQx1e0b2gkj0xNEp+zrR5IpMkpURzTFe+UfkCZiXBM/4DGt9pwmvR0wzSGJR2mLhv0/atA1MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgzO7PkZ3Fs1YUyYFfcaDGwp5xQ5fb0MbsnWUyIwq4FTU5F92cMl2VSFpv1DTfIjobQW5n8aytBj9b9Yk8gJX+cBS588+YaIH57DjZdiKvABGPkKPsyuQo7FG06Z0S9KB16qBlEz/oYYZ4LeilD+VX3A+HzpUpbBG5mbLNQkxxJw4Hwl/n3zVAnMiRhbHznBGeutrmRpC5gfzuqrCcd3m2yJpmOyjDHI59Y3DTlSTN9ancwUH2gDRDSlLu6P5YGgw5t/WIkUc0VTE3BAgRHmhxJ1LLs1cxvMpVy1R7JkQ1bBJwXGYmx6/yJNqzwf6rbx68dZbCtadERkeokHbPdl09QtABYAFu3z5UHXQhCdBMkrTb2ij1zMI9GcaJM0Cf1XGBQoZrnfX59QNhrMHsojmKCWJUmC1qDwUmF+o2RhKlOPGAE=",
+        "thinking": "The input is \"apple\". This is not a development term. It's a fruit, or possibly a reference to Apple Inc. But it's not a specific development term. It's not a typo of a development term either. I'll call return_not_dev_term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01QSrAXWZ6aBZyivLgajwh6Z",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {},
+        "name": "return_not_dev_term",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3783,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 106,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

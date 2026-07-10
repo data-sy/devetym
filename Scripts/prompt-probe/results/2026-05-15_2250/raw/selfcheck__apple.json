@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "cell": "selfcheck",
+    "keyword": "apple",
+    "group": "branch_check",
+    "prompt_hash": "547cd6ba99746461d391eea735cf999712969f7bc12fa82f23cd4e5ad978f287",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:57:15.322917",
+    "latency_ms": 3681
+  },
+  "expected": {
+    "keyword": "apple",
+    "group": "branch_check",
+    "expected_branch": "not_dev_term"
+  },
+  "response": {
+    "id": "msg_012sLBazMknioVwJaXiPTV4k",
+    "container": null,
+    "content": [
+      {
+        "signature": "Et0CClsIDRgCKkCZ6KpJRpuLwzJOyFHQT7eJAB/Ulip2vrqbTH/5MOCJst6XnCzAvVRZ+MVlDiRPOhmFZ03EVKG0W0k8goimislkMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgy6XvSN3q/ZkiC3Y1gaDJ4snPxsBfO9c0RWMCIweyxaEGmy5Vxx17kJfrf4D7yHpuOa0XTsesu6O8lwh1CbDXgoYG2ceHgB1ays34SuKq8BDY5U8gR+2Bx6oTTfiOgoyOWuKAo/xnn1X8ySgxEuh+VNyGYEBqPwdTPVTzGbrFWWT0fI6Pa4Z+gpKtn5oeZTbaxCmwEr2orwPzjaa1KNMwPs9wG4OuogH2V8X2zPc+LLlOEv9jgrKivt3VqS+9EgWGsy5/8Yk2EcexNQio50r7+I7N8XIBnFuAFEpzORRU8zL2O9yJ2v5qAk3l0rt90XOil4hk2hmcavMK4GdjqU7hgB",
+        "thinking": "The input is \"apple\". This is not a development term. It's a fruit (or a company name, but not a specific development term). I should call return_not_dev_term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01VVfk8d8tzf6M26eB5NwoJJ",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {},
+        "name": "return_not_dev_term",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3536,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 89,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

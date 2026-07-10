@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "cell": "selfcheck__alias_strict",
+    "keyword": "lunch",
+    "group": "branch_check",
+    "prompt_hash": "4008c10903ca57f9d7fd33e5647635c88267624ec0171e04942fd35755670e0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:07:39.760067",
+    "latency_ms": 2146
+  },
+  "expected": {
+    "keyword": "lunch",
+    "group": "branch_check",
+    "expected_branch": "not_dev_term"
+  },
+  "response": {
+    "id": "msg_01DGuttyNF7nXaJvUGezQMs4",
+    "container": null,
+    "content": [
+      {
+        "signature": "EoICClsIDRgCKkD/mYayRlqK2tn9K7Lrmd1NVGTu3lrPKVaY1coD/gfjKteD2M+dQfFcd8N9GoZahvq0mb3jP4iqGNfoWUTJgz76MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxmIMsNY6TPrnibYwsaDHh+GEUhpQ6pJvzYeSIw9yKiuijFTKMem/ol8BmlgnPeBmCkzko2FVtviEZu1PXMG384FdIY2Lm/VsPP9sO7KlVvkWZgj/q6whxGdrZFvWGCJYBHawZg8ofu32haLmlfHB+oglLpFN4VYHMr96l/dpaSqEYh9oZN72BReuGIvaxiRcCD1FJo7e/vmKzdNlcZeDyuD528GAE=",
+        "thinking": "\"lunch\" is not a development term. I should call return_not_dev_term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01DQ84H5abMhqF3Dr8qtE44T",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {},
+        "name": "return_not_dev_term",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3628,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 68,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

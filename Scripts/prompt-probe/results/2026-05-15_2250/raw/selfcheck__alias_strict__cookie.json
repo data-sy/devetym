@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "selfcheck__alias_strict",
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "prompt_hash": "4008c10903ca57f9d7fd33e5647635c88267624ec0171e04942fd35755670e0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:06:16.002280",
+    "latency_ms": 26895
+  },
+  "expected": {
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01UhuAciBdfoF3qL9WYMSJ5k",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"cookie\" - this is a development term (HTTP cookie). Let me analyze it.\n\n1. It's a dev term - specifically related to web/network (HTTP cookies).\n2. Etymology: The term \"cookie\" comes from \"magic cookie\" - a term used in Unix programming. It derives from the concept of a \"fortune cookie\" or \"magic cookie\" in computing, which referred to a small token of data passed between programs.\n3. Naming reason: The term was coined by Lou Montulli at Netscape in 1994. He borrowed the term \"magic cookie\" from Unix programming, where it meant a small piece of data passed between programs. \n\nThe metaphor works because a cookie is like a small token the server gives you that you send back later to prove who you are. Now I'm working through the structured fields - setting up the keyword, determining the right aliases (just the Korean translation, since \"HTTP cookie\" is more of a modifier than a true alias), categorizing it under networking, and drafting a concise summary of how cookies function as small state data stored by servers on clients.\n\nFor the etymology, the term traces back to Unix programming jargon where \"magic cookie\" referred to mysterious tokens passed between programs, drawing inspiration from the fortune cookie metaphor of a small container holding hidden information inside.\n\nNow I'm thinking through how the naming actually came about—in 1994, Netscape's Lou Montulli introduced cookies to solve HTTP's statelessness problem, where servers send small data chunks to clients who then return them with each request, mirroring that fortune cookie image of receiving something and opening it later. The original meaning of exchanging small tokens perfectly captured the idea of delegating session state to the browser. 쿠키의 어원이 세션 상태를 클라이언트에 저장하는 HTTP의 설계 철학과 자연스럽게 맞아떨어진다는 걸 보니, 이름 선택이 정말 의도적이었던 것 같다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01YMPqatM9i5YC15C4XDYzME",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "cookie",
+          "aliases": [
+            "쿠키"
+          ],
+          "category": "네트워크",
+          "summary": "서버가 클라이언트 측에 저장시키는 소량의 상태 데이터",
+          "etymology": "유닉스 프로그래밍 은어 'magic cookie'에서 유래. 프로그램 간에 주고받는, 내용보다 '존재 자체'가 중요한 작은 토큰을 뜻했으며, 안에 쪽지가 든 포춘 쿠키(fortune cookie)의 이미지에서 비롯된 것으로 본다.",
+          "namingReason": "1994년 넷스케이프의 루 몬툴리(Lou Montulli)가 HTTP의 무상태성(statelessness) 문제를 해결하기 위해 도입했다. 서버가 클라이언트에 작은 데이터 덩어리를 건네면, 클라이언트는 이후 요청마다 그것을 그대로 서버에 되돌려 보낸다. 포춘 쿠키를 받아 나중에 열어보는 것처럼 '받아 뒀다가 필요할 때 제출하는 작은 토큰'이라는 이미지가 이 메커니즘과 맞아떨어졌다. 어원의 '주고받는 불투명한 토큰'이라는 의미가 세션 상태를 브라우저 쪽에 위탁하는 HTTP 설계 방식과 직접 연결된다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3628,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1748,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

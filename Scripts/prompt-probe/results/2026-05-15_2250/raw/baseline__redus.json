@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "cell": "baseline",
+    "keyword": "redus",
+    "group": "branch_check",
+    "prompt_hash": "037754b355208bf3db2f2e58c5f32c9ddde4a8a13c511b973606f3ff6e30b0ca",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:52:19.135216",
+    "latency_ms": 2612
+  },
+  "expected": {
+    "keyword": "redus",
+    "group": "branch_check",
+    "expected_branch": "possible_typo",
+    "expected_suggestion": "redis"
+  },
+  "response": {
+    "id": "msg_01WfXiGtibnzWWvw3d6rkCzz",
+    "container": null,
+    "content": [
+      {
+        "signature": "EqACClsIDRgCKkBFwrBHgjcYYI/8MW6LDyYH/4DVZK4++to3fnXyWdp7r28W2CTDjg2bwZK/OYjpMGdbo2KmmbHv7HrCqqu6ygVyMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgypYbNf7MuHILikv5MaDN8aFC7H4anTJWlIYyIwt5+/9fWFpNrjxRCZN5EtWsDqkIFdO1/f1QGbtrJ/KV+9M+5ezJdZRoUhS2+r8vr5KnNxYLY8DBTNOZkmqxbtMIby6SX+ULcrUM0OTzVNSQrdtGNvw1BpbIoQqG10USIIdSGzc/RpF6rMebHXlTlw71nBHRWo7iLyRN7AA8JMb8i8QEaS9Wu86l6KsvN20Rv+nxwPsxsgBc3wfryJ1lAcXMpmyguXGAE=",
+        "thinking": "\"redus\" - this looks like a typo for \"Redis\", which is a well-known in-memory data structure store.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_013iMukpQ952ioAhzAftt3sf",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "suggestion": "Redis"
+        },
+        "name": "return_possible_typo",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3364,
+      "inference_geo": "global",
+      "input_tokens": 332,
+      "output_tokens": 92,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

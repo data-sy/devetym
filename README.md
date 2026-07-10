@@ -32,7 +32,7 @@
 | UI | Compose Multiplatform |
 | 상태 | ViewModel + `StateFlow` (단방향 데이터 흐름) |
 | 네트워킹 | Ktor Client + `kotlinx.serialization` (엔진: Android=OkHttp, iOS=Darwin) |
-| 로컬 저장 | SQLDelight *또는* Room KMP (히스토리·북마크·AI 캐시) — [ADR에서 확정 예정](docs/adr/) |
+| 로컬 저장 | **SQLDelight** 2.3.2 (히스토리·북마크·AI 캐시) — [ADR-0003 확정](docs/adr/0003-local-storage.md) |
 | DI | Koin (`module`/`single`/`viewModel`) |
 | 큐레이션 DB | 앱 번들 내 JSON (`terms.json`, 650개) |
 | AI 폴백 | Claude (Cloudflare Worker 프록시 경유, 기기당 일 10회) |
@@ -70,7 +70,7 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 |---|---|---|
 | [`docs/product/prd.md`](docs/product/prd.md) | 제품 기획 — 문제·타겟·유저 스토리·콘텐츠 (*왜*의 정본) | ✅ |
 | [`docs/architecture.md`](docs/architecture.md) | 아키텍처 설계 — 레이어링·Ktor·로컬 저장·Koin (기술 *어떻게*) | ✅ |
-| [`docs/adr/`](docs/adr/) | 돌이킬 수 없는 결정 기록 (CMP 선택·관용구 원칙·로컬 DB·프록시 경계) | ✅ |
+| [`docs/adr/`](docs/adr/) | 돌이킬 수 없는 결정 기록 (0001~0006: CMP·관용구 원칙·로컬 DB·프록시 경계·SKIE interop·서버 캐시 경계) | ✅ |
 | [`docs/specs/spec.md`](docs/specs/spec.md) | 화면·동작 구현 명세 (Phase 1~4, Claude Code 전용) | ✅ |
 | [`ROADMAP.md`](ROADMAP.md) | 이행 순서(코어 먼저, UI 나중) + **진행 상태 정본** | ✅ |
 
@@ -106,3 +106,5 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 `-lsqlite3` 누락 + **Android manifest 클래스 경로 오류**(`.DevEtymApp`→`.android.DevEtymApp`, `ClassNotFoundException` 즉사).
 남은 것 = 티어형 게이트: **[시뮬]** iOS 입력 주입분(라이브 탭/idb) · **[실기기]** 하드웨어 감각(실 메일 전송·클립보드·DPI·햅틱·
 TalkBack/VoiceOver) · **[외부]** 코드서명·심사·게시. 진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md)(M9), 출시 지그·게이트는 [`docs/release/`](docs/release/).
+
+**병행 트랙 (2026-07-10 착수).** private 원격 `data-sy/devetym` 생성 → `m1`~`m8` 스택 PR(#1~8) 병합(main=M8, m9 draft #9) + 원본 repo `~/dev-etymology` **이관·자기완결화**(pages.yml·Scripts·db-expand 이관 완료, ai-quality·크래시 리포팅 등은 계획) + 코드 갭(#9 클립보드·#10 스플래시·#11 셸 회귀가드) 정리. **독립 작업단위 WU-1~12 + 확정 결정(크래시 SDK=Sentry KMP 등)의 정본 = [`docs/handoff/26-07-10-selfcontained-migration-plan.md`](docs/handoff/26-07-10-selfcontained-migration-plan.md)** — 미래 세션이 WU 단위로 실행.
