@@ -38,15 +38,23 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)  // M1 JSON 왕복(kotlinx.serialization)
             implementation(libs.sqldelight.runtime)              // M2 로컬 DB — 생성 API 런타임
             implementation(libs.sqldelight.coroutines.extensions) // .asFlow() (반응형 쿼리, ADR-0002)
+            // M3 네트워킹(§3-4) — 코어·ContentNegotiation·JSON은 commonMain. 엔진만 플랫폼별.
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)     // runTest (suspend 테스트)
+            implementation(libs.ktor.client.mock)            // MockEngine (§6-A, 네트워크 무의존)
         }
         androidMain.dependencies {
             implementation(libs.sqldelight.android.driver)   // AndroidSqliteDriver (M2 §3-3 actual)
+            implementation(libs.ktor.client.okhttp)          // M3 엔진 actual (androidMain)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)    // NativeSqliteDriver (M2 §3-3 actual)
+            implementation(libs.ktor.client.darwin)          // M3 엔진 actual (iosMain)
         }
         // §6-B DB 왕복은 JVM(androidUnitTest)에서만 — JDBC in-memory. 네이티브엔 JDBC 없음(§7-4).
         val androidUnitTest by getting {

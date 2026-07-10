@@ -10,7 +10,9 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 ## Now — 진행 중
 
-- **M3 · 네트워킹 + 서버 read-through 착수 준비** — M2 완료(아래 Done). 다음은 `feat/m3-...`를 `feat/m2-local-db` 위에 **스택** 분기(브랜치 보존 규율). 프로세스는 M1·M2와 동일: M3 스펙 슬라이스 저작 → 적대 비준 → 사람 비준 → 구현. 아직 슬라이스 미저작. **마일스톤 경계 사람 비준 후** 착수.
+- **M4 · Repository 오케스트레이터 착수 준비** — M3 클라측 완료(아래 Done). 다음은 `feat/m4-...`를 `feat/m3-networking` 위에 **스택** 분기(브랜치 보존). 프로세스: M4 스펙 슬라이스 저작 → 적대 비준 → (게이트 완화) Claude eyes-open 수용 → 구현. 3계층 read-through·upsert·pinning·⚠️ M2 상속(createdAt 보존·schemaVersion Int범위)·AI 응답 category 정규화(M3 §7-4 이월) 소비.
+  - **⚠️ 정책(2026-07-05): 구현 전 사람 비준 게이트 완화** — M1·M2서 eyes-open 수용이 러버스탬프였음을 경험하고 사용자가 게이트를 제거. **적대 비준 수렴/ESCALATE → Claude가 잔여 residual을 eyes-open 수용 → 구현·4축 green까지 자율 관통**. 사람 리뷰는 **완성물 아침 리뷰**가 체크포인트(수용 residual 로그). 메모리 [milestone-human-gate-relaxed]. 나머지 안전선(push·브랜치보존·하네스 격리)은 유효.
+  - **⚠️ 디자인 자산 상속**: M6 토큰·M8 아이콘/스플래시/폰트는 iOS repo(`~/dev-etymology/docs/design` + `Fonts` + `Features`)에 존재 — ROADMAP "작성 예정" 무효. 메모리 [ios-design-assets-inheritable].
 
 ---
 
@@ -32,11 +34,12 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 각 마일스톤의 🔗 항목이 그 단계에 빌트인되는 캐시 범위다. **락(안 지키면 나중 리팩토링) 지점은 ⚠️로 표시** — 처음부터 그렇게 짓는다.
 
-- **M3 · 네트워킹 + 서버 read-through** — Ktor 클라이언트·Claude 요청/응답(tool_use 3분기)·`X-Device-Id`·429.
-  - 🔗 **캐시 빌트인**: ⚠️ **클라를 read-through 프록시 계약에 맞춰 작성**(Claude 직접 호출 아님 — 안 하면 계약 교체 리팩토링). **서버(`devetym-proxy`) 신규 구축**: D1 스키마·Worker read-through(D1→API·write-back·first-write-wins)·single-flight(DO)·validator write-게이트·rate-limit/남용/무효화. 〔캐시 트랙 M0서버·M1·M2·M3write·M7〕
+- **M3 · 네트워킹 + 번들 로더 (클라측)** — Ktor 클라이언트·Claude 요청/응답(tool_use 3분기)·`X-Device-Id`·429 + `BundleDbSource`. **스코핑 판정(2026-07-05): 클라측만**(슬라이스 [§0](docs/specs/m3-networking-draft.md)). 서버는 아래 별도 트랙.
+  - 🔗 **캐시 빌트인**: ⚠️ **클라를 read-through 프록시 계약에 맞춰 작성**(Claude 직접 호출 아님 — 안 하면 계약 교체 리팩토링). 클라는 계약에 **투명**해 서버 없이도 `MockEngine`으로 실측. 〔캐시 트랙 M1·M4 클라 소비측〕
+  - **서버 트랙(별도 repo·TS/Worker — M3에서 분리)**: `devetym-proxy` 신규 구축 — D1 스키마·Worker read-through(D1→API·write-back·first-write-wins)·single-flight(DO)·validator write-게이트·rate-limit/남용/무효화·**INV-13 정규화-후-캐시쓰기**. 클라 M3와 병렬/후속, 자체 green 오라클. 〔캐시 트랙 M0서버·M1·M2·M3write·M7〕
   - ⚠️ 계약 변경: 프록시 → read-through 캐시. [ADR-0006](docs/adr/0006-server-cache-boundary.md)(ADR-0004 대체). 참조: spec 2-1·2-2.
   - ⚠️ **INV-A wire측 로더 실측 상속(M1 DR-1 바인딩)**: M1이 실제 `terms.json` 디코드로 wire 키 계약을 fixture 실측했으나(슬라이스 §6), **번들 로더(`BundleDbSource`)의 실제 로드 경로**가 aliases 내용을 보존하는지는 **M3 DoD에서 회귀 가드로 테스트**한다 — 실제 배포 `terms.json`을 로더로 로드해 알려진 term의 aliases *내용*을 단언(성공 디코드는 무효 오라클). 근거: M1 슬라이스 §7-4·§8, DR-1 eyes-open 수용.
-  - ⚠️ **서버 read-through category 소유(M1 DR-2 바인딩)**: 서버가 정규화 이전 원응답을 캐시-히트로 되돌려 클라 정규화를 우회하지 않도록 **정규화-후-캐시쓰기 순서**를 고정한다(집합 밖 category clamp 후 write-back). 정본 불변식: [cache-delivery-milestones](docs/cache-delivery-milestones.md) **INV-13**. 근거: M1 슬라이스 §7-2, DR-2 eyes-open 수용.
+  - ⚠️ **서버 read-through category 소유(M1 DR-2 바인딩) — 서버 트랙으로 이관**: 클라 M3 스코핑 분리(2026-07-05)로 이 항목은 **서버 트랙 DoD**로 옮겨졌다. 서버가 정규화 이전 원응답을 캐시-히트로 되돌려 클라 정규화를 우회하지 않도록 **정규화-후-캐시쓰기 순서**를 고정한다(집합 밖 category clamp 후 write-back). 클라측 상보 방어(수신 category 정규화)는 **M4**. 정본 불변식: [cache-delivery-milestones](docs/cache-delivery-milestones.md) **INV-13**. 근거: M1 슬라이스 §7-2, DR-2 eyes-open 수용, M3 슬라이스 §4·§7-6.
 - **M4 · Repository 오케스트레이터** — `fetch` 3단 흐름·upsert·북마크·히스토리·Analytics. Fake 협력자 테스트.
   - 🔗 **캐시 빌트인**: ⚠️ **3계층 read-through를 처음부터**(로컬/번들 → 네트워크 → 서버 D1 캐시 → API, 2계층으로 짓고 확장 금지). **local-first pinning + 명시적 새로고침** 경로 내장. 〔INV-1·INV-2·INV-6·캐시 트랙 M1소비·M4행위〕 참조: spec 2-3·2-4.
   - ⚠️ **upsert 보존 목록 상속(M2 DR-M2-2)**: `INSERT OR REPLACE`=DELETE+INSERT라 refresh 시 `createdAt`을 `isBookmarked`/`source`와 **함께 보존**해야 `bookmarked`(`createdAt DESC`)가 새로고침마다 조용히 재정렬되지 않는다. pinned(`seenAt`) 로우는 `fetch`가 덮지 않고 `refresh`만 갱신. `toEntity`는 4 DB전용 필드가 필수인자라 read-modify-write 재주입 누락이 **컴파일 에러**(M2가 강제). 근거: M2 슬라이스 §3-2·§3-4·Open Questions.
@@ -70,6 +73,10 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 ## Done — 완료
 
+- **M3 · 네트워킹 + 번들 로더 (클라측)** — 2026-07-05 (브랜치 `feat/m3-networking`, 로컬 커밋·미푸시). `commonMain`에 `BundleDbSource`(번들 `terms.json` 650 로드·정규화 인덱스 first-wins·keyword/alias 완전매칭·prefix autocomplete) + `ClaudeApi`(Ktor read-through 프록시 호출·`tool_use` 3분기→`TermResult`·`X-Device-Id`·429→DailyLimitExceeded) + 프롬프트/3도구(iOS 검증본 계승) + HttpClient 엔진 `expect`/`actual`(OkHttp/Darwin) + 공유 `AppJson`·`normalizeKeyword`. **green 4축 실측**: `:shared:testDebugUnitTest`(39) · `:androidApp:assembleDebug` · `:shared:linkDebugFrameworkIosSimulatorArm64` · **`:shared:iosSimulatorArm64Test`(31)**. **Ktor 3.5.1 × Kotlin 2.3.21 × serialization 1.9.0 klib 소비를 네이티브 링크·테스트로 실측**(§5 load-bearing). 참조: [M3 슬라이스](docs/specs/m3-networking-draft.md), spec 2-1·2-2, [ADR-0006](docs/adr/0006-server-cache-boundary.md).
+  - **⚠️ INV-A 로더측 실측 = 폐쇄(M1 DR-1 바인딩)**: §6-B가 실 배포 `terms.json`을 `InMemoryBundleDbSource` 파서·인덱스에 태워 `aa-tree` aliases 내용·category + **alias 검색 성립**(`search("Arne Andersson tree")`→`aa-tree`)을 단언(성공 디코드는 무효 오라클). M1 fixture 대비 증분 폐쇄점. **네이티브 실행 갭 선제 폐쇄**: §6-A(BundleDbSource 매칭 9 + ClaudeApi×MockEngine 11)가 `:iosSimulatorArm64Test`로 네이티브 실행 — Native Ktor 파이프라인+Anthropic 응답 shape(thinking/text/tool_use) 직렬화 디코드 실측(M1·M2 비준 blocker였던 갭을 M3는 선제 폐쇄).
+  - **비준 결과 = ESCALATE(6R, Blocker 1=AD-1) → 게이트 완화 하 eyes-open, AD-1은 구현으로 해소**. 6라운드가 draft를 강화(정규화 seam 제거·키잉vs프롬프트 분리로 대소문자 유의미 용어 어원오염 차단·에러처리 status선검사·flat DTO로 thinking블록 관용). 잔여 Blocker AD-1(2xx 비JSON/빈바디 `NoTransformationFoundException` 미포착)은 **수용이 아니라 구현에서 닫음**(catch 넓혀 InvalidResponse 봉인 + canned 2건). 상세: M3 슬라이스 Open Questions.
+  - 🔗 캐시 빌트인: 클라를 read-through 계약(ADR-0006)에 투명하게 작성(리팩토링-0). **서버 트랙(devetym-proxy·INV-13)은 별도 이관**(§0). 클라측 category 정규화·fetch 3단은 M4. 〔캐시 트랙 M1·M4 클라 소비측〕
 - **M2 · 로컬 DB** — 2026-07-05 (브랜치 `feat/m2-local-db`, 로컬 커밋·미푸시). SQLDelight 2.3.2([ADR-0003](docs/adr/0003-local-storage.md)): `.sq` 스키마(`term`·`searchHistory`, **pinning `seenAt` + 버전 `schemaVersion`/`promptVersion` 컬럼 처음부터** — INV-6·INV-9·INV-12, 마이그레이션 회피)·반응형 라벨 쿼리(`bookmarked`/`recent`, `.asFlow()` 대상)·드라이버 `expect`/`actual`(`AndroidSqliteDriver`/`NativeSqliteDriver`)·DTO↔엔티티 매퍼(`TermEntry.toEntity()`/`Term.toDto()`, aliases/source는 매퍼 변환). **green 4축 실측**: `:shared:testDebugUnitTest`(17) · `:androidApp:assembleDebug` · `:shared:linkDebugFrameworkIosSimulatorArm64` · **`:shared:iosSimulatorArm64Test`(11, B1 신규 축)**. **Kotlin 2.3.21 × SQLDelight 2.3.2 klib 소비를 네이티브 링크·테스트로 실측**(§5 load-bearing). 참조: [M2 슬라이스](docs/specs/m2-local-db-draft.md), spec 1-2.
   - **⚠️ INV-A 매핑측 실측 = 폐쇄(M1 DR-1 바인딩)**: 매퍼 `toEntity`/`toDto`의 `aliases`(순서)·`category` 무손실 보존을 §6-A 순수 commonTest로 실측(DoD 필수). aliases/source 변환을 매퍼에 둬(컬럼 어댑터 아님) 드라이버 없는 순수 왕복으로 성립. **B1 결착**: §6-A가 `:iosSimulatorArm64Test`로 **네이티브 실행**돼 Native `kotlinx.serialization` 왕복도 실측.
   - **비준 결과 = ESCALATE → 사람 eyes-open + B1 부분 폐쇄**(재비준 안 함). 6라운드가 draft를 강화(INV-9 무손실 M2경로 한정·`toEntity` 4필드 필수인자화로 M4 재주입누락 컴파일에러화·§6-B raw컬럼 canary). 잔존 Blocker(네이티브 실행 갭)를 **B1**(네이티브 실행 축 추가)로 직렬화 절반 폐쇄, DB 실행 절반은 M8 이월. 상세: M2 슬라이스 §5·§8·Open Questions.
