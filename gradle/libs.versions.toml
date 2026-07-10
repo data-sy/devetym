@@ -11,6 +11,7 @@ koin = "4.1.0"
 androidxActivityCompose = "1.11.0"
 skie = "0.10.12"                       # Touchlab SKIE (2026-05)
 sqldelight = "2.3.2"                    # ADR-0003. Kotlin 2.3.21×2.3.2 klib 소비 빌드 실측(M2 §5). native-driver iosArm64/iosSimulatorArm64 klib 배포 확인.
+lifecycleViewmodel = "2.9.6"           # M5 ViewModel+viewModelScope(멀티플랫폼). CMP 1.11.1의 lifecycle-viewmodel-compose와 동일 2.9 라인 → 정합. Kotlin 2.3.21 네이티브 klib 소비를 링크·테스트로 실측(M5 §5).
 # Android SDK 레벨
 compileSdk = "36"
 minSdk = "26"
@@ -35,6 +36,7 @@ ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 # SQLDelight (ADR-0003) — 드라이버만 플랫폼별. runtime/coroutines-extensions는 commonMain.
 sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
 sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
+lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycleViewmodel" }  # M5 — ViewModel 기반클래스 + viewModelScope (commonMain)
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }  # JdbcSqliteDriver(IN_MEMORY) — androidUnitTest §6-B 전용
