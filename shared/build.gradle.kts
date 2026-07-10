@@ -43,6 +43,7 @@ kotlin {
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.lifecycle.viewmodel)         // M5 ViewModel + viewModelScope(멀티플랫폼)
+            implementation(libs.lifecycle.runtime.compose)   // M6 collectAsStateWithLifecycle
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
