@@ -19,7 +19,7 @@
    - [x] `[AI]` docs/db-expand 이관.
    - [→WU-5] launch-prep/e2e-checklist 대조.
    - [→WU-3] ai-quality → ADR-0007 (**D3 승인 완료**).
-   - [x] 크래시 리포팅 → **WU-4 완료(2026-07-10)**: D1을 **플랫폼 seam 분리**로 실측 정정(KMP를 commonMain에 넣으면 iOS 테스트 축이 Sentry Cocoa 미해결로 깨짐). Android=`sentry-android` 실배선·iOS=Swift/SPM no-op(WU-11)·방침 §2-2 신설(사인오프 완료)·5축 green. 근본 해결(commonMain 단일 KMP)=출시 후 백로그(ROADMAP Later).
+   - [x] 크래시 리포팅 → **WU-4 완료(2026-07-10)**: D1을 **플랫폼 seam 분리**로 실측 정정(KMP를 commonMain에 넣으면 iOS 테스트 축이 Sentry Cocoa 미해결로 깨짐). Android=`sentry-android` 실배선·iOS=Swift/SPM no-op(WU-11)·방침 §2-2 신설(사인오프 완료)·5축 green. **→ WU-4B(2026-07-10)로 commonMain 단일 KMP 통합 완료**(iOS도 실배선, WU-11 SPM 폐기·Xcode 빌드 검증). 근본 해결=완료(구 ROADMAP Later 항목 닫힘).
 6. [x] **미기재 잔여 점검** — DevEtym/ 네이티브 iOS 전수 스윕. ✅ WU-6 완료(2026-07-10, `f4b2a9c`): 자기완결성 확증(dev-etymology 의존 0)·안전이관 2건(이메일 버그·LICENSE)·[원장](docs/handoff/26-07-10-wu6-native-sweep-ledger.md). 잔여는 원장 §3(UX 포트·거버넌스·M9 iOS 자산).
 7. [→WU-11·12] **M9 잔여 마감** — 실기기/서명/심사(환원 불가).
 
@@ -27,7 +27,7 @@
 - [x] WU-8 #9 클립보드 UI 배선 · [x] WU-9 #10 스플래시 · [x] WU-10 #11 셸 배선 회귀 가드(신규 `:androidApp:testDebugUnitTest` 축)
 
 ## 결정/승인 (이 세션에 확정 — 원장 = 핸드오프 §1)
-- **D1** 크래시 SDK = **Sentry** (원안 commonMain 단일 KMP 배선). → **WU-4 실측 정정(2026-07-10)**: 비cocoapods 정적 프레임워크라 KMP를 commonMain에 두면 iOS 테스트 축이 깨짐 → **플랫폼 seam 분리**(Android=sentry-android·iOS=Swift/SPM). SDK는 여전히 Sentry. 단일 KMP 통합=출시 후 백로그.
+- **D1** 크래시 SDK = **Sentry** (원안 commonMain 단일 KMP 배선). → **WU-4 실측 정정(2026-07-10)**: 비cocoapods 정적 프레임워크라 KMP를 commonMain에 두면 iOS 테스트 축이 깨짐 → **플랫폼 seam 분리**(Android=sentry-android·iOS=Swift/SPM). SDK는 여전히 Sentry. **→ WU-4B(2026-07-10): 단일 KMP 통합 완료**(seam 분리 해소, iOS까지 실배선).
 - **D2** 크래시 리포팅 **도입** → ✅ WU-4 완료. 방침 "미수집"→"크래시 진단 최소수집" 갱신(§2-2 신설, 사인오프 완료 2026-07-10).
 - **D3** ai-quality → **ADR-0007 흡수 승인**.
 - **D4** Pages 소스 = GitHub Actions. **D5** 출시후 = ROADMAP 하위제목. **D6** #2 = M9 [외부].
