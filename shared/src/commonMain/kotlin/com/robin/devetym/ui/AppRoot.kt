@@ -93,7 +93,9 @@ fun AppRoot(deps: AppDependencies) {
                     Tab.entries.forEach { t ->
                         NavigationBarItem(
                             selected = tab == t,
-                            onClick = { tab = t },
+                            // 활성 탭 재탭 = 루트 pop(상세 닫기) — iOS 탭바 관례. M9 스모크 결함
+                            // (Found 상세 탈출 불가)의 보조 탈출구(주 탈출구는 DetailScreen 상시 back).
+                            onClick = { if (tab == t) detailKeys[t] = null else tab = t },
                             icon = { Text(t.label, style = AppScheme.type.caption) },
                         )
                     }
