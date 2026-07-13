@@ -45,7 +45,7 @@ xcrun simctl io "$SIM" screenshot shot.png     # 임의 시점 캡처
 - ✅ 히스토리 탭·개별 삭제·실검색 타임스탬프 · 설정 외관 라이트/다크 실조작 · 라이선스 실스크롤
 - ✅ 아이콘: 홈스크린 라이트/다크 렌더(이번에 AppIcon·LaunchLogo·brand 이관 배선 — 리포트 §1)
 - ✅ VoiceOver: 시뮬 Inspector 감사 생략 — **실기기 VoiceOver 사용자 사인오프로 대체**(2026-07-13, Tier 2 참조)
-- 🐛 **발견 결함(수정 대기)**: iOS Found 상세 탈출 불가 — ROADMAP M9 등재, 리포트 §3
+- 🐛 발견 결함: iOS Found 상세 탈출 불가 — ✅ **수정 완료(2026-07-13**, 상시 back+재탭 pop → 이후 셸 재설계 NavContainer로 흡수), 리포트 §3
 
 ### Android 에뮬레이터 — ✅ Tier 1 완주 (2026-07-05, adb 자율 주행)
 > **✅ 셋업·주행 완료** — `system-images;android-36;google_apis;arm64-v8a` AVD 부팅 후 adb `input tap/text`로 전 플로우 자율 주행.
@@ -73,10 +73,10 @@ adb logcat -d | grep -iE "devetym|AndroidRuntime|FATAL"   # 첫 기동 크래시
 > 이미 Robolectric JVM으로 그래프 닫음).
 
 ## Tier 2 · `[사람]` 실기기 전용 — 하드웨어 감각 (시뮬로 대체 불가)
-- ☐ **메일앱 실제 전송**(시뮬엔 메일 계정 없음) · ✅ **앱간 클립보드 실붙여넣기 체감**(2026-07-13 아이폰 13 mini — 복사 내용 확인 과정에서 실붙여넣기 확인. 파생 피드백: 복사 범위 오인 → ROADMAP 실기기 피드백 2차 UX-4)
-- ☐ iOS 공유시트 실동작 — ⚠️ 현재 `IosAppActions.share`는 no-op(백로그) → iOS는 "미동작"이 정상. **실기기서 사용자가 dead button으로 재확인(2026-07-13)** → 출시 전 구현/숨김 결정 = ROADMAP 실기기 피드백 2차 UX-6
-- ☐ **실 DPI 아이콘 선명도**·홈스크린 실렌더(시뮬은 근사)
-- ☐ 햅틱·실 제스처 나uance
+- ✅ **메일 실동작**(2026-07-13 셸 재설계 — 메일 앱 열림·수신자/한글 제목 채움 확인, 실전송은 사용자 종결) · ✅ **앱간 클립보드 실붙여넣기 체감**(2026-07-13 아이폰 13 mini — 파생 피드백: 복사 범위 오인 → 셸 재설계 §2-E로 해소)
+- ✅ iOS 공유시트 실동작 — **셸 재설계 스텝 1에서 `UIActivityViewController` 실구현**(구 no-op dead button 해소) + 라운드 2에서 프레젠테이션(iPhone 기본 시트)·전문 페이로드 보정 → 사용자 사인오프(2026-07-13). 정본 = [셸 재설계 체크리스트](m9-shell-redesign-device-checklist.md)
+- ☐ **실 DPI 아이콘 선명도**·홈스크린 실렌더(시뮬은 근사 — 홈스크린 렌더 자체는 사용자 실사용 중 무지적)
+- ☐ 햅틱·실 제스처 뉘앙스(앱에 커스텀 햅틱 없음 — 선택)
 - ✅ VoiceOver **실기기 사용자 사인오프**(2026-07-13 아이폰 13 mini — "보이스오버는 됐다" 판정, Inspector 감사 생략 대체) · ☐ TalkBack(Android)은 실기기 확보 시 잔여
 - ☐ Dynamic Type 실반영(시뮬로도 상당부분 가능)
 
@@ -89,7 +89,8 @@ adb logcat -d | grep -iE "devetym|AndroidRuntime|FATAL"   # 첫 기동 크래시
 
 ## 판정
 - **Tier 0 완료**(자동 + iOS 시뮬 첫 기동 실증).
-- **Tier 1 Android ✅ 완주**(adb 자율 주행, 크래시 1건 수정) · **Tier 1 iOS** = 입력 주입분(라이브 탭/idb)만 잔여. 시뮬/에뮬이 **실기기 없이 M9 스모크의 실질 폐쇄** + 4축이 못 잡은 **첫 기동 크래시 2건**(iOS `-lsqlite3`·Android manifest 클래스 경로) 포착.
+- **Tier 1 Android ✅ 완주**(adb 자율 주행, 크래시 1건 수정) · **Tier 1 iOS ✅ 완주**(2026-07-13 CGEvent 입력 주입 — [리포트](m9-ios-sim-smoke-report.md)). 시뮬/에뮬이 **실기기 없이 M9 스모크의 실질 폐쇄** + 4축이 못 잡은 **첫 기동 크래시 2건**(iOS `-lsqlite3`·Android manifest 클래스 경로) 포착.
+- **Tier 2 ✅ 실질 완료**(2026-07-13 아이폰 13 mini — 셸 재설계 라운드 1·2 사인오프 + VoiceOver. [체크리스트](m9-shell-redesign-device-checklist.md)). 잔여(선택): TalkBack·Dynamic Type·실 DPI 재확인·햅틱.
 - **Tier 2·3**만 실기기/외부 잔여 — Tier 2는 하드웨어 확보 시, Tier 3는 게시 지시 시.
 
 > **거짓 green 금지**: 시뮬은 실 하드웨어 감각(Tier 2)·외부 심사(Tier 3)를 보증하지 않는다. 그러나 앱 **런타임**

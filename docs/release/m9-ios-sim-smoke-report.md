@@ -54,6 +54,10 @@
 
 ## 5. 남은 것 (이 리포트로 대체되지 않음)
 
+> **〔2026-07-13 추기 — 대부분 해소〕** 아래 항목 중 메일·클립보드·공유·앱평가·VoiceOver는 같은 날 **셸 재설계
+> 스텝 1~3 + 실기기 라운드 1·2 사인오프**로 종결(공유 no-op·앱평가 죽은 URL은 실구현으로 대체). 정본 =
+> [셸 재설계 체크리스트](m9-shell-redesign-device-checklist.md)·ROADMAP. 잔여 = TalkBack·Dynamic Type·실 DSN(선택/후속).
+
 - **[사람] Tier 2 실기기**: 메일 실전송·앱간 클립보드 체감·실 DPI 아이콘·햅틱·TalkBack/VoiceOver 실감사([접근성 대본](m9-accessibility-audit-script.md)) — VoiceOver/Accessibility Inspector는 시뮬에서도 사람 상호작용 필요라 미주행
 - **[사람] Sentry 실 DSN 런타임 도달** (WU-4B 잔여 — 실기기 스모크 시)
 - iOS 공유 시트 no-op(알려진 백로그)·메일/앱평가는 시뮬 한계로 Tier 2 귀속

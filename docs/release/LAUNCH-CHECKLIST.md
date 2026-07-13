@@ -8,7 +8,7 @@
 > **IDs:** appId/bundleId `com.robin.devetym` · Android 8.0+ (API 26) · iOS 16+ · `versionName=0.1.0`, `versionCode=1`.
 > **Last synced to repo state:** 2026-07-13.
 >
-> **🧭 Launch sequence (decided 2026-07-13).** Critical path **A → (B·C·D parallel) → E·F**: **A** flip repo public (secret sweep first, irreversible; upstream of everything) → **B** deploy Pages (policy URL, WU-1) · **C** real-device smoke + a11y audit (WU-11) · **D** capture screenshots → **E iOS store submit FIRST** (dev account paid, prior launch experience, no cohort gate → review直行) · **F Android LATER** (closed-testing gate: 20 testers × 14 days). **iOS and Android ship as separate todos** (WU-12a / WU-12b) — different store gates. Source of truth: ROADMAP M9 "출시 시퀀스 확정".
+> **🧭 Launch sequence (decided 2026-07-13).** Critical path **A → (B·C·D parallel) → E·F**: **A** flip repo public (secret sweep first, irreversible; upstream of everything) → **B** deploy Pages (policy URL, WU-1) · **C** real-device smoke + a11y audit (WU-11) · **D** capture screenshots → **E iOS store submit FIRST** (dev account paid, prior launch experience, no cohort gate → review直行) · **F Android LATER** (closed-testing gate: 20 testers × 14 days). **iOS and Android ship as separate todos** (WU-12a / WU-12b) — different store gates. Source of truth: ROADMAP M9 "출시 시퀀스 확정". **Current (2026-07-13 night): A·B·C done → next = D screenshots, then E (iOS submit) / F (Android closed-testing kickoff).**
 
 ## Legend
 
@@ -27,7 +27,7 @@
 These are the items that can actually stop or misrepresent the launch. Everything else is mechanical.
 
 1. ✅ **Privacy policy ↔ implementation mismatch — RESOLVED (2026-07-06).** Decision: reconcile to "**does not currently collect**" (Firebase-later). [`site/privacy-policy.md`](../../site/privacy-policy.md) rewritten: no analytics collected; on-device-only data; the only outbound data is the search keyword + a random rate-limit device id sent for the AI-fallback feature (honestly disclosed). Store labels updated to match ([store-metadata §3–4](m9-store-metadata-draft.md)). ⚠️ Still recommend legal review before external release.
-2. ✅ **Privacy policy deployed → live public URL — RESOLVED (2026-07-13).** Repo flipped **public** (secret sweep clean) → PR #10 merged → GitHub Pages enabled (Actions source) → policy/ToS live (all 200): <https://data-sy.github.io/devetym/privacy-policy>, <https://data-sy.github.io/devetym/terms-of-service>, index <https://data-sy.github.io/devetym/>. URL reflected in [store-metadata §1](m9-store-metadata-draft.md). ☐ remaining: align in-app policy link (WU-6 residual) before submit.
+2. ✅ **Privacy policy deployed → live public URL — RESOLVED (2026-07-13).** Repo flipped **public** (secret sweep clean) → PR #10 merged → GitHub Pages enabled (Actions source) → policy/ToS live (all 200): <https://data-sy.github.io/devetym/privacy-policy>, <https://data-sy.github.io/devetym/terms-of-service>, index <https://data-sy.github.io/devetym/>. URL reflected in [store-metadata §1](m9-store-metadata-draft.md). ✅ in-app policy link aligned (2026-07-13 shell-redesign step 1 — `Constants.privacyPolicyUrl`, stale `devetym.app/privacy` literal replaced).
 3. ✅ **Terms of Service — drafted (2026-07-06).** [`site/terms-of-service.md`](../../site/terms-of-service.md), incl. AI-generated-content disclaimer + acceptable-use (rate limits). ⚠️ Legal review recommended before publish.
 4. 🟡 **Store screenshots not produced.** Full capture recipe handed off: [m9-screenshot-capture-handoff](m9-screenshot-capture-handoff.md) (own session — live sim/emu, per-store sizes). Still blocks store listing until executed.
 5. 🟡 **Signing not wired.** `androidApp/build.gradle.kts` release buildType has no `signingConfig`. Guide exists ([signing-upload-guide](m9-signing-upload-guide.md)); keystore creation is `[H]` (secret key).
@@ -38,20 +38,20 @@ These are the items that can actually stop or misrepresent the launch. Everythin
 
 ## 1. Functionality & QA
 
-- ✅ `[AI]` **Core flows exercised on 4-axis green.** unit (`:shared:testDebugUnitTest` 106) · native (`:shared:iosSimulatorArm64Test` 93) · link (`linkDebugFrameworkIosSimulatorArm64`) · assemble (`:androidApp:assembleDebug`). Real Koin graph completeness + native SQLite roundtrip pulled down from human gates. Evidence: ROADMAP M9 `[AI]` track.
-- 🟡 `[AI→H]` **Multiple devices / screen sizes / OS versions.** iPhone 16 simulator + Android API 36 emulator smoke completed (Tier 1, full flow driven). Real hardware DPI/size matrix remains `[H]`. Script: [m9-device-smoke-script](m9-device-smoke-script.md).
+- ✅ `[AI]` **Core flows exercised on 5-axis green.** unit (`:shared:testDebugUnitTest` 121) · native (`:shared:iosSimulatorArm64Test` 111) · link (`linkDebugFrameworkIosSimulatorArm64`) · assemble (`:androidApp:assembleDebug`) · guard (`:androidApp:testDebugUnitTest`). Real Koin graph completeness + native SQLite roundtrip pulled down from human gates. Evidence: ROADMAP M9 `[AI]` track.
+- ✅ `[H]` **Multiple devices / screen sizes / OS versions.** iPhone 16 sim + Android API 36 emulator (Tier 1, full flow) **+ real-device iPhone 13 mini smoke signed off (2026-07-13, shell-redesign rounds 1–2 — [checklist](m9-shell-redesign-device-checklist.md))**. Optional residue: real-DPI icon recheck. Script: [m9-device-smoke-script](m9-device-smoke-script.md).
 - ✅ `[AI]` **Network-unstable / offline handling.** Offline-first: bundle dictionary (650+ terms) serves without network; AI fallback on miss. Emulator saw AI miss→proxy generation + DNS-flake recovery. Evidence: ROADMAP Android smoke.
-- 🟡 `[AI→H]` **Crash / error handling.** Two real first-launch crashes already caught by device smoke and fixed (iOS `-lsqlite3` link; Android manifest class path). Error paths logged via `AnalyticsService.logError` — but see §4 (no live backend). No automated crash reporting yet.
+- 🟡 `[AI→H]` **Crash / error handling.** Two real first-launch crashes already caught by device smoke and fixed (iOS `-lsqlite3` link; Android manifest class path). Error paths logged via `AnalyticsService.logError` — but see §4 (no live backend). Crash reporting: Sentry wired on both platforms (WU-4B; real-DSN runtime delivery pending — Blocker #7 note).
 - 🟡 `[AI]` **Memory leaks / performance (load, battery).** No profiling done. VM lifecycle (ViewModelStore) is a `[Defer]` track. Load feels instant (bundle-local). Battery/leak profiling not performed → open.
 - ✅ `[AI]` / 🟡 `[H]` **Dark mode / accessibility.** WCAG contrast: 36 pairs, **all pass AA**. contentDescription coverage scanned. 3 appearance modes (light/dark/system) verified on emulator. **Remaining `[H]`:** real TalkBack/VoiceOver gestures + Dynamic Type. Script: [m9-accessibility-audit-script](m9-accessibility-audit-script.md).
 - ➖ **Payments / IAP.** None in app. N/A.
-- 🐛 `[AI]` **Known gaps (honest, unfixed → backlog):** (a) clipboard seam is dead code — implemented + unit-tested but no UI caller; (b) Android splash screen unwired (default launcher). Neither blocks launch. Source: ROADMAP M9 smoke notes.
+- ✅ `[AI]` **Known gaps — both RESOLVED (2026-07-10, WU-8/WU-9):** (a) clipboard seam wired to Detail copy action (later upgraded to full-payload copy, shell-redesign §2-E); (b) Android splash wired (`core-splashscreen`, brand `#2E5D3A`). Source: ROADMAP 코드 갭 수정 트랙.
 
 ## 2. Legal & Policy
 
-- 🟡 `[AI]`/`[H]` **Privacy policy written & hosted.** Rewritten to match implementation (2026-07-06) at [`site/privacy-policy.md`](../../site/privacy-policy.md). **Still not hosted** (Blocker #2) and legal review recommended.
-- 🟡 `[AI]`/`[H]` **Terms of Service.** Drafted at [`site/terms-of-service.md`](../../site/terms-of-service.md). Not hosted; legal review recommended.
-- ✅ `[AI]` **Collected PII disclosed + consent flow.** Reconciled: policy now states no analytics collected; onboarding consent step present but currently gates nothing (no-op). Search-keyword transmission for AI fallback honestly disclosed (policy §2).
+- ✅ `[AI]`/`[H]` **Privacy policy written & hosted.** Rewritten to match implementation (2026-07-06); **live since 2026-07-13** (Blocker #2 resolved): <https://data-sy.github.io/devetym/privacy-policy>. Legal review still recommended.
+- ✅ `[AI]`/`[H]` **Terms of Service.** Live: <https://data-sy.github.io/devetym/terms-of-service>. Legal review recommended.
+- ✅ `[AI]` **Collected PII disclosed + consent flow.** Policy states no analytics collected. Onboarding consent choice now **persists** (ConsentStore, 2026-07-13) and syncs with the Settings toggle — still display-only (gates nothing; nothing is collected, consistent with policy). Search-keyword transmission for AI fallback honestly disclosed (policy §2).
 - 🟡 `[H]` **Data-regulation compliance.** Policy targets **Korea PIPA**. **GDPR / CCPA not explicitly addressed** — decide based on release regions (§3 country selection). If EU/US launch, policy needs a GDPR/CCPA section + legal review.
 - ✅ `[AI]` **Open-source license notice.** In-app Licenses screen renders OFL (3 fonts); load tested (`Res.readBytes` non-empty). Real scroll render is `[H]`.
 - 🟡 `[AI→H]` **Content / age rating.** Drafted as **14+** (not child-directed), category Education / Developer Tools. Actual rating questionnaire in each console is `[H]`. Draft: [store-metadata §1](m9-store-metadata-draft.md).
@@ -115,4 +115,4 @@ Governance/data-plane files (specs, ADRs, architecture) remain **propose-not-aut
 
 ## Human/external gates (await your instruction)
 
-Developer-account enrollment · keystore/cert creation · code signing · real-device smoke + TalkBack/VoiceOver · iOS appiconset via Xcode · store submission / review / publish · staged rollout. All `[H]` — no autonomous execution.
+Developer-account enrollment · keystore/cert creation · release code signing · TalkBack (Android device) + Dynamic Type · iOS appiconset via Xcode · store submission / review / publish · staged rollout. All `[H]` — no autonomous execution. (Real-device smoke + VoiceOver: signed off 2026-07-13.)
