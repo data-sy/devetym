@@ -6,7 +6,7 @@
 **Android · iOS 단일 코드베이스** — Kotlin Multiplatform 위에서 UI까지 Compose Multiplatform으로 공유한다.
 
 - 앱 표시 이름: **개발 어원 사전**
-- 애플리케이션 ID / 번들 ID: `com.robin.devetym`
+- 애플리케이션 ID / 번들 ID: `com.oddmuffin.devetym` (코드 네임스페이스·Kotlin 패키지는 `com.robin.devetym` 유지)
 - 타깃: Android 8.0+ (API 26), iOS 16+
 - 리브랜딩 후보: `Rootly` (추후 검토)
 

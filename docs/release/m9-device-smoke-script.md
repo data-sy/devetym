@@ -30,7 +30,7 @@ xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug 
   -sdk iphonesimulator -destination "id=$SIM" -derivedDataPath iosApp/build/dd build
 xcrun simctl boot "$SIM"; open -a Simulator
 xcrun simctl install "$SIM" iosApp/build/dd/Build/Products/Debug-iphonesimulator/iosApp.app
-xcrun simctl launch "$SIM" com.robin.devetym
+xcrun simctl launch "$SIM" com.oddmuffin.devetym
 xcrun simctl io "$SIM" screenshot shot.png     # 임의 시점 캡처
 ```
 **✅ AI가 상태 주입으로 자율 확인(2026-07-05, 탭 불요)** — `simctl spawn defaults write`·컨테이너 DB `sqlite3` 주입:
@@ -64,7 +64,7 @@ avdmanager create avd -n devetym -k "system-images;android-36;google_apis;arm64-
 emulator -avd devetym -no-snapshot -no-window &   # 헤드리스 부팅
 adb wait-for-device
 ./gradlew :androidApp:installDebug
-adb shell am start -n com.robin.devetym/.MainActivity
+adb shell am start -n com.oddmuffin.devetym/com.robin.devetym.android.MainActivity  # 패키지부=applicationId, 클래스부=namespace 기준 실 클래스
 adb exec-out screencap -p > shot.png
 adb logcat -d | grep -iE "devetym|AndroidRuntime|FATAL"   # 첫 기동 크래시/NoDefinitionFound 확인
 ```
