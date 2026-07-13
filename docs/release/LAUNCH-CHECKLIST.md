@@ -52,7 +52,7 @@ These are the items that can actually stop or misrepresent the launch. Everythin
 - ✅ `[AI]`/`[H]` **Privacy policy written & hosted.** Rewritten to match implementation (2026-07-06); **live since 2026-07-13** (Blocker #2 resolved): <https://data-sy.github.io/devetym/privacy-policy>. Legal review still recommended.
 - ✅ `[AI]`/`[H]` **Terms of Service.** Live: <https://data-sy.github.io/devetym/terms-of-service>. Legal review recommended.
 - ✅ `[AI]` **Collected PII disclosed + consent flow.** Policy states no analytics collected. Onboarding consent choice now **persists** (ConsentStore, 2026-07-13) and syncs with the Settings toggle — still display-only (gates nothing; nothing is collected, consistent with policy). Search-keyword transmission for AI fallback honestly disclosed (policy §2).
-- 🟡 `[H]` **Data-regulation compliance.** Policy targets **Korea PIPA**. **GDPR / CCPA not explicitly addressed** — decide based on release regions (§3 country selection). If EU/US launch, policy needs a GDPR/CCPA section + legal review.
+- ✅ `[H]` **Data-regulation compliance.** Policy targets **Korea PIPA**. **D2 decision (2026-07-13): Korea-only launch** — GDPR/CCPA N/A, closed. Reopen (policy amendment + legal review) only if expanding regions later.
 - ✅ `[AI]` **Open-source license notice.** In-app Licenses screen renders OFL (3 fonts); load tested (`Res.readBytes` non-empty). Real scroll render is `[H]`.
 - 🟡 `[AI→H]` **Content / age rating.** Drafted as **14+** (not child-directed), category Education / Developer Tools. Actual rating questionnaire in each console is `[H]`. Draft: [store-metadata §1](m9-store-metadata-draft.md).
 
