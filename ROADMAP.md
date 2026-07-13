@@ -88,6 +88,10 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 각 마일스톤의 🔗 항목이 그 단계에 빌트인되는 캐시 범위다. **락(안 지키면 나중 리팩토링) 지점은 ⚠️로 표시** — 처음부터 그렇게 짓는다.
 
+- **M9-후속 · 실기기 피드백 UX 3건 (출시 전 착수, 2026-07-13 방향 확정)** — M9 아이폰 13 mini 실기기 테스트 피드백. 새 세션 착수 대상(순서 무관, 각각 독립 작업 단위).
+  - **[UX] 상세 액션 어포던스 개선** — `ActionText`(순수 텍스트)가 버튼으로 안 읽히고 "북마크·공유"가 문장처럼 이어짐(`DetailScreen.kt` FoundBody). **아이콘+라벨 톤 버튼(FilledTonal형 — 목업 A안, 4안 비교 후 사람 확정)** 으로 전환: 복사·북마크·공유 3개를 accent 틴트 배경 알약형(아이콘+라벨)으로, '오류 제보'는 하단에 회색 톤 분리.
+  - **[UX] 스와이프 네비게이션** — 자체 상태기반 네비(`AppRoot.kt`)라 iOS 시스템 백 제스처 부재. ① 뎁스0: 탭 4개(검색↔북마크↔히스토리↔설정) `HorizontalPager` 좌우 스와이프 전환, ② 뎁스1(상세): 왼쪽 엣지 스와이프-백 직접 구현. 상세 표시 중엔 페이저 스와이프 비활성(제스처 충돌 관리 포함 한 작업 단위).
+  - **[UX] 로딩 문구 2개 교차** — 상세 Loading(`DetailScreen.kt`) "어원을 찾고 있어요" 단일 고정 → 차분한 안내형 2문구("AI가 어원을 찾고 있어요" ↔ "잠시만 기다려 주세요") ~3초 간격 크로스페이드 교차.
 - **M3 · 네트워킹 + 번들 로더 (클라측)** — Ktor 클라이언트·Claude 요청/응답(tool_use 3분기)·`X-Device-Id`·429 + `BundleDbSource`. **스코핑 판정(2026-07-05): 클라측만**(슬라이스 [§0](docs/specs/m3-networking-draft.md)). 서버는 아래 별도 트랙.
   - 🔗 **캐시 빌트인**: ⚠️ **클라를 read-through 프록시 계약에 맞춰 작성**(Claude 직접 호출 아님 — 안 하면 계약 교체 리팩토링). 클라는 계약에 **투명**해 서버 없이도 `MockEngine`으로 실측. 〔캐시 트랙 M1·M4 클라 소비측〕
   - **서버 트랙(별도 repo·TS/Worker — M3에서 분리)**: `devetym-proxy` 신규 구축 — D1 스키마·Worker read-through(D1→API·write-back·first-write-wins)·single-flight(DO)·validator write-게이트·rate-limit/남용/무효화·**INV-13 정규화-후-캐시쓰기**. 클라 M3와 병렬/후속, 자체 green 오라클. 〔캐시 트랙 M0서버·M1·M2·M3write·M7〕
@@ -120,9 +124,6 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 - **[Arch] AI 스트리밍 도입 검토** — 현재 단발 응답. 토큰 스트리밍(`Flow<String>`)은 이후 선택지(architecture §4.3).
 - **[Arch] 프롬프트 서버 이전 검토** — 현재 클라이언트(`commonMain`) 소유. 프롬프트 핫픽스 필요성 커지면 재검토([ADR-0006](docs/adr/0006-server-cache-boundary.md) 유보 항목).
 - **[UI] 디자인 후속** — 다크/라이트 폴리시·대비·플랫폼별 미세 조정.
-- **[UX] 상세 액션 어포던스 개선(M9 실기기 피드백 #1, 2026-07-13)** — `ActionText`(순수 텍스트)가 버튼으로 안 읽히고 "북마크·공유"가 문장처럼 이어짐(`DetailScreen.kt` FoundBody). **아이콘+라벨 톤 버튼(FilledTonal형 — 목업 A안, 4안 비교 후 사람 확정)** 으로 전환: 복사·북마크·공유 3개를 accent 틴트 배경 알약형(아이콘+라벨)으로, '오류 제보'는 하단에 회색 톤 분리.
-- **[UX] 스와이프 네비게이션(M9 실기기 피드백 #2, 2026-07-13)** — 자체 상태기반 네비(`AppRoot.kt`)라 iOS 시스템 백 제스처 부재. ① 뎁스0: 탭 4개(검색↔북마크↔히스토리↔설정) `HorizontalPager` 좌우 스와이프 전환, ② 뎁스1(상세): 왼쪽 엣지 스와이프-백 직접 구현. 상세 표시 중엔 페이저 스와이프 비활성(제스처 충돌 관리 포함 한 작업 단위).
-- **[UX] 로딩 문구 2개 교차(M9 실기기 피드백 #3, 2026-07-13)** — 상세 Loading(`DetailScreen.kt`) "어원을 찾고 있어요" 단일 고정 → 차분한 안내형 2문구("AI가 어원을 찾고 있어요" ↔ "잠시만 기다려 주세요") ~3초 간격 크로스페이드 교차.
 - **[Server] 프록시 토큰 usage 기록(M9 실기기 검증 파생, 2026-07-13)** — 현행 `devetym-proxy`는 Anthropic 응답의 `usage`를 버려 토큰 회계 불가(콘솔만 의존). 검색 1회당 usage(input/output)를 로깅(D1 캐시 도입 시 함께). *제안 상태 — 사람 확정 대기.*
 - ~~**[Arch] 크래시 리포팅 commonMain 단일 KMP 배선으로 통합 (WU-4 후속)**~~ — ✅ **완료(WU-4B, 2026-07-10)**. Approach A(Kotlin Cocoapods)는 `pod` CLI 부재로 스킵 → **Approach B(Sentry.xcframework 벤더링 + linkerOpts + Swift 백호환 라이브러리 경로)** 채택. commonMain 단일 `sentry-kotlin-multiplatform` 0.27.0(iOS Cocoa 8.58.2 정적 xcframework, 비커밋 gradle 다운로드) 배선 + **5축 green** + **Xcode 시뮬 빌드 SUCCEEDED**(iOS도 Sentry 실링크 — WU-11 SPM 절차 대체). seam 이원화 해소. 정본 상세 = [WU-4 원장 §5](docs/handoff/26-07-10-wu4-crash-reporting-ledger.md).
 - (아이디어 추가 시 여기로)
