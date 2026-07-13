@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>M9 스크린샷 캡션 밴드 지그 (D1 확정 — 경량 프레이밍)</title>
+<!--
+  용도: 스토어 스크린샷 후처리 — raw 캡처(1320×2868) 위에 캡션 텍스트 밴드를 얹어
+        같은 해상도(1320×2868)의 제출용 PNG를 만든다. 디바이스 베젤 없음(D1: 경량 캡션 밴드).
+
+  사용법 (헤드리스 Chrome — 재현 가능한 일괄 생성):
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+      --headless=new --disable-gpu --hide-scrollbars \
+      --window-size=1320,2868 \
+      --screenshot=OUT.png \
+      "file://$PWD/m9-screenshot-caption-jig.html?img=file:///abs/path/raw.png&caption=왜%20버그일까%3F%20어원부터%20알려줘요&theme=dark"
+
+  파라미터:
+    img     = raw 스크린샷 file:// URL (1320×2868)
+    caption = 밴드에 올릴 한 줄 카피 (URL 인코딩). 캡션 정본은 m9-screenshot-capture-handoff.md §1b — 과장 금지.
+    theme   = dark(기본) | light  — 앱 배경과 이어지는 밴드 색.
+
+  캡션이 없으면(파라미터 생략) 밴드 없이 raw를 그대로 1320×2868로 렌더한다.
+-->
+<style>
+  html,body { margin:0; padding:0; width:1320px; height:2868px; overflow:hidden; }
+  body { display:flex; flex-direction:column; font-family:"Apple SD Gothic Neo","Pretendard",sans-serif; }
+  body.dark  { background:#0A0A0A; }
+  body.light { background:#F5F5F3; }
+  #band { box-sizing:border-box; height:400px; flex:0 0 auto; display:flex; align-items:center; justify-content:center; padding:0 90px; text-align:center; }
+  body.dark  #band { color:#FFFFFF; }
+  body.light #band { color:#111111; }
+  #band span { font-size:88px; font-weight:800; line-height:1.28; letter-spacing:-1px; word-break:keep-all; }
+  body.dark  #band em  { color:#C8F542; font-style:normal; }
+  body.light #band em  { color:#2E5D3A; font-style:normal; }
+  #shot { flex:1 1 auto; display:flex; align-items:flex-start; justify-content:center; min-height:0; }
+  #shot img { height:100%; width:auto; border-radius:48px; }
+  body.noband #band { display:none; }
+  body.noband #shot img { border-radius:0; height:2868px; }
+</style>
+</head>
+<body class="dark">
+  <div id="band"><span id="cap"></span></div>
+  <div id="shot"><img id="img" alt=""></div>
+<script>
+  const q = new URLSearchParams(location.search);
+  const theme = q.get("theme") === "light" ? "light" : "dark";
+  document.body.className = theme;
+  const cap = q.get("caption") || "";
+  if (!cap) document.body.classList.add("noband");
+  // *단어* 를 accent 색으로 (선택 문법)
+  document.getElementById("cap").innerHTML =
+    cap.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\*([^*]+)\*/g,"<em>$1</em>");
+  document.getElementById("img").src = q.get("img") || "";
+</script>
+</body>
+</html>

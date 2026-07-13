@@ -37,6 +37,7 @@ Same order as the smoke script's flow. Aim for 5–8 shots (both stores cap at 8
 | #3 | 상세(어원·작명) | **"정의가 아니라 '이름의 이유'까지"** | 깊이 |
 | #4 | AI 생성 결과 | **"없는 용어는 AI가 그 자리에서"** | 커버리지 확장 |
 | #5/#6 | 북마크/검색 기록 | **"면접·복습용으로 모아두기"** | 타깃 유스케이스 |
+| 라이트 보조컷 | 상세(라이트) | **"라이트/다크, 눈이 편한 쪽으로"** | 폴리시(외관 3모드 — 캡처 세션 추가, 사실 기반) |
 
 첫 컷(온보딩 또는 검색 후크)이 첫인상이므로 가장 공들일 것. 다크 기본 + 라이트 1장 섞으면 완성도 인상↑.
 
@@ -96,8 +97,8 @@ Raw device screenshots are acceptable. If you want marketing frames (device beze
 
 ## 7. Definition of done
 
-- [ ] iOS 6.9"/6.7" set (5–8 shots), dark primary + a light alternate or two, clean status bar.
-- [ ] Android phone set (2–8 shots), 9:16, dark primary.
-- [ ] Play feature graphic 1024×500 + hi-res icon 512×512.
-- [ ] Store specs re-verified against current console requirements at capture time.
-- [ ] LAUNCH-CHECKLIST updated.
+- [x] iOS 6.9"/6.7" set (5–8 shots), dark primary + a light alternate or two, clean status bar. — **✅ 2026-07-13**: iPhone 16 Pro Max sim, 1320×2868, dark 9 + light 2 (`~/devetym-shots/ios/`), detail cut = `bug` (설명 후크와 정합). D1 caption-band framing via [caption jig](m9-screenshot-caption-jig.html) → framed 6 (`~/devetym-shots/ios/framed/`).
+- [ ] Android phone set (2–8 shots), 9:16, dark primary. — 별도 세션 잔여.
+- [ ] Play feature graphic 1024×500 + hi-res icon 512×512. — Android 트랙 잔여.
+- [x] Store specs re-verified against current console requirements at capture time. — 2026-07-13 웹 확인: 6.9" 필수(1320×2868 허용), 1~10장, iPad 미지원 시 불필요.
+- [x] LAUNCH-CHECKLIST updated. (iOS ✅ / Android 🟡)
