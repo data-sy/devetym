@@ -13,6 +13,14 @@ fun errorMessage(kind: ErrorKind): String = when (kind) {
 }
 
 /**
+ * 로딩 안내 문구 교차 (M9-후속 UX-3) — 단일 고정 문구가 길게 느껴진다는 실기기 피드백.
+ * 차분한 안내형 2문구를 ~3초 간격 크로스페이드로 순환. tick은 0부터 증가(음수 없음).
+ */
+val LOADING_PHRASES = listOf("AI가 어원을 찾고 있어요", "잠시만 기다려 주세요")
+
+fun loadingPhrase(tick: Int): String = LOADING_PHRASES[tick % LOADING_PHRASES.size]
+
+/**
  * 경과 diff 기반 상대시간 라벨 (M6 §3-6). 캘린더/타임존/DST 비의존 — `now - epochMillis`만 사용.
  * `<1분`="방금 전" / `<60분`="N분 전" / `<24시간`="N시간 전" / `<48시간`="어제" / 그이상="N일 전".
  */

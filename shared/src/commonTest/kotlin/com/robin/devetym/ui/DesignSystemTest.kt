@@ -81,6 +81,15 @@ class DesignSystemTest {
     }
 
     @Test
+    fun test_loadingPhrase_순환() {
+        // M9-후속 UX-3 — 2문구 tick 순환(모듈러, 경계 안전).
+        assertEquals("AI가 어원을 찾고 있어요", loadingPhrase(0))
+        assertEquals("잠시만 기다려 주세요", loadingPhrase(1))
+        assertEquals(loadingPhrase(0), loadingPhrase(2))
+        assertEquals(2, LOADING_PHRASES.size)
+    }
+
+    @Test
     fun test_tonalActionColor_스킴매핑() {
         // M9-후속 UX-1 — 다크=accent(라임), 라이트=brand(딥그린, accent는 틴트 위 AA 미달).
         assertEquals(DarkColors.accent, tonalActionColor(DarkColors))

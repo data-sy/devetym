@@ -1,5 +1,7 @@
 package com.robin.devetym.ui.screens
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +17,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,10 +38,13 @@ import com.robin.devetym.ui.components.CategoryBadge
 import com.robin.devetym.ui.components.PulsingDots
 import com.robin.devetym.ui.components.TONAL_CONTAINER_ALPHA
 import com.robin.devetym.ui.components.TonalPillButton
+import com.robin.devetym.ui.LOADING_PHRASES
 import com.robin.devetym.ui.errorMessage
 import com.robin.devetym.ui.isBookmarkedFor
+import com.robin.devetym.ui.loadingPhrase
 import com.robin.devetym.ui.theme.AppScheme
 import com.robin.devetym.ui.tonalActionColor
+import kotlinx.coroutines.delay
 
 /**
  * 상세 화면 (M6 §3-7·§3-8). **2-VM 시그니처 정본**: `bookmarkVm.bookmarks`에서 `isBookmarkedFor`로
@@ -96,8 +105,15 @@ fun DetailContent(
                 Text(keyword, style = type.codeHero, color = colors.accent,
                     modifier = Modifier.padding(bottom = 20.dp))
                 PulsingDots()
-                Text("어원을 찾고 있어요", style = type.bodySub, color = colors.textDim,
-                    modifier = Modifier.padding(top = 20.dp))
+                // M9-후속 UX-3: 고정 단일 문구 → 안내형 2문구 ~3초 크로스페이드 순환.
+                var phraseTick by remember { mutableStateOf(0) }
+                LaunchedEffect(Unit) {
+                    while (true) { delay(3_000); phraseTick += 1 }
+                }
+                Crossfade(phraseTick % LOADING_PHRASES.size, animationSpec = tween(600),
+                    modifier = Modifier.padding(top = 20.dp)) { i ->
+                    Text(loadingPhrase(i), style = type.bodySub, color = colors.textDim)
+                }
             }
 
             is DetailUiState.Result -> when (val r = state.result) {
