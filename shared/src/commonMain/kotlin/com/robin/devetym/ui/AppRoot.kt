@@ -1,10 +1,7 @@
 package com.robin.devetym.ui
 
 import com.robin.devetym.Constants
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.drag
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -17,16 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.isSystemInDarkTheme
 import kotlinx.coroutines.launch
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.robin.devetym.ui.platform.AppActions
@@ -85,112 +78,100 @@ fun isEdgeSwipeBack(startX: Float, totalDragX: Float, edgeWidth: Float, threshol
     startX <= edgeWidth && totalDragX > threshold
 
 /**
- * 앱 루트 (M6 §3-8) — 의존성-0 상태기반 네비(탭별 단일 push 스택 + 온보딩 게이트). navigation-compose
- * 네이티브 링크 리스크 회피(§7-1 안전 폴백). 온보딩·동의 영속은 M7/M8 seam.
+ * 앱 루트 (M6 §3-8 → M9-후속 셸 재설계 §2 재편) — 의존성-0 상태기반 네비. navigation-compose
+ * 네이티브 링크 리스크 회피(§7-1 안전 폴백)는 유지하되, 셸 계층을 정본화:
+ * `AppSurface`(배경·인셋 §2-B) ▸ 온보딩 게이트 ▸ Scaffold+페이저(뎁스0) ▸ `NavContainer`(push 스택 §2-A).
+ * 네비 상태 정본 = pagerState(탭) + `TabNavState`(탭별 백스택) — 종전 detailKeys·showLicenses 분산(§1-1) 폐지.
  */
 @Composable
 fun AppRoot(deps: AppDependencies) {
     // M8 §3-6 외관 배선: appearance.mode(0=시스템·1=라이트·2=다크)를 실제 테마로 반영(inert 제거).
-    // ⚠️ set→emit·재구성 전파의 실제 테마 전환은 실기기 천장(assembleDebug/link는 매핑 컴파일만 보증).
     val mode by deps.appearance.mode.collectAsStateWithLifecycle()
     val darkMode = resolveDarkMode(mode, isSystemInDarkTheme())
     AppTheme(dark = darkMode) {
-        var onboarded by rememberSaveable { mutableStateOf(deps.onboarding.completed) }   // M8 영속 게이트
-        if (!onboarded) {
-            OnboardingScreen(onComplete = { deps.onboarding.complete(); onboarded = true })
-            return@AppTheme
-        }
-        var showLicenses by rememberSaveable { mutableStateOf(false) }   // M8 DR-2: 라이선스 오버레이
-        if (showLicenses) {
-            LicensesScreen(onBack = { showLicenses = false })
-            return@AppTheme
-        }
-        // M9-후속 UX-2: 탭 상태 정본 = pagerState(자체 Saver로 영속). 뎁스0은 좌우 스와이프 전환.
-        val pagerState = rememberPagerState { Tab.entries.size }
-        val currentTab = Tab.entries[pagerState.currentPage]
-        val scope = rememberCoroutineScope()
-        // 탭별 상세 push 키워드(단일 레벨 — possibleTypo는 교체). null=탭 루트.
-        val detailKeys = remember { mutableStateMapOf<Tab, String?>() }
+        AppSurface {
+            var onboarded by rememberSaveable { mutableStateOf(deps.onboarding.completed) }   // M8 영속 게이트
+            if (!onboarded) {
+                // 온보딩은 네비 밖 게이트 유지(§2-A) — 단 AppSurface 안이라 배경·인셋 규율은 상속.
+                OnboardingScreen(onComplete = { deps.onboarding.complete(); onboarded = true })
+                return@AppSurface
+            }
+            // M9-후속 UX-2: 탭 상태 정본 = pagerState(자체 Saver로 영속). 뎁스0은 좌우 스와이프 전환.
+            val pagerState = rememberPagerState { Tab.entries.size }
+            val currentTab = Tab.entries[pagerState.currentPage]
+            val scope = rememberCoroutineScope()
+            var nav by remember { mutableStateOf(TabNavState()) }
 
-        Scaffold(
-            bottomBar = {
-                NavigationBar(containerColor = AppScheme.colors.surface) {
-                    Tab.entries.forEach { t ->
-                        NavigationBarItem(
-                            selected = currentTab == t,
-                            // 활성 탭 재탭 = 루트 pop(상세 닫기) — iOS 탭바 관례. M9 스모크 결함
-                            // (Found 상세 탈출 불가)의 보조 탈출구(주 탈출구는 DetailScreen 상시 back).
-                            onClick = {
-                                if (currentTab == t) detailKeys[t] = null
-                                else scope.launch { pagerState.animateScrollToPage(t.ordinal) }
-                            },
-                            icon = { Text(t.label, style = AppScheme.type.caption) },
-                        )
+            Scaffold(
+                bottomBar = {
+                    NavigationBar(containerColor = AppScheme.colors.surface) {
+                        Tab.entries.forEach { t ->
+                            NavigationBarItem(
+                                selected = currentTab == t,
+                                // 활성 탭 재탭 = 루트 pop — iOS 탭바 관례(M9 스모크 보조 탈출구).
+                                onClick = {
+                                    if (currentTab == t) nav = nav.popToRoot(t.ordinal)
+                                    else scope.launch { pagerState.animateScrollToPage(t.ordinal) }
+                                },
+                                icon = { Text(t.label, style = AppScheme.type.caption) },
+                            )
+                        }
                     }
-                }
-            },
-        ) { padding ->
-            HorizontalPager(
-                state = pagerState,
-                // UX-2 제스처 충돌 관리: 상세(뎁스1) 표시 중엔 페이저 스와이프 비활성 —
-                // 좌우 드래그는 엣지 스와이프-백 전용.
-                userScrollEnabled = detailKeys[currentTab] == null,
-                modifier = Modifier.fillMaxSize().padding(padding),
-            ) { page ->
-                val t = Tab.entries[page]
-                val detailKey = detailKeys[t]
-                val openDetail: (String) -> Unit = { detailKeys[t] = it }
-                val back: () -> Unit = { detailKeys[t] = null }
-                if (detailKey != null) {
-                    // UX-2 뎁스1: 왼쪽 엣지에서 시작한 우측 드래그가 임계를 넘으면 back.
-                    // 엣지 판정은 슬롭 통과 지점이 아니라 실제 다운 지점(awaitFirstDown) 기준 —
-                    // detectHorizontalDragGestures의 onDragStart는 슬롭만큼 밀려 엣지를 벗어난다.
-                    // 아무것도 consume하지 않아 자식(탭·verticalScroll)과 충돌 없음.
-                    Box(Modifier.fillMaxSize().pointerInput(t, detailKey) {
-                        val edge = EDGE_SWIPE_EDGE_DP.dp.toPx()
-                        val threshold = EDGE_SWIPE_THRESHOLD_DP.dp.toPx()
-                        awaitEachGesture {
-                            val down = awaitFirstDown(requireUnconsumed = false)
-                            var dragX = 0f
-                            drag(down.id) { change ->
-                                dragX += change.position.x - change.previousPosition.x
+                },
+            ) { padding ->
+                HorizontalPager(
+                    state = pagerState,
+                    // UX-2 제스처 충돌 관리: push 화면 표시 중엔 페이저 스와이프 비활성 —
+                    // 좌우 드래그는 엣지 스와이프-백(NavContainer) 전용.
+                    userScrollEnabled = nav.top(currentTab.ordinal) == null,
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                ) { page ->
+                    val t = Tab.entries[page]
+                    val openDetail: (String) -> Unit = { nav = nav.push(t.ordinal, Route.Detail(it)) }
+                    NavContainer(
+                        stack = nav.stack(t.ordinal),
+                        onBack = { nav = nav.pop(t.ordinal) },
+                        root = {
+                            when (t) {
+                                Tab.Search -> SearchScreen(deps.searchViewModel, openDetail)
+                                Tab.Bookmark -> BookmarkScreen(deps.bookmarkViewModel, openDetail)
+                                Tab.History -> HistoryScreen(deps.historyViewModel, deps.now(), openDetail)
+                                Tab.Settings -> {
+                                    // M9-후속 §2-F: ConsentStore seam 영속.
+                                    val consent by deps.consent.given.collectAsStateWithLifecycle()
+                                    SettingsScreen(
+                                        actions = deps.actions,
+                                        appearance = deps.appearance,
+                                        device = deps.device,
+                                        consentGiven = consent,
+                                        onConsentChange = deps.consent::set,
+                                        // M8 DR-2 in-app OFL 고지 — 이제 Settings 스택 push(§2-A).
+                                        onOpenLicenses = { nav = nav.push(t.ordinal, Route.Licenses) },
+                                    )
+                                }
                             }
-                            if (isEdgeSwipeBack(down.position.x, dragX, edge, threshold)) back()
-                        }
-                    }) {
-                        key(t, detailKey) {
-                            val detailVm = remember(t, detailKey) { deps.createDetailViewModel() }
-                            LaunchedEffect(detailKey) { detailVm.load(detailKey) }
-                            DetailScreen(
-                                keyword = detailKey,
-                                vm = detailVm,
-                                bookmarkVm = deps.bookmarkViewModel,
-                                onBack = back,
-                                onSelectSuggestion = { detailKeys[t] = it },
-                                onShare = deps.actions::share,
-                                onCopy = deps.actions::copyToClipboard,
-                                onReport = { deps.actions.sendMail(Constants.supportEmail, "DevEtym 오류 제보: $it", "") },
-                            )
-                        }
-                    }
-                } else {
-                    when (t) {
-                        Tab.Search -> SearchScreen(deps.searchViewModel, openDetail)
-                        Tab.Bookmark -> BookmarkScreen(deps.bookmarkViewModel, openDetail)
-                        Tab.History -> HistoryScreen(deps.historyViewModel, deps.now(), openDetail)
-                        Tab.Settings -> {
-                            // M9-후속 §2-F: rememberSaveable(프로세스 생존만) → ConsentStore seam 영속.
-                            val consent by deps.consent.given.collectAsStateWithLifecycle()
-                            SettingsScreen(
-                                actions = deps.actions,
-                                appearance = deps.appearance,
-                                device = deps.device,
-                                consentGiven = consent,
-                                onConsentChange = deps.consent::set,
-                                onOpenLicenses = { showLicenses = true },   // M8: in-app OFL 고지
-                            )
-                        }
-                    }
+                        },
+                        screen = { route ->
+                            when (route) {
+                                is Route.Detail -> key(t, route.keyword) {
+                                    val detailVm = remember(t, route.keyword) { deps.createDetailViewModel() }
+                                    LaunchedEffect(route.keyword) { detailVm.load(route.keyword) }
+                                    DetailScreen(
+                                        keyword = route.keyword,
+                                        vm = detailVm,
+                                        bookmarkVm = deps.bookmarkViewModel,
+                                        onBack = { nav = nav.pop(t.ordinal) },
+                                        // possibleTypo 제안 수락 = top 교체(§6 — 뎁스 유지).
+                                        onSelectSuggestion = { nav = nav.replaceTop(t.ordinal, Route.Detail(it)) },
+                                        onShare = deps.actions::share,
+                                        onCopy = deps.actions::copyToClipboard,
+                                        onReport = { deps.actions.sendMail(Constants.supportEmail, "DevEtym 오류 제보: $it", "") },
+                                    )
+                                }
+                                Route.Licenses -> LicensesScreen()
+                            }
+                        },
+                    )
                 }
             }
         }

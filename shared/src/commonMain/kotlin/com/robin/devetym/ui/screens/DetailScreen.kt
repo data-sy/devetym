@@ -92,11 +92,9 @@ fun DetailContent(
     val colors = AppScheme.colors
     val type = AppScheme.type
     val dim = AppScheme.dim
+    // back 어포던스는 NavContainer 고정 top bar 소유(셸 재설계 §2-A) — 인라인 "← 뒤로" 삭제.
+    // onBack은 NotDevTerm·PossibleTypo·Error 본문 액션("돌아가기")에만 남는다.
     Column(Modifier.fillMaxSize().padding(horizontal = dim.screenPadding)) {
-        // M9 스모크 결함 수정: 상시 back — Found·Loading은 이 어포던스가 유일한 탈출구
-        // (iOS는 시스템 백 제스처 없음, 상태기반 네비). LicensesScreen "← 뒤로"와 동일 패턴.
-        Text("← 뒤로", style = type.codeAction, color = colors.accent,
-            modifier = Modifier.clickable(onClick = onBack).padding(vertical = 16.dp))
         when (state) {
             is DetailUiState.Loading -> Column(
                 Modifier.fillMaxSize(),
