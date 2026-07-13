@@ -39,6 +39,7 @@ import com.robin.devetym.ui.components.PulsingDots
 import com.robin.devetym.ui.components.TONAL_CONTAINER_ALPHA
 import com.robin.devetym.ui.components.TonalPillButton
 import com.robin.devetym.ui.LOADING_PHRASES
+import com.robin.devetym.ui.detailCopyPayload
 import com.robin.devetym.ui.errorMessage
 import com.robin.devetym.ui.isBookmarkedFor
 import com.robin.devetym.ui.loadingPhrase
@@ -173,7 +174,8 @@ private fun FoundBody(
         val tonalContainer = colors.accent.copy(alpha = TONAL_CONTAINER_ALPHA)
         val tonalContent = tonalActionColor(colors)
         Row(Modifier.padding(top = dim.sectionGap), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            TonalPillButton("❏", "복사", tonalContainer, tonalContent) { onCopy(entry.etymology) }
+            // M9-후속 §2-E(UX-4): 어원 단일 필드 → 전체 페이로드(키워드+어원+왜 이 이름인가, 순수 함수).
+            TonalPillButton("❏", "복사", tonalContainer, tonalContent) { onCopy(detailCopyPayload(entry)) }
             TonalPillButton(
                 if (isBookmarked) "★" else "☆", if (isBookmarked) "북마크됨" else "북마크",
                 tonalContainer, tonalContent, onToggleBookmark,

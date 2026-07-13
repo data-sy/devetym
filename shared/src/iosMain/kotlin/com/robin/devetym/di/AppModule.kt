@@ -5,6 +5,7 @@ import com.robin.devetym.data.local.createDatabase
 import com.robin.devetym.db.DevEtymDatabase
 import com.robin.devetym.ui.platform.AppActions
 import com.robin.devetym.ui.platform.AppearanceStore
+import com.robin.devetym.ui.platform.ConsentStore
 import com.robin.devetym.ui.platform.DeviceInfo
 import com.robin.devetym.ui.platform.OnboardingStore
 import kotlinx.coroutines.runBlocking
@@ -26,6 +27,7 @@ fun iosPlatformModule(): Module = module {
     single<AppActions> { IosAppActions() }
     single<AppearanceStore> { UserDefaultsAppearanceStore() }
     single<OnboardingStore> { UserDefaultsOnboardingStore() }
+    single<ConsentStore> { UserDefaultsConsentStore() }   // M9-후속 §2-F
     single<DeviceInfo> { IosDeviceInfo() }
 }
 

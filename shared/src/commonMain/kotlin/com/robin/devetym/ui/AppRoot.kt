@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.robin.devetym.ui.platform.AppActions
 import com.robin.devetym.ui.platform.AppearanceStore
+import com.robin.devetym.ui.platform.ConsentStore
 import com.robin.devetym.ui.platform.DeviceInfo
 import com.robin.devetym.ui.platform.OnboardingStore
 import com.robin.devetym.ui.screens.LicensesScreen
@@ -56,6 +57,7 @@ interface AppDependencies {
     val appearance: AppearanceStore
     val device: DeviceInfo
     val onboarding: OnboardingStore
+    val consent: ConsentStore
     fun now(): Long
 }
 
@@ -177,13 +179,14 @@ fun AppRoot(deps: AppDependencies) {
                         Tab.Bookmark -> BookmarkScreen(deps.bookmarkViewModel, openDetail)
                         Tab.History -> HistoryScreen(deps.historyViewModel, deps.now(), openDetail)
                         Tab.Settings -> {
-                            var consent by rememberSaveable { mutableStateOf(true) }
+                            // M9-후속 §2-F: rememberSaveable(프로세스 생존만) → ConsentStore seam 영속.
+                            val consent by deps.consent.given.collectAsStateWithLifecycle()
                             SettingsScreen(
                                 actions = deps.actions,
                                 appearance = deps.appearance,
                                 device = deps.device,
                                 consentGiven = consent,
-                                onConsentChange = { consent = it },
+                                onConsentChange = deps.consent::set,
                                 onOpenLicenses = { showLicenses = true },   // M8: in-app OFL 고지
                             )
                         }

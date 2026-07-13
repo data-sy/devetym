@@ -81,7 +81,8 @@ fun SettingsContent(
                     modifier = Modifier.weight(1f))
                 Switch(checked = consentGiven, onCheckedChange = onConsentChange)
             }
-            ActionRow("개인정보 처리방침") { actions.openUrl("https://devetym.app/privacy") }
+            // M9-후속 §2-D: stale 리터럴(미보유 도메인) → Constants 정본(WU-1 라이브, 스토어 라벨과 단일 소스).
+            ActionRow("개인정보 처리방침") { actions.openUrl(Constants.privacyPolicyUrl) }
         }
         Section("법적 고지") {
             ActionRow("오픈소스 라이선스", onOpenLicenses)

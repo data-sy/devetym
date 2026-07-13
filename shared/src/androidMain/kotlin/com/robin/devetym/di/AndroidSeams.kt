@@ -1,12 +1,15 @@
 package com.robin.devetym.di
 
+import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import com.robin.devetym.ui.platform.AppActions
 import com.robin.devetym.ui.platform.AppearanceStore
+import com.robin.devetym.ui.platform.ConsentStore
 import com.robin.devetym.ui.platform.DeviceInfo
 import com.robin.devetym.ui.platform.OnboardingStore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +24,14 @@ import java.util.UUID
 class AndroidAppActions(private val context: Context) : AppActions {
     override fun sendMail(to: String, subject: String, body: String) {
         val uri = Uri.parse("mailto:$to?subject=${Uri.encode(subject)}&body=${Uri.encode(body)}")
-        start(Intent(Intent.ACTION_SENDTO, uri))
+        try {
+            start(Intent(Intent.ACTION_SENDTO, uri))
+        } catch (_: ActivityNotFoundException) {
+            // M9-후속 §2-D 메일 폴백 — iOS와 동일 정책(주소 복사+안내). 설계는 resolveActivity를 말하지만
+            // API 30+ 패키지 가시성 제한으로 <queries> 선언 없인 거짓 부재를 반환하므로 예외 캐치가 정확하다.
+            copyToClipboard(to)
+            Toast.makeText(context, "메일 앱을 열 수 없어 주소를 복사했어요\n$to", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun share(text: String) {
@@ -53,6 +63,17 @@ class PrefsAppearanceStore(context: Context) : AppearanceStore {
     override fun set(mode: Int) {
         prefs.edit().putInt("appearance_mode", mode).apply()
         _mode.value = mode
+    }
+}
+
+/** 동의 토글 영속 (M9-후속 셸 재설계 §2-F) — `PrefsAppearanceStore`와 동형. 부재 시 true(현행 UI 기본). */
+class PrefsConsentStore(context: Context) : ConsentStore {
+    private val prefs = prefs(context)
+    private val _given = MutableStateFlow(prefs.getBoolean("consent_given", true))
+    override val given: StateFlow<Boolean> = _given.asStateFlow()
+    override fun set(value: Boolean) {
+        prefs.edit().putBoolean("consent_given", value).apply()
+        _given.value = value
     }
 }
 

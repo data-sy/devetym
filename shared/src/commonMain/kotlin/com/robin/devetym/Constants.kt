@@ -27,4 +27,10 @@ object Constants {
      * 인앱 하드코딩이 개인 주소로 드리프트해 공개 문서와 어긋났던 것을 한 곳으로 중앙화(WU-6).
      */
     const val supportEmail = "oddmuffinstudio@gmail.com"
+
+    /**
+     * 개인정보 처리방침 URL (M9-후속 셸 재설계 §2-D) — WU-1 라이브 페이지가 정본. 스토어 라벨과 반드시 동일.
+     * 종전 `SettingsScreen` 하드코딩(`devetym.app/privacy` — 미보유 도메인 플레이스홀더) stale을 중앙화로 대체.
+     */
+    const val privacyPolicyUrl = "https://data-sy.github.io/devetym/privacy-policy"
 }

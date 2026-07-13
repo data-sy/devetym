@@ -7,6 +7,7 @@ import com.robin.devetym.ui.HistoryViewModel
 import com.robin.devetym.ui.SearchViewModel
 import com.robin.devetym.ui.platform.AppActions
 import com.robin.devetym.ui.platform.AppearanceStore
+import com.robin.devetym.ui.platform.ConsentStore
 import com.robin.devetym.ui.platform.DeviceInfo
 import com.robin.devetym.ui.platform.OnboardingStore
 import org.koin.core.Koin
@@ -21,5 +22,6 @@ class KoinAppDependencies(private val koin: Koin) : AppDependencies {
     override val appearance: AppearanceStore get() = koin.get()
     override val device: DeviceInfo get() = koin.get()
     override val onboarding: OnboardingStore get() = koin.get()
+    override val consent: ConsentStore get() = koin.get()   // M9-후속 §2-F
     override fun now(): Long = epochMillis()
 }

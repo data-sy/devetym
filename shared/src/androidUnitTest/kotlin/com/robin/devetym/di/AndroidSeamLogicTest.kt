@@ -65,4 +65,14 @@ class AndroidSeamLogicTest {
         // 새 인스턴스가 영속값을 읽는지(SharedPreferences 왕복)
         assertEquals(1, PrefsAppearanceStore(app).mode.value, "SharedPreferences 영속 왕복 실패")
     }
+
+    // M9-후속 §2-F — 동의 토글 영속. 키 부재 기본 true(현행 UI 기본) + set→emit·SharedPreferences 왕복.
+    @Test
+    fun test_prefsConsentStore_기본true_set_persist() {
+        assertEquals(true, PrefsConsentStore(app).given.value, "키부재 첫 실행 동의 기본이 true 아님")
+        val store = PrefsConsentStore(app)
+        store.set(false)
+        assertEquals(false, store.given.value, "PrefsConsentStore set→emit 불일치")
+        assertEquals(false, PrefsConsentStore(app).given.value, "SharedPreferences 영속 왕복 실패")
+    }
 }
