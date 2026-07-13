@@ -39,12 +39,13 @@ xcrun simctl io "$SIM" screenshot shot.png     # 임의 시점 캡처
 - ✅ **외관 3모드 렌더** — `appearance_mode=1` 주입 → **라이트 테마 실렌더**(흰 배경·다크 텍스트), `=2` → 다크. §3-3(ii) `resolveDarkMode`가 실 iOS 런타임서 시각 렌더로 확인
 - ✅ **실 디스크 SQLite + 반응형 쿼리→UI** — 컨테이너 DB에 searchHistory 3건 주입 → "최근 검색" FlowChip(mutex·daemon·kernel) **searchedAt DESC 렌더**. 실 `NativeSqliteDriver` 디스크 읽기 + `.asFlow()`→StateFlow→Compose 파이프라인 실동작(**B1 디스크 잔여 시뮬 폐쇄**)
 
-**☐ 입력 주입 필요(탭/타이핑) — 사람이 라이브 시뮬서 탭 or idb/XCUITest 도입 시 자동화**(⚠️ Xcode 26 신규 sim은 idb 호환 미확인):
-- ☐ 검색 타이핑: 번들 히트(`mutex`)·alias(`Arne Andersson tree`→`aa-tree`)·미스→AI 경로 — ※ 로직은 199 유닛테스트가 이미 커버, 시뮬은 UI 배선 확인
-- ☐ 상세→북마크 토글→북마크 탭 즉시 반영→재기동 유지(주입한 북마크 term 1건은 DB에 존재 — 북마크 탭 진입만 탭 필요)
-- ☐ 히스토리 탭·삭제 · 설정 탭 외관 토글 실조작 · 라이선스 실스크롤
-- ☐ 아이콘: 시뮬 홈스크린(스프링보드) 렌더 — [아이콘 시트](m9-icon-render-sheet.html) 대조
-- ☐ VoiceOver: 시뮬 Accessibility Inspector([접근성 대본](m9-accessibility-audit-script.md) B)
+**✅ 입력 주입분 완주(2026-07-13, CGEvent 자작 tap/swipe 도구 — cliclick은 mouse-up 유실로 폐기). 원장 = [시뮬 스모크 리포트](m9-ios-sim-smoke-report.md):**
+- ✅ 검색 타이핑: 번들 히트(`mutex`)·alias(`Arne Andersson tree`→`aa-tree`)·미스→AI 실 프록시(`zzqxv`→NotDevTerm)
+- ✅ 상세→북마크 토글→북마크 탭 즉시 반영→재기동 유지 + 어원 복사→`simctl pbpaste` 클립보드 seam actual
+- ✅ 히스토리 탭·개별 삭제·실검색 타임스탬프 · 설정 외관 라이트/다크 실조작 · 라이선스 실스크롤
+- ✅ 아이콘: 홈스크린 라이트/다크 렌더(이번에 AppIcon·LaunchLogo·brand 이관 배선 — 리포트 §1)
+- ☐ VoiceOver: 시뮬 Accessibility Inspector([접근성 대본](m9-accessibility-audit-script.md) B) — 사람 상호작용 필요, Tier 2와 함께
+- 🐛 **발견 결함(수정 대기)**: iOS Found 상세 탈출 불가 — ROADMAP M9 등재, 리포트 §3
 
 ### Android 에뮬레이터 — ✅ Tier 1 완주 (2026-07-05, adb 자율 주행)
 > **✅ 셋업·주행 완료** — `system-images;android-36;google_apis;arm64-v8a` AVD 부팅 후 adb `input tap/text`로 전 플로우 자율 주행.

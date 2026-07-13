@@ -22,6 +22,9 @@ targets:
         INFOPLIST_FILE: iosApp/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: com.robin.devetym
         SWIFT_VERSION: "5.0"
+        # M9 — 원본(dev-etymology) Assets.xcassets 이관분: AppIcon(라이트/다크 단일 1024)·
+        # LaunchLogo·Theme/brand(#2E5D3A, UILaunchScreen 배경). WU-6 원장 §3 NEEDS-MIGRATION 해소.
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         # M9 WU-4 — 크래시 DSN 주입(Info.plist `SentryDsn`=$(SENTRY_DSN)). 빈값이면 CrashReporter no-op.
         # 시크릿 미커밋: 배포 시 xcconfig/CI 시크릿으로 override(예: xcodebuild SENTRY_DSN=...).
         SENTRY_DSN: ""
