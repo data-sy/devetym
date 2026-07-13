@@ -9,7 +9,7 @@
 | 필드 | 값(초안) |
 |---|---|
 | 앱 이름 | 개발 어원 사전 (DevEtym) |
-| 개인정보 처리방침 URL | `site/` 배포 주소 (GitHub Pages `/privacy-policy/`) — **배포 후 실 URL로 치환** |
+| 개인정보 처리방침 URL | https://data-sy.github.io/devetym/privacy-policy (약관: https://data-sy.github.io/devetym/terms-of-service) — 2026-07-13 Pages 배포·라이브 |
 | 지원 이메일 | oddmuffinstudio@gmail.com (방침 §8) |
 | 카테고리 | 교육 / 개발자 도구 (Education / Developer Tools) |
 | 대상 연령 | 만 14세 이상 (방침 §6 — 아동 대상 아님) |
@@ -64,7 +64,7 @@
 ## 4. ⚠️ 실 제출 전 확인 (사람)
 - ☑ **블로커 #1 해소(2026-07-06)**: 방침·라벨을 "현재 미수집(애널리틱스 없음)"으로 정합. Firebase는 도입 시 방침 §4 절차로 재갱신 후 라벨 갱신.
 - ☑ **크래시 리포팅 도입(2026-07-10 · WU-4)**: 방침 §2-2 신설 + 라벨에 크래시 진단 반영. ☐ 실 제출 시 Play 「데이터 보안」에 **크래시 로그** 체크·App Store 「Diagnostics/Crash Data」 체크 누락 없나 확인. ☐ 배포 빌드에 실 DSN 주입(Android=`-PSENTRY_DSN`/CI 시크릿, iOS=Info.plist `SentryDsn` 빌드세팅/xcconfig·CI). ☐ iOS 크래시 배선은 WU-4B 단일 KMP로 완료(Xcode 빌드 검증) — 실 DSN 런타임 도달만 실기기 스모크서 확인 후 라벨 확정.
-- ☐ 방침 배포 URL 확정 → 위 §1·앱 내 링크 일치 (블로커 #2 — GitHub Pages 배포)
+- ☑ **방침 배포 URL 확정(2026-07-13 · 블로커 #2 해소)**: GitHub Pages 라이브 → 위 §1 반영(privacy-policy·terms-of-service, 전부 200). ☐ 앱 내 링크(WU-6 잔여 인앱 방침 URL)와 최종 일치 확인.
 - ☐ 스토어 라벨 입력 시 "검색 키워드 서버 전송"을 각 콘솔 문항에 맞게 분류(App Functionality 목적 강조)
 - ☐ 스토어별 설명 글자수 제한 재확인
 - ☐ 스크린샷·프로모 자산(별도 핸드오프 — [m9-screenshot-capture-handoff](m9-screenshot-capture-handoff.md))

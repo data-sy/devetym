@@ -27,7 +27,7 @@
 These are the items that can actually stop or misrepresent the launch. Everything else is mechanical.
 
 1. ✅ **Privacy policy ↔ implementation mismatch — RESOLVED (2026-07-06).** Decision: reconcile to "**does not currently collect**" (Firebase-later). [`site/privacy-policy.md`](../../site/privacy-policy.md) rewritten: no analytics collected; on-device-only data; the only outbound data is the search keyword + a random rate-limit device id sent for the AI-fallback feature (honestly disclosed). Store labels updated to match ([store-metadata §3–4](m9-store-metadata-draft.md)). ⚠️ Still recommend legal review before external release.
-2. 🚫 **Privacy policy not deployed → no public URL.** Both stores require a live URL. `site/` is a Jekyll/GitHub-Pages source but not published. Every metadata field that references the policy URL is a placeholder until this lands. `[H]` (GitHub Pages enable).
+2. ✅ **Privacy policy deployed → live public URL — RESOLVED (2026-07-13).** Repo flipped **public** (secret sweep clean) → PR #10 merged → GitHub Pages enabled (Actions source) → policy/ToS live (all 200): <https://data-sy.github.io/devetym/privacy-policy>, <https://data-sy.github.io/devetym/terms-of-service>, index <https://data-sy.github.io/devetym/>. URL reflected in [store-metadata §1](m9-store-metadata-draft.md). ☐ remaining: align in-app policy link (WU-6 residual) before submit.
 3. ✅ **Terms of Service — drafted (2026-07-06).** [`site/terms-of-service.md`](../../site/terms-of-service.md), incl. AI-generated-content disclaimer + acceptable-use (rate limits). ⚠️ Legal review recommended before publish.
 4. 🟡 **Store screenshots not produced.** Full capture recipe handed off: [m9-screenshot-capture-handoff](m9-screenshot-capture-handoff.md) (own session — live sim/emu, per-store sizes). Still blocks store listing until executed.
 5. 🟡 **Signing not wired.** `androidApp/build.gradle.kts` release buildType has no `signingConfig`. Guide exists ([signing-upload-guide](m9-signing-upload-guide.md)); keystore creation is `[H]` (secret key).
@@ -80,7 +80,7 @@ These are the items that can actually stop or misrepresent the launch. Everythin
 ## 5. ASO & Marketing
 
 - 🟡 `[AI→H]` **Keyword optimization (title / description).** Draft keyword set exists ([store-metadata §2](m9-store-metadata-draft.md)). Not tuned against store search data.
-- 🟡 `[AI]` **Landing page / website.** Built at [`site/index.md`](../../site/index.md) — features, platforms, privacy summary, policy/ToS/repo links. Not yet hosted (same GitHub Pages enable as Blocker #2).
+- ✅ `[AI]` **Landing page / website.** Built at [`site/index.md`](../../site/index.md) — features, platforms, privacy summary, policy/ToS/repo links. **Hosted live (2026-07-13)** at <https://data-sy.github.io/devetym/> (GitHub Pages, Blocker #2 resolved).
 - ⬜ `[H]` **Launch announcement channels** (SNS / community / email). None prepared.
 - ⬜ `[H]` **Beta test (TestFlight / internal / closed).** Not run.
 - ⬜ `[H]` **Early review / rating strategy.** None.
