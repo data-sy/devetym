@@ -5,7 +5,7 @@
 > **What this is NOT.** The milestone status source of truth. That stays in [`../../ROADMAP.md`](../../ROADMAP.md) (M9). When a status here disagrees with ROADMAP, **ROADMAP wins** and this file is the stale one — fix it here.
 >
 > **App:** 개발 어원 사전 (DevEtym) · KMP/Compose Multiplatform, single codebase for **Android + iOS**.
-> **IDs:** appId/bundleId `com.robin.devetym` · Android 8.0+ (API 26) · iOS 16+ · `versionName=0.1.0`, `versionCode=1`.
+> **IDs:** appId/bundleId `com.oddmuffin.devetym` · Android 8.0+ (API 26) · iOS 16+ · `versionName=0.1.0`, `versionCode=1`.
 > **Last synced to repo state:** 2026-07-13.
 >
 > **🧭 Launch sequence (decided 2026-07-13).** Critical path **A → (B·C·D parallel) → E·F**: **A** flip repo public (secret sweep first, irreversible; upstream of everything) → **B** deploy Pages (policy URL, WU-1) · **C** real-device smoke + a11y audit (WU-11) · **D** capture screenshots → **E iOS store submit FIRST** (dev account paid, prior launch experience, no cohort gate → review直行) · **F Android LATER** (closed-testing gate: 20 testers × 14 days). **iOS and Android ship as separate todos** (WU-12a / WU-12b) — different store gates. Source of truth: ROADMAP M9 "출시 시퀀스 확정". **Current (2026-07-13 night): A·B·C done → next = D screenshots, then E (iOS submit) / F (Android closed-testing kickoff).**
