@@ -15,8 +15,10 @@ D1~D9 결정 세션의 4인 패널은 **판단**용이었고 전건 확정됐다
 
 - **A~D 완료**: public 전환 · Pages 방침 URL 라이브 · 실기기 사인오프 · **iOS 스크린샷 캡처+프레이밍 완료**.
 - **D1~D9 결정 전건 확정** — 콘솔에 넣을 값이 전부 준비됨(아래 §2).
-- 작업 브랜치 `feat/m9-store-submission`(main 위 스택). **제출 아카이브는 main 기준 빌드**.
-- 시뮬 검증 환경 보존 중(teardown 금지 — [원장](../release/m9-verification-teardown-ledger.md)).
+- **스토어 식별자 교체 완료(2026-07-13 밤)**: 공개 ID(iOS 번들 ID·Android applicationId) = **`com.oddmuffin.devetym`**, 코드 네임스페이스·Kotlin 패키지는 `com.robin.devetym` 유지(이원 설계 — AGP 공식 지원). 독립 블라인드 감사 2회 PASS(APK badging·showBuildSettings·xcodegen 재생성 실측). prd.md까지 사용자 승인으로 갱신 완료.
+- **수출 규정(b5) 완료**: Info.plist `ITSAppUsesNonExemptEncryption=false` — HTTPS만 사용(면제), 업로드 후 암호화 문답 생략.
+- 작업 브랜치 `feat/m9-store-submission`(main 위 스택). **⚠️ "제출 아카이브는 main 기준 빌드" 전제 갱신**: 식별자·수출규정 커밋(33520ea·c1b037f)이 feat에 얹혀 있어 **아카이브 전 feat→main 병합 필수**(push=사람 지시). 병합 전 main을 빌드하면 옛 식별자로 나간다.
+- 시뮬 검증 환경 보존 중(teardown 금지 — [원장](../release/m9-verification-teardown-ledger.md)). 시뮬·실기기의 기존 설치본은 옛 ID(`com.robin.devetym`) — 새 ID는 별개 앱으로 설치되므로 다음 스모크 전 옛 앱 `simctl uninstall` 권장.
 
 ## 2. 콘솔 입력물 (전부 확정 — 복붙 가능)
 
@@ -33,11 +35,12 @@ D1~D9 결정 세션의 4인 패널은 **판단**용이었고 전건 확정됐다
 | 연령 등급 questionnaire | **정직 응답**(무검수 AI 생성 있음 + 도메인 제한·일일 한도·제보 경로) → 산출 등급 수용(13+ 예상). 신 체계 4+/9+/13+/16+/18+ | D7 |
 | 프리뷰 영상 | 없음(스킵) | D8 |
 | 지원 이메일·방침 URL | oddmuffinstudio@gmail.com · https://data-sy.github.io/devetym/privacy-policy | 라이브 확인됨 |
+| 번들 ID · SKU | 코드 정본(project.yml·pbxproj·build.gradle.kts) | **`com.oddmuffin.devetym`**(07-13 교체, 구 com.robin.devetym) · SKU 제안 `devetym` |
 
 ## 3. 실행 순서 (대시보드 섹션 2 → 4 → 5)
 
-1. **콘솔 메타 입력 `[사람]`** — App Store Connect 앱 레코드 생성(번들 ID 확인) → §2 표의 값 입력. AI는 화면별 입력값을 옆에서 대준다.
-2. **빌드·서명 `[사람+AI]`** — [서명·업로드 가이드](../release/m9-signing-upload-guide.md) 절차. 체크: ① **main 기준** 빌드 ② iOS appiconset Xcode 확정(자산 이관됨 — 빌드에서 최종 확인) ③ **실 Sentry DSN 주입**(Info.plist `SentryDsn` — [메타 초안 §4](../release/m9-store-metadata-draft.md) 체크) ④ 버전 0.1.0 / 빌드 번호 ⑤ 아카이브 → 업로드.
+1. **콘솔 메타 입력 `[사람]`** — ⓪ 번들 ID가 신규라 developer portal Identifiers에 App ID `com.oddmuffin.devetym` 등록(Explicit, Capabilities 기본값 — 드롭다운에 없을 때) → App Store Connect 앱 레코드 생성(iOS·한국어·SKU `devetym`) → §2 표의 값 입력. AI는 화면별 입력값을 옆에서 대준다.
+2. **빌드·서명 `[사람+AI]`** — [서명·업로드 가이드](../release/m9-signing-upload-guide.md) 절차. 체크: ⓪ **feat→main 병합**(식별자·수출규정 커밋 — push=사람) ① **main 기준** 빌드 ② iOS appiconset Xcode 확정(자산 이관됨 — 빌드에서 최종 확인) ③ **실 Sentry DSN 주입**(Info.plist `SentryDsn` — [메타 초안 §4](../release/m9-store-metadata-draft.md) 체크) ④ 버전 0.1.0 / 빌드 번호 ⑤ 아카이브 → 업로드(수출 규정 문답은 Info.plist 키로 생략됨).
 3. **제출 전 최종 대조 `[AI]`** — 라벨↔방침↔설명 3자 정합 재확인(§2 표), 심사 노트 붙여넣기 확인(리안).
 4. **심사 제출 `[사람 지시로만]`** → 승인 후 **수동 게시 버튼도 사람** → 게시 시점에 `v0.1.0` 태그(핫픽스 런북 전제).
 5. **리젝 시** — 리안 리드로 사유 분석 → 대응은 결정 로그에 추기.

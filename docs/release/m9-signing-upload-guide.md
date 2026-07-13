@@ -63,8 +63,7 @@ jarsigner -verify -verbose -certs androidApp/build/outputs/bundle/release/androi
 
 > iOS 서명·아카이브·appiconset은 **Xcode 빌드**(축 밖, `[사람]`). SKIE 프레임워크는 링크 green(4축) — 앱 셸/서명은 Xcode.
 
-1. **appiconset**: `iosApp/.../Assets.xcassets/AppIcon.appiconset`에 상속 PNG 배치 확인(현재 부재 → 생성 필요).
-   [아이콘 렌더 시트](m9-icon-render-sheet.html) §4로 배치 전 모양 컨펌.
+1. **appiconset**: ✅ 배치 완료(2026-07-13 이관 — 라이트/다크 1024 단일 사이즈, 시뮬 홈스크린 렌더 확인). 빌드에서 최종 확인만.
 2. **서명**: Xcode → Signing & Capabilities → Team 선택 → 자동 서명(Automatically manage signing) 또는 수동 프로비저닝.
 3. **버전**: `CFBundleShortVersionString`(=0.1.0)·`CFBundleVersion`(빌드번호) 설정.
 4. **아카이브**: Xcode → Product → Archive → Distribute App → App Store Connect 업로드.
