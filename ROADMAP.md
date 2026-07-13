@@ -88,10 +88,6 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 각 마일스톤의 🔗 항목이 그 단계에 빌트인되는 캐시 범위다. **락(안 지키면 나중 리팩토링) 지점은 ⚠️로 표시** — 처음부터 그렇게 짓는다.
 
-- **M9-후속 · 실기기 피드백 UX 3건 (출시 전 착수, 2026-07-13 방향 확정)** — M9 아이폰 13 mini 실기기 테스트 피드백. 새 세션 착수 대상(순서 무관, 각각 독립 작업 단위).
-  - **[UX] 상세 액션 어포던스 개선** — `ActionText`(순수 텍스트)가 버튼으로 안 읽히고 "북마크·공유"가 문장처럼 이어짐(`DetailScreen.kt` FoundBody). **아이콘+라벨 톤 버튼(FilledTonal형 — 목업 A안, 4안 비교 후 사람 확정)** 으로 전환: 복사·북마크·공유 3개를 accent 틴트 배경 알약형(아이콘+라벨)으로, '오류 제보'는 하단에 회색 톤 분리.
-  - **[UX] 스와이프 네비게이션** — 자체 상태기반 네비(`AppRoot.kt`)라 iOS 시스템 백 제스처 부재. ① 뎁스0: 탭 4개(검색↔북마크↔히스토리↔설정) `HorizontalPager` 좌우 스와이프 전환, ② 뎁스1(상세): 왼쪽 엣지 스와이프-백 직접 구현. 상세 표시 중엔 페이저 스와이프 비활성(제스처 충돌 관리 포함 한 작업 단위).
-  - **[UX] 로딩 문구 2개 교차** — 상세 Loading(`DetailScreen.kt`) "어원을 찾고 있어요" 단일 고정 → 차분한 안내형 2문구("AI가 어원을 찾고 있어요" ↔ "잠시만 기다려 주세요") ~3초 간격 크로스페이드 교차.
 - **M3 · 네트워킹 + 번들 로더 (클라측)** — Ktor 클라이언트·Claude 요청/응답(tool_use 3분기)·`X-Device-Id`·429 + `BundleDbSource`. **스코핑 판정(2026-07-05): 클라측만**(슬라이스 [§0](docs/specs/m3-networking-draft.md)). 서버는 아래 별도 트랙.
   - 🔗 **캐시 빌트인**: ⚠️ **클라를 read-through 프록시 계약에 맞춰 작성**(Claude 직접 호출 아님 — 안 하면 계약 교체 리팩토링). 클라는 계약에 **투명**해 서버 없이도 `MockEngine`으로 실측. 〔캐시 트랙 M1·M4 클라 소비측〕
   - **서버 트랙(별도 repo·TS/Worker — M3에서 분리)**: `devetym-proxy` 신규 구축 — D1 스키마·Worker read-through(D1→API·write-back·first-write-wins)·single-flight(DO)·validator write-게이트·rate-limit/남용/무효화·**INV-13 정규화-후-캐시쓰기**. 클라 M3와 병렬/후속, 자체 green 오라클. 〔캐시 트랙 M0서버·M1·M2·M3write·M7〕
@@ -132,6 +128,10 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 ## Done — 완료
 
+- **M9-후속 · 실기기 피드백 UX 3건** — ✅ 2026-07-13 (브랜치 `feat/m9-release-verification`, 커밋 `3f1ce6a`·`35874bf`·`720f5d4` — 각각 독립 커밋·미푸시). M9 아이폰 13 mini 실기기 테스트 피드백 3건 전부 구현, 각 건 **5축 green + iPhone 16 Pro 시뮬 실주행 스크린샷 대조**로 닫음.
+  - **[UX-1] 상세 액션 톤 알약 버튼(목업 A안)** — `ActionText` → `TonalPillButton` 아톰(Capsule accent 15% 틴트 + 글리프·라벨, 신규 의존성 0). 복사(WU-8 seam 유지)·북마크·공유 3개 + 오류 제보 회색 톤 분리. **전경 다크=accent(≈11:1)·라이트=brand(≈6:1)** — 라이트 accent가 틴트 위 AA 미달(≈4.1)이라 `tonalActionColor`로 분기, `AccessibilityContrastTest` 합성 쌍 게이트가 근거를 락. 시뮬: 다크/라이트 렌더·복사→`pbpaste` 회수·북마크 ☆↔★ 반응형.
+  - **[UX-2] 스와이프 네비게이션** — 뎁스0 탭 4개 `HorizontalPager`(탭 상태 정본=pagerState, 탭바 클릭=animateScrollToPage, 재탭 pop 유지) + 뎁스1 엣지 스와이프-백(24dp 엣지·80dp 임계, `isEdgeSwipeBack` 순수 판정+테스트 5건). 상세 중 `userScrollEnabled=false`(제스처 충돌 관리). 〔구현 로어: `detectHorizontalDragGestures`의 onDragStart는 **터치 슬롭 통과 지점**이라 엣지 판정이 밀림 — 시뮬 실주행으로 적발, `awaitFirstDown` 실제 다운 지점 기준으로 교체〕 시뮬: 4탭 양방향 스와이프·클릭 점프·상세 중 본문 스와이프 무효·엣지 백·기존 탈출구 회귀 0.
+  - **[UX-3] 로딩 문구 2개 크로스페이드** — "AI가 어원을 찾고 있어요" ↔ "잠시만 기다려 주세요" ~3초 교차(600ms tween, `loadingPhrase` 순수 헬퍼+순환 테스트). 시뮬: AI 미스 로딩에서 t<3s 1문구·t≈4.6s 2문구 실측.
 - **M8 · 통합·자산·마감 (최종 *구현* 마일스톤 — 이후 M9는 검증·출시)** — 2026-07-05 (브랜치 `feat/m8-integration-assets`, 로컬 커밋 `ed26f51`·미푸시). M7 스텁을 **seam actual**로 대체: androidMain(`AndroidAppActions`·`PrefsAppearanceStore`·`PrefsOnboardingStore`·`PrefsDeviceIdProvider`·`AndroidDeviceInfo`)·iosMain(`IosAppActions`·`UserDefaults*` 3종·`IosDeviceInfo`), 플랫폼 모듈 5종 바인딩 교체. **외관 배선**(`AppRoot`가 `appearance.mode`→`AppTheme(dark)` 소비, `darkMode=true` inert 제거)·**온보딩 영속**(`OnboardingStore` seam)·**in-app OFL 라이선스**(`LicensesScreen`+`Res.readBytes`, `showLicenses` 오버레이)·**Android 런처 아이콘**(`v2/icon.svg`→rsvg 15 PNG+adaptive+colors+manifest, 커밋 PNG). **green 4축**: `:shared:testDebugUnitTest`(97, KoinGraph 온보딩 포함) · `:androidApp:assembleDebug`(**APK ic_launcher 17엔트리 패키징 실증**) · `:shared:linkDebugFrameworkIosSimulatorArm64`(iOS seams UIKit/Foundation 링크) · **`:shared:iosSimulatorArm64Test`(83, 회귀 0)**. 신규 좌표 0(플랫폼 API만). 참조: [M8 슬라이스](docs/specs/m8-integration-assets-draft.md).
   - **비준 RATIFIED(4R 수렴)**. §7 판정: iOS share=최소 스텁·평가=스토어 url·아이콘=커밋 PNG·Firebase=null 유지·VM수명주기=범위 밖·라이선스=in-app. **정정 반영**: iOS `NSUserDefaults` objectForKey null 체크로 외관 부재시 다크(2) 보장(integerForKey 0 반환 함정)·`UIPasteboard.string` 세터·전 actual 5종 실 모듈 바인딩(그래프 마스킹 방어)·DR-2 carry-forward(라이선스 네비 슬롯) `showLicenses` 오버레이로 마감.
   - **⚠️ 검증 천장(최대)**: seam 런타임 동작·아이콘 시각 충실도·iOS appiconset(Xcode)·접근성·Firebase·실 플랫폼 Koin 그래프 완전성·실기기 시각/상호작용·코드서명·심사는 4축이 보증 안 함 → 「코드 완료·실기기 검증 필요」(Now 아침 체크리스트).
