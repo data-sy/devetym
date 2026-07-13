@@ -60,8 +60,8 @@ These are the items that can actually stop or misrepresent the launch. Everythin
 
 - ✅ `[AI]` / 🟡 `[H]` **App icon (all resolutions).** Android adaptive icon (`#2E5D3A` bg) rendered & confirmed on emulator; 17 mipmap entries. **iOS appiconset needs an Xcode build** (`[H]`, off-axis). Render sheet: [m9-icon-render-sheet.html](m9-icon-render-sheet.html).
 - ✅(iOS) / 🟡(Android) `[AI→H]` **Screenshots (per device spec).** **iOS set captured 2026-07-13** (iPhone 16 Pro Max sim, 1320×2868, dark 9 + light 2, raw = `~/devetym-shots/ios/`) + D1 caption-band framing applied via [caption jig](m9-screenshot-caption-jig.html) (framed 6 cuts = `~/devetym-shots/ios/framed/`). Remaining `[H]`: pick order & upload to console. **Android set not yet captured** (separate run; recipe in [capture handoff](m9-screenshot-capture-handoff.md)).
-- ⬜ `[Defer]` **App preview video.** Optional.
-- 🟡 `[AI→H]` **Name / subtitle / description (with keywords).** Drafted (short + full + App Store keywords). Human review/paste pending. Draft: [store-metadata §2](m9-store-metadata-draft.md).
+- ✅ `[Defer]` **App preview video.** Optional — **D8 decision (2026-07-13): skip for v1**, revisit in v1.x on screenshot conversion data.
+- ✅ `[AI→H]` **Name / subtitle / description (with keywords).** **Confirmed D3~D5 (2026-07-13)**: name 「개발 어원 사전」 + subtitle A · keywords 95자 final · hook-style description + promo text (stale "opt-in collection" copy retired). Canon: [store-metadata](m9-store-metadata-draft.md) §2·부록 A. Remaining `[H]`: paste into console.
 - 🟡 `[AI→H]` **Category.** Drafted (Education / Developer Tools). Confirm in console.
 - ⬜ `[H]` **Release countries / regions.** Not set. Drives Blocker/GDPR decision (§2).
 - ⬜ `[H]` **Developer account + billing** (Apple Developer / Play Console). Not confirmed (Blocker #6).

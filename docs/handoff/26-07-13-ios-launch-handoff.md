@@ -1,6 +1,6 @@
 # Handoff — iOS 출시 준비 (M9 잔여 · store-submission 트랙)
 
-> **작성**: 2026-07-13 밤 (D1~D9 완료 반영: 같은 날 결정 세션 후). **다음 세션 진입점**: 이 문서 → [캡처 핸드오프](../release/m9-screenshot-capture-handoff.md)로 스크린샷 캡처 세션.
+> **작성**: 2026-07-13 밤 (같은 날 D1~D9 결정·iOS 캡처 완료 반영). **다음 세션 진입점**: [E 제출 핸드오프](26-07-13-ios-submission-handoff.md) — 이 문서는 D 구간 이력 스냅샷으로 보존.
 > **상태 정본**: [ROADMAP M9](../../ROADMAP.md) + [iOS 출시 대시보드](../release/ios-launch-dashboard.html)(체크박스 `checked` 속성이 정본). 이 핸드오프는 진입용 스냅샷 — 충돌 시 정본 우선.
 
 ## 1. 현재 위치 (2026-07-13 병합 직후)
@@ -8,7 +8,7 @@
 - **main = M9 검증 구간.** PR #9(merge-commit) 병합 완료 — 셸 재설계 종결·실기기 사인오프·5축 green까지 전부 main에 있음. `feat/m9-release-verification` 브랜치는 보존(삭제 금지 규율).
 - **작업 브랜치 = `feat/m9-store-submission`** (main 위 스택, push됨). 잔여 출시 작업은 전부 여기서.
 - 병합 시 `site/privacy-policy.md` 충돌을 m9 정본(§2-2 크래시 진단, 07-10)으로 해소 → Pages 자동 재배포로 **라이브 방침도 최신본**(확인됨).
-- M9 DoD(스토어 게시)는 미완 — 남은 게이트는 결정·스크린샷·콘솔 입력·심사(사람/외부).
+- M9 DoD(스토어 게시)는 미완 — ~~결정·스크린샷~~(✅ 07-13 완료), 남은 게이트는 **콘솔 입력·빌드/서명·심사(사람/외부)** = E 트랙. 진입점 = [E 제출 핸드오프](26-07-13-ios-submission-handoff.md).
 
 ## 2. 다음 작업 (순서)
 
