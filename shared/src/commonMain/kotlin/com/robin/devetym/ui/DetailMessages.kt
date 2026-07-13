@@ -30,6 +30,13 @@ fun detailCopyPayload(entry: TermEntry): String =
     "${entry.keyword}\n\n어원\n${entry.etymology}\n\n왜 이 이름인가\n${entry.namingReason}"
 
 /**
+ * 상세 공유 페이로드 (실기기 라운드 2 — 종전 요약 한 줄만 나가던 것을 전체 페이지로).
+ * 복사(§2-E)와 관례 분리: 복사=콘텐츠만(출처 자동 부착은 안티패턴), 공유=요약 포함 전문+출처 표기.
+ */
+fun detailSharePayload(entry: TermEntry): String =
+    "${entry.keyword}\n${entry.summary}\n\n어원\n${entry.etymology}\n\n왜 이 이름인가\n${entry.namingReason}\n\n— DevEtym"
+
+/**
  * 경과 diff 기반 상대시간 라벨 (M6 §3-6). 캘린더/타임존/DST 비의존 — `now - epochMillis`만 사용.
  * `<1분`="방금 전" / `<60분`="N분 전" / `<24시간`="N시간 전" / `<48시간`="어제" / 그이상="N일 전".
  */

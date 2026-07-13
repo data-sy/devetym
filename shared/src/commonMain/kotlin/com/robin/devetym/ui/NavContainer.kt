@@ -1,9 +1,12 @@
 package com.robin.devetym.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -39,10 +42,13 @@ fun NavContainer(
         targetState = stack,
         transitionSpec = {
             val push = targetState.size >= initialState.size   // 동뎁스 교체(replaceTop)도 전진으로 취급
+            // 기본 spring은 iOS 네이티브 백(~0.35s 강한 감속)보다 굼뜨게 감긴다(실기기 라운드 2 피드백)
+            // → 300ms 감속 tween으로 고정. 손가락 추종 인터랙티브 스와이프백은 §5-1 후속.
+            val motion = tween<IntOffset>(durationMillis = 300, easing = LinearOutSlowInEasing)
             val spec = if (push) {
-                slideInHorizontally { it } togetherWith slideOutHorizontally { -it / 3 }
+                slideInHorizontally(motion) { it } togetherWith slideOutHorizontally(motion) { -it / 3 }
             } else {
-                slideInHorizontally { -it / 3 } togetherWith slideOutHorizontally { it }
+                slideInHorizontally(motion) { -it / 3 } togetherWith slideOutHorizontally(motion) { it }
             }
             // 깊은 스택이 항상 위 — push는 새 화면이 덮고, pop은 떠나는 화면이 위에서 빠진다.
             spec.apply { targetContentZIndex = targetState.size.toFloat() }

@@ -40,6 +40,7 @@ import com.robin.devetym.ui.components.TONAL_CONTAINER_ALPHA
 import com.robin.devetym.ui.components.TonalPillButton
 import com.robin.devetym.ui.LOADING_PHRASES
 import com.robin.devetym.ui.detailCopyPayload
+import com.robin.devetym.ui.detailSharePayload
 import com.robin.devetym.ui.errorMessage
 import com.robin.devetym.ui.isBookmarkedFor
 import com.robin.devetym.ui.loadingPhrase
@@ -178,9 +179,8 @@ private fun FoundBody(
                 if (isBookmarked) "★" else "☆", if (isBookmarked) "북마크됨" else "북마크",
                 tonalContainer, tonalContent, onToggleBookmark,
             )
-            TonalPillButton("↗", "공유", tonalContainer, tonalContent) {
-                onShare("${entry.keyword}\n\n${entry.summary}\n\n— DevEtym")
-            }
+            // 라운드 2: 요약 한 줄 → 전체 페이지 공유(detailSharePayload — 요약+어원+왜 이 이름인가+출처).
+            TonalPillButton("↗", "공유", tonalContainer, tonalContent) { onShare(detailSharePayload(entry)) }
         }
         Row(Modifier.padding(vertical = dim.sectionGap)) {
             TonalPillButton("!", "오류 제보", colors.surface2, colors.textDim) { onReport(entry.keyword) }

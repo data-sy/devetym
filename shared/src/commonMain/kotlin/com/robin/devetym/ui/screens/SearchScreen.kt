@@ -1,9 +1,11 @@
 package com.robin.devetym.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.layout.Arrangement
+
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +19,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -69,14 +73,19 @@ fun SearchContent(
             modifier = Modifier.padding(bottom = 16.dp))
 
         // §2-C dismiss 경로 1: 콘텐츠 영역 아래 방향 드래그 → 키보드·포커스 해제(3-2).
-        // consume하지 않고 관찰만 — 자식(LazyColumn 스크롤·칩 탭)과 충돌 없음(엣지 스와이프-백과 동일 패턴).
+        // ⚠️ Initial 패스로 관찰(라운드 2 수정) — drag()는 자식(제안 LazyColumn 스크롤·페이저)이
+        // 이벤트를 consume하면 관찰이 중단돼 임계 미달로 새는 경합이 있었다. Initial 패스는 자식
+        // 처리 전에 위치만 읽으므로 경합 없음(여전히 비consume — 스크롤·탭 정상).
         Box(Modifier.weight(1f).fillMaxWidth().pointerInput(Unit) {
             val threshold = KEYBOARD_DISMISS_THRESHOLD_DP.dp.toPx()
             awaitEachGesture {
-                val down = awaitFirstDown(requireUnconsumed = false)
+                val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
                 var dragY = 0f
-                drag(down.id) { change ->
+                while (true) {
+                    val event = awaitPointerEvent(PointerEventPass.Initial)
+                    val change = event.changes.firstOrNull { it.id == down.id } ?: break
                     dragY += change.position.y - change.previousPosition.y
+                    if (!change.pressed) break
                 }
                 if (isKeyboardDismissDrag(dragY, threshold)) {
                     keyboard?.hide()
@@ -85,15 +94,28 @@ fun SearchContent(
             }
         }) {
             if (suggestions.isNotEmpty()) {
-                LazyColumn(Modifier.fillMaxSize()) {
-                    items(suggestions, key = { it.keyword }) { entry ->
-                        Text(
-                            entry.keyword,
-                            style = AppScheme.type.bodyPreview,
-                            color = AppScheme.colors.text,
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(vertical = dim.rowVPad),
-                        )
+                // 라운드 2: 제안이 최근 검색 영역을 통째로 갈아끼워 "갑자기 DB 내용이 뜬" 인상 —
+                // "제안" 캡션(최근 검색과 동형)으로 영역 정체 표기 + ↖(채워 넣기) 어포던스 + 행 탭 배선.
+                Column(Modifier.fillMaxSize()) {
+                    Text("제안", style = AppScheme.type.caption, color = AppScheme.colors.textMuted,
+                        modifier = Modifier.padding(vertical = 8.dp))
+                    LazyColumn(Modifier.fillMaxSize()) {
+                        items(suggestions, key = { it.keyword }) { entry ->
+                            Row(
+                                Modifier.fillMaxWidth()
+                                    // 탭 = 완성어를 필드에 채우고 바로 상세로(검색 커밋과 동일 경로).
+                                    .clickable {
+                                        onQueryChange(entry.keyword)
+                                        onSelect(entry.keyword)
+                                    }
+                                    .padding(vertical = dim.rowVPad),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(entry.keyword, style = AppScheme.type.bodyPreview,
+                                    color = AppScheme.colors.text, modifier = Modifier.weight(1f))
+                                Text("↖", style = AppScheme.type.codeAction, color = AppScheme.colors.textMuted)
+                            }
+                        }
                     }
                 }
             } else {

@@ -24,7 +24,9 @@ import platform.UIKit.UIAlertController
 import platform.UIKit.UIAlertControllerStyleAlert
 import platform.UIKit.UIAlertActionStyleDefault
 import platform.UIKit.UIApplication
+import platform.UIKit.UIDevice
 import platform.UIKit.UIPasteboard
+import platform.UIKit.UIUserInterfaceIdiomPad
 import platform.UIKit.UISceneActivationStateForegroundActive
 import platform.UIKit.UIViewController
 import platform.UIKit.UIWindow
@@ -36,6 +38,14 @@ import platform.UIKit.popoverPresentationController
  * percent-encoding을 담당해 **한글 제목도 nil이 안 된다** — 종전 공백·개행만 치환하던 수동 encode는
  * "DevEtym 문의" 같은 한글 subject에서 `NSURL.URLWithString` nil → 조용한 no-op였다(실기기 3-5 전멸의 확정 결함).
  */
+/**
+ * 앱 평가 프롬프트 presenter 주입 (실기기 라운드 2) — iOS 26 실기기에서 `SKStoreReviewController.
+ * requestReviewInScene`이 무프롬프트 no-op 관측(iOS 18.5 시뮬은 표시, iOS 18에서 deprecated된 API).
+ * StoreKit 2 `AppStore.requestReview(in:)`는 Swift 전용이라 Kotlin에서 직접 호출 불가 —
+ * iOS 셸(`iOSApp.swift`)이 앱 시작 시 이 훅에 StoreKit 2 호출을 주입한다(의존 역전).
+ */
+var iosReviewPresenter: (() -> Unit)? = null
+
 internal fun mailtoUrl(to: String, subject: String, body: String): NSURL? {
     val components = NSURLComponents()
     components.scheme = "mailto"
@@ -70,7 +80,8 @@ class IosAppActions : AppActions {
     }
 
     override fun requestReview() {
-        // 씬 기반 StoreKit — 미출시(실 앱 ID 부재) 상태에서도 안전. 스토어 URL 폴백(id0000000000) 폐지.
+        // 셸 주입 StoreKit 2 우선(iOS 26 대응) → 미주입 시 씬 기반 SKStoreReviewController 폴백.
+        iosReviewPresenter?.let { it(); return }
         foregroundWindowScene()?.let { SKStoreReviewController.requestReviewInScene(it) }
     }
 
@@ -95,9 +106,14 @@ class IosAppActions : AppActions {
         topPresentedViewController()?.presentViewController(alert, animated = true, completion = null)
     }
 
-    /** iPad에서 UIActivityViewController는 popover source 없으면 크래시 — 뷰 중앙 anchor 방어. */
+    /**
+     * iPad에서 UIActivityViewController는 popover source 없으면 크래시 — 뷰 중앙 anchor 방어.
+     * ⚠️ iPad **한정**: iPhone(iOS 26 실기기)에서 popover source를 설정하면 기본 하단 시트
+     * 슬라이드업 대신 popover 어댑트로 떠 프레젠테이션이 어긋난다(실기기 라운드 2 관측).
+     */
     @OptIn(ExperimentalForeignApi::class)
     private fun presentWithPopoverGuard(vc: UIViewController, presenter: UIViewController) {
+        if (UIDevice.currentDevice.userInterfaceIdiom != UIUserInterfaceIdiomPad) return
         vc.popoverPresentationController?.let { popover ->
             val view = presenter.view
             popover.sourceView = view
