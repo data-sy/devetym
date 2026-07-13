@@ -35,6 +35,15 @@ class AppearanceMappingTest {
     }
 
     @Test
+    fun test_keyboardDismissDrag_판정() {
+        // M9-후속 §2-C — 아래(+y) 누적 드래그 임계 초과만 dismiss.
+        val th = 24f
+        assertTrue(isKeyboardDismissDrag(totalDragY = 25f, threshold = th), "임계 초과 아래 드래그는 dismiss")
+        assertFalse(isKeyboardDismissDrag(totalDragY = 24f, threshold = th), "임계 미달(경계 미포함)")
+        assertFalse(isKeyboardDismissDrag(totalDragY = -80f, threshold = th), "위 방향 드래그는 무시")
+    }
+
+    @Test
     fun test_appearance_set_emit() {
         val store = StubAppearanceStore(initial = 2)
         assertEquals(2, store.mode.value, "초기값 다크")

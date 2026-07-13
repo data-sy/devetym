@@ -2,6 +2,7 @@ package com.robin.devetym.ui
 
 import com.robin.devetym.Constants
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -20,6 +21,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import kotlinx.coroutines.launch
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.robin.devetym.ui.platform.AppActions
@@ -77,6 +80,15 @@ const val EDGE_SWIPE_THRESHOLD_DP = 80
 fun isEdgeSwipeBack(startX: Float, totalDragX: Float, edgeWidth: Float, threshold: Float): Boolean =
     startX <= edgeWidth && totalDragX > threshold
 
+/** 키보드 dismiss 드래그 임계 (M9-후속 셸 재설계 §2-C 경로 1). */
+const val KEYBOARD_DISMISS_THRESHOLD_DP = 24
+
+/**
+ * 키보드 dismiss 드래그 판정 (§2-C) — 순수 함수(테스트 대상). 콘텐츠 영역에서 아래(+y) 방향
+ * 누적 드래그가 임계를 넘으면 dismiss(3-2 — 한 번 열면 끌 수 없던 갭의 1경로).
+ */
+fun isKeyboardDismissDrag(totalDragY: Float, threshold: Float): Boolean = totalDragY > threshold
+
 /**
  * 앱 루트 (M6 §3-8 → M9-후속 셸 재설계 §2 재편) — 의존성-0 상태기반 네비. navigation-compose
  * 네이티브 링크 리스크 회피(§7-1 안전 폴백)는 유지하되, 셸 계층을 정본화:
@@ -101,6 +113,14 @@ fun AppRoot(deps: AppDependencies) {
             val currentTab = Tab.entries[pagerState.currentPage]
             val scope = rememberCoroutineScope()
             var nav by remember { mutableStateOf(TabNavState()) }
+            // §2-C dismiss 경로 2·3 일괄: 페이저 페이지 전환(3-3 — iOS 관례상 닫히는 게 맞다)과
+            // 네비 push/pop 이동 시 포커스·키보드 해제.
+            val keyboard = LocalSoftwareKeyboardController.current
+            val focusManager = LocalFocusManager.current
+            LaunchedEffect(pagerState.currentPage, nav) {
+                keyboard?.hide()
+                focusManager.clearFocus()
+            }
 
             Scaffold(
                 bottomBar = {
@@ -124,7 +144,9 @@ fun AppRoot(deps: AppDependencies) {
                     // UX-2 제스처 충돌 관리: push 화면 표시 중엔 페이저 스와이프 비활성 —
                     // 좌우 드래그는 엣지 스와이프-백(NavContainer) 전용.
                     userScrollEnabled = nav.top(currentTab.ordinal) == null,
-                    modifier = Modifier.fillMaxSize().padding(padding),
+                    // consumeWindowInsets: Scaffold가 이미 패딩한 인셋(하단 바)을 소비 표기 —
+                    // 검색의 imePadding(§2-C)이 키보드 높이에서 기패딩분을 빼고 계산하게 한다.
+                    modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding),
                 ) { page ->
                     val t = Tab.entries[page]
                     val openDetail: (String) -> Unit = { nav = nav.push(t.ordinal, Route.Detail(it)) }
