@@ -105,7 +105,13 @@ fun AppRoot(deps: AppDependencies) {
             var onboarded by rememberSaveable { mutableStateOf(deps.onboarding.completed) }   // M8 영속 게이트
             if (!onboarded) {
                 // 온보딩은 네비 밖 게이트 유지(§2-A) — 단 AppSurface 안이라 배경·인셋 규율은 상속.
-                OnboardingScreen(onComplete = { deps.onboarding.complete(); onboarded = true })
+                // 동의 선택("허용/허용 안 함")을 ConsentStore(§2-F)로 영속 — 종전엔 값이 버려져
+                // 설정 토글 초기값(true)과 온보딩 선택이 어긋났다. 토글은 여전히 표시용(수집 없음).
+                OnboardingScreen(onComplete = { consent ->
+                    deps.consent.set(consent)
+                    deps.onboarding.complete()
+                    onboarded = true
+                })
                 return@AppSurface
             }
             // M9-후속 UX-2: 탭 상태 정본 = pagerState(자체 Saver로 영속). 뎁스0은 좌우 스와이프 전환.
