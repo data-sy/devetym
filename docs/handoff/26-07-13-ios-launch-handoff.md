@@ -1,0 +1,35 @@
+# Handoff — iOS 출시 준비 (M9 잔여 · store-submission 트랙)
+
+> **작성**: 2026-07-13 밤. **다음 세션 진입점**: 이 문서 → [결정 프롬프트](../release/ios-launch-decision-prompt.md) D1부터.
+> **상태 정본**: [ROADMAP M9](../../ROADMAP.md) + [iOS 출시 대시보드](../release/ios-launch-dashboard.html)(체크박스 `checked` 속성이 정본). 이 핸드오프는 진입용 스냅샷 — 충돌 시 정본 우선.
+
+## 1. 현재 위치 (2026-07-13 병합 직후)
+
+- **main = M9 검증 구간.** PR #9(merge-commit) 병합 완료 — 셸 재설계 종결·실기기 사인오프·5축 green까지 전부 main에 있음. `feat/m9-release-verification` 브랜치는 보존(삭제 금지 규율).
+- **작업 브랜치 = `feat/m9-store-submission`** (main 위 스택, push됨). 잔여 출시 작업은 전부 여기서.
+- 병합 시 `site/privacy-policy.md` 충돌을 m9 정본(§2-2 크래시 진단, 07-10)으로 해소 → Pages 자동 재배포로 **라이브 방침도 최신본**(확인됨).
+- M9 DoD(스토어 게시)는 미완 — 남은 게이트는 결정·스크린샷·콘솔 입력·심사(사람/외부).
+
+## 2. 다음 작업 (순서)
+
+1. **D1~D9 결정 세션** — 새 세션에서: **"docs/release/ios-launch-decision-prompt.md 읽고 D1부터 진행하자"**. 전문가 패널 4인(하린·세아·리안·시온)이 결정마다 옵션+추천 브리핑 → 사용자 확정 → 결정 로그 기록 + 대시보드 체크 갱신. **D1(스크린샷 미리보기 방식)이 D 스크린샷 착수의 선행 결정.**
+2. **D 스크린샷 캡처** — D1 확정 후, [캡처 핸드오프](../release/m9-screenshot-capture-handoff.md) 레시피로 자체 세션 실행(시뮬 환경 보존돼 있음 — teardown 아직 금지).
+3. **E 제출 준비** — 대시보드 섹션 2(메타데이터)·4(빌드·서명)·5(심사·제출) 순. 제출 아카이브는 **main 기준 빌드**, 게시 시점에 `v0.1.0` 태그(핫픽스 런북 전제).
+
+## 3. 안전선 (요약 — 정본은 CLAUDE.md·ROADMAP)
+
+- **심사 제출·게시·push는 사람 지시로만.** 브랜치 삭제 금지(보존 규율).
+- 개인정보·수집 문구는 방침 "현재 미수집" 정합 유지 — ⚠️ 스토어 설명 현행안(§2)에 "동의한 경우에만 수집" 잔존 문구 있음, **D5에서 반드시 정정**(프롬프트에 명시됨).
+- 스토어 정책·요구 사이즈 등 외부 사실은 브리핑 전 웹 최신 확인.
+- 완료 항목은 대시보드 HTML의 `checked` 갱신 + 커밋(브라우저 체크는 localStorage 임시).
+
+## 4. 파일 지도
+
+| 파일 | 역할 |
+|---|---|
+| [ios-launch-dashboard.html](../release/ios-launch-dashboard.html) | 실행 체크리스트 정본 (7섹션 38항목·소유자 태그·진행률) |
+| [ios-launch-decision-prompt.md](../release/ios-launch-decision-prompt.md) | D1~D9 결정 세션 프롬프트 + 결정 로그 |
+| [m9-screenshot-capture-handoff.md](../release/m9-screenshot-capture-handoff.md) | 스크린샷 캡처 레시피 (D1 확정 후) |
+| [m9-store-metadata-draft.md](../release/m9-store-metadata-draft.md) | 이름·설명·키워드·라벨 초안 (D3~D5·D7 입력물) |
+| [m9-signing-upload-guide.md](../release/m9-signing-upload-guide.md) | 서명·아카이브·업로드 절차 |
+| [LAUNCH-CHECKLIST.md](../release/LAUNCH-CHECKLIST.md) | 6카테고리 배경·근거 (양 플랫폼) |
