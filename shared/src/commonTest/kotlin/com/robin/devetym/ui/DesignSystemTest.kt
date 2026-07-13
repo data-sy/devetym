@@ -81,6 +81,13 @@ class DesignSystemTest {
     }
 
     @Test
+    fun test_tonalActionColor_스킴매핑() {
+        // M9-후속 UX-1 — 다크=accent(라임), 라이트=brand(딥그린, accent는 틴트 위 AA 미달).
+        assertEquals(DarkColors.accent, tonalActionColor(DarkColors))
+        assertEquals(LightColors.brand, tonalActionColor(LightColors))
+    }
+
+    @Test
     fun test_categoryColor_클램프() {
         assertEquals(DarkColors.accent, categoryColor("동시성", DarkColors))   // 정본 6종
         assertEquals(DarkColors.accent, categoryColor("존재안함카테고리", DarkColors)) // 범위밖→accent(크래시 없음)

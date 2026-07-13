@@ -30,9 +30,12 @@ import com.robin.devetym.ui.DetailViewModel
 import com.robin.devetym.ui.components.AiBadge
 import com.robin.devetym.ui.components.CategoryBadge
 import com.robin.devetym.ui.components.PulsingDots
+import com.robin.devetym.ui.components.TONAL_CONTAINER_ALPHA
+import com.robin.devetym.ui.components.TonalPillButton
 import com.robin.devetym.ui.errorMessage
 import com.robin.devetym.ui.isBookmarkedFor
 import com.robin.devetym.ui.theme.AppScheme
+import com.robin.devetym.ui.tonalActionColor
 
 /**
  * 상세 화면 (M6 §3-7·§3-8). **2-VM 시그니처 정본**: `bookmarkVm.bookmarks`에서 `isBookmarkedFor`로
@@ -144,19 +147,28 @@ private fun FoundBody(
             Text(entry.etymology, style = type.bodyBlock, color = colors.text,
                 modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(dim.radiusBlock))
                     .background(colors.surface2).padding(dim.cardPadding))
-            // WU-8: copyToClipboard seam 호출처(어원 블록 복사 어포던스). seam은 구현·유닛테스트되나
-            // 이전엔 호출 UI가 없어 dead code였다(M9 에뮬 스모크 발견).
-            ActionText("어원 복사", { onCopy(entry.etymology) })
         }
         Section("왜 이 이름인가") {
             Text(entry.namingReason, style = type.body, color = colors.text)
         }
 
-        Row(Modifier.padding(vertical = dim.sectionGap), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            ActionText(if (isBookmarked) "★ 북마크됨" else "☆ 북마크", onToggleBookmark)
-            ActionText("공유", { onShare("${entry.keyword}\n\n${entry.summary}\n\n— DevEtym") })
+        // M9-후속 UX-1(목업 A안): ActionText(순수 텍스트, 문장처럼 읽힘) → 톤 알약. 복사(WU-8
+        // copyToClipboard seam 호출처)·북마크·공유 3개 accent 틴트, 오류 제보는 회색 톤 분리.
+        val tonalContainer = colors.accent.copy(alpha = TONAL_CONTAINER_ALPHA)
+        val tonalContent = tonalActionColor(colors)
+        Row(Modifier.padding(top = dim.sectionGap), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            TonalPillButton("❏", "복사", tonalContainer, tonalContent) { onCopy(entry.etymology) }
+            TonalPillButton(
+                if (isBookmarked) "★" else "☆", if (isBookmarked) "북마크됨" else "북마크",
+                tonalContainer, tonalContent, onToggleBookmark,
+            )
+            TonalPillButton("↗", "공유", tonalContainer, tonalContent) {
+                onShare("${entry.keyword}\n\n${entry.summary}\n\n— DevEtym")
+            }
         }
-        ActionText("오류 제보", { onReport(entry.keyword) })
+        Row(Modifier.padding(vertical = dim.sectionGap)) {
+            TonalPillButton("!", "오류 제보", colors.surface2, colors.textDim) { onReport(entry.keyword) }
+        }
     }
 }
 

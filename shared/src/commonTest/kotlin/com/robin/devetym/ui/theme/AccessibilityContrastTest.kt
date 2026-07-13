@@ -1,6 +1,8 @@
 package com.robin.devetym.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import com.robin.devetym.ui.components.TONAL_CONTAINER_ALPHA
+import com.robin.devetym.ui.tonalActionColor
 import kotlin.math.pow
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -60,5 +62,26 @@ class AccessibilityContrastTest {
             fails.isEmpty(),
             "WCAG AA(4.5:1) 미달 전경/배경 쌍 — 실기기 전 토큰 조정 필요: $fails",
         )
+    }
+
+    /** sRGB 알파 합성 — Compose `background(color.copy(alpha))` 블렌딩과 동일 공간. */
+    private fun blendOver(fg: Color, alpha: Float, bg: Color) = Color(
+        red = fg.red * alpha + bg.red * (1 - alpha),
+        green = fg.green * alpha + bg.green * (1 - alpha),
+        blue = fg.blue * alpha + bg.blue * (1 - alpha),
+    )
+
+    /**
+     * M9-후속 UX-1 톤 알약 — accent 틴트 컨테이너(bg 위 합성) × `tonalActionColor` 전경 AA 게이트.
+     * 라이트 accent 전경이 4.5 미달(≈4.1)이라 brand로 정한 근거를 이 게이트가 락한다.
+     */
+    @Test
+    fun test_contrast_톤버튼_컨테이너() {
+        for ((scheme, c) in listOf("DARK" to DarkColors, "LIGHT" to LightColors)) {
+            val container = blendOver(c.accent, TONAL_CONTAINER_ALPHA, c.bg)
+            val r = contrast(tonalActionColor(c), container)
+            println("── 톤버튼 [$scheme] tonalContent/tonalContainer ${(r * 100).toInt() / 100.0}  ${grade(r)}")
+            assertTrue(r >= 4.5, "$scheme 톤버튼 전경/컨테이너 AA 미달: ${(r * 100).toInt() / 100.0}")
+        }
     }
 }
