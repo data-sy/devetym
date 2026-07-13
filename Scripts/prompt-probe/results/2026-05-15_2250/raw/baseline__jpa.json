@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "baseline",
+    "keyword": "jpa",
+    "group": "in_shot",
+    "prompt_hash": "037754b355208bf3db2f2e58c5f32c9ddde4a8a13c511b973606f3ff6e30b0ca",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:50:36.237164",
+    "latency_ms": 6275
+  },
+  "expected": {
+    "keyword": "jpa",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01WJ3CrLHunPHVr9fJCPVfi3",
+    "container": null,
+    "content": [
+      {
+        "signature": "EvIBClsIDRgCKkDugwBIl7Ns1Be3rEdvAlYe/nOO6d3sPM3/BY+EJEhgrhbSprex14FEj6C1AYL0GfljPTVrx2DVlGkjJ0kUI8NnMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxsbvQIIFXtDU7wiHAaDAW3IxsyTSI1aNxmOSIwYEWrg1HXa9KCm/pxDVTNmVKfDzXopY8/2wWWQi8QG75qY0ZxfKuai3nW+pTCdT+MKkWVr9JQ/Ksu/Q+aX4kU8Y+jcIrCM79zu+6DwDAY9OokZznWR0XhGuQl9wrWQb0NXpkOcyY3OTQtF6oUJ820QyqN+maaMNMYAQ==",
+        "thinking": "The user input is \"jpa\", which is a development term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01WxwdZJxoCtZAPfkTEszyVV",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "jpa",
+          "aliases": [
+            "Java Persistence API",
+            "자바 영속성 API"
+          ],
+          "category": "DB",
+          "summary": "자바 객체를 DB에 매핑하는 영속성 표준 명세",
+          "etymology": "Java Persistence API의 약어. Java(자바 언어), Persistence(영속성, 프로그램 종료 후에도 데이터가 유지되는 성질), API(Application Programming Interface, 응용 프로그래밍 인터페이스)로 구성된 순수 두문자어.",
+          "namingReason": "Persistence(영속성)는 라틴어 persistere(계속 존재하다)에서 온 말로, 메모리 위의 객체를 디스크에 '지속'시킨다는 의미를 담는다. 객체 지향 언어와 관계형 DB 사이의 패러다임 불일치를 해소하는 ORM 표준 규약을 지칭하며, Java EE 5(2006)에서 EJB 3.0 명세의 일부로 처음 제정되었다. Hibernate·EclipseLink 등이 이 명세를 구현하는 대표 프레임워크다. 'Persistence'라는 단어 선택 자체가 ORM의 본질인 '객체 생존 기간의 연장'을 직접적으로 드러낸다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3364,
+      "inference_geo": "global",
+      "input_tokens": 332,
+      "output_tokens": 532,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

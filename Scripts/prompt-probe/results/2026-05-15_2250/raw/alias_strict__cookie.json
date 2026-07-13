@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "prompt_hash": "a26d467de6d1f81437daf4a7edc0f5559ddbf78c55c7481ed3c8e2f1cf948c0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:58:23.624089",
+    "latency_ms": 10546
+  },
+  "expected": {
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_018NLxR2Vs6aqknuX2a7XTLm",
+    "container": null,
+    "content": [
+      {
+        "signature": "Ep4CClsIDRgCKkAvc+BcamowXULPRmY5XnU9+4zTcgZ+P5AzTz6eTC+OD/nzDKtARAqWKGb/VRUXs99ut6sKYDTd1t7pDeDuK8L5MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxnz1BoZcxazLxfUZQaDKZoEejNSUCyOWdG8CIwnuUvbvJpr9EkdE35A75208XbZi8kWFsu+ejLZayKOJu1jV+V2UVLePexsehCWk1RKnEblBQIrRqv+lRMSUYoxbhi0ppc5fyiZqJEGx84VDYezIP3MfgK3OquNYkQaFOYzs9AcS7InMN2Bz5KxBzwkdnX4iB7XJlNtxZHxbCQ+38wh9f+/d3TE2o/T1QiB6RCUZUsJOp7JN/q7n80DgpaD2m6KhgB",
+        "thinking": "The user input is \"cookie\" which is a development term (HTTP cookie). Let me fill in the details.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_018pnBG3Fteuc4JtYvvXJ6vt",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "cookie",
+          "aliases": [
+            "쿠키"
+          ],
+          "category": "네트워크",
+          "summary": "서버가 클라이언트에 저장시키는 소량의 상태 데이터",
+          "etymology": "영어 'cookie'(과자 조각)에서 유래. 컴퓨팅에서는 프로그램 간에 주고받는 작은 데이터 토큰을 가리키는 속어로 먼저 쓰였으며, 'magic cookie'라는 표현이 그 원형이다.",
+          "namingReason": "1994년 넷스케이프의 루 몬툴리(Lou Montulli)가 HTTP 상태 유지 메커니즘을 구현할 때 Unix 프로그래밍 관습의 'magic cookie'—프로그램 사이에서 조용히 전달되는 불투명한 데이터 덩어리—에서 이름을 따왔다. HTTP는 본래 무상태(stateless) 프로토콜이므로 서버가 요청마다 클라이언트를 식별하려면 어딘가에 토큰을 심어 두고 되돌려 받아야 한다. '과자 조각'처럼 작고 눈에 잘 띄지 않게 브라우저에 남겨 두었다가 다음 요청 시 서버로 다시 건네진다는 동작 방식이 이 은유와 맞아떨어졌다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3456,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 572,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

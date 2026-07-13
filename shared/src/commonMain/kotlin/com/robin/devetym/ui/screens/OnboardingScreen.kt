@@ -33,6 +33,7 @@ fun OnboardingContent(page: Int, onNext: () -> Unit, onComplete: (Boolean) -> Un
     val colors = AppScheme.colors
     val type = AppScheme.type
     Column(
+        // 배경은 AppSurface 정본(셸 재설계 §2-B) — M9 수동 도색 패치(§1-5 증상) 삭제.
         Modifier.fillMaxSize().padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,

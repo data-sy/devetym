@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck",
+    "keyword": "mutex",
+    "group": "in_shot",
+    "prompt_hash": "b0396852d6b88ba3bbe9657fed3a73fac75ed7ae06f2c3035db7ec760d72f425",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:59:15.234870",
+    "latency_ms": 7577
+  },
+  "expected": {
+    "keyword": "mutex",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01Bdbd2gzmB2unPLeNsCf65o",
+    "container": null,
+    "content": [
+      {
+        "signature": "Eq0IClsIDRgCKkAUeJo88PKaFU368TVqNp8bMtHE1rf2OBPpVz/F7+2VFwU32X/AvfgixsZN8zqVB3F/RAuyWX5Op8jWvIrhptXBMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgz5dtZ/Jycw2ZfO58YaDEz99ob0BZ3GNlSpxCIwYqXfyOCOOEVqijGKY7ZZX+nfoATUrHpIwYU9lYitozveK/6Uk2wUjGqMmpWn4E/fKv8GZ56dNAI9/nrE5nSDwzqUXCPRyHZiyG1dVPDH5piqsX1oKzDTkW2sAEp3qWj4GWL4kuFZk0mX23OKbVAu7Q117KMzGyCVwV6XD+2Dv+n/As9Ikb9l3GfRfY0qIogt4S56egTYNIPHTeJwcKHZgXqAOD83zc3oxIRqLfhaM6dd+LnYcPOMLRsovkHyEN4Rs5AEb5+Sw+JKX3tKMrUXPGgldUwXbBIeIsf+k/v1FvvFElBrbpy3TilJmpQ8EHaBm6D5TkGrqNBxjRRd1uAMhmpDYJLmw8hSJWkkN7gkJ7LdDAV9xPqQJLdZz3d3QkbLfksd+GzdlqZ+zWltRsZa3i1gSUYS0/thZi49qzny4CVIp699T/PBse9XrmWUCyWZx/jkh04rp2gbUY3CWoxy3/QzjvHu9jyLncJxTUZVV0/gBKdy2rtzq20NL5CQqBnIxHrZrvfvNrF/xV097ulLj3mkhuNuF76UUZFkKqSaFl/I7VW+40nXogOT+B1ZHfgyaOjFnic/ZEAghqlwALec5X5aG6UF1Mm5kM0y1YvPXfAaH7KjHm86u+KYuBYFFf7mkPDj3w+2RcmkdsDk+lRrETXem8R7zOrE7bVKy2x4QbHt56ZEZExD394FqqzWRbqpHbbJjr/JvPUJS70d28Apu+dVPWsav4jiIXu0iPQzZx1v+qpkaZ6PqUZaorrXKvteTPokZIra7yghShoVTiMbedH7zdLDe85FtcFXorInWlgrvDMBMgbXgCd5RmgO88E+LvYX6358T77NaLWAxWfz8dAiJUo2e/OA6NGX45BhAuzGJzRqi5m+VntwQx23fv/LnUG+gXA1tNot8WHABwwzNMddiL4FRiOEOKtMKNQ0a1B7P1JQ2jfMgBiVtWFgot+VUhrMW0wzSfnW3t6CWpVotB1+VGCigVuhcPYevVAlsiy23jc8HLuTevQTALicbv5Zx3kw8nbSodV9sXtQpqkQGqcAcQu7AsQo/kZSb+cRVxM+3M3g7La7HzVI856wFVT0rT1j4NZ9rjFmM93WzgYVdXmOb8zAl3qR8DQeRsNNL1RZ7UCTylkAUNylRE/HwWIleCXc5F824Sjz4CniHhjuQZtJ6xTU4r0S3zFQqTLrrFajEIXVCVvtqun1aiza35X5/cDLDiQFVmPMBnLXN0eSGtUv5QOpo1Rn5pUiA43GNRcLHRgB",
+        "thinking": "The input is \"mutex\", which is a development term related to concurrency. Let me prepare the fields.\n\n1. It's a dev term - use return_term_entry\n2. Etymology: Latin mutuus (mutual) + exclusio (exclusion) → \"mutual exclusion\" → abbreviated to \"mutex\"\n3. namingReason draft: 한 스레드가 공유 자원을 사용하는 동안 다른 스레드의 접근을 '상호 배제'하여 경쟁 조건(race condition)을 막는 동기화 기본형이다. \n\nThe etymological concept of mutual exclusion directly shaped how this mechanism works—only one owner can hold the lock at any given time, which is the core design principle behind mutexes.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01DqktsXXiEX133og4bvwrck",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "mutex",
+          "aliases": [
+            "뮤텍스",
+            "mutual exclusion"
+          ],
+          "category": "동시성",
+          "summary": "여러 스레드의 동시 접근을 막는 잠금 장치",
+          "etymology": "라틴어 mutuus(상호의)와 exclusio(배제)를 합친 영어 'mutual exclusion'의 축약어. 서로 다른 주체가 서로를 배제하는 상태를 뜻한다.",
+          "namingReason": "한 스레드가 공유 자원을 사용하는 동안 다른 스레드의 접근을 '상호 배제'하여 경쟁 조건(race condition)을 막는 동기화 기본형이다. 어원의 '서로를 배제한다'는 의미가 동시성 제어 메커니즘에 그대로 옮겨졌다. 한 번에 오직 하나의 소유자만 락을 쥘 수 있다는 설계 원칙이 여기서 비롯된다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 3691
+      },
+      "cache_creation_input_tokens": 3691,
+      "cache_read_input_tokens": 0,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 740,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

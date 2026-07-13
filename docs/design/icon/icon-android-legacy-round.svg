@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DevEtym 안드로이드 레거시 폴백 · 원형 (ic_launcher_round.png, API<=25)
+     원형 런처용. 초록 원을 굽고 lockup을 세이프존과 동일한 0.62배로 배치(원 안 잘림 없음). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <circle cx="512" cy="512" r="512" fill="#2E5D3A"/>
+  <g transform="translate(512 512) scale(0.62) translate(-512 -548)">
+    <text x="512" y="410" text-anchor="middle"
+          font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Pretendard', sans-serif"
+          font-weight="900" font-size="320" fill="#F7E8D0" letter-spacing="16">개발</text>
+    <text x="512" y="720" text-anchor="middle"
+          font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Pretendard', sans-serif"
+          font-weight="900" font-size="320" fill="#F7E8D0" letter-spacing="16">어원</text>
+    <rect x="336" y="790" width="352" height="156" rx="18" fill="#F7E8D0"/>
+    <text x="512" y="912" text-anchor="middle"
+          font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', sans-serif"
+          font-weight="900" font-size="116" fill="#2E5D3A" letter-spacing="10">사전</text>
+  </g>
+</svg>

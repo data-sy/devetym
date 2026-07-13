@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck__alias_strict",
+    "keyword": "jpa",
+    "group": "in_shot",
+    "prompt_hash": "d2be35897b3d540d7d9da0024812d073ee1e3e3b9bc5b9181b12c813f839d753",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:08:17.307041",
+    "latency_ms": 16291
+  },
+  "expected": {
+    "keyword": "jpa",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01SPYJB1C35BZG8KFBxZ1EZs",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"jpa\" - this is a development term (Java Persistence API). Let me fill in the fields.\n\netymology: Java Persistence API의 약어. Java(자바 언어), Persistence(라틴어 persistere에서 유래, '끝까지 유지되다'는 뜻), API(Application Programming Interface)로 구성된 순수 두문자어.\n\nnamingReason: Persistence는 라틴어 persistere(per- '끝까지' + sistere '서다')에서 온 말로, 프로그램이 종료되어도 데이터가 사라지지 않고 '지속'된다는 성질을 뜻한다. \n\nJPA는 자바 객체가 메모리에서 소멸하는 것을 막기 위해 관계형 데이터베이스에 매핑하는 표준 명세로, Java EE 5에서 JSR-220의 일부로 처음 도입되었다. Hibernate와 EclipseLink 같은 프레임워크들이 이 명세를 실제로 구현하고 있다.\n\n이제 JPA의 어원과 명명 이유를 정리하고 있는데, 각 항목의 길이를 확인 중이다. 별칭 부분에서 \"자바 영속성 API\"가 진정한 별칭인지 아니면 단순 번역인지 구분해야 할 것 같다.\n\n규칙을 다시 보니 약어의 풀네임은 별칭으로 포함되어야 하고, 예시에서도 한글 번역을 포함하고 있으니 \"Java Persistence API\"와 \"자바 영속성 API\" 모두 포함하는 게 맞을 것 같다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01JYrKJ7sXP6yUmmDdJvnF6a",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "jpa",
+          "aliases": [
+            "Java Persistence API",
+            "자바 영속성 API"
+          ],
+          "category": "DB",
+          "summary": "자바 객체를 관계형 DB에 매핑하는 영속성 표준 명세",
+          "etymology": "Java Persistence API의 약어. Java(자바 언어), Persistence(라틴어 persistere, per-'끝까지' + sistere'서다', '끝까지 유지된다'는 뜻), API(Application Programming Interface)로 구성된 순수 두문자어.",
+          "namingReason": "Persistence는 '프로그램이 종료되어도 데이터가 사라지지 않고 지속된다'는 성질을 뜻한다. 자바 객체는 메모리에만 존재하다 프로세스 종료와 함께 소멸하는데, JPA는 그 객체를 관계형 DB에 매핑해 생존 기간을 연장하는 역할을 한다. 이 '지속'의 의미가 명세 이름에 그대로 반영된 것이다. 2006년 Java EE 5(JSR-220)의 일부로 처음 정의되었으며, Hibernate와 EclipseLink가 이 명세를 구현하는 대표적인 프레임워크다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3783,
+      "inference_geo": "global",
+      "input_tokens": 332,
+      "output_tokens": 1212,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

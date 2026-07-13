@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "selfcheck__alias_strict",
+    "keyword": "jpa",
+    "group": "in_shot",
+    "prompt_hash": "4008c10903ca57f9d7fd33e5647635c88267624ec0171e04942fd35755670e0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:04:58.375505",
+    "latency_ms": 18938
+  },
+  "expected": {
+    "keyword": "jpa",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_013r4wHmnx4D5AsXfqpn4kQH",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"jpa\" - this is a development term (Java Persistence API). Let me fill in the fields.\n\n1. keyword: \"jpa\"\n2. aliases: [\"Java Persistence API\", \"자바 영속성 API\"] - wait, \"자바 영속성 API\" is a translation, not really an alias per the rules. Let me check: \"정의·번역·상위 개념은 포함하지 않는다\". So \"자바 영속성 API\" is a translation, not an alias. I'll just use [\"Java Persistence API\"].\n\n\n3. category: \"DB\"\n4. summary: 자바 객체를 DB에 매핑하는 영속성 표준 명세\n5. etymology: Now I'm working on the etymology section - JPA is an acronym for Java Persistence API, where Java refers to the programming language, Persistence comes from the Latin \"persistere\" meaning to continue existing, and API stands for Application Programming Interface. I need to condense this to fit the 60-120 character limit.\n6. namingReason: Still working through this section...\n\nFor the naming reason, I'm thinking about how \"Persistence\" captures the core concept - it's about extending the lifespan of objects that normally only exist in memory by storing them in a relational database, keeping their state intact even after the program ends. This became an official standard with Java EE 5 in 2006.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01UChqux45nyEtEeC7JzeBRj",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "jpa",
+          "aliases": [
+            "Java Persistence API"
+          ],
+          "category": "DB",
+          "summary": "자바 객체를 관계형 DB에 매핑하는 영속성 표준 명세",
+          "etymology": "Java Persistence API의 두문자어. Java(자바 언어), Persistence(라틴어 persistere '계속 존재하다'에서 유래, 프로그램 종료 후에도 데이터가 유지되는 성질), API(Application Programming Interface)의 세 단어로 구성된다.",
+          "namingReason": "Persistence(영속성)는 메모리에만 존재하는 객체 상태를 디스크, 즉 관계형 DB에 저장하여 생존 기간을 연장한다는 의미를 담는다. 2006년 Java EE 5 명세(JSR-220)로 공식 제정되었으며, Hibernate·EclipseLink 등 ORM 구현체가 이 명세를 따른다. 구현체가 아닌 '인터페이스 규약'임을 API라는 단어로 명시함으로써, 특정 라이브러리에 종속되지 않는 표준임을 이름 자체에서 드러낸다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3628,
+      "inference_geo": "global",
+      "input_tokens": 332,
+      "output_tokens": 1174,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

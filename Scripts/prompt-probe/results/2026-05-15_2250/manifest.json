@@ -1,0 +1,37 @@
+{
+  "run_id": "2026-05-15_2250",
+  "timestamp": "2026-05-15T22:50:22.250837",
+  "model": "claude-sonnet-4-6",
+  "max_tokens": 4096,
+  "thinking_budget": 2000,
+  "cells": [
+    "baseline",
+    "closing",
+    "selfcheck",
+    "alias_strict",
+    "closing__selfcheck",
+    "closing__alias_strict",
+    "selfcheck__alias_strict",
+    "closing__selfcheck__alias_strict"
+  ],
+  "n_cells": 8,
+  "keywords": [
+    "mutex",
+    "jpa",
+    "daemon",
+    "bug",
+    "idempotent",
+    "cookie",
+    "semaphore",
+    "request",
+    "boolean",
+    "null",
+    "apple",
+    "lunch",
+    "mutext",
+    "redus",
+    "semafore"
+  ],
+  "n_keywords": 15,
+  "total_calls": 120
+}

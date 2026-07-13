@@ -1,0 +1,76 @@
+# Round-004 keyword 60개 (수동 라운드, claude.ai 정액) — 마지막 라운드 (A안)
+# 카테고리 배분 (목표 N=650 코어 균등화 완료, 기타 0): 자료구조+16 동시성+13 패턴+12 DB+10 네트워크+9
+# 발주안: docs/db-expand/handoff-round-004.md + ROADMAP "Now". 590 → 650 (+60, 코어 5개 ~102-103 동등선).
+# 생성: 탭A에서 30+30 두 번 paste(출력 길이 부담 완화), 머지는 1회.
+# dedup: 기존 terms.json(590)의 {keyword} ∪ {모든 alias} 완전매칭 차집합으로 충돌 0 확인.
+#   (정규화 비교도 informational로 0. round-002 교훈 — 완전매칭 기준.)
+
+# 자료구조 (87 → +16 → 103)  long pole 최대 가중
+monotonic-stack
+sparse-table
+link-cut-tree
+euler-tour-tree
+y-fast-trie
+fusion-tree
+d-ary-heap
+min-max-heap
+soft-heap
+vantage-point-tree
+bk-tree
+ball-tree
+m-tree
+adjacency-list
+cuckoo-filter
+quotient-filter
+
+# 동시성 (90 → +13 → 103)
+obstruction-free
+load-link-store-conditional
+clh-lock
+flat-combining
+lock-elision
+lock-striping
+hand-over-hand-locking
+countdown-latch
+cyclic-barrier
+phaser
+exchanger
+disruptor
+stamped-lock
+
+# 패턴 (91 → +12 → 103)
+multiton
+identity-map
+transaction-script
+service-layer
+lazy-initialization
+command-query-separation
+raii
+mixin
+marker-interface
+double-dispatch
+humble-object
+delegation-pattern
+
+# DB (92 → +10 → 102)
+two-phase-locking
+write-skew
+next-key-lock
+gin-index
+gist-index
+bitmap-index
+hash-join
+merge-join
+nested-loop-join
+compensating-transaction
+
+# 네트워크 (93 → +9 → 102)
+sliding-window
+go-back-n
+selective-repeat
+token-bucket
+leaky-bucket
+tcp-bbr
+path-mtu-discovery
+alpn
+mtls

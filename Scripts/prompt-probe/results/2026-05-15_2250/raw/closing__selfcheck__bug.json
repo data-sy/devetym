@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck",
+    "keyword": "bug",
+    "group": "in_shot",
+    "prompt_hash": "b0396852d6b88ba3bbe9657fed3a73fac75ed7ae06f2c3035db7ec760d72f425",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:59:54.146932",
+    "latency_ms": 19249
+  },
+  "expected": {
+    "keyword": "bug",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01NetEyEkKQsjUgsfFKhkm9o",
+    "container": null,
+    "content": [
+      {
+        "signature": "EtQaClsIDRgCKkBTD5FTs2AbMusK9dUCa4XnV5mRwHNpwi2B+zx6vA5mFpJSvrv2h1OE3c29RvRsSmsDmzV/GwAtvSr8JzU6pUhIMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgz23ZbiWYetHsk52lYaDHewj4olFEuhuNenDyIwjGJVXS5oF77Xnl6hTykd9HF7s95bcWry++CH3q6jWjfgndWIrFqL5fqALMYCmfhpKqYZS4BiJADVmW4QyZwBYd5AF3pvQLxdD2bNcP4fXjfA4/tTqY6Z4WZ92tIV3cE6dRy8V5RQ9CPubif87FN6sWuQRo/k6GLvl66p8asGsYVsUtZChXKFsSyDkkKKyHERkqg70xhhNlSOuZ+SUb8VoemsL+vGGAhu9KBXrdDWVgjIAS1fhsAb+8RyAHHzUl4jPS8HWKQd1mldnSJZjKnVgVF2iR7skrN78AvivmAH3Lb7MoD8Mm4/c0fh59BNbD7QCOoUeydD/6Xpr7+I5cvTPDxIk5JKEG5RRz5exKQSzYQAAZ8oL15e75NofSQ4oEHEEGI5r7lNy43hbMkg7peZfLZtJVFKcBgHh0shCnpdtKwayQsCedSq4ji64QVnfgPIvm/264GlaAH/8A4bYDsEXzGUMdSSYuuB7x8+Y7kJMUJqlPG1w1JRHRiKsl6ntRSE3uVVjIgt1J9BL3RIKsMIgYNFm2GH4Q6EOy4E9nfLKqOOCwVB7zDZfpXwvhY0BEUXxewaU/1mRReJ5VzuXaoQ1B2Zd2yryvzkmAkMW1OMbFdi+oAnq/iDH+vW9xfdQwrK/WjV96q6bwzaXv+pibeYTpvZMRc2f9yNDyPGioqhMyoa+riot1ueKs6JgzkwwYNodiZ3Cb5XCBNVqvi7VRJbqvkhgUDA1BxG20ozQHxXuFkpF/gHFdX3ajoyTF14qhimY7Z1S2IV8f7SILAiUcH+Qz/wZaARiKGOHKgI68PPf2k6O9jGO/T5Gb3xO44mNZevav3W1mea8xbGZblZkVMUdIndPY5aUN3gmjJkcJQF5DdtfxqNW15rKDswF2g/bKXigIJ+Sa7WSAXr4d3X+Iz2C9e29lzfEXr/Y1jehXgopD0naNR2N74twHmfwaODTfoj8p1iwF6XLnQNU68q6XOVj+2mYyJ3cuNsuKxCMSUuZy+NeFhZHNixcRjIYKq2ULHzcMLUkeDHm2KP+xGZY6gFktPxRNgFdK26hnqFE2pMvDC1ByZFVYAzmx6bXHHAgAym6rBcDakYk213geExboSGuIYW6x4+tWB+XHam+NL253P42ZnYhdoJ0WdOAHW/JSoVMFfzQdDsGyzCzfV1JHnqluE0E22f6wPck2eCk9Ud+FJFrAsLcTaRDQe4FeV9H5ShfchkQBW3xsk2R7aaEmOaOsViWLr1gviM/LloJ2uupavs60e0RtCqmxv/me7Tz8rQnHJ1zD7oOGWdygulSa/93TIvoFx458e/0Yhb0VXDehJWvEbXZOfjE3mHIYD+JypzHoVyjoIBmyKIBDSvTFtKv+R6FpQLGJcLtURVbmsCp3aHoJckt6IHu34Du69GsiRZnubBu9+ik2bFYNI2zQ7bNYM8vkj17iSq9DvUvG0HGgw0xhKzICW+T0trCxewSsB2J1/xLhEW2jdeCOzR8UhFHwKBZR/EtpeQTm0BwMrc1KP0ufOU0JGErDH8UwMae/6uWzqrT+rT4wBwyzlHtojcUm8tgEZbZ6t+nttR/GoExgICIGrVFI1tDK+FnavWtrh1wvS8ZO+RNUQIlI3Fzj3tCxaT3x7TFQ8R0Wsw81+pUY5KST139lY4iYdISDhIbHziR0qMpe/doyn7ejkZeODVtqeyiHfbzEIwpA9ftmN+zCxoKRVzYzvW7MuSePXQpgpErdWn+bcLApjqNJbRsAtOs5P/dydNGa93xjJamgA0J6ePaU5VzBvzVa4ZvtlsuEK1rZ5pBcXN7HZOkxI74Tz5DWVNAnMHc3KFVIeC/BC/PPdwF5lVGVbNMNHGqV90cs+CCY+sqhvFfqS0xXGAMtRUJ75ueQk/Lk6J7cFRTiGlqClMLU5/5joUfnI9Osz4vfdt+O86F73sFSWfJw7uWnAY4GsZ3HpwPc/V6OV/NYceGdM8A8gD/HQa8oY0/Rlb6BmETgKPY0mGGF5tDeinzmUcWKbMdVi2vF4Ban5FZenEZG1Ja6FTtMvgsyX9c7V/5Nug24aJYij3Mu+8rjxjZi5DM/V+3WYwIvgw99vVdUdSDydPH7JXiF7gEfo83nWzkrEEw91I3ibvPr6l+k3wbR1fcJ5VWImcM3xgnkP0MMvCy8oJLwa2QRRLTPkb3+iWtEWaZLLnXnu+QKZ4fItHIc/XhqLvhLH4sXGErdtJ/wWbU4j7GBHhfkBLY6ppm6CUKUVvCvETcqWAp7e393+S/kDtlL/mFDM0OKPsI+GTyjOR9lLScmUShhohMDOLZ+Lh2oPAmKq6Qv3dppVZrm8EXfMyWyQ0m2KWMquSTc4kjDPeIEGF+8BPSddpyfoFnrwC5IQ136jWBGqnqL3vrU+KmNreNBnRPkGBHVtRBrr+azF4+W1kJuCExhOE7fJS8lLyjdHTQN2/AsI+8xfxnHjznyjgu2XcNQfeMm3qEpH6FM6pOl4MHsvqBgiAZlNPhWn+bjZGLB12D+eyVhOsVF1Td/yHffL/V6cWlTBBEB7yffG9BiyyC9uRS+8HWHyVtCKPdXtep1/BJv7z2jsfxILaqzaSHjzxIqfk7tkmm0xe9mAixhsLfdjK2iRokwif8Z5og2iCwvFtNBVjlQgYpVDKATJlLGdyKED1019xoprgDuUPonCAZfowPjp7tML8fjvtbaRAPkzSeWInCnSMWtuKYzF9HvfXhg/GN/faC7nHMdWp756KCG3ygmJhoH428xKuowww/8UyqzVBOum9TIw5qGo18G08+HgHu8FRWXxfUwofgvutAtDuY4wY4h9qCm7h7iu5pzCKAjPNjVRsbV6ETrH6xkYWy1dUub56Bu7NK7ieXvTAIpvh2JqoGprUSfqmA7CCwPkz3CTzMRPIXEd3quxWUkzBTLZ4HNx2l1KTyx3Q8bTWZE+abHru6nuFUWIhPRexI3/xo3lB4p1O45RIBzMdLafeL6wSOW2fxti6/SdplCfZo5QHsAka84S4g5btggxQlWAxmNphVT84WB8Hsz+1yYer7+SQ+1miY8J/19JG8sfzkWmL+Dme+ijixv0zNgXbyBcaHgoRpW29TgAqo0dPw50S7SWND4Q2RreI5jbma41yRc6k4k+aYKlZg/TQaxOHCYBoY4MkXPOx87806+K2qQ9Tct2xLHeRCo0N1vQxq2lKRHT1pIgQcVFDif9GhlYaXLUobRLbnLcOLDwLNz+M0w9BUMjTdsKu2RdQ9F5OI57dxTJK8txy81HKl7S/s5Pxf3CqeUIaFD7//EU1YvPBxTOO0Z2PZRmY3/B9ZD528gOrH+nhWvBMu3IQfgz2YND8x2rooPyXfkjPrdO+FhkTykyMYsZCM1OryrPdIYJ3gbEXWYd9YBqY2/1dWYjOWvlus+9/PkgYz0OBSNqgJwkGdvQbGoI/0lyh+12Oh+uYF0VoIugE2eGi/Gnzs6KjZQChwBczWmlcvpJWWh4Q3aGLSA1Zdxxvo2mOSa10g+lp3mpwcOF50m0JK+vmP1rX3TyK7z4UH0FexsgZWdJLC4gWtzoJDQ1h7rSEgKvzlRs3qv0XoAVmq6xzKCDi1QRwxTd+g3GTALvwKlx80CAqfoVOQuwdFPnAbfYBCO+5pft+TNeNr3avI7XYAQ8J98Ge/lwGNKIdjja1Ad5BYSm+Zp6Pvqs6kcKyNBoWfbQoKSypqTSBuznVlGCBggu9HPqP1bARSzHDLMlbS2ZjoIJ0r8tm3E9sySc/iNJ/rMxl+crDsyGv2Fc5NCGDSf3XlITmhOu4Vcb67FLu1QhsYLUDhR2kXxnbAjPUJMrWfz65SHdNrQcIF2R2jtwSXkciHgDK5iuTi3XFXE4ju2zw97W7xoRX0yWc0QjxsNCCEfXzqF2c9PYFwvRXxFnGJYWVNM3OtIBkYtBAlCgqEZWCMRU4hb+h869nZG3aJYhSoqYmcvwo2gX6IwuBgK+uB6Hf6Bmp9krsCM1ScnrP23DXQY1y+P8P3Uzu4EE/dmnOxMsj4+Mp/Gv4FaxOrlKXElju1zegvgbiQis6of1dMjjEm+oGE60jesTb+Q7hdMRsYA/Mx6fegQ1bCV1dH26Xbmv402YQlB0tEwlV9V4g1HHr9Yp5cQTvjEzozEulwEX9ni0oRdMjyScfVmveuwhXacKRjsrOXMCcD8EWiCm/9BiT2VmwIfbR8CNX4cLnt212chhPuPVYSMsbopQP7MIvIQ3UMmDKF3+YXCmfnr6dWEkF/dVYcRJ5RmHSDRWCrvEyU/USxQfPd/vBfkjG28b48iWd0r+Pz6kpb8/A3yIMxgTdsr2sz0dQw6j6TtWN+u5Jjd8ypzloFawQ6uynk1uAnzzibxABv0WGZNY/TDYFuerdYfV/7Z3wGRuXH7RGzbunIBgB",
+        "thinking": "The input is \"bug\" which is a development term referring to a software defect/error. Let me prepare the entry.\n\nEtymology: English \"bug\" (벌레), uncertain origin but used as a metaphor for mechanical defects before software era. Edison used it in 1878.\n\nnamingReason: The famous 1947 moth incident at Harvard Mark II, but this wasn't the origin. The metaphor of a bug crawling inside machinery causing unpredictable failures transferred to software defects.\n\nLet me check the last sentence rule - it should contain new information not covered before. \n\nI'm noticing the conclusion about how the metaphor became standard terminology is just restating what I've already covered, so I should replace it with something that adds new perspective rather than repeating the same point.\n\nThe next thinking traces the actual origin back to Edison's 1878 letter, establishing that \"bug\" was already engineering slang before software existed. Then it addresses the famous 1947 moth incident at Harvard—clarifying that while it's a memorable anecdote, it's actually just a coincidental literal example of the existing metaphor rather than the true origin of the term.\n\nThe thinking then explains why the metaphor stuck: the image of hidden creatures causing unpredictable malfunctions naturally aligned with how software defects behave—lurking in code and triggering unintended behavior. It concludes by noting that Grace Hopper's logbook with the actual moth taped to it is now preserved at the Smithsonian. 이 용어가 자연스럽게 정착한 배경을 생각해보니, 기계 내부에 숨어 예측 불가능한 오작동을 일으키는 '벌레'라는 이미지가 코드 결함의 특성과 정확히 맞아떨어진 것 같다. Grace Hopper가 붙인 나방 표본은 지금 스미소니언 박물관에 전시되어 있다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01LWMXDyC35z1JcAyzuMXb3h",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "bug",
+          "aliases": [
+            "버그"
+          ],
+          "category": "기타",
+          "summary": "소프트웨어의 의도치 않은 결함이나 오작동",
+          "etymology": "정확한 어원은 불분명하나, 영어 'bug'(벌레)의 비유적 용법에서 유래한 것으로 본다. 기계 결함을 'bug'로 지칭한 기록은 1878년 에디슨의 편지에서 확인되며, 소프트웨어 이전 엔지니어링 속어로 이미 통용되고 있었다.",
+          "namingReason": "1947년 하버드 Mark II 컴퓨터의 릴레이에서 실제 나방이 발견되어 로그에 'first actual case of bug being found'라는 메모가 붙은 일화가 유명하나, 이는 기존 은유를 문자 그대로 재현한 우연의 일치에 가깝고 용어의 기원은 아니다. 기계 내부에 몰래 숨어 예측 불가능한 오작동을 일으키는 '벌레'라는 이미지가, 코드 안에 잠복하여 의도치 않은 동작을 유발하는 결함의 특성과 맞닿아 자연스럽게 정착했다. Grace Hopper가 해당 나방을 테이프로 붙인 로그북은 현재 스미소니언 박물관에 보관되어 있다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3691,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1701,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

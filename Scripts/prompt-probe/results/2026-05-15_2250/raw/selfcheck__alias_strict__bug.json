@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "selfcheck__alias_strict",
+    "keyword": "bug",
+    "group": "in_shot",
+    "prompt_hash": "4008c10903ca57f9d7fd33e5647635c88267624ec0171e04942fd35755670e0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:05:15.167600",
+    "latency_ms": 8086
+  },
+  "expected": {
+    "keyword": "bug",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01XHRyepYYQANezhdvFSva5A",
+    "container": null,
+    "content": [
+      {
+        "signature": "ErAFClsIDRgCKkDQI3OVOnxzdc3enyIXlcXRjtbqshUYRHi8r5GLYhffNjT2s1Z6UNUGaEgYUcdyYU2lNQfsztNbkreR7MWepT+MMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgz8pfa5+8xnw5RbqSYaDKCnSmc6ZD9R6aT8rCIwSNu50OJ+uM65M/9lBDBysINxZCORxg67IdnJHxsFmCYPjUid4BbtVqawlNcpZjfAKoIEu7lxnv578fK8U3HhsWB5wLscjLWHyIile87IcBiTs5/f3OGzQt39I1r9vJvHoYr5bfo5tR7ABBAf0OlYe+WBWWWuAFbf1JY3jFijL0lF+47k2V8e1ab9z8RXbkoAFBySJNDvTdWeiI6/q6NavFJACvV2Dk8Rt6rPfc7qB15T9Lo4B3Gii8QEIOKu25oqplC7cNuOFBXKDxHKSNLqGEchmiUEWlAHSmDzqscc1eDj6gMcD8aNbZQcwJXeWo0O+4WvX98QZIX21SWKBBA59+2bV6fktXcA2yHsbMRZ5FGes4IrnWxNU77+4rPNZaGfaFzSFxZdzPQGf7H+M1m546yYqJUkIku0QJGUTdSVOsRUnbXfOOcO237J9YD9zfWEaPrfvnALHgKGM+GptfzMZLJ5iNI3kQw2JeAd/hDJcm632CFzWV25PSj56n+WpD/eb4PZEGs0VCx65nVlY6YyqB50glnZmnByuuruH743I1xYFnsM1gy5SOi3HmPXZAmq6V+2nxs2t8ddOiiQXivWw0XqZvVMyFiV7JsEwUVtHSTHJdKj77lgsw7hnjqE3qjGg8C2feyEuOTS++MVLyB0lORd0TjFV5kN9lIfCBuxvZ17hRrO0mdEajXO+8eSkMEfFcpUHVYzzIUSYAhKj0aYPE9SA1kh1x0AKkzdfD3f3WwUo9EL+hgB",
+        "thinking": "The input is \"bug\", which is a development term referring to a software defect or error. I'll call return_term_entry with the appropriate fields.\n\nEtymology: uncertain origin, English 'bug' (insect/beetle), used metaphorically for mechanical defects before software era. Edison used it in 1878.\n\nnamingReason: The 1947 moth incident at Harvard Mark II is famous but not the origin. The metaphor of a creature crawling inside machinery causing unpredictable failures transferred to software defects.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01VqY4bMQR8WNq4ovkHgXmZo",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "bug",
+          "aliases": [
+            "버그"
+          ],
+          "category": "기타",
+          "summary": "프로그램의 의도치 않은 오작동이나 결함",
+          "etymology": "정확한 어원은 불분명하나, 영어 'bug'(벌레)의 비유적 용법에서 유래한 것으로 본다. 1878년 에디슨이 편지에서 기계 결함을 'bug'로 지칭한 기록이 있어, 소프트웨어 이전 엔지니어링 속어로 이미 쓰이고 있었다.",
+          "namingReason": "1947년 하버드 Mark II 컴퓨터의 릴레이에서 실제 나방이 발견되어 로그에 붙여진 'first actual case of bug being found'라는 일화가 유명하나, 이는 기존 은유를 문자 그대로 실행한 농담에 가깝고 용어의 기원 자체는 아니다. 기계 속을 기어다니며 예측 불가능한 고장을 일으키는 '벌레'라는 은유가 소프트웨어의 숨은 결함에 그대로 이식되어 오늘날 표준 용어로 자리 잡았다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3628,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 611,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck",
+    "keyword": "apple",
+    "group": "branch_check",
+    "prompt_hash": "b0396852d6b88ba3bbe9657fed3a73fac75ed7ae06f2c3035db7ec760d72f425",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:02:20.884293",
+    "latency_ms": 2974
+  },
+  "expected": {
+    "keyword": "apple",
+    "group": "branch_check",
+    "expected_branch": "not_dev_term"
+  },
+  "response": {
+    "id": "msg_0197AkVPfQwmVoc3QULiHZSv",
+    "container": null,
+    "content": [
+      {
+        "signature": "EuQCClsIDRgCKkCQtiQmMeE2zFKZQ20haOq8++Kj1HzEzN1ULCxIQoWiZy30nIP0FsjQn0jWsKPu6TwgV3LLFw6iQ6Tdw8j9nW0QMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxufe6fAoCvxakEfyUaDGmC+XfeUlrUBJGSVSIwtO+24OmFHhbwJ8t0l4Z6XbPYBIPgC0fTicPndDs++fyhFfQ1f2ReDtdrgz2+vQO3KrYBgyovkbjKUIQjsTFVXFvr47olf7dT7jMp60VTAHfikpS6Ett/vrc4Y4SEcFGYUaVjh/0gMuZ8FVTs4ZaJUDQL4F4l4Jx8PT03diKYDZJXMpGD3SdA+pi0A8ps78exp3IbQuGY/nAmfc/bPyLHZ1Xi7BtyP5lCa25WPW1ne7yiLpT4B8dOYPvAOFwOcHOxtHV4d+ZwW3rW0bwFIHKNcohg8d1IuEwwE5s267JBmgUOFO9Od735kRkYAQ==",
+        "thinking": "\"apple\" is not a development term. It's a fruit, or a company name, but not a specific development term that warrants a term entry. I should call return_not_dev_term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01FRjDz1QRn55WaQkcc2GMPW",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {},
+        "name": "return_not_dev_term",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3691,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 91,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

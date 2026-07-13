@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "selfcheck",
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "prompt_hash": "547cd6ba99746461d391eea735cf999712969f7bc12fa82f23cd4e5ad978f287",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:55:48.258439",
+    "latency_ms": 18548
+  },
+  "expected": {
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01UU4Thkuhy7iCj3RG5KbFsr",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"cookie\" - this is a development term related to web/network technology. Let me analyze it.\n\n1. It's a development term (HTTP cookie, web cookie)\n2. Etymology: The term \"cookie\" comes from \"magic cookie\" - a Unix computing term. The word \"magic cookie\" referred to a packet of data that a program receives and sends back unchanged. This itself may derive from \"fortune cookie\" metaphor.\n3. Category: 네트워크\n\nEtymology: 유닉스 컴퓨팅 속어 'magic cookie'에서 유래. 'magic cookie'는 프로그램이 받아서 변형 없이 되돌려 보내는 데이터 묶음을 뜻했으며, 포춘 쿠키(fortune cookie)에서 착안한 은유로 알려져 있다. \n\nNow I'm refining the Korean explanation to be more concise - around 100 characters - while keeping the key details about how the term originated from Unix terminology and the fortune cookie metaphor. 이 명칭이 브라우저와 서버 표준 명세에 그대로 반영되어 RFC 2109 같은 공식 문서들에 포함되었다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_0123GDYTKytQbkrDz45UUf16",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "cookie",
+          "aliases": [
+            "쿠키",
+            "HTTP 쿠키"
+          ],
+          "category": "네트워크",
+          "summary": "서버가 클라이언트에 저장시키는 소형 상태 데이터",
+          "etymology": "유닉스 컴퓨팅 속어 'magic cookie'에서 유래. 프로그램이 받아서 변형 없이 돌려보내는 불투명한 데이터 토큰을 가리켰으며, 안에 내용물이 든 포춘 쿠키(fortune cookie)의 은유에서 비롯된 것으로 본다.",
+          "namingReason": "1994년 넷스케이프의 루 몬툴리(Lou Montulli)가 HTTP 상태 유지 문제를 해결하기 위해 도입했다. HTTP는 본래 무상태(stateless) 프로토콜이라 요청 간 사용자 정보를 기억하지 못한다. 서버가 건네준 작은 데이터 조각을 클라이언트가 이후 매 요청마다 그대로 되돌려 보내는 방식이, 받은 것을 변형 없이 반환하는 'magic cookie' 개념과 정확히 일치했다. 이 이름은 이후 RFC 2109 등 공식 표준 문서에 그대로 채택되었다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3536,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1270,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

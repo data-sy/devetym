@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck__alias_strict",
+    "keyword": "bug",
+    "group": "in_shot",
+    "prompt_hash": "d2be35897b3d540d7d9da0024812d073ee1e3e3b9bc5b9181b12c813f839d753",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:08:42.164120",
+    "latency_ms": 18365
+  },
+  "expected": {
+    "keyword": "bug",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01Sn9iPxKiqDe8ve1zjbyNmf",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"bug\" - a development term referring to a software defect or error. Let me fill in the fields.\n\nEtymology: English \"bug\" (벌레). The origin is uncertain but the metaphorical use of bug for mechanical defects predates software. Edison used it in 1878.\n\nnamingReason: The famous 1947 moth story at Harvard Mark II, but that's not the origin. The metaphor of a bug crawling inside machinery causing unpredictable failures transferred to software defects.\n\nLet me draft:\n\netymology (60~120자): 정확한 어원은 불분명하나, 영어 'bug'(벌레)의 비유적 용법에서 유래한 것으로 본다. \n\n1878년 에디슨이 편지에서 기계 결함을 'bug'로 지칭한 기록이 있어, 소프트웨어 이전 엔지니어링 속어로 이미 쓰이고 있었다.\n\n지금 모범 답안을 참고하면서 'bug'의 어원을 설명하는 방식을 생각해보고 있다. 기존 내용과 겹치지 않으면서도 벌레라는 은유가 예측 불가능한 고장을 나타내는 이유를 마지막 문장에 담아야겠다. 소프트웨어 이전부터 기계 내부를 기어다니며 예측 불가능한 오작동을 일으키는 '벌레'라는 은유가 엔지니어링 현장에서 널리 쓰였고, 이것이 소프트웨어 결함을 설명하는 용어로 자연스럽게 확장되었다. 1947년 하버드 Mark II의 나방 사건은 이 기존 속어를 문자 그대로 실행한 일화일 뿐이며, 그 로그 카드는 현재 스미스소니언 박물관에 보관되어 있다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01MgVuMxGH5BXkonGQ2Nahb3",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "bug",
+          "aliases": [
+            "버그"
+          ],
+          "category": "기타",
+          "summary": "프로그램의 의도치 않은 오작동이나 결함",
+          "etymology": "정확한 어원은 불분명하나, 영어 'bug'(벌레)의 비유적 용법에서 유래한 것으로 본다. 1878년 에디슨이 편지에서 기계 결함을 'bug'로 지칭한 기록이 있어, 소프트웨어 이전 엔지니어링 속어로 이미 쓰이고 있었다.",
+          "namingReason": "1947년 하버드 Mark II 컴퓨터의 릴레이에서 실제 나방이 발견되어 로그에 'first actual case of bug being found'라고 기록된 일화가 유명하나, 이는 기존 속어를 문자 그대로 실행한 농담에 가깝고 용어의 기원 자체는 아니다. 기계 내부를 기어다니며 예측 불가능한 오작동을 일으키는 '벌레'라는 은유가 소프트웨어 이전 엔지니어링 현장에서 이미 통용되었고, 이것이 소프트웨어 결함으로 자연스럽게 확장되었다. 당시 나방이 붙어 있던 로그 카드는 현재 스미스소니언 국립 미국사 박물관에 실물로 보관되어 있다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3783,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1536,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

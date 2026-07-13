@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "jpa",
+    "group": "in_shot",
+    "prompt_hash": "a26d467de6d1f81437daf4a7edc0f5559ddbf78c55c7481ed3c8e2f1cf948c0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:57:46.965300",
+    "latency_ms": 10033
+  },
+  "expected": {
+    "keyword": "jpa",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01UcrZq951eSJLpJ7azZBphC",
+    "container": null,
+    "content": [
+      {
+        "signature": "EokCClsIDRgCKkAtZGAqP5fTaqjtzO7e3/25TcoZPXSd+trI0qB3kRlaGJm2IaZHrgtkgVHqO61xRy0CPq9DZFISHN2R4RoS3KO/MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxYlEHTZgR6FW3r79IaDPlpgDSrHgtB7EdVjSIw/J8yE3pYgs6pdzQS0GSkdolm4p2UMtRlelkITGG6kgnfCcmMR9fORSMIUWh2wjUSKlzzs/2GOOU15KZDGKTJSQLAYLcyqXfz3hYvwXErqjuKMOBVv0iag5c42+J2rD4jqc0S8f5VoA7xLWbwwpYU3bXBgSoMkMO1xddCMmOhl/pl0yWdfz1zrWiLMh7W8hgB",
+        "thinking": "The user input is \"jpa\", which is a development term (Java Persistence API).",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01RR1gwpfBkV66xTQ9PjKbYQ",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "jpa",
+          "aliases": [
+            "Java Persistence API",
+            "자바 영속성 API"
+          ],
+          "category": "DB",
+          "summary": "자바 객체를 DB에 매핑하는 영속성 표준 명세",
+          "etymology": "Java Persistence API의 약어. Java(자바 언어), Persistence(영속성, 프로그램 종료 후에도 데이터가 유지되는 성질), API(Application Programming Interface, 응용 프로그래밍 인터페이스)로 구성된 순수 두문자어.",
+          "namingReason": "Persistence(영속성)는 라틴어 persistere(끝까지 서 있다)에서 온 단어로, 메모리 위의 객체를 디스크에 '지속'시킨다는 의미를 담는다. 자바 객체는 프로세스가 종료되면 사라지지만, 이를 관계형 DB에 매핑해 살아남게 만드는 것이 JPA의 역할이다. 2006년 Java EE 5 표준으로 제정되어 ORM(객체-관계 매핑)의 공식 명세로 자리 잡았고, Hibernate·EclipseLink 등이 이 명세의 구현체로 동작한다. 'Persistence'라는 단어 선택 자체가 ORM의 본질인 '객체 생존 기간의 연장'을 정확히 드러낸다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3456,
+      "inference_geo": "global",
+      "input_tokens": 332,
+      "output_tokens": 557,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

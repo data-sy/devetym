@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "cell": "selfcheck__alias_strict",
+    "keyword": "semafore",
+    "group": "branch_check",
+    "prompt_hash": "4008c10903ca57f9d7fd33e5647635c88267624ec0171e04942fd35755670e0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:07:49.353424",
+    "latency_ms": 2520
+  },
+  "expected": {
+    "keyword": "semafore",
+    "group": "branch_check",
+    "expected_branch": "possible_typo",
+    "expected_suggestion": "semaphore"
+  },
+  "response": {
+    "id": "msg_01BN23jL1QB93v3Vz3Agnc6v",
+    "container": null,
+    "content": [
+      {
+        "signature": "EskCClsIDRgCKkB+bx9/EFds3QNllO0PK6mY4oTe56Mu1x8oCx/Dnb9juXWo3u6i18i2M86uQMo7LBvMGiXCjO8GiaqvfHKHxtNSMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxoPg32+f+6zImfLMoaDOKomSnxt5Tmq128MCIwRvWPj49pI885qF2VfOP4DNeRi0YeCodoTHGsX5bO/ZdFxcdlI+cIBFx4qTCAi/yuKpsBeqtuxcY+mWm5EBVhoVu4dte2HyzOQMMQ5pPaDnh9wiew1tqPVwH/Z2Q1ncVNtX9sbavxJApVKo4T/N3OONJD1pKHgh7S4KHY7lx4XcayJPXbx+6sTtRYfiAYl8/3FHXA818tIpXeBBLHnllbQa8HLwuVVGL7nbt5nn29Ic+JsKZcOFFTZj2AhNLcoVB0YDgU+N+5DBVFElEYQ3MYAQ==",
+        "thinking": "The input \"semafore\" looks like a typo of the development term \"semaphore\". I should call return_possible_typo with suggestion \"semaphore\".",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_017LCSxc6EqxquUbZbxDii9G",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "suggestion": "semaphore"
+        },
+        "name": "return_possible_typo",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3628,
+      "inference_geo": "global",
+      "input_tokens": 333,
+      "output_tokens": 103,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

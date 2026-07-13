@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck__alias_strict",
+    "keyword": "mutex",
+    "group": "in_shot",
+    "prompt_hash": "d2be35897b3d540d7d9da0024812d073ee1e3e3b9bc5b9181b12c813f839d753",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:08:01.013287",
+    "latency_ms": 11659
+  },
+  "expected": {
+    "keyword": "mutex",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01AKb7cvjYvRafUQTZ8fjmdp",
+    "container": null,
+    "content": [
+      {
+        "signature": "EoYNClsIDRgCKkBAwdulVpxAyAFbL9cZPgh6QP1qx+IHWByA6G2F/BxYh4eNlcuOA+A4e1bLrggR6+7dzyRx0d0RI+ExLu90dwMhMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxE6V7JkMDwOPOuvVYaDKIjIyuZE31McRDVlCIwcMOL2T4ienMQrRfjT8lxNEO4+xhoXXXTlR4t7KVH+L1c17bjHBvqZLwBPZnmVtBIKtgLDbrP3t/HQxhJcRRn5OFTuJCF8QStYZNyyjLZu+F4q3Avg6QO9CvaDk+p8B5lvloGHIwfQn1mSW/TKExvaYCK/+QCPtHSmPf/LiUHUO3QViBythJ8jEdTZfXM2lrbvwRGsXoLH6rNp+TUu1rcegUHoyhP84E2byb3XAeI7p1PjvsnDZejWTT7EU/8xUXmD4SbERUDltuWx1FtV7F9XNKAnUx3B8bSsB8A25bhciWnOz8xizW3io4a7IbIAQClAY2mcDH405wj3l/rLPVKGp1mB1ACpM88tQwYGFQCDKhfs2FlUlRefVk1TnXyrDSCZz8zMg8d6qJROmOCzwcabCUT52OrSofINgeHB5drfrsnGRNp2+IYp6odK2aCIJcT13DgcsT30Wtfii3/k7k7PvZ7lT8UiJJ89cedoEmVCEURq44f7He84YUg8M8BTS8CN7GXaZqN4MHcwo5zsvzbKboLd31OHhlJ0l8/KxMTHvfu7V6H5CK+xhZjIeCrbSwkH7PF/IgtOiqUBwVhOxTnClobCdy9g00zwTPf7iNWFwNekOWlX4ySnxL2A6a+yj0WyHMG+y5oNBNy6uMBZXKfhUjOR4HSNM49GpmVT1VeD0RwWxEEONoEMZLaCPI2/aA5A9tM/GW8Xtxlxif3rqmqHaF/UHFK2t9kCcYO25OpOXQxhKkDBkUFr/K9myZan3Gm68oPjT7zGLRcGSUoeEh7uHTFF/rf5fMgN/+dAvsbl7cFSmxDCrkCLq6CWCIML5efTNykohPbsWBPw/8luG1K7zjQIwTX3M7rYJjWWMdRWPbwNKxpVQMqwymDVszAqqdvlTIKOVRhdCQhG/rIkDh8goyPqCxScIcw78mOTH3JTU1S2XYwQXk6bAgBj7UWAxk4K8Cif4dflyK0ymYGbBtqdIanQx1w9ftCHACTaHGWdBzjxokHH4I67LgoUkxobEjMZ303i3wUzS43su0mEQ7WGwrT8H1jOqnb3g4dEqQWGNFxCjZUuGAaOVW08LCP7Ykkh3uwtVyN4yo/stFgvPQ7mHYWQ7c8/o3+Qie/ISD4aEzF/VgB1TR2sC9Mhvg9APmN5CthDocN3n+kruyN5jQKtYCZip9vsmKgYly2rHpqREcQAfnXB1gdpIpYn0Ifa0tHKYdadxagOsIySA91zvqba6OnLkwHSOTiH3z/lR3fxAVSmMW9X0PFUVUcAejB0CbuCFnWVBoiF/jq2tX6HjpvMkUE9+E+pES6LIMok4DDszFBzCmFBVSVVBA6yjT2r7+SR0Ehqe/REu4mpmmPIbDlPhyCje1CbNtFuJq/maGgmgb03GB/dKc9Xe8BbsTtrrpDZ6GPQgIXCKOQtBrUCj4h3hkaMAj8n0ZkXUDqpyVaGhKwrIxdk80lBIaz+Vn0eoNijIDUHesf/hlI2TCSexN0cCiZE2Vn5U1yN15W2sAj6UyP1yEZB/BY2VlEE1sXHuVDeLh52AIdjG7Oitt4qvht6ElVwsdKNJLFWeRJHfHWnx6r+Knk22d8HsTpoN+MwwZQME1/BEDw6rlczTfEQebWXWOI/O30IIMzY/NxaDGr8pmedjdgHUPyAsIXzuVlR1oKiN7YiSNWOptNT63gZh/SrZHDkoIKYlHMCFZhfcFupUKwaF8dge9IVlUcyKvY0ekgXC1HvzMsU+VkHawPyru6/aUP8bIwWhRHEmq9Sod7W6E/G1ykKpYPWn5mi+O1BvA0zl5D5yTKTUWIi5p/I56hmHhnbmPlbUTDOuPbREaEj5ln0FnifBHppsdHJdIiQizrX5sDg/RFcEwXkYhWB3PH6Sa4fdLnuue6bD+DAQRcR/f9tvX3Me7lUkSc9V789zpSZVa9lXlBu8U9f8a22ONwp3yIGzpmKvtVGa9XwbTLH07N0I5JP+kU/i2ahEzJO4fQyBybprrRM+csbBVx9nFPlROjofUPr8FhK9EGOiUfNKt9WuQ4Qs0uBEq0Hfc0OLHC5TXAh/IDMIbxgSoYAQ==",
+        "thinking": "The input is \"mutex\", which is a development term related to concurrency. Let me prepare the response.\n\n1. It's a development term - concurrent programming concept\n2. Etymology: Latin mutuus (mutual) + exclusio (exclusion) → mutual exclusion → mutex (abbreviation)\n3. namingReason: Bridge between etymology and actual usage. Last sentence should contain new info, not just a restatement.\n\nLet me draft:\n\netymology: 라틴어 mutuus(상호의)와 exclusio(배제)를 합친 영어 'mutual exclusion'의 축약어. \n\nNow I'm thinking about the naming reason - it's about how one thread locks a shared resource while excluding other threads from accessing it, which prevents race conditions. This synchronization mechanism directly embodies that mutual exclusion concept from the etymology, where threads take turns rather than competing for the same resource.\n\nThe key distinction from semaphores is the ownership concept - only the thread that acquired the lock can release it, which is what fundamentally defines a mutex and makes it different from other synchronization primitives.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01PjLDJAC5tPcWDUs75JiFEQ",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "mutex",
+          "aliases": [
+            "뮤텍스",
+            "mutual exclusion"
+          ],
+          "category": "동시성",
+          "summary": "여러 스레드의 동시 접근을 막는 잠금 장치",
+          "etymology": "라틴어 mutuus(상호의)와 exclusio(배제)를 합친 영어 'mutual exclusion'의 축약어. 서로 다른 주체가 서로를 배제하는 상태를 뜻한다.",
+          "namingReason": "한 스레드가 공유 자원을 사용하는 동안 다른 스레드의 접근을 '상호 배제'하여 경쟁 조건(race condition)을 막는 동기화 기본형이다. 어원의 '서로를 배제한다'는 의미가 잠금 소유권 개념으로 구체화되어, 잠금을 획득한 스레드만 임계 구역(critical section)에 진입할 수 있다. 세마포어(semaphore)와 달리 잠금을 획득한 스레드만 해제할 수 있다는 '소유권' 규칙이 mutex를 구분짓는 핵심 특성이다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 3783
+      },
+      "cache_creation_input_tokens": 3783,
+      "cache_read_input_tokens": 0,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 998,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "cell": "closing__alias_strict",
+    "keyword": "semafore",
+    "group": "branch_check",
+    "prompt_hash": "1fe8a1815b90d220dd1a0b048772ca32c437b58fbbf90bdda9a2814b2bce11bf",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:04:24.017969",
+    "latency_ms": 2193
+  },
+  "expected": {
+    "keyword": "semafore",
+    "group": "branch_check",
+    "expected_branch": "possible_typo",
+    "expected_suggestion": "semaphore"
+  },
+  "response": {
+    "id": "msg_01TjVB1rEJt6rLqmCi2Fhp82",
+    "container": null,
+    "content": [
+      {
+        "signature": "EsMCClsIDRgCKkBKfieweObm1tzbSKyB4/u2uAUiTCgvp3y/dvx4O8glh7tvZ3x70DbaJgayUwgbzMR1c7rOCbtyA5snZFv4yl+LMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgyMEFThQLSMWlzBJlsaDAjkzDnE5bbg+2ubWSIwUxCEmooyBJV0crI5fX8GSI59Ugmpy6ernT7s1BpkOKpQA3M2B0CaMBPUE0W8tWulKpUBTXpmE8TM5GaLl4aB8sJR64nQ+T43ryN72da+8V8AzABzc//eywWF7sJntGUmV0fgP5Z5ms1o7/BgZ2wc54oZ+L3aNiNVVZqPrKaLcVVOT7/JHXPyXxOXITSbvU9XdoHRvs9UwXXuraotX5rYahxoROFCeHhfTSW0MBPlvUtzZs3Re5jBU9z8QyT8UM716kEXw2/UmBIYAQ==",
+        "thinking": "The input \"semafore\" looks like a typo of \"semaphore\", which is a well-known development term related to concurrency/synchronization.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01YYmWfXqnsdRaQsG2VZMpua",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "suggestion": "semaphore"
+        },
+        "name": "return_possible_typo",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3611,
+      "inference_geo": "global",
+      "input_tokens": 333,
+      "output_tokens": 100,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

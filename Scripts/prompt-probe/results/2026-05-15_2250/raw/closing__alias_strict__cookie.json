@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "closing__alias_strict",
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "prompt_hash": "1fe8a1815b90d220dd1a0b048772ca32c437b58fbbf90bdda9a2814b2bce11bf",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:03:32.870745",
+    "latency_ms": 12799
+  },
+  "expected": {
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_012nYnyQeNY6VdBmJg7QWn2K",
+    "container": null,
+    "content": [
+      {
+        "signature": "EqwCClsIDRgCKkDrLftWePrSYweBsPuxy/Pmy5rDE2Ren4cxYsEAkXovHjS1NtZQDC2PbJEdvHbPFcA+sbdxERXYySEOPRTnQevLMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgzcfuemRYNJ4X2wDXEaDBs2fR8xYBlJhEbbnCIwIPginRahwxZobbn29LY12aZMbvnTF/pi+T5A7U3fwe3dJG2bWZD3DBtNczUjJiItKn+HGhV8D1j6NbH0FUEhT9UZkfVbqamvDjrSfZw6nQ3uh2k99yKYeEGHTcljrx5IrcnkT6XgkrDTjl4ZkEgVzsrFshWxm/cIXLWBIE/HmVPNLx9ANXhbZIXRAfUhcfatyy5U89vzh9fg2rlzSlDAbQdwI6FouGOyQX9v+Htv2XHQGAE=",
+        "thinking": "The user input is \"cookie\", which is a development term (HTTP cookie). Let me fill in the fields appropriately.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_012atkb7LNNDFNRz7TQApZH5",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "cookie",
+          "aliases": [
+            "쿠키"
+          ],
+          "category": "네트워크",
+          "summary": "서버가 클라이언트에 저장시키는 소규모 상태 데이터",
+          "etymology": "영어 'cookie'(과자)에서 비유적으로 차용. 컴퓨터 과학에서는 1970년대부터 프로세스 간에 주고받는 불투명한 식별 토큰을 'magic cookie'라고 부르던 관행이 있었으며, HTTP cookie는 이 전통에서 이름을 이어받았다.",
+          "namingReason": "HTTP는 기본적으로 무상태(stateless) 프로토콜이라 서버가 이전 요청을 기억하지 못한다. 이 문제를 해결하기 위해 1994년 넷스케이프의 Lou Montulli가 서버가 클라이언트 브라우저에 작은 데이터 조각을 심어두고, 이후 요청마다 그 데이터를 돌려받는 메커니즘을 설계했다. 그는 프로세스 간 식별 토큰을 뜻하는 기존 전산 은어 'magic cookie'에서 이름을 가져와 'cookie'로 줄였다. 마치 손님이 카운터에서 번호표(과자 조각)를 받아 다음에 다시 내미는 것처럼, 브라우저가 서버로부터 받은 데이터를 보관했다가 재제출하는 동작과 은유가 맞아 떨어진다. Montulli는 이 명칭이 기술 문서보다 구현 코드에서 먼저 굳어졌다고 회고한 바 있다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3611,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 666,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

@@ -32,7 +32,7 @@
 | UI | Compose Multiplatform |
 | 상태 | ViewModel + `StateFlow` (단방향 데이터 흐름) |
 | 네트워킹 | Ktor Client + `kotlinx.serialization` (엔진: Android=OkHttp, iOS=Darwin) |
-| 로컬 저장 | SQLDelight *또는* Room KMP (히스토리·북마크·AI 캐시) — [ADR에서 확정 예정](docs/adr/) |
+| 로컬 저장 | **SQLDelight** 2.3.2 (히스토리·북마크·AI 캐시) — [ADR-0003 확정](docs/adr/0003-local-storage.md) |
 | DI | Koin (`module`/`single`/`viewModel`) |
 | 큐레이션 DB | 앱 번들 내 JSON (`terms.json`, 650개) |
 | AI 폴백 | Claude (Cloudflare Worker 프록시 경유, 기기당 일 10회) |
@@ -64,13 +64,13 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 
 ## 문서
 
-이 repo는 **문서 → 구현** 순서로 채워 나간다. 현재는 설계 단계다.
+이 repo는 **문서 → 구현** 순서로 채워 나간다. **M0~M8 구현 완료**(코드 레벨), 현재 **M9(검증·출시)** 단계다.
 
 | 위치 | 내용 | 상태 |
 |---|---|---|
 | [`docs/product/prd.md`](docs/product/prd.md) | 제품 기획 — 문제·타겟·유저 스토리·콘텐츠 (*왜*의 정본) | ✅ |
 | [`docs/architecture.md`](docs/architecture.md) | 아키텍처 설계 — 레이어링·Ktor·로컬 저장·Koin (기술 *어떻게*) | ✅ |
-| [`docs/adr/`](docs/adr/) | 돌이킬 수 없는 결정 기록 (CMP 선택·관용구 원칙·로컬 DB·프록시 경계) | ✅ |
+| [`docs/adr/`](docs/adr/) | 돌이킬 수 없는 결정 기록 (0001~0006: CMP·관용구 원칙·로컬 DB·프록시 경계·SKIE interop·서버 캐시 경계) | ✅ |
 | [`docs/specs/spec.md`](docs/specs/spec.md) | 화면·동작 구현 명세 (Phase 1~4, Claude Code 전용) | ✅ |
 | [`ROADMAP.md`](ROADMAP.md) | 이행 순서(코어 먼저, UI 나중) + **진행 상태 정본** | ✅ |
 
@@ -78,16 +78,18 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 
 ## 빌드 · green 루프
 
-골격 검증 오라클(세 축 모두 통과해야 green). 버전은 [`gradle/libs.versions.toml`](gradle/libs.versions.toml) 한 곳에서 관리
+검증 오라클(**네 축 모두 통과해야 green**). 버전은 [`gradle/libs.versions.toml`](gradle/libs.versions.toml) 한 곳에서 관리
 (Kotlin 2.3.21 · CMP 1.11.1 · AGP 8.13.0 · Gradle 8.13 · SKIE 0.10.12 — [ADR-0005](docs/adr/0005-ios-interop.md)).
 
 ```bash
-./gradlew :shared:testDebugUnitTest                      # 공유 로직 단위테스트
+./gradlew :shared:testDebugUnitTest                      # 공유 로직 + Robolectric(실 Android 그래프·seam) — androidUnitTest
 ./gradlew :androidApp:assembleDebug                      # Android APK
 ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64    # iOS 프레임워크(Kotlin/Native + SKIE)
+./gradlew :shared:iosSimulatorArm64Test                  # commonTest + iosTest(네이티브 DB·NSUserDefaults) 네이티브 실행
 ```
 
-iOS 앱 시뮬레이터 실행(Apple Silicon)은 [`iosApp/README.md`](iosApp/README.md) 참조 — `xcodebuild` + `simctl`.
+iOS 앱 **시뮬레이터 실 구동**(Apple Silicon)은 M9서 실증 — `xcodebuild -scheme iosApp -sdk iphonesimulator … build` + `simctl boot/install/launch`
+(⚠️ 앱 링크에 `-lsqlite3` 필요 — SQLiter cinterop). 상세는 [실기기/시뮬 스모크 대본](docs/release/m9-device-smoke-script.md).
 
 - iOS interop은 **SKIE**로 `Shared.framework`의 Swift API를 개선한다(suspend→async/await, Flow→AsyncSequence 등).
 - ⚠️ **SKIE 0.10.12는 Kotlin 최대 2.3.21까지만** 지원 — Kotlin을 앞질러 올리지 말 것.
@@ -96,6 +98,15 @@ iOS 앱 시뮬레이터 실행(Apple Silicon)은 [`iosApp/README.md`](iosApp/REA
 
 ## 현재 상태
 
-**M0(KMP 골격) 완료 — 양 플랫폼 실제 실행 확인.** `shared + androidApp + iosApp` 골격이 서고, 공유 `Greeting`을
-Koin으로 배선해 **Android APK + iOS 시뮬레이터** 둘 다에서 공유 Compose 화면이 뜬다(green 루프 3축 통과). 다음은
-[`ROADMAP.md`](ROADMAP.md)의 **M1(모델·직렬화)** — 진행 상태 정본은 로드맵.
+**M0~M8 구현 완료 — 앱 코드 레벨 완성.** 모델·직렬화(M1)·로컬 DB(M2)·네트워킹(M3)·Repository(M4)·ViewModel(M5)·
+Compose UI 6화면(M6)·Koin 배선(M7)·통합·자산·seam actual(M8)까지 **4축 green**으로 닫혔다. 현재 **M9(검증·출시)** —
+`[AI]` 트랙 완료(199 테스트: 실 Android 그래프 완전성·네이티브 DB 왕복·seam 로직·접근성 리포트) + **iOS 시뮬 첫 기동·
+메인 앱·양 테마·반응형 DB 실증** + **Android 에뮬 Tier 1 스모크 완주**(adb 탭·타이핑 자율 주행 — 검색 3경로·북마크/히스토리 영속·
+seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 green이 못 잡은 실 첫 기동 크래시 2건 포착·수정**: iOS 앱 링크
+`-lsqlite3` 누락 + **Android manifest 클래스 경로 오류**(`.DevEtymApp`→`.android.DevEtymApp`, `ClassNotFoundException` 즉사).
+남은 것 = 티어형 게이트: **[시뮬]** iOS 입력 주입분(라이브 탭/idb) · **[실기기]** 하드웨어 감각(실 메일 전송·클립보드·DPI·햅틱·
+TalkBack/VoiceOver) · **[외부]** 코드서명·심사·게시. **출시 시퀀스 확정(2026-07-13): A public 전환 → B/C/D(Pages·실기기·스크린샷) 병렬 →
+E iOS 배포(우선·심사 직행) · F Android 배포(후행·폐쇄테스트 20명×14일 게이트).** iOS/Android 배포는 게이트가 달라 분리 투두다.
+진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md)(M9), 출시 지그·게이트는 [`docs/release/`](docs/release/).
+
+**병행 트랙 (2026-07-10 착수).** 원격 `data-sy/devetym`(2026-07-13 **public 전환**) → `m1`~`m8` 스택 PR(#1~8) 병합(main=M8, m9 draft #9) + 원본 repo `~/dev-etymology` **이관·자기완결화** + 코드 갭 정리. **완료**: 이관 WU-1(**Pages 배포·방침 URL 라이브 2026-07-13**, [PR #10](https://github.com/data-sy/devetym/pull/10) 병합·<https://data-sy.github.io/devetym/>)·WU-2(Scripts·db-expand 검증)·WU-3(ai-quality→ADR-0007)·WU-4(크래시 리포팅 Sentry — 방침 사인오프 + **WU-4B 단일 KMP 통합**까지 완료, iOS도 실배선)·WU-5(launch-prep 대조)·WU-6(네이티브 iOS 전수 스윕·자기완결성 확증) + 코드 갭 WU-8(클립보드)·WU-9(스플래시)·WU-10(셸 회귀가드). **잔여**: WU-7(원본 repo 폐기·사람). **독립 작업단위 WU-1~12 + 확정 결정(크래시 SDK=Sentry KMP 등)의 정본 = [`docs/handoff/26-07-10-selfcontained-migration-plan.md`](docs/handoff/26-07-10-selfcontained-migration-plan.md)** — 미래 세션이 WU 단위로 실행.

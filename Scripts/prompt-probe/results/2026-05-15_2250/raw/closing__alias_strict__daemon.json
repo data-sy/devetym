@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing__alias_strict",
+    "keyword": "daemon",
+    "group": "in_shot",
+    "prompt_hash": "1fe8a1815b90d220dd1a0b048772ca32c437b58fbbf90bdda9a2814b2bce11bf",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:03:02.356605",
+    "latency_ms": 8601
+  },
+  "expected": {
+    "keyword": "daemon",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01YVowMsuD9i2D4GPmgLPCTA",
+    "container": null,
+    "content": [
+      {
+        "signature": "EvUBClsIDRgCKkDvL4v/bSsdD+VdNggbf6CDBmUfM4aei/klA0YXetYDkQDpTaO6P384vPklT8CORhrITlHmSLLKtDd76NaTKemFMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxmOUC6ctqS4/MOKrwaDGCme2avan+s+KVTviIwbKzKpZ4oXaHKxguflHIjqTKzTWP013GCPxoYuTRTAXKKdRhM40pa54o2J+X3KNevKkhocr1mbk5T2EViYSl5OPXKKcQReRkjDqnYscTXmVfvcr4Bek7DxcK2+8WoOizi0UFDLCwYS+VWtMihT71jXq4CTbJxQInvrj4YAQ==",
+        "thinking": "The user input is \"daemon\", which is a development term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_017xaybc9zJbnHsk2KnXzTwt",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "daemon",
+          "aliases": [
+            "데몬",
+            "demon"
+          ],
+          "category": "기타",
+          "summary": "백그라운드에서 지속 실행되는 프로세스",
+          "etymology": "그리스어 δαίμων(daimōn)에서 유래. 본래 '신과 인간 사이의 중개 영혼'을 뜻하는 종교·철학 용어로, 사람 눈에 보이지 않으면서 일을 대신 처리하는 존재를 가리켰다.",
+          "namingReason": "1963년 MIT의 Project MAC에서 Maxwell의 악마(Maxwell's demon) 사고실험에 영감을 받아 명명되었다. 사용자 상호작용 없이 시스템 뒤편에서 스스로 작업을 처리하는 프로세스를 '보이지 않는 중개자'라는 원의미에 빗댄 은유적 전이다. 악마(devil)와의 혼동을 피하고 중립적·기술적 의미를 살리기 위해 고대 그리스 철학 용어인 'daemon' 철자를 의도적으로 택했으며, Unix 관습에 따라 해당 프로세스 이름 끝에 'd'를 붙이는 전통(httpd, sshd, cron 등)으로 이어졌다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3611,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 532,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "cell": "selfcheck",
+    "keyword": "redus",
+    "group": "branch_check",
+    "prompt_hash": "547cd6ba99746461d391eea735cf999712969f7bc12fa82f23cd4e5ad978f287",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:57:23.514458",
+    "latency_ms": 2660
+  },
+  "expected": {
+    "keyword": "redus",
+    "group": "branch_check",
+    "expected_branch": "possible_typo",
+    "expected_suggestion": "redis"
+  },
+  "response": {
+    "id": "msg_016nctX9RScPxUtPsLFoyYm2",
+    "container": null,
+    "content": [
+      {
+        "signature": "EuACClsIDRgCKkAyt50RWP4q9KdFvo8Nhfsi3l185VMxUxdogv9XcOkFnMZExbt7W5RkEhYG3JF7uvNNxmDXxDONm8FxbaPbzOAdMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgwAIKFho94NOUi2zJsaDKrMZvfue9f2Qwz1dCIwut1Lw8z1s5Q3lZqnk/iAOCSy7SEdIotXraHG6WCjg8gdg0bGfTNDxV4gqF3Xs4yXKrIBoIEQZ/gCNLSqEJsMFR5fd8OlvxK9vb4bkxryIgde08WcW/8w4sRZuD5NTCOYgaTSl1qz0fdl8XpqQ/blKBptPK/FWmV4AeIPKuo9vSNri2YQlHb5dMYLWheEwI8WCvs54+sziE0oTeBMHDz83Rs/yLgw6/rMwrWeCh8fypl4QEE+kI545Bch0q+B83Nu4kU9CbX2wZt6mm/49RgQzx86CbcZZ3BskQnh0RlkoPAnya7TjxgB",
+        "thinking": "The input is \"redus\". This looks like it could be a typo for \"Redis\" (the popular in-memory data store). Let me call return_possible_typo with suggestion \"Redis\".",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01HfoqPNNWFXTDCfZJMHc8NZ",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "suggestion": "Redis"
+        },
+        "name": "return_possible_typo",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3536,
+      "inference_geo": "global",
+      "input_tokens": 332,
+      "output_tokens": 107,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

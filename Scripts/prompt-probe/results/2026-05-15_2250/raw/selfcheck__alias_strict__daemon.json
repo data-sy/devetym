@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "selfcheck__alias_strict",
+    "keyword": "daemon",
+    "group": "in_shot",
+    "prompt_hash": "4008c10903ca57f9d7fd33e5647635c88267624ec0171e04942fd35755670e0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:05:07.079778",
+    "latency_ms": 8701
+  },
+  "expected": {
+    "keyword": "daemon",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01Fv4DCkt353uhYDP2oe9N9v",
+    "container": null,
+    "content": [
+      {
+        "signature": "EoQFClsIDRgCKkCMj1e2E8O4Y/pRMsZs8/+yvkOrouqCpHb5v5FHOoMWmWpcgJNzzwoIBnuDtRQ8x1QSr6b8wDraKfiAF9gzeS+ZMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgx7CxHBEqevKZg/k+caDAuKP5Qo+dhCC/GdgyIw6IYY7fB08rPkDB+kr0iM/L6GeMjLAjWEsf3f4am9gWYTDiDvW3fLSlbYqOVXFPL2KtYDuCEWMzLJkeexY4z28bRZI6ueSTyWisWduFe5vEI8yPwW/qHXnQ5oXY1IUef+v6kv+k+gHPitzGD2yyXgBF89lsctxuk8WNHW6KwP2SLFpRHYhj3WcLI9mW5TDatqxwCQQs/KswslL6c/xFQTFX7lpUMcHbTYlGi8NtP2V4oUBnouOcpsXDNOb4rbzv22pJgPHEGyhWcWelJftXWiOQH3EMbnneReQ0cNf91sYUaRZXWqg2yV0Bf1LMj69rEOXFiFR1uYojvOGqsuALa9DJu7TY6X5Bpr+rgkUO8uXF+2ZSW+ptzeaMvBft5Q7CBs+nI35aMXrz5snd5cXaPLdO2ZdTununYHPT1dglHhu+b6LzwbN/l8UNZtpjRtsg8Z0vPNqZvzKvAUh04eROAEWyUhq/bBPgtHMkrdI0viVeOsxdkhEEhKa2br41wrrztgt0iWi3T+4VZZytJg02oSmBBYhPwtuR6BL8Z5/iNYOzIkQh6MwX2kXD/i0b1ciuJD2trDyXFBy7DnAfKoDY64yF95ug6ngAiwD0nZTGjNU0ctss4xCGSd46i9jl8fRArt60Ua+LSCw9AerT2IjGNb9qtb6vbqeCzpD8AkURqEddC4mthO9J+VHDYYAQ==",
+        "thinking": "The input is \"daemon\", which is a development term referring to a background process. Let me fill in the fields appropriately.\n\nEtymology: Greek δαίμων (daimōn), meaning a spirit/intermediary between gods and humans.\n\nNaming reason: Named after Maxwell's demon thought experiment by MIT's Project MAC in 1963. The invisible intermediary concept maps well to background processes.\n\nThe example already shows the answer for daemon, so I'll use that.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01Fx1pWU4cuPHiAcHMcMxgE8",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "daemon",
+          "aliases": [
+            "데몬",
+            "demon"
+          ],
+          "category": "기타",
+          "summary": "백그라운드에서 지속 실행되는 프로세스",
+          "etymology": "그리스어 δαίμων(daimōn)에서 유래. 본래 '신과 인간 사이의 중개 영혼'을 뜻하는 종교·철학 용어로, 사람 눈에 보이지 않으면서 일을 대신 처리하는 존재를 가리켰다.",
+          "namingReason": "1963년 MIT의 Project MAC에서 Maxwell의 악마(Maxwell's demon) 사고실험에 영감을 받아 명명되었다. 사용자 상호작용 없이 시스템 뒤편에서 스스로 작업을 처리하는 프로세스를, '보이지 않는 중개자'라는 원의미에 빗댄 은유적 전이다. Unix 관습에 따라 데몬 프로세스 이름 끝에 'd'를 붙이며(httpd, sshd), 시스템 부팅 시 자동 시작되어 종료 시까지 상주한다는 동작 방식이 '보이지 않는 곳에서 항상 일하는 존재'라는 어원 이미지와 정확히 맞아떨어진다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3628,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 620,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

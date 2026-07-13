@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "selfcheck",
+    "keyword": "null",
+    "group": "out_of_shot",
+    "prompt_hash": "547cd6ba99746461d391eea735cf999712969f7bc12fa82f23cd4e5ad978f287",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:57:11.639089",
+    "latency_ms": 17509
+  },
+  "expected": {
+    "keyword": "null",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_012vXEd32LretaoLvzLwBEGm",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The user input is \"null\". This is a development term used in programming to represent the absence of a value or a reference that points to nothing.\n\nLet me analyze:\n1. Is it a dev term? Yes, \"null\" is a fundamental programming concept.\n2. Etymology: From Latin \"nullus\" meaning \"not any, none\". \n3. Naming reason: The concept of null represents the absence of a value, which maps directly to the Latin meaning of \"none/nothing\".\n\nLet me draft etymology and namingReason:\n\nEtymology: 라틴어 nullus(아무것도 없는, 없는)에서 유래. null-('no, not')과 -us(형용사 어미)로 구성된다. \n\nThe Latin adjective meaning \"nothing at all\" was adopted directly into English and later into programming terminology. For the naming reason, Tony Hoare introduced null as a reference representing \"the absence of a value\" when designing the ALGOL W language in 1965, drawing directly from the etymological sense of having nothing.\n\nThis concept naturally extended to express the state where a variable references nothing—a complete absence of reference. Hoare himself later called this \"the billion-dollar mistake,\" acknowledging how null became the source of countless runtime errors like NullPointerException in subsequent programming languages.\n\nNow I'm settling on the aliases for this entry, keeping just \"널\" since \"null 참조\" is redundant with the main term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01KuUmyWEDU7aKhP4bu8jUr1",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "null",
+          "aliases": [
+            "널"
+          ],
+          "category": "기타",
+          "summary": "값이 존재하지 않음을 나타내는 특수 참조",
+          "etymology": "라틴어 nullus(아무것도 없는)에서 직접 차용. null-(없음, 부정)과 형용사 어미 -us로 구성되며, '전혀 존재하지 않음'을 뜻한다. 수학·논리학에서 '공집합'이나 '무효'를 가리키는 용어로도 쓰이던 단어다.",
+          "namingReason": "1965년 Tony Hoare가 ALGOL W 언어를 설계하면서, 어떤 객체도 가리키지 않는 참조 상태를 표현할 단어로 라틴어 어원 그대로 null을 채택했다. '전혀 존재하지 않음'이라는 어원의 의미가 '변수가 유효한 값을 보유하지 않은 상태'로 자연스럽게 전이된 것이다. Hoare 본인은 훗날 이 도입을 \"10억 달러짜리 실수(billion-dollar mistake)\"라고 회고했는데, null 참조 역참조 시 발생하는 NullPointerException 등의 런타임 오류가 수십 년간 소프트웨어 결함의 주요 원인이 되었기 때문이다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3536,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1085,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

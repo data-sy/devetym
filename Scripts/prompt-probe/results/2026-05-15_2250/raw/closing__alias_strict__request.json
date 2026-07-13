@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "closing__alias_strict",
+    "keyword": "request",
+    "group": "out_of_shot",
+    "prompt_hash": "1fe8a1815b90d220dd1a0b048772ca32c437b58fbbf90bdda9a2814b2bce11bf",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:03:58.799380",
+    "latency_ms": 11900
+  },
+  "expected": {
+    "keyword": "request",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01AovDJ4j4nFTMGi9Sxr1z5T",
+    "container": null,
+    "content": [
+      {
+        "signature": "EpAFClsIDRgCKkCu/AE6uK0/p2UFtrCfhlfFrsbB6hze6dNy/ktjO+vzOXvQjJxqgAphyuFitdz309pXfhlgNJIREBePy3ZNhE+HMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxzkk/cL5jLO3UXDP0aDFhBP/9tPtWKJbprryIwocYaT7fHL46Tj0eTOiQuivmMCW9Kgw5P57a4jHVq6J6h47Smcz1FYob7yPbn9x0LKuIDw2aM3cDR2pdnrlh00Oas8jeyUNyHysbz3zYteLyhC6zU9ZFzafDxj/V0Gf/XO7ywiPxM56ob+3KgKyS8pTKVaLglQaHIWY4cNPEdxZwLmm3Di8igSLjenaPms943k7ZKAVUeBMbiWkWr+KiztJgUSuovjNxOcChg23RsO4nnhyPC20Njca/cCIz+8cHuNkWcnl1pfdXTcQd44VnM1ety/64HJ0O1SoikkgJO+/tMZssSdj6O5j62lFWv3CJtv76YrFhS3DyJ7TmIvH7ZX2E8j+BPXOJCDrWqF8RKrxDQFVZWOx/6HwMTWmRyt0OuAMVrDFNJ+NA2d/CldEVI1cZ/aKPfrOjUJWymmZTvjksaNKiHG4n2XyXDgkb44Zy3rGbVr9YTD4LuBCBYSo+jCyN9oQZs7DGvTUKPJTeNJrZRGm5E9eecF+GRKtsEzBL3e0VXg8dpr+8iATuOWfbyXAIST5fcWFWgEiWcDmYM4o0/ol3YCWvIGHv/cwAIyUOIz3WnpnmOUy47mEUZZZsurqtmFuTOF94FLB6xQSyco7T4xEPTEcMdpXo5/40rmnvNOpG+/pLfwgtYa7cJuxCqEbg4JhxliMa9rCpaEtXz4tbFfm1V43O06DKNV8RmboOLtC2H25YYAQ==",
+        "thinking": "The input \"request\" could be a general English word, but it's also commonly used in development contexts (HTTP request, etc.). However, as a standalone term, \"request\" is a general English word. But in development, it's a very common concept referring to an HTTP request or a general request in client-server architecture.\n\nI think \"request\" is a development term - it's fundamental to web development, networking, APIs, etc. I'll treat it as a networking/HTTP term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01ExaCudThwmzotCe6s1gpCb",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "request",
+          "aliases": [
+            "요청"
+          ],
+          "category": "네트워크",
+          "summary": "클라이언트가 서버에 처리를 요구하는 메시지",
+          "etymology": "라틴어 requirere(다시 구하다)에서 중세 프랑스어 requête를 거쳐 영어 request로 정착. re-(다시)와 quaerere(구하다·묻다)의 합성어로, '무언가를 구하는 행위' 자체를 뜻한다.",
+          "namingReason": "어원상 '무언가를 구하는 행위'라는 의미가 네트워크 통신에서 클라이언트가 서버에 특정 자원이나 동작을 요구하는 메시지로 자연스럽게 전이되었다. HTTP에서 request는 메서드(GET·POST 등), 헤더, 바디로 구성되며 서버가 수행해야 할 작업을 기술한다. 서버가 돌려주는 응답은 response라 불려, 두 용어가 쌍을 이루며 클라이언트-서버 모델의 기본 통신 단위를 이룬다. 1991년 HTTP/0.9 명세에서 이 명칭이 공식 채택된 이후 REST·gRPC 등 다양한 통신 패러다임에서도 동일한 용어가 쓰이고 있다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3611,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 644,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

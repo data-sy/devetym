@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck__alias_strict",
+    "keyword": "boolean",
+    "group": "out_of_shot",
+    "prompt_hash": "d2be35897b3d540d7d9da0024812d073ee1e3e3b9bc5b9181b12c813f839d753",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:10:27.393311",
+    "latency_ms": 19760
+  },
+  "expected": {
+    "keyword": "boolean",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_019fhFAH7vDKKM9YcoU39npw",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"boolean\" - this is clearly a development term. Let me work through the etymology and naming reason.\n\n**Etymology:**\nBoolean comes from the name of George Boole (1815–1864), a British mathematician who developed Boolean algebra in his 1854 work \"An Investigation of the Laws of Thought.\" The suffix \"-an\" is an English adjectival suffix meaning \"of or relating to.\" So Boolean = \"of Boole.\" It's a proper name-derived adjective.\n\n**Naming Reason:**\nGeorge Boole created a system of algebra where variables take only two values (true/false, 1/0) and operations are logical (AND, OR, NOT). \n\nHis binary logic system became fundamental to digital circuits and computer programming. When developers needed a data type for true/false values, they named it after Boole's algebra—making it an eponym, which is pretty unusual for a data type. Now I'm drafting concise definitions of the etymology and naming reason to fit specific character limits.\n\nThe etymology is coming together at around 68 characters, capturing how the English suffix -an was added to Boole's surname. For the naming reason, I'm explaining how Boole's 1854 work on logical algebra with binary values (1 and 0) became the theoretical foundation for digital circuits and programming languages, and how programmers honored this by naming the data type after him.\n\nNow I'm adding the historical evolution in C—originally using integers without a dedicated type, then formally adopting _Bool in C99. I'm also noting the common aliases in Korean and English, and categorizing this as a fundamental concept.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_012eW69tvKwdJKo5U5GpArii",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "boolean",
+          "aliases": [
+            "불리언",
+            "bool"
+          ],
+          "category": "기타",
+          "summary": "참과 거짓 두 값만 갖는 논리 자료형",
+          "etymology": "영국 수학자 조지 불(George Boole, 1815~1864)의 성(Boole)에 영어 형용사 접미사 -an을 붙인 고유명사 유래어. '불의, 불에 관한'을 뜻하는 에포님(eponym)이다.",
+          "namingReason": "조지 불은 1854년 『사고의 법칙 연구(An Investigation of the Laws of Thought)』에서 참(1)과 거짓(0) 두 값만 갖는 논리 대수 체계를 정립했다. 프로그래밍 언어에서 참/거짓 두 상태만 표현하는 자료형을 만들 때, 그 이론적 토대인 '불 대수(Boolean algebra)'의 창시자 이름을 자료형 명칭으로 차용했다. C언어에서는 별도 타입 없이 0/1 정수로 대체되다가 C99에서 _Bool 타입으로 공식 편입되었다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3783,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1266,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "cell": "closing",
+    "keyword": "redus",
+    "group": "branch_check",
+    "prompt_hash": "a375f07f70512ed802370765aaeda70d0278f7253f21cbdd2bfef2268c398ad2",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:54:12.252869",
+    "latency_ms": 2738
+  },
+  "expected": {
+    "keyword": "redus",
+    "group": "branch_check",
+    "expected_branch": "possible_typo",
+    "expected_suggestion": "redis"
+  },
+  "response": {
+    "id": "msg_01NtwMTw5K1diB6Uk7st7cZX",
+    "container": null,
+    "content": [
+      {
+        "signature": "EpcCClsIDRgCKkDfbiWPWQK29nXhh4M72aFi4N7aWPvhrkmJgqV9Rtu97sy5dxY9TqnXUJR43D0q+ySQnP2/+Eik3za5ZGhybC5FMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxENWWYaYOPl9Pl8xoaDB0CIh8qgqxCnJs21CIw2SD3Xm/hBTq5KuRRC+jUazydMT3ui4qJTKP31HBEbSW9useKXvLj7zATVYG3KGbYKmpbznX+qFYqjvyvd6RjkXbfiqUvizTCYKC9wtocbKWx9H36sRAf81fyDzkCgPCE4DYDA9fkMrAb7XJrvMzaKhCLeLHU5MkqseSNI6uVMuC/UUy45XNzclhIiGzgWBpH46uJi4FZZ1hmCknvGAE=",
+        "thinking": "\"redus\"는 개발 용어가 아닌 것 같습니다. \"Redis\"의 오타로 추정됩니다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01Nbbbsh2oMEBNPn5zKfbLGi",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "suggestion": "Redis"
+        },
+        "name": "return_possible_typo",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3519,
+      "inference_geo": "global",
+      "input_tokens": 332,
+      "output_tokens": 104,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

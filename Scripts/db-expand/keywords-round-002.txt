@@ -1,0 +1,54 @@
+# Round-002 keyword 40개 (Phase 6 본 확장 — 마지막 수동 라운드)
+# 카테고리 배분 (결손→100 비례, 기타 0): 자료구조+11 동시성+9 네트워크+7 패턴+7 DB+6
+# 발주안: docs/db-expand/rounds/round-002.md. 510 → 550.
+# dedup: 기존 terms.json(510)의 {keyword} ∪ {모든 alias} 정규화 차집합으로 충돌 0 확인 (아래 참조).
+
+# 자료구조 (long pole 64 → +11 → 75)
+cartesian-tree
+finger-tree
+zipper
+gap-buffer
+piece-table
+count-min-sketch
+hyperloglog
+cuckoo-hashing
+interval-tree
+ternary-search-tree
+pairing-heap
+
+# 동시성 (71 → +9 → 80)
+thundering-herd
+false-sharing
+rcu
+bakery-algorithm
+futex
+spurious-wakeup
+hazard-pointer
+seqlock
+lock-convoy
+
+# 네트워크 (79 → +7 → 86)
+nagles-algorithm
+happy-eyeballs
+head-of-line-blocking
+bufferbloat
+slow-start
+stun
+vlan
+
+# 패턴 (79 → +7 → 86)
+abstract-factory
+object-pool
+dead-letter-queue
+cache-aside
+backends-for-frontends
+entity-component-system
+claim-check
+
+# DB (80 → +6 → 86)
+lsm-tree
+tombstone
+snowflake-schema
+star-schema
+change-data-capture
+consistent-hashing

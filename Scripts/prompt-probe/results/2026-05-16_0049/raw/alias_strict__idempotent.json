@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "idempotent",
+    "group": "out_of_shot",
+    "prompt_hash": "956ba44a7c48f75b2abbcf7faecda24ac6d0fdca7c4e1d0bd1da3b5452801ad7",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-16T00:50:00.105214",
+    "latency_ms": 15464
+  },
+  "expected": {
+    "keyword": "idempotent",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01KNvHT44bWj6wneiWS2UJvJ",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The user input is \"idempotent\", which is a development term used in the context of APIs, HTTP methods, and distributed systems. Let me analyze it and call return_term_entry.\n\nIdempotent comes from Latin \"idem\" (same) + \"potens\" (powerful/having power). It means an operation that produces the same result no matter how many times it's applied.\n\nCategory: 네트워크 or 기타? It's used in HTTP (GET, PUT, DELETE are idempotent), also in DB and distributed systems. I'll go with 네트워크 since it's most commonly discussed in the context of HTTP methods and REST APIs.\n\n\nThe Korean term is 멱등성, which describes the property where executing the same request multiple times yields identical results. The concept originated in mathematics to describe operations where repeated application doesn't change the outcome, and the naming reflects this mathematical foundation.\n\nIn distributed systems and HTTP design, this principle evolved to mean that sending a request once or ten times should leave the server in the same state. GET, PUT, and DELETE are classified as idempotent HTTP methods, which allows clients to safely retry requests when network failures occur.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01DxwWYZfp36jtLtS9fCrfPb",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "idempotent",
+          "aliases": [
+            "멱등",
+            "멱등성"
+          ],
+          "category": "네트워크",
+          "summary": "동일 연산을 여러 번 실행해도 결과가 같은 성질",
+          "etymology": "라틴어 idem(같은)과 potens(능력, 힘)의 합성어. 수학에서 '같은 연산을 반복 적용해도 결과가 변하지 않는 성질'을 지칭하는 용어로 먼저 사용되었다.",
+          "namingReason": "수학에서는 f(f(x)) = f(x)가 성립하는 함수를 멱등 함수라 부른다. '같은 힘(potens)을 거듭 가해도 결과(idem)가 변하지 않는다'는 이 개념이 분산 시스템과 HTTP 설계로 이식되었다. HTTP 명세(RFC 7231)는 GET·PUT·DELETE를 멱등 메서드로 규정하며, 동일 요청을 몇 번 보내도 서버 상태가 동일하게 유지된다고 정의한다. 이 성질이 보장될 때 클라이언트는 네트워크 장애 후 응답 여부와 무관하게 요청을 안전하게 재시도할 수 있다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3540,
+      "inference_geo": "global",
+      "input_tokens": 334,
+      "output_tokens": 1002,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

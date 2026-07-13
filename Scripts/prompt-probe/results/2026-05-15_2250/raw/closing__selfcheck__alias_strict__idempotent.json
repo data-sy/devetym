@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck__alias_strict",
+    "keyword": "idempotent",
+    "group": "out_of_shot",
+    "prompt_hash": "d2be35897b3d540d7d9da0024812d073ee1e3e3b9bc5b9181b12c813f839d753",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:09:08.190793",
+    "latency_ms": 26024
+  },
+  "expected": {
+    "keyword": "idempotent",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_017bN2XRJkxhE3xoqgVFE9dk",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The user input is \"idempotent\". Let me analyze this.\n\n1. This is a development term used in APIs, HTTP methods, and distributed systems.\n2. Let me work out etymology and namingReason.\n\nEtymology: From Latin \"idem\" (same) + \"potens\" (powerful, able). The word means \"having the same power/effect when applied multiple times.\" In mathematics, an operation f is idempotent if f(f(x)) = f(x).\n\nnamingReason: The mathematical concept of idempotency (an operation that yields the same result no matter how many times it's applied) was adopted in computing. In HTTP, methods like GET, PUT, DELETE are idempotent - calling them once or multiple times produces the same server state. \n\nThe term is especially important in distributed systems where network failures trigger retries, and the Latin roots directly capture this idea: repeated application has the same effect as a single one. For categorization, while it spans mathematics, databases, and network protocols, I'll classify it under \"기타\" since it's a foundational concept across multiple domains rather than being specific to networking alone.\n\nNow I'm drafting the etymology and naming reason in Korean, explaining how the Latin roots map to the mathematical property where applying an operation multiple times yields the same result as applying it once. 멱등성이라는 한국어 용어로도 불리는데, 이는 개념 자체를 지칭하는 표현이다.\n\n요약은 20~30자 정도로 \"동일 요청을 반복해도 결과가 변하지 않는 성질\"로 정리하면 될 것 같다.\n\n카테고리는 네트워크보다는 기타가 더 적절할 것 같은데, 멱등성이 수학적 성질이기도 하고 HTTP/REST 맥락에만 국한되지 않기 때문이다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_016QB7u5JxFqf7TwninoxHsd",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "idempotent",
+          "aliases": [
+            "멱등성",
+            "멱등"
+          ],
+          "category": "네트워크",
+          "summary": "동일 연산을 반복해도 결과가 달라지지 않는 성질",
+          "etymology": "라틴어 idem(같은)과 potens(힘·능력)의 합성어. '같은 효과를 낸다'는 뜻으로, 수학에서 연산을 여러 번 적용해도 결과가 바뀌지 않는 성질을 가리키는 데 먼저 쓰였다.",
+          "namingReason": "수학에서 f(f(x)) = f(x)를 만족하는 연산, 즉 '몇 번을 적용하든 결과가 동일하다'는 성질을 지칭한 것이 시작이다. 이 개념이 네트워크·API 설계로 이전되어, 동일 요청을 한 번 보내든 여러 번 보내든 서버 상태가 같게 유지되는 HTTP 메서드(GET·PUT·DELETE 등)의 속성을 설명하는 데 쓰인다. 분산 시스템에서 네트워크 오류로 재시도가 발생해도 부작용이 없음을 보장할 때 핵심 설계 기준으로 삼는다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3783,
+      "inference_geo": "global",
+      "input_tokens": 334,
+      "output_tokens": 1784,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

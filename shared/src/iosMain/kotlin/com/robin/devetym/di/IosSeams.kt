@@ -2,45 +2,141 @@ package com.robin.devetym.di
 
 import com.robin.devetym.ui.platform.AppActions
 import com.robin.devetym.ui.platform.AppearanceStore
+import com.robin.devetym.ui.platform.ConsentStore
 import com.robin.devetym.ui.platform.DeviceInfo
 import com.robin.devetym.ui.platform.OnboardingStore
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.useContents
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import platform.CoreGraphics.CGRectMake
 import platform.Foundation.NSBundle
 import platform.Foundation.NSURL
+import platform.Foundation.NSURLComponents
+import platform.Foundation.NSURLQueryItem
 import platform.Foundation.NSUUID
 import platform.Foundation.NSUserDefaults
+import platform.StoreKit.SKStoreReviewController
+import platform.UIKit.UIActivityViewController
+import platform.UIKit.UIAlertAction
+import platform.UIKit.UIAlertController
+import platform.UIKit.UIAlertControllerStyleAlert
+import platform.UIKit.UIAlertActionStyleDefault
 import platform.UIKit.UIApplication
+import platform.UIKit.UIDevice
 import platform.UIKit.UIPasteboard
+import platform.UIKit.UIUserInterfaceIdiomPad
+import platform.UIKit.UISceneActivationStateForegroundActive
+import platform.UIKit.UIViewController
+import platform.UIKit.UIWindow
+import platform.UIKit.UIWindowScene
+import platform.UIKit.popoverPresentationController
 
 /**
- * iOS seam actual (M8 §3-1·§3-2). ⚠️ 런타임 동작(openURL·클립보드·공유)은 실기기 천장 — 컴파일·링크까지 보증.
- * `share`·In-App Review는 presenting VC/scene 제약이라 최소 구현(§7).
+ * mailto URL 조립 (M9-후속 셸 재설계 §2-D) — 순수 함수(iosTest 대상). `NSURLComponents`+`NSURLQueryItem`이
+ * percent-encoding을 담당해 **한글 제목도 nil이 안 된다** — 종전 공백·개행만 치환하던 수동 encode는
+ * "DevEtym 문의" 같은 한글 subject에서 `NSURL.URLWithString` nil → 조용한 no-op였다(실기기 3-5 전멸의 확정 결함).
+ */
+/**
+ * 앱 평가 프롬프트 presenter 주입 (실기기 라운드 2) — iOS 26 실기기에서 `SKStoreReviewController.
+ * requestReviewInScene`이 무프롬프트 no-op 관측(iOS 18.5 시뮬은 표시, iOS 18에서 deprecated된 API).
+ * StoreKit 2 `AppStore.requestReview(in:)`는 Swift 전용이라 Kotlin에서 직접 호출 불가 —
+ * iOS 셸(`iOSApp.swift`)이 앱 시작 시 이 훅에 StoreKit 2 호출을 주입한다(의존 역전).
+ */
+var iosReviewPresenter: (() -> Unit)? = null
+
+internal fun mailtoUrl(to: String, subject: String, body: String): NSURL? {
+    val components = NSURLComponents()
+    components.scheme = "mailto"
+    components.path = to
+    components.queryItems = listOf(
+        NSURLQueryItem(name = "subject", value = subject),
+        NSURLQueryItem(name = "body", value = body),
+    )
+    return components.URL
+}
+
+/**
+ * iOS seam actual (M8 §3-1 → M9-후속 셸 재설계 §2-D 전면 재작성). 스텁·deprecated API를 실구현으로 교체:
+ * 비동기 `openURL:options:completionHandler:`(동기 `openURL:`은 iOS 26 실기기에서 https 포함 전멸 관찰)·
+ * `UIActivityViewController` 공유·씬 기반 StoreKit 리뷰·메일 폴백(클립보드+알럿).
+ * ⚠️ 메일 실전송·공유시트 실동작·리뷰 프롬프트는 실기기 게이트 이월(§3).
  */
 class IosAppActions : AppActions {
     override fun sendMail(to: String, subject: String, body: String) {
-        open("mailto:$to?subject=${encode(subject)}&body=${encode(body)}")
+        val url = mailtoUrl(to, subject, body) ?: return mailFallback(to)
+        // completionHandler는 메인 큐 실행(UIKit 보증) — 알럿 present 안전.
+        UIApplication.sharedApplication.openURL(url, options = emptyMap<Any?, Any>()) { opened ->
+            if (!opened) mailFallback(to)
+        }
     }
 
     override fun share(text: String) {
-        // UIActivityViewController는 presenting VC 필요 — 최소 no-op(§7, 실 구현 실기기/별도).
+        val presenter = topPresentedViewController() ?: return
+        val activityVc = UIActivityViewController(activityItems = listOf(text), applicationActivities = null)
+        presentWithPopoverGuard(activityVc, presenter)
+        presenter.presentViewController(activityVc, animated = true, completion = null)
     }
 
-    override fun requestReview() = open("https://apps.apple.com/app/id0000000000")  // App Store url 폴백(§7)
+    override fun requestReview() {
+        // 셸 주입 StoreKit 2 우선(iOS 26 대응) → 미주입 시 씬 기반 SKStoreReviewController 폴백.
+        iosReviewPresenter?.let { it(); return }
+        foregroundWindowScene()?.let { SKStoreReviewController.requestReviewInScene(it) }
+    }
 
     override fun copyToClipboard(text: String) {
-        UIPasteboard.generalPasteboard.string = text   // ⚠️ 세터(쓰기) — 게터 읽기 no-op 금지(§3-1)
+        UIPasteboard.generalPasteboard.string = text   // ⚠️ 세터(쓰기) — 게터 읽기 no-op 금지(M8 §3-1)
     }
 
-    override fun openUrl(url: String) = open(url)
-
-    private fun open(spec: String) {
-        NSURL.URLWithString(spec)?.let { UIApplication.sharedApplication.openURL(it) }
+    override fun openUrl(url: String) {
+        val nsUrl = NSURL.URLWithString(url) ?: return
+        UIApplication.sharedApplication.openURL(nsUrl, options = emptyMap<Any?, Any>(), completionHandler = null)
     }
 
-    // 최소 인코딩(공백·개행) — 완전한 percent-encoding·실제 mailto 열림은 실기기 천장(§7).
-    private fun encode(s: String): String = s.replace(" ", "%20").replace("\n", "%0A")
+    /** 메일 앱을 못 여는 기기(계정 미설정 등) — 주소 클립보드 복사 + 네이티브 알럿 안내(§2-D 폴백, 승인 채택). */
+    private fun mailFallback(to: String) {
+        copyToClipboard(to)
+        val alert = UIAlertController.alertControllerWithTitle(
+            title = "메일 앱을 열 수 없어요",
+            message = "지원 이메일 주소를 클립보드에 복사했어요\n$to",
+            preferredStyle = UIAlertControllerStyleAlert,
+        )
+        alert.addAction(UIAlertAction.actionWithTitle("확인", style = UIAlertActionStyleDefault, handler = null))
+        topPresentedViewController()?.presentViewController(alert, animated = true, completion = null)
+    }
+
+    /**
+     * iPad에서 UIActivityViewController는 popover source 없으면 크래시 — 뷰 중앙 anchor 방어.
+     * ⚠️ iPad **한정**: iPhone(iOS 26 실기기)에서 popover source를 설정하면 기본 하단 시트
+     * 슬라이드업 대신 popover 어댑트로 떠 프레젠테이션이 어긋난다(실기기 라운드 2 관측).
+     */
+    @OptIn(ExperimentalForeignApi::class)
+    private fun presentWithPopoverGuard(vc: UIViewController, presenter: UIViewController) {
+        if (UIDevice.currentDevice.userInterfaceIdiom != UIUserInterfaceIdiomPad) return
+        vc.popoverPresentationController?.let { popover ->
+            val view = presenter.view
+            popover.sourceView = view
+            popover.sourceRect = view.bounds.useContents {
+                CGRectMake(size.width / 2, size.height / 2, 0.0, 0.0)
+            }
+        }
+    }
+
+    private fun foregroundWindowScene(): UIWindowScene? =
+        UIApplication.sharedApplication.connectedScenes
+            .filterIsInstance<UIWindowScene>()
+            .firstOrNull { it.activationState == UISceneActivationStateForegroundActive }
+
+    /** 최상위 presented VC 탐색 — present 중인 시트/알럿 위에도 안전하게 얹는다. */
+    private fun topPresentedViewController(): UIViewController? {
+        var top = foregroundWindowScene()?.windows
+            ?.filterIsInstance<UIWindow>()
+            ?.firstOrNull { it.keyWindow }
+            ?.rootViewController
+            ?: return null
+        while (true) top = top.presentedViewController ?: return top
+    }
 }
 
 private val defaults: NSUserDefaults get() = NSUserDefaults.standardUserDefaults
@@ -62,6 +158,23 @@ class UserDefaultsAppearanceStore : AppearanceStore {
 class UserDefaultsOnboardingStore : OnboardingStore {
     override val completed: Boolean get() = defaults.boolForKey("onboarding_done")
     override fun complete() { defaults.setBool(true, "onboarding_done") }
+}
+
+/**
+ * 동의 토글 영속 (M9-후속 셸 재설계 §2-F) — `UserDefaultsAppearanceStore`와 동형.
+ * ⚠️ boolForKey는 키 부재 시 false 함정 — objectForKey null 판정으로 부재 시 true(현행 UI 기본) 보장.
+ */
+class UserDefaultsConsentStore : ConsentStore {
+    private val _given = MutableStateFlow(readConsent())
+    override val given: StateFlow<Boolean> = _given.asStateFlow()
+    override fun set(value: Boolean) {
+        defaults.setBool(value, "consent_given")
+        _given.value = value
+    }
+
+    private fun readConsent(): Boolean =
+        if (defaults.objectForKey("consent_given") == null) true
+        else defaults.boolForKey("consent_given")
 }
 
 class UserDefaultsDeviceIdProvider : DeviceIdProvider {

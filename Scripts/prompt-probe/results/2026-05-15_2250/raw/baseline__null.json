@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "baseline",
+    "keyword": "null",
+    "group": "out_of_shot",
+    "prompt_hash": "037754b355208bf3db2f2e58c5f32c9ddde4a8a13c511b973606f3ff6e30b0ca",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:52:08.533407",
+    "latency_ms": 10239
+  },
+  "expected": {
+    "keyword": "null",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01E92qJfMBZtLx26J2RroJoC",
+    "container": null,
+    "content": [
+      {
+        "signature": "EoYCClsIDRgCKkAy/NKJLUgcJNs1YB7kU04U3rSQqjYWK/lYbzBVlvbjcfK/lAHJkQTx8LCh6drPSie4ylSS/6VFVjASwFn/utzCMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgyMySkWEfg7vw3qesUaDNdEESWshD0kq4gxkSIwcPlmLXXLKA9/lB9vtPig2kNfeOBqoB6bBmAaGa91yRTFvzBUOIXPci4V3VPfidfsKlkKGfAuvc+CXKRr1WOLkDwhBdwuaNj3abQXSZbwRXzD4tWUJmqG4hq6f6mbul5tFGYaP0zqh1MSOd/8vnYmYA8JM3UXi1aqbts98vopqjp++VbDYhnqq9QnbRgB",
+        "thinking": "The user input is \"null\". This is a development term used in programming.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01XMRrruygGRShPfPaPYkfwg",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "null",
+          "aliases": [
+            "널",
+            "널 값"
+          ],
+          "category": "기타",
+          "summary": "값이 존재하지 않음을 나타내는 특수한 표지",
+          "etymology": "라틴어 nullus(없는, 아무것도 아닌)에서 유래. null은 'ne(부정) + ullus(어떤 것)'의 합성으로, 수량이나 존재 자체가 없음을 뜻한다. 수학·논리학 문헌에서 '빈 집합' 또는 '무효 값'을 지칭하는 용어로 먼저 쓰였다.",
+          "namingReason": "1965년 Tony Hoare가 ALGOL W 언어에 처음 도입하며 \"값이 없음\"을 명시적으로 표현하기 위해 이 단어를 선택했다. 0이나 빈 문자열은 그 자체로 유효한 값이므로, 참조 대상이 아예 존재하지 않는다는 상태를 별도로 구별할 필요가 있었다. '아무것도 없다'는 라틴어 원의미가 메모리 주소나 객체 참조가 가리키는 대상이 없다는 개념에 정확히 대응된다. Hoare 본인은 훗날 이를 \"10억 달러짜리 실수\"라고 표현했는데, null 참조를 역참조할 때 발생하는 런타임 오류가 수십 년간 막대한 장애를 유발했기 때문이다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3364,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 601,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

@@ -2,6 +2,7 @@ package com.robin.devetym.di
 
 import com.robin.devetym.analytics.AnalyticsService
 import com.robin.devetym.analytics.PlaceholderAnalyticsService
+import com.robin.devetym.crash.CrashReporter
 import com.robin.devetym.data.AppJson
 import com.robin.devetym.data.bundle.BundleDbSource
 import com.robin.devetym.data.bundle.loadBundleDbSource
@@ -61,8 +62,12 @@ fun appModule(readyBundle: BundleDbSource): Module = module {
  * 공통 진입 (M7 §3-2). preload(`loadBundleDbSource`)로 `readyBundle`를 만든 뒤 공통+플랫폼 모듈 조립.
  * `Context`는 이 시그니처에 넣지 않는다(iOS 네이티브 컴파일 미해결) — 플랫폼 팩토리가 완성된 `Module`을 넘긴다.
  * **플랫폼 진입점의 `runBlocking`으로 동기 완료**(첫 프레임/`getKoin()` 이전 — async-init 레이스 차단).
+ *
+ * **크래시 리포팅(WU-4)**: Koin 조립보다 **먼저** `CrashReporter.init`한다(초기화 이후 조기 크래시부터
+ * 포착). `crashDsn`은 플랫폼 셸이 주입(Android=BuildConfig, iOS=Info.plist) — null/blank면 no-op.
  */
-suspend fun initKoin(platformModule: Module) {
+suspend fun initKoin(platformModule: Module, crashDsn: String? = null) {
+    CrashReporter.init(crashDsn)
     val readyBundle = loadBundleDbSource(AppJson)
     startKoin { modules(appModule(readyBundle), platformModule) }
 }

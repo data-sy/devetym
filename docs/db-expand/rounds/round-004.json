@@ -1,0 +1,646 @@
+[
+  {
+    "keyword": "monotonic-stack",
+    "aliases": [
+      "단조 스택",
+      "monotonic stack"
+    ],
+    "category": "자료구조",
+    "summary": "원소를 단조 증가·감소 순으로 유지하는 스택",
+    "etymology": "그리스어 monos(하나)와 tonos(음조·장력)에서 온 수학 용어 monotonic의 차용. 한 방향으로만 변하는, 즉 증가만 하거나 감소만 하는 성질을 뜻한다.",
+    "namingReason": "원소를 넣고 뺄 때 항상 단조 순서가 유지되도록, 새 원소보다 크거나 작은 기존 원소를 미리 꺼내 버리는 스택이다. 어원의 '한 방향으로만 변한다'는 성질이 스택 내부의 정렬 불변식으로 옮겨졌다. 각 원소가 한 번씩만 들고 나므로 다음 큰 원소(next greater element) 문제를 선형 시간에 푸는 데 쓰인다."
+  },
+  {
+    "keyword": "sparse-table",
+    "aliases": [
+      "희소 테이블",
+      "sparse table"
+    ],
+    "category": "자료구조",
+    "summary": "구간 질의를 2의 거듭제곱 단위로 전처리한 표",
+    "etymology": "흩뿌리다를 뜻하는 라틴어 spargere의 과거분사 sparsus(흩어진)에서 온 sparse(드문드문한)와 table(표)의 합성. 값이 빽빽이 아니라 띄엄띄엄 채워짐을 가리킨다.",
+    "namingReason": "가능한 모든 구간이 아니라 길이가 2의 거듭제곱인 구간의 답만 미리 계산해 두므로, 전체 구간 공간에 비해 표가 '드문드문' 채워진다. 어원의 '흩어져 듬성하다'가 저장 밀도에 대응한다. 최솟값·최댓값처럼 겹쳐도 결과가 같은 멱등 연산의 구간 질의를 O(1)에 처리한다."
+  },
+  {
+    "keyword": "link-cut-tree",
+    "aliases": [
+      "링크 컷 트리",
+      "LCT"
+    ],
+    "category": "자료구조",
+    "summary": "간선 연결·절단을 지원하는 동적 트리 구조",
+    "etymology": "영어 link(잇다)와 cut(끊다)의 합성. 두 트리를 잇는 연산과 한 간선을 끊는 연산이라는, 이 구조가 지원하는 두 핵심 동작을 그대로 이름에 담았다.",
+    "namingReason": "동적으로 변하는 숲에서 두 트리를 link로 잇고 한 간선을 cut으로 끊는 연산을 로그 시간에 처리하는 자료구조다. 이름이 곧 지원 연산의 나열이라는 점에서 어원과 기능이 직결된다. 1981년 Sleator와 Tarjan이 preferred path 분해와 splay tree를 결합해 고안했다."
+  },
+  {
+    "keyword": "euler-tour-tree",
+    "aliases": [
+      "오일러 투어 트리",
+      "ETT"
+    ],
+    "category": "자료구조",
+    "summary": "오일러 투어로 트리를 표현한 동적 연결 구조",
+    "etymology": "스위스 수학자 Leonhard Euler의 이름에서 온 Euler tour(오일러 투어)와 tree의 합성. 오일러 투어는 트리의 각 간선을 두 번씩 지나며 도는 순회를 뜻한다.",
+    "namingReason": "트리를 오일러 투어 순서의 정점 나열로 펼쳐 균형 BST에 담고, 이 순열을 자르고 이어 붙여 간선 추가·삭제를 처리한다. 오일러가 한붓그리기에서 정립한 '간선을 빠짐없이 지나는 순회'가 트리를 1차원 수열로 직렬화하는 근거가 된다. 동적 연결성(dynamic connectivity) 문제를 로그 시간에 다루는 데 쓰인다."
+  },
+  {
+    "keyword": "y-fast-trie",
+    "aliases": [
+      "y-패스트 트라이"
+    ],
+    "category": "자료구조",
+    "summary": "정수 키를 빠르게 다루는 비트 기반 트라이",
+    "etymology": "정보 검색을 뜻하는 retrieval에서 따온 trie(트라이)에, 빠름을 뜻하는 fast와 x-fast trie의 다음 단계임을 표시하는 글자 y를 붙인 이름이다.",
+    "namingReason": "x-fast trie의 공간 비용을 줄이려 균형 BST를 보조로 결합한 정수 자료구조로, 선행 구조 이름에 알파벳상 다음 글자 y를 붙여 개량판임을 표시했다. retrieval에서 온 trie라는 어원처럼 키를 비트 단위로 따라가며 검색한다. 1983년 Dan Willard가 x-fast·y-fast trie를 함께 제안했다."
+  },
+  {
+    "keyword": "fusion-tree",
+    "aliases": [
+      "퓨전 트리"
+    ],
+    "category": "자료구조",
+    "summary": "여러 키를 한 워드에 묶어 검색하는 트리",
+    "etymology": "녹여 합치다를 뜻하는 라틴어 fundere의 명사형 fusio(융합)에서 온 fusion과 tree의 합성. 여러 대상을 하나로 녹여 합친다는 의미를 담는다.",
+    "namingReason": "여러 정수 키의 구별 비트만 추려 하나의 기계어 워드(machine word)에 '융합'해 넣고, 워드 단위 병렬 연산으로 한 번에 비교한다. 어원의 '녹여 합친다'가 다수 키를 단일 워드로 압축하는 기법에 대응한다. 1990년 Fredman과 Willard가 비교 기반 정렬의 정보이론적 하한을 우회하려 고안했다."
+  },
+  {
+    "keyword": "d-ary-heap",
+    "aliases": [
+      "d진 힙",
+      "d-ary heap"
+    ],
+    "category": "자료구조",
+    "summary": "각 노드가 자식 d개를 갖는 힙 자료구조",
+    "etymology": "수를 나타내는 변수 d에 '~진법의'를 뜻하는 라틴어계 접미사 -ary를 붙인 d-ary(d진)와, 무더기를 뜻하는 영어 heap의 합성이다.",
+    "namingReason": "이진 힙을 일반화해 각 노드가 자식을 d개씩 갖도록 한 힙으로, binary·ternary처럼 가짓수를 세는 -ary 접미사를 변수 d에 적용해 '자식이 d개'임을 표기했다. 어원의 '몇 진(arity)인가'가 분기 수로 직결된다. d를 키우면 트리 높이가 낮아져 키 감소 연산이 잦은 다익스트라 알고리즘 등에서 유리하다."
+  },
+  {
+    "keyword": "min-max-heap",
+    "aliases": [
+      "최소-최대 힙"
+    ],
+    "category": "자료구조",
+    "summary": "최솟값과 최댓값을 모두 빠르게 꺼낼 수 있는 힙",
+    "etymology": "최솟값 minimum, 최댓값 maximum, 무더기를 뜻하는 영어 heap을 합친 이름이다. 한 구조 안에서 최소와 최대라는 양극단을 모두 다룬다는 뜻을 직접 담았다.",
+    "namingReason": "트리의 깊이를 한 단계씩 번갈아 min 레벨과 max 레벨로 지정해, 루트와 그 자식에서 최솟값과 최댓값을 동시에 상수 시간에 찾을 수 있는 양방향 우선순위 큐다. 이름의 min과 max가 곧 번갈아 놓이는 두 레벨 종류를 가리키며, 어느 한쪽 극단만 빠른 일반 힙의 한계를 메운다. 1986년 Atkinson 등이 발표했다."
+  },
+  {
+    "keyword": "soft-heap",
+    "aliases": [
+      "소프트 힙"
+    ],
+    "category": "자료구조",
+    "summary": "키 값을 약간 흐트러뜨려 빨라진 우선순위 큐",
+    "etymology": "단단하지 않고 무르다는 뜻의 영어 soft와 heap의 합성. 여기서 soft는 값이 엄밀하지 않고 일부 느슨하게 '뭉개진' 상태임을 가리킨다.",
+    "namingReason": "정확도를 일부 포기하는 대가로 속도를 얻는 근사 우선순위 큐로, 정해진 비율의 키 값을 의도적으로 키워(corruption) 오차를 허용한다. 엄격한 정렬을 '무르게' 푼다는 점에서 soft라는 이름이 붙었다. 1998년 Bernard Chazelle이 고안해 최소 신장 트리의 거의 선형 시간 알고리즘에 활용했다."
+  },
+  {
+    "keyword": "vantage-point-tree",
+    "aliases": [
+      "VP 트리",
+      "밴티지 포인트 트리"
+    ],
+    "category": "자료구조",
+    "summary": "기준점과의 거리로 공간을 나누는 트리",
+    "etymology": "유리한 위치를 뜻하는 영어 vantage point와 tree의 합성. vantage는 '이점'을 뜻하는 옛 프랑스어 avantage에서 왔으며, 잘 내려다보이는 지점을 가리킨다.",
+    "namingReason": "노드마다 기준점(vantage point) 하나를 고르고, 다른 점들을 그 기준점까지의 거리에 따라 안쪽·바깥쪽으로 갈라 저장하는 거리공간 트리다. '한 지점에서 조망한다'는 어원처럼 선택된 관측점을 기준으로 거리를 재 분할한다. 1991년 Peter Yianilos가 최근접 이웃 검색용으로 정식화했다."
+  },
+  {
+    "keyword": "bk-tree",
+    "aliases": [
+      "BK 트리",
+      "Burkhard-Keller tree"
+    ],
+    "category": "자료구조",
+    "summary": "편집 거리로 유사 문자열을 찾는 거리 트리",
+    "etymology": "고안자 Walter Burkhard와 Robert Keller의 성 첫 글자 B와 K를 딴 약어. 사람 이름에서 온 명칭이라 약어 자체에는 별도 의미가 없다.",
+    "namingReason": "두 문자열 사이의 편집 거리(edit distance)가 삼각 부등식을 만족함을 이용해, 기준 단어와의 거리를 간선 값으로 삼아 가지를 뻗는 트리다. 약어 자체엔 뜻이 없고 1973년 논문 저자 Burkhard와 Keller의 이름에서 따왔다. 오타 교정과 근사 문자열 검색에 쓰인다."
+  },
+  {
+    "keyword": "ball-tree",
+    "aliases": [
+      "볼 트리"
+    ],
+    "category": "자료구조",
+    "summary": "점들을 중첩된 초구로 묶어 나누는 트리",
+    "etymology": "위상수학에서 어떤 중심으로부터 반지름 안에 있는 점들의 집합을 뜻하는 ball(공·구)에서 온 이름. tree와 합쳐졌다.",
+    "namingReason": "각 노드를 중심점과 반지름으로 정의되는 초구(hypersphere), 곧 '공' 안에 점들을 담고 이를 재귀적으로 중첩해 공간을 분할하는 트리다. 수학에서 반지름 내부 점 집합을 뜻하는 ball이 노드의 경계 모양을 그대로 가리킨다. 고차원 최근접 이웃 검색에서 kd-tree의 대안으로 쓰인다."
+  },
+  {
+    "keyword": "m-tree",
+    "aliases": [
+      "M 트리"
+    ],
+    "category": "자료구조",
+    "summary": "거리공간에서 객체를 색인하는 균형 트리",
+    "etymology": "거리를 뜻하는 metric의 머리글자 M과 tree의 합성. metric은 '재다'를 뜻하는 그리스어 metron에서 왔다.",
+    "namingReason": "임의의 거리 함수가 정의된 거리공간(metric space)에서 객체들을 묶어 디스크 기반으로 색인하는 균형 트리로, metric의 첫 글자를 따 M-tree라 부른다. 어원의 '잰다'는 의미가 객체 간 거리로 군집을 나누는 원리에 대응한다. 1997년 Ciaccia 등이 유사도 검색용 디스크 색인으로 제안했다."
+  },
+  {
+    "keyword": "adjacency-list",
+    "aliases": [
+      "인접 리스트",
+      "인접 목록"
+    ],
+    "category": "자료구조",
+    "summary": "각 정점의 이웃을 목록으로 담는 그래프 표현",
+    "etymology": "'~에 가까이 눕다'를 뜻하는 라틴어 adjacere(ad- '~에' + jacere '눕다')에서 온 adjacency(인접)와 목록을 뜻하는 list의 합성이다.",
+    "namingReason": "그래프에서 각 정점마다 그와 간선으로 연결된 이웃 정점들을 목록으로 나열해 저장하는 표현 방식이다. 어원의 '곁에 누워 있다', 곧 서로 맞닿아 있음이 그래프의 인접 관계로 직결된다. 모든 정점 쌍을 행렬로 적는 인접 행렬과 달리 간선 수에 비례하는 공간만 써 희소 그래프에 적합하다. 너비·깊이 우선 탐색처럼 정점의 이웃을 차례로 훑는 알고리즘에서 기본 표현으로 쓰인다."
+  },
+  {
+    "keyword": "cuckoo-filter",
+    "aliases": [
+      "쿠쿠 필터"
+    ],
+    "category": "자료구조",
+    "summary": "원소 포함 여부를 근사 판정하는 해시 필터",
+    "etymology": "다른 새의 둥지에 알을 낳아 기존 알을 밀어내는 새 cuckoo(뻐꾸기)와 filter의 합성. cuckoo hashing의 충돌 해소 방식에서 이름을 물려받았다.",
+    "namingReason": "원소의 지문(fingerprint)을 두 후보 칸 중 하나에 넣되, 자리가 차 있으면 기존 항목을 다른 칸으로 밀어내는 쿠쿠 해싱 방식을 쓴다. 남의 둥지에서 알을 밀어내는 뻐꾸기의 습성이 항목을 쫓아내며 자리를 잡는 동작에 빗대어졌다. 블룸 필터와 달리 항목 삭제를 지원한다."
+  },
+  {
+    "keyword": "quotient-filter",
+    "aliases": [
+      "몫 필터",
+      "쿼션트 필터"
+    ],
+    "category": "자료구조",
+    "summary": "지문을 몫과 나머지로 쪼개 저장하는 필터",
+    "etymology": "'몇 번'을 뜻하는 라틴어 quotiens에서 온 quotient(몫)와 filter의 합성. 나눗셈에서 몫에 해당하는 비트로 위치를 정한다는 데서 왔다.",
+    "namingReason": "원소의 해시 지문을 몫(quotient)과 나머지(remainder)로 나눠, 몫으로는 저장할 슬롯 위치를 정하고 나머지만 그 칸에 기록하는 근사 멤버십 필터다. 어원의 '나눈 몫'이 슬롯 주소 역할을 한다는 점에서 이름과 동작이 맞물린다. 데이터가 연속된 배열에 담겨 캐시 효율과 병합·확장에 유리하다."
+  },
+  {
+    "keyword": "obstruction-free",
+    "aliases": [
+      "옵스트럭션 프리",
+      "obstruction freedom"
+    ],
+    "category": "동시성",
+    "summary": "홀로 실행되면 완료를 보장하는 논블로킹 성질",
+    "etymology": "'앞을 막다'를 뜻하는 라틴어 obstruere(ob-'~앞에' + struere'쌓다')에서 온 obstruction(방해)에, 자유로움을 뜻하는 free를 붙였다.",
+    "namingReason": "어떤 스레드든 다른 스레드의 간섭(방해)만 없으면 유한 단계 안에 자기 연산을 끝낼 수 있음을 보장하는, 논블로킹 진행 보장 중 가장 약한 단계다. 어원의 '앞을 가로막음'이 사라진 상태, 곧 홀로 달릴 수 있는 상황을 전제로 한다. 2003년 Herlihy 등이 lock-free와 wait-free 사이를 메우려 제시했다."
+  },
+  {
+    "keyword": "load-link-store-conditional",
+    "aliases": [
+      "LL/SC",
+      "로드 링크/스토어 컨디셔널"
+    ],
+    "category": "동시성",
+    "summary": "끼어든 쓰기가 없을 때만 저장하는 원자 명령쌍",
+    "etymology": "주소를 읽으며 표식을 거는 load-link(적재-연결)와, 그 사이 다른 쓰기가 없었을 때만 저장하는 store-conditional(조건부 저장)을 합친 이름이다.",
+    "namingReason": "load-link으로 메모리 주소를 읽으면서 동시에 그 주소를 감시 대상으로 '연결'해 두었다가, store-conditional은 그사이 해당 주소에 다른 쓰기가 없었을 때만 저장에 성공한다. 두 동작의 이름이 곧 절차를 설명한다. compare-and-swap의 ABA 문제를 구조적으로 피하며 RISC 계열 아키텍처에서 원자 연산의 토대가 된다."
+  },
+  {
+    "keyword": "clh-lock",
+    "aliases": [
+      "CLH 락",
+      "CLH queue lock"
+    ],
+    "category": "동시성",
+    "summary": "대기 스레드를 연결 큐로 줄 세우는 스핀락",
+    "etymology": "고안자 Craig, Landin, Hagersten 세 사람의 성 첫 글자를 딴 약어. 사람 이름에서 온 명칭이라 약어 자체에는 별도 의미가 없다.",
+    "namingReason": "각 스레드가 자기 앞 노드의 상태 변수를 스핀하며 기다리도록 대기열을 암묵적 연결 리스트로 구성한 큐 기반 스핀락이다. 약어엔 뜻이 없고 이를 제안한 Travis Craig, Anders Landin, Eric Hagersten의 이름에서 따왔다. 각자 다른 캐시 라인을 스핀해 경합 시 버스 트래픽을 줄인다."
+  },
+  {
+    "keyword": "flat-combining",
+    "aliases": [
+      "플랫 컴바이닝"
+    ],
+    "category": "동시성",
+    "summary": "한 스레드가 여러 연산을 모아 대신 처리하는 기법",
+    "etymology": "평평함을 뜻하는 영어 flat과 한데 합침을 뜻하는 combining의 합성. 흩어진 요청을 한 줄로 펼쳐 모아 처리한다는 뜻을 담는다.",
+    "namingReason": "여러 스레드가 각자 락을 다투는 대신 자기 연산을 공용 목록에 등록하면, 그중 한 스레드가 결합자(combiner)가 되어 모인 연산들을 한 번에 '평탄하게' 순회하며 대신 실행한다. 어원의 '펼쳐 합친다'가 분산된 요청을 단일 패스로 묶는 방식에 대응한다. 2010년 Hendler 등이 경합이 심한 자료구조의 처리량을 높이려 제안했다."
+  },
+  {
+    "keyword": "lock-elision",
+    "aliases": [
+      "락 일라이전",
+      "락 생략"
+    ],
+    "category": "동시성",
+    "summary": "락 획득을 생략하고 투기적으로 실행하는 기법",
+    "etymology": "'쳐서 빼다'를 뜻하는 라틴어 elidere(e-'밖으로' + laedere'치다')에서 온 elision(생략·탈락)과 lock의 합성이다.",
+    "namingReason": "임계 구역을 실제로 락을 잡지 않은 채 투기적으로 실행하고, 충돌이 없었으면 락 획득 자체를 '생략'해 병렬성을 높이는 기법이다. 어원의 '쳐내 없앤다'가 불필요한 락 연산을 들어내는 동작에 대응한다. 하드웨어 트랜잭셔널 메모리로 구현되며 인텔 TSX의 HLE가 대표 사례다."
+  },
+  {
+    "keyword": "lock-striping",
+    "aliases": [
+      "락 스트라이핑"
+    ],
+    "category": "동시성",
+    "summary": "자료를 줄무늬로 나눠 락을 여럿 두는 기법",
+    "etymology": "줄무늬를 뜻하는 영어 stripe의 동명사형 striping과 lock의 합성. 데이터를 여러 줄(stripe)로 가른다는 데서 왔다.",
+    "namingReason": "하나의 큰 락으로 자료구조 전체를 보호하는 대신, 데이터를 여러 줄무늬(stripe)로 쪼개고 각 줄마다 독립된 락을 두어 서로 다른 구간을 동시에 갱신할 수 있게 한다. 어원의 '줄무늬로 나눈다'가 락의 분할 단위에 대응한다. 자바의 초기 ConcurrentHashMap이 세그먼트 단위로 이 방식을 썼다."
+  },
+  {
+    "keyword": "hand-over-hand-locking",
+    "aliases": [
+      "핸드오버핸드 락킹",
+      "lock coupling"
+    ],
+    "category": "동시성",
+    "summary": "다음 락을 잡고서 이전 락을 푸는 순회 기법",
+    "etymology": "밧줄을 한 손으로 잡은 뒤 다른 손을 옮겨 쥐며 오르는 동작을 가리키는 영어 표현 hand over hand에 locking이 붙은 이름이다.",
+    "namingReason": "연결 리스트나 트리를 훑을 때, 다음 노드의 락을 먼저 획득한 뒤에야 현재 노드의 락을 푸는 식으로 항상 두 락이 겹치게 잠그며 이동한다. 밧줄을 번갈아 쥐며 오르는 동작이 락을 번갈아 잡는 순회에 빗대어졌다. 락 결합(lock coupling)이라고도 불리며 동시 탐색 중에도 구조의 일관성을 지킨다."
+  },
+  {
+    "keyword": "countdown-latch",
+    "aliases": [
+      "카운트다운 래치",
+      "CountDownLatch"
+    ],
+    "category": "동시성",
+    "summary": "카운터가 0이 될 때까지 스레드를 막는 동기화기",
+    "etymology": "수를 거꾸로 세어 내려감을 뜻하는 countdown과, 걸쇠를 뜻하는 latch의 합성. 정해진 수만큼 세어 내려가 걸쇠를 푼다는 뜻을 담는다.",
+    "namingReason": "초기 카운트를 정해 두고 다른 스레드가 작업을 마칠 때마다 수를 하나씩 줄여, 카운트가 0에 닿으면 대기하던 스레드들의 걸쇠를 풀어 한꺼번에 통과시킨다. '세어 내려가 걸쇠를 연다'는 어원이 동작 그대로다. 자바 java.util.concurrent의 CountDownLatch가 대표 구현이며 한 번 0이 되면 재사용할 수 없다."
+  },
+  {
+    "keyword": "cyclic-barrier",
+    "aliases": [
+      "순환 배리어",
+      "CyclicBarrier"
+    ],
+    "category": "동시성",
+    "summary": "스레드들이 모두 모이면 재사용되는 동기화 장벽",
+    "etymology": "원을 뜻하는 그리스어 kyklos에서 온 cyclic(순환하는)과, 가로막는 울타리를 뜻하는 옛 프랑스어 barriere에서 온 barrier의 합성이다.",
+    "namingReason": "정해진 수의 스레드가 모두 도착할 때까지 각자를 장벽 앞에 세워 두었다가, 다 모이면 함께 통과시키고 장벽을 초기 상태로 되돌려 다시 쓸 수 있게 한다. 어원의 '원을 그리며 되돌아온다'가 장벽이 매 주기 재사용되는 성질을 가리킨다. 한 번 쓰면 끝인 CountDownLatch와 대비된다."
+  },
+  {
+    "keyword": "phaser",
+    "aliases": [
+      "페이저",
+      "Phaser"
+    ],
+    "category": "동시성",
+    "summary": "단계별로 스레드를 모으는 재사용 동기화기",
+    "etymology": "'나타남·국면'을 뜻하는 그리스어 phasis에서 온 phase(단계·위상)에 행위자 접미사 -er을 붙인 이름. 단계를 진행시키는 것이라는 뜻이다.",
+    "namingReason": "참여 스레드 수를 동적으로 등록·해제할 수 있고, 모두가 한 단계(phase)를 마치면 위상 번호를 올리며 다음 단계로 넘어가는 유연한 동기화기다. 어원의 '국면을 넘긴다'가 phase 번호를 증가시키며 반복 동기화하는 동작에 대응한다. CyclicBarrier와 CountDownLatch의 기능을 통합해 자바 7에 도입됐다."
+  },
+  {
+    "keyword": "exchanger",
+    "aliases": [
+      "익스체인저",
+      "Exchanger"
+    ],
+    "category": "동시성",
+    "summary": "두 스레드가 만나 객체를 맞교환하는 지점",
+    "etymology": "'바꾸다'를 뜻하는 라틴어 cambiare에서 비롯한 옛 프랑스어 eschangier(ex- + change)에서 온 exchange(교환)에 -er을 붙인 이름이다.",
+    "namingReason": "정확히 두 스레드가 같은 동기화 지점에 도착할 때까지 서로를 기다렸다가, 만나는 순간 각자 들고 온 객체를 맞바꾸고 함께 떠난다. 어원의 '서로 바꾼다'가 두 스레드 간 일대일 객체 교환에 직결된다. 생산자와 소비자가 버퍼를 주고받는 파이프라인에서 자바 Exchanger로 쓰인다."
+  },
+  {
+    "keyword": "disruptor",
+    "aliases": [
+      "디스럽터",
+      "LMAX Disruptor"
+    ],
+    "category": "동시성",
+    "summary": "링 버퍼로 스레드 간 메시지를 나르는 동시성 구조",
+    "etymology": "'부수어 깨뜨리다'를 뜻하는 라틴어 disrumpere에서 온 영어 disruptor(파괴하는 것·교란자)에서 따왔다. 기존 방식을 뒤엎는다는 어감을 담는다.",
+    "namingReason": "고정 크기 링 버퍼(ring buffer)에 시퀀스 번호로 슬롯을 배정해, 락 없이 스레드 사이로 메시지를 주고받는 고성능 메시징 라이브러리다. 큐 기반 통념을 '뒤엎는다'는 어감에서 이름이 왔다. 같은 시기 자바에 도입된 Phaser와 짝을 이루는 작명으로도 알려져 있으며 2011년 거래소 LMAX가 공개했다."
+  },
+  {
+    "keyword": "stamped-lock",
+    "aliases": [
+      "스탬프드 락",
+      "StampedLock"
+    ],
+    "category": "동시성",
+    "summary": "스탬프 값으로 낙관적 읽기를 지원하는 락",
+    "etymology": "도장·표식을 뜻하는 영어 stamp의 과거분사 stamped와 lock의 합성. 락 연산이 돌려주는 표(stamp)를 들고 다닌다는 데서 왔다.",
+    "namingReason": "락을 걸거나 풀 때마다 버전을 식별하는 정수 '스탬프'를 발급해, 이 값으로 락을 해제하거나 낙관적 읽기가 그사이 무효화됐는지 검증한다. 어원의 '찍어 준 표식'이 그 스탬프 토큰에 대응한다. 읽기·쓰기 락에 더해 락을 아예 잡지 않는 낙관적 읽기 모드를 제공하며 자바 8에 도입됐다."
+  },
+  {
+    "keyword": "multiton",
+    "aliases": [
+      "멀티톤"
+    ],
+    "category": "패턴",
+    "summary": "키별로 단일 인스턴스를 관리하는 생성 패턴",
+    "etymology": "많음을 뜻하는 라틴어 multus에서 온 접두사 multi-에, singleton의 뒷부분 -ton을 떼어 붙인 조어다. 'singleton의 다중판'이라는 뜻을 담는다.",
+    "namingReason": "singleton이 클래스마다 인스턴스를 단 하나로 제한하는 반면, multiton은 키마다 하나씩 인스턴스를 두고 키로 조회해 재사용하는 생성 패턴이다. multi-가 singleton의 '단 하나'를 키 단위로 다중화했음을 이름에 담았다. 흔히 키→인스턴스 대응을 담는 레지스트리(registry)로 구현된다."
+  },
+  {
+    "keyword": "identity-map",
+    "aliases": [
+      "식별자 맵",
+      "아이덴티티 맵"
+    ],
+    "category": "패턴",
+    "summary": "같은 레코드를 객체 하나로만 매핑하는 패턴",
+    "etymology": "같음을 뜻하는 라틴어 idem에서 온 identitas(동일성)에 뿌리를 둔 identity와, '대응시키다'를 뜻하는 map의 합성이다.",
+    "namingReason": "한 작업 단위 안에서 같은 DB 레코드를 두 번 읽더라도 메모리상의 객체 하나로만 매핑해, 같은 식별자가 곧 같은 객체임(동일성)을 보장한다. 어원의 '동일성'이 객체 중복 로드를 막는 규칙에 대응한다. Martin Fowler가 PoEAA에서 ORM의 핵심 패턴으로 정리했다."
+  },
+  {
+    "keyword": "transaction-script",
+    "aliases": [
+      "트랜잭션 스크립트"
+    ],
+    "category": "패턴",
+    "summary": "한 요청을 절차적 스크립트 하나로 처리하는 패턴",
+    "etymology": "'가로질러 처리하다'를 뜻하는 라틴어 transigere에서 온 transaction과, '쓰다'를 뜻하는 scribere에서 온 script(대본·각본)의 합성이다.",
+    "namingReason": "하나의 요청, 곧 한 건의 거래를 처리하는 비즈니스 로직 전체를, 도메인 모델 없이 위에서 아래로 읽히는 한 편의 절차적 각본처럼 늘어놓는 방식이다. 어원의 '대본'이 순차 실행되는 처리 흐름에 대응한다. Fowler가 도메인 로직을 조직하는 가장 단순한 방식으로 꼽았으며, 로직이 복잡해질수록 중복이 늘어 도메인 모델로 옮겨 가는 출발점으로 본다."
+  },
+  {
+    "keyword": "service-layer",
+    "aliases": [
+      "서비스 계층",
+      "서비스 레이어"
+    ],
+    "category": "패턴",
+    "summary": "애플리케이션 경계를 정의하는 서비스 계층",
+    "etymology": "'섬기는 일'을 뜻하는 라틴어 servitium에서 온 service(봉사·용역)와, 층을 뜻하는 layer의 합성이다. servitium은 servus(종)에서 갈라졌다.",
+    "namingReason": "애플리케이션이 외부에 제공하는 작업의 집합을 한 층으로 묶어, 호출자에게 일관된 진입점을 주고 그 안에서 트랜잭션·보안 경계를 관리한다. 어원의 '봉사·용역'이 클라이언트에게 제공하는 기능 묶음이라는 의미로 옮겨졌다. Fowler는 이를 도메인 로직과 표현 계층을 잇는 경계로 규정했다."
+  },
+  {
+    "keyword": "lazy-initialization",
+    "aliases": [
+      "지연 초기화",
+      "레이지 초기화"
+    ],
+    "category": "패턴",
+    "summary": "실제로 쓰이는 순간까지 초기화를 미루는 기법",
+    "etymology": "lazy의 정확한 어원은 불분명하나 중세 저지독일어 lasich(느슨한·기력 없는)에서 왔다는 설이 가장 유력하다. 흔히 '꼭 필요할 때까지 미룬다'는 뜻으로 쓰인다.",
+    "namingReason": "객체나 값을 선언 시점이 아니라 처음으로 실제 접근되는 순간에야 비로소 생성하거나 계산하는 기법이다. 일을 뒤로 미루는 '게으름'이라는 어원이, 불필요한 초기화 비용을 실제 필요 시점까지 늦추는 전략에 빗대어졌다. 반대로 미리 만들어 두는 방식은 eager 초기화라 부르며, 다중 스레드 환경에서는 초기화가 단 한 번만 일어나도록 별도의 동기화가 필요하다."
+  },
+  {
+    "keyword": "command-query-separation",
+    "aliases": [
+      "명령-질의 분리",
+      "CQS"
+    ],
+    "category": "패턴",
+    "summary": "상태 변경과 값 반환 메서드를 분리하는 원칙",
+    "etymology": "'맡기다'를 뜻하는 라틴어 commandare에서 온 command, '묻다'를 뜻하는 quaerere의 query, '갈라놓다'를 뜻하는 separare의 separation의 합성이다.",
+    "namingReason": "상태를 바꾸는 명령(command)과 값을 돌려주는 질의(query)를 한 메서드에 섞지 말고 분리하라는 설계 원칙이다. 어원 그대로 '명령'과 '물음'을 갈라 둠으로써, 질의는 부작용 없이 안전하게 거듭 호출할 수 있게 된다. Bertrand Meyer가 Eiffel 언어를 설계하며 정식화했다. 뒷날 명령과 조회 책임을 가르는 CQRS 아키텍처로 확장됐다."
+  },
+  {
+    "keyword": "raii",
+    "aliases": [
+      "RAII",
+      "Resource Acquisition Is Initialization",
+      "자원 획득 즉 초기화"
+    ],
+    "category": "패턴",
+    "summary": "자원의 수명을 객체의 수명에 묶는 관리 기법",
+    "etymology": "Resource(자원) Acquisition(획득) Is(이다) Initialization(초기화)의 두문자어. '자원 획득이 곧 초기화'라는 문장을 줄인 이름이다.",
+    "namingReason": "객체를 생성(초기화)할 때 자원을 획득하고 소멸자에서 자동으로 반납하게 묶어, 객체 수명이 끝나면 자원도 확실히 풀리도록 보장하는 기법이다. 이름의 문장 '획득이 곧 초기화'가 자원과 객체 수명을 일치시키는 원리를 그대로 진술한다. Bjarne Stroustrup이 C++ 예외 안전성을 다루며 명명했다. 스마트 포인터와 락 가드가 모두 이 원리 위에 선다."
+  },
+  {
+    "keyword": "mixin",
+    "aliases": [
+      "믹스인"
+    ],
+    "category": "패턴",
+    "summary": "여러 클래스에 기능을 섞어 넣는 코드 단위",
+    "etymology": "'섞어 넣다'를 뜻하는 영어 구 mix in에서 온 명사. 미국 아이스크림 가게에서 기본 아이스크림에 토핑을 섞어 넣던 'mix-in'에서 따왔다는 유래가 전해진다.",
+    "namingReason": "독립적으로 인스턴스화하지 않고 다른 클래스에 섞여 들어가 기능을 보태는 코드 단위다. 아이스크림에 토핑을 섞듯 기존 클래스에 메서드를 '섞어 넣는다'는 비유가 그대로 이름이 됐다. Lisp의 객체 시스템 Flavors에서 처음 쓰였고 이후 Ruby의 module, Python의 다중 상속 등으로 퍼졌다."
+  },
+  {
+    "keyword": "marker-interface",
+    "aliases": [
+      "마커 인터페이스",
+      "태그 인터페이스"
+    ],
+    "category": "패턴",
+    "summary": "메서드 없이 표식 역할만 하는 인터페이스",
+    "etymology": "표시하는 것을 뜻하는 marker(mark에 행위자 접미사 -er)와 interface의 합성. 여기서 marker는 객체에 꼬리표를 붙이는 표식을 가리킨다.",
+    "namingReason": "메서드를 하나도 선언하지 않고, 그 인터페이스를 구현했다는 사실 자체만으로 객체에 특정 자격을 '표시'하는 빈 인터페이스다. 어원의 '표식'처럼 타입에 꼬리표를 달아 런타임이 이를 검사하게 한다. 자바의 Serializable, Cloneable이 대표 예이며 태그 인터페이스(tag interface)라고도 불린다."
+  },
+  {
+    "keyword": "double-dispatch",
+    "aliases": [
+      "더블 디스패치",
+      "이중 디스패치"
+    ],
+    "category": "패턴",
+    "summary": "두 객체의 런타임 타입으로 동작을 정하는 기법",
+    "etymology": "'두 배'를 뜻하는 double과, '보내다'를 뜻하는 dispatch의 합성. dispatch는 '서둘러 보내다'를 뜻하는 이탈리아어 dispacciare 계열에서 왔다.",
+    "namingReason": "호출할 실제 메서드를 수신 객체 하나가 아니라 두 객체의 런타임 타입 조합으로 결정하는 기법이다. 보통의 단일 디스패치가 한 번 '보내는' 데 그치는 것을, 두 번 거쳐 타입을 가린다는 뜻에서 double이 붙었다. 단일 디스패치만 지원하는 언어에서는 방문자 패턴으로 이를 흉내 낸다."
+  },
+  {
+    "keyword": "humble-object",
+    "aliases": [
+      "험블 오브젝트",
+      "겸손한 객체"
+    ],
+    "category": "패턴",
+    "summary": "테스트하기 힘든 코드를 얇게 떼어내는 패턴",
+    "etymology": "'낮은·땅에 가까운'을 뜻하는 라틴어 humilis(humus 땅에서 파생)에서 온 humble(겸손한·보잘것없는)과 object의 합성이다.",
+    "namingReason": "테스트하기 어려운 환경 의존 코드(UI·하드웨어 등)에서 로직을 모두 빼내, 그 객체에는 위임만 하는 아주 얇고 '보잘것없는' 껍데기만 남기는 패턴이다. 어원의 '낮고 소박함'이 로직을 덜어낸 빈약한 객체에 대응한다. Gerard Meszaros가 xUnit Test Patterns에서 테스트 용이성 기법으로 정리했다."
+  },
+  {
+    "keyword": "delegation-pattern",
+    "aliases": [
+      "위임 패턴",
+      "델리게이션 패턴"
+    ],
+    "category": "패턴",
+    "summary": "한 객체가 자기 일을 다른 객체에 맡기는 패턴",
+    "etymology": "'보내어 맡기다'를 뜻하는 라틴어 delegare(de- '~로부터' + legare '위임하다')에서 비롯한 delegation(위임)과 pattern의 합성이다.",
+    "namingReason": "한 객체가 들어온 요청을 직접 처리하지 않고, 협력하는 다른 객체에 그 일을 넘겨(위임) 대신 수행하게 하는 패턴이다. 어원의 '보내어 맡긴다'가 책임을 다른 객체로 넘기는 구조에 직결된다. 상속이 굳히는 정적 재사용과 달리 실행 중에 위임 대상을 바꿀 수 있어 더 유연하다. 객체 합성으로 코드를 재사용하는 대표 기법으로, 상속의 경직성을 피하려는 설계에서 자주 쓰인다."
+  },
+  {
+    "keyword": "two-phase-locking",
+    "aliases": [
+      "2단계 잠금",
+      "2PL"
+    ],
+    "category": "DB",
+    "summary": "잠금을 확장·수축 두 단계로 나눈 규약",
+    "etymology": "'둘'을 뜻하는 two와, 그리스어 phasis(나타남)에서 온 phase(단계·국면), 그리고 locking(잠금)의 합성. 잠금이 두 국면으로 나뉜다는 뜻이다.",
+    "namingReason": "트랜잭션이 락을 늘리기만 하는 확장 단계(growing)와 풀기만 하는 수축 단계(shrinking) 둘로 진행되며, 한 번 락을 풀기 시작하면 새 락을 잡지 못한다. 이 두 '국면' 분리가 직렬 가능성(serializability)을 보장한다. 1976년 Eswaran 등이 형식화했다."
+  },
+  {
+    "keyword": "write-skew",
+    "aliases": [
+      "쓰기 스큐",
+      "쓰기 편향"
+    ],
+    "category": "DB",
+    "summary": "두 트랜잭션의 갱신이 서로 어긋나는 이상",
+    "etymology": "'쓰다'를 뜻하는 write와, '비스듬히 어긋남'을 뜻하는 skew의 합성. skew는 '비켜 가다'를 뜻하는 옛 북프랑스어 eskiuwer에서 왔다.",
+    "namingReason": "두 트랜잭션이 각자 다른 행을 읽고 갱신하지만, 둘이 함께 지켜야 할 제약을 어긋나게(비스듬히) 깨뜨리는 동시성 이상 현상이다. 각자는 정상이나 합쳐 보면 빗나간다는 점이 '비스듬함'이라는 어원과 맞물린다. 스냅샷 격리에서도 막지 못해, 이를 방지하려 직렬화 가능 스냅샷 격리(SSI)가 고안됐다."
+  },
+  {
+    "keyword": "next-key-lock",
+    "aliases": [
+      "넥스트 키 락",
+      "넥스트 키 잠금"
+    ],
+    "category": "DB",
+    "summary": "인덱스 레코드와 앞 갭을 함께 잠그는 락",
+    "etymology": "'다음'을 뜻하는 next와 '키'를 뜻하는 key, lock의 합성. 인덱스의 한 키와 그 다음 키에 이르는 구간을 함께 잠근다는 데서 왔다.",
+    "namingReason": "인덱스 레코드 자체를 잠그는 레코드 락과, 그 레코드 앞의 빈 구간을 잠그는 갭 락을 합쳐, 한 키와 그 직전 간격을 한꺼번에 잠그는 방식이다. '다음 키까지'를 봉쇄한다는 이름처럼 범위에 새 행이 끼어드는 팬텀 읽기를 막는다. MySQL InnoDB가 반복 읽기 격리 수준에서 기본으로 쓴다."
+  },
+  {
+    "keyword": "gin-index",
+    "aliases": [
+      "GIN 인덱스",
+      "Generalized Inverted Index"
+    ],
+    "category": "DB",
+    "summary": "배열·문서 같은 복합 값을 역색인하는 인덱스",
+    "etymology": "Generalized Inverted Index의 두문자어. Generalized(일반화된), Inverted(뒤집힌), Index(색인)로, '일반화된 역색인'이라는 뜻이다.",
+    "namingReason": "하나의 칼럼 값을 여러 구성 요소로 쪼개, 각 요소가 어느 행에 들어 있는지를 거꾸로 가리키는 역색인(inverted index)을 일반화한 구조다. 어원의 '뒤집힌 색인'처럼 값이 아니라 값의 조각에서 행을 찾는다. PostgreSQL이 배열·전문 검색·JSONB 같은 복합 타입 색인에 쓴다."
+  },
+  {
+    "keyword": "gist-index",
+    "aliases": [
+      "GiST 인덱스",
+      "Generalized Search Tree"
+    ],
+    "category": "DB",
+    "summary": "다양한 검색 트리를 일반화한 인덱스 틀",
+    "etymology": "Generalized Search Tree의 두문자어. Generalized(일반화된), Search(검색), Tree(트리)로, '일반화된 검색 트리'라는 뜻이다.",
+    "namingReason": "B-tree나 R-tree처럼 서로 다른 검색 트리들을 하나의 추상 틀로 묶어, 사용자가 몇 가지 연산만 정의하면 새 색인 유형을 만들 수 있게 한 일반화된 트리다. 어원의 '일반화된 검색 트리'가 곧 확장 가능한 색인 골격을 가리킨다. PostgreSQL에서 기하·전문 검색 등 비표준 자료형 색인의 토대가 된다."
+  },
+  {
+    "keyword": "bitmap-index",
+    "aliases": [
+      "비트맵 인덱스"
+    ],
+    "category": "DB",
+    "summary": "값마다 비트열을 두어 행을 표시하는 인덱스",
+    "etymology": "비트들의 배열을 뜻하는 bitmap(bit '이진 자리' + map '대응표')과 index의 합성. 각 비트가 한 행의 해당 여부를 나타낸다는 데서 왔다.",
+    "namingReason": "칼럼이 가질 수 있는 값마다 비트열을 하나씩 두고, 각 비트가 그 행이 해당 값을 갖는지를 0과 1로 표시하는 색인이다. 어원의 '비트들의 지도'가 행 집합을 비트로 그린 그림에 대응한다. 성별·상태처럼 값 종류가 적은 저카디널리티 칼럼에서 AND·OR 비트 연산으로 빠르게 조건을 결합한다."
+  },
+  {
+    "keyword": "hash-join",
+    "aliases": [
+      "해시 조인"
+    ],
+    "category": "DB",
+    "summary": "해시 테이블로 두 테이블을 결합하는 방식",
+    "etymology": "'잘게 다지다'를 뜻하는 프랑스어 hacher에서 온 hash(해시)와, '잇다'를 뜻하는 라틴어 jungere에서 온 join(결합)의 합성이다.",
+    "namingReason": "한 테이블의 조인 키를 해시 함수로 흩어 해시 테이블을 만든 뒤(build), 다른 테이블의 각 행으로 그 테이블을 조회해(probe) 짝을 맞춘다. 어원의 '잘게 다져 흩는다'가 키를 버킷으로 분산시키는 동작에 대응한다. 등가 조인에서 큰 테이블끼리 결합할 때 특히 효율적이다."
+  },
+  {
+    "keyword": "merge-join",
+    "aliases": [
+      "병합 조인",
+      "sort-merge join"
+    ],
+    "category": "DB",
+    "summary": "정렬된 두 입력을 훑어 결합하는 방식",
+    "etymology": "'잠기다·합치다'를 뜻하는 라틴어 mergere에서 온 merge(병합)와 join의 합성. 정렬된 두 흐름을 하나로 합친다는 뜻이다.",
+    "namingReason": "양쪽 입력을 조인 키로 미리 정렬해 두고, 두 정렬 흐름을 동시에 앞으로 훑으며 키가 같은 행끼리 합치는 방식이다. 어원의 '합쳐 흐르게 한다'가 두 정렬열을 나란히 병합하는 동작에 대응한다. 입력이 이미 정렬돼 있으면 추가 정렬 없이 한 번의 순회로 끝나 정렬-병합 조인으로도 불린다."
+  },
+  {
+    "keyword": "nested-loop-join",
+    "aliases": [
+      "중첩 루프 조인",
+      "NLJ"
+    ],
+    "category": "DB",
+    "summary": "이중 반복으로 두 테이블을 맞춰 보는 방식",
+    "etymology": "'둥지처럼 포개다'를 뜻하는 nest의 형용사형 nested(중첩된)와 loop(반복), join의 합성이다. 반복문이 안팎으로 포개졌음을 가리킨다.",
+    "namingReason": "바깥 테이블의 각 행마다 안쪽 테이블 전체를 훑는 이중 반복문으로 두 테이블을 맞춰 보는 가장 기본적인 조인이다. 어원의 '포개진 고리'가 외부 루프 안에 내부 루프가 든 구조를 그대로 가리킨다. 단순하지만 비교 횟수가 두 테이블 크기의 곱에 비례해, 안쪽에 인덱스가 있을 때라야 효율적이다."
+  },
+  {
+    "keyword": "compensating-transaction",
+    "aliases": [
+      "보상 트랜잭션"
+    ],
+    "category": "DB",
+    "summary": "이미 커밋된 작업을 되돌리는 트랜잭션",
+    "etymology": "'함께 무게를 달아 균형 맞추다'를 뜻하는 라틴어 compensare(com- '함께' + pensare '저울질하다')에서 온 compensate에, transaction을 붙인 이름이다.",
+    "namingReason": "이미 커밋되어 되돌릴 수 없는 작업을, 그 효과를 상쇄하는 반대 작업을 새로 실행해 논리적으로 무효화하는 트랜잭션이다. 어원의 '저울의 균형을 맞춘다'가 끼친 변화를 반대편 작업으로 상계한다는 의미에 대응한다. 여러 서비스에 걸친 분산 트랜잭션을 다루는 사가(saga) 패턴의 핵심 구성 요소다."
+  },
+  {
+    "keyword": "sliding-window",
+    "aliases": [
+      "슬라이딩 윈도우"
+    ],
+    "category": "네트워크",
+    "summary": "확인 없이 보낼 수 있는 양을 정하는 창",
+    "etymology": "'미끄러지다'를 뜻하는 고대영어 slīdan에서 온 slide의 형용사형 sliding과, '바람 눈'을 뜻하는 고대 노르드어 vindauga에서 온 window(창)의 합성이다.",
+    "namingReason": "수신 측이 미리 허용한 범위만큼만 송신 측이 확인 응답 없이 연속해 보낼 수 있게 하고, 응답이 올 때마다 그 허용 구간(창)을 데이터 위로 한 칸씩 미끄러뜨린다. 어원의 '미끄러지는 창'이 스트림을 따라 전진하는 전송 허용 구간에 대응한다. TCP의 흐름 제어와 혼잡 제어 모두 이 창 개념 위에서 동작한다."
+  },
+  {
+    "keyword": "go-back-n",
+    "aliases": [
+      "고 백 N",
+      "Go-Back-N ARQ"
+    ],
+    "category": "네트워크",
+    "summary": "오류 지점부터 다시 보내는 재전송 방식",
+    "etymology": "'N개만큼 되돌아가라'를 뜻하는 영어 명령구 go back N을 그대로 이름으로 삼았다. N은 한 번에 보낼 수 있는 프레임 수, 곧 창 크기를 가리킨다.",
+    "namingReason": "오류나 손실이 감지되면 그 프레임뿐 아니라 그 이후 보낸 것까지 모두 버리고, 문제가 된 지점으로 되돌아가 다시 보내는 ARQ 방식이다. 이름의 '되돌아가 보낸다'가 재전송 범위를 직접 진술한다. 수신 측 버퍼링이 거의 필요 없는 대신, 한 번 어긋나면 멀쩡히 받은 뒤 프레임까지 재전송하는 낭비가 따른다."
+  },
+  {
+    "keyword": "selective-repeat",
+    "aliases": [
+      "선택적 반복",
+      "Selective Repeat ARQ"
+    ],
+    "category": "네트워크",
+    "summary": "손실된 프레임만 골라 재전송하는 방식",
+    "etymology": "'골라내다'를 뜻하는 라틴어 seligere에서 온 selective(선택적)와, '다시 구하다'를 뜻하는 repetere에서 온 repeat(반복)의 합성이다.",
+    "namingReason": "go-back-n과 달리, 손실되거나 오류가 난 프레임만 골라(선택적으로) 다시 보내고 정상 수신된 뒤 프레임은 버리지 않고 버퍼에 보관한다. 어원의 '골라 되풀이한다'가 문제 프레임만 재전송하는 동작에 대응한다. 대역폭 낭비는 적지만 수신 측이 순서를 재조립할 버퍼와 관리 비용을 더 치러야 한다."
+  },
+  {
+    "keyword": "token-bucket",
+    "aliases": [
+      "토큰 버킷"
+    ],
+    "category": "네트워크",
+    "summary": "토큰을 모아 전송을 허가하는 트래픽 제어",
+    "etymology": "'증표·표식'을 뜻하는 고대영어 tācen에서 온 token(토큰)과, 양동이를 뜻하는 bucket의 합성. 토큰을 담는 양동이라는 뜻이다.",
+    "namingReason": "일정 속도로 토큰을 채우는 양동이를 두고, 패킷을 보낼 때마다 토큰을 하나씩 꺼내 쓰며 토큰이 없으면 전송을 미루는 트래픽 정형 기법이다. 양동이에 쌓인 토큰만큼은 한꺼번에 내보낼 수 있어 일시적 폭주(burst)를 허용한다. 평균 속도는 토큰 보충률로, 최대 폭주량은 양동이 크기로 정해진다."
+  },
+  {
+    "keyword": "leaky-bucket",
+    "aliases": [
+      "리키 버킷",
+      "누출 버킷"
+    ],
+    "category": "네트워크",
+    "summary": "일정 속도로 흘려보내 흐름을 고르는 제어",
+    "etymology": "'새다'를 뜻하는 leak의 형용사형 leaky(새는)와 bucket의 합성. 바닥에 구멍이 나 물이 일정하게 새어 나오는 양동이를 빗댄 이름이다.",
+    "namingReason": "들어오는 패킷을 양동이에 받아 두고 바닥의 구멍으로 일정한 속도로만 흘려보내, 출력 흐름을 고르게 다듬는 기법이다. '새는 양동이'라는 어원이 일정 속도 유출이라는 핵심 동작을 그대로 그린다. 폭주를 그대로 통과시키는 토큰 버킷과 달리 출력을 항상 균일하게 만들며, 넘치면 패킷을 버린다."
+  },
+  {
+    "keyword": "tcp-bbr",
+    "aliases": [
+      "BBR",
+      "비비아르"
+    ],
+    "category": "네트워크",
+    "summary": "병목 대역폭과 왕복 지연을 추정하는 혼잡 제어",
+    "etymology": "BBR은 Bottleneck Bandwidth and Round-trip propagation time의 약어로, 이 알고리즘이 추정하는 병목 대역폭과 왕복 전파 시간이라는 두 값을 딴 이름이다.",
+    "namingReason": "패킷 손실을 혼잡 신호로 삼던 기존 방식과 달리, 경로의 병목 대역폭과 최소 왕복 지연을 직접 추정해 그 둘로 적정 전송 속도를 정하는 혼잡 제어다. 이름이 곧 추정 대상인 두 변수를 그대로 나열한다. 2016년 구글이 발표해 유튜브와 리눅스 커널에 도입했고, 후속 BBRv2는 손실과 ECN 신호까지 반영해 공정성 문제를 보완하려 했다."
+  },
+  {
+    "keyword": "path-mtu-discovery",
+    "aliases": [
+      "경로 MTU 탐색",
+      "PMTUD"
+    ],
+    "category": "네트워크",
+    "summary": "경로의 최대 전송 단위를 알아내는 절차",
+    "etymology": "경로를 뜻하는 path, Maximum Transmission Unit(최대 전송 단위)의 약어 MTU, 그리고 '찾아냄'을 뜻하는 discovery의 합성이다.",
+    "namingReason": "출발지에서 목적지까지 경로 전체가 쪼개지 않고 통과시킬 수 있는 최대 패킷 크기(경로 MTU)를, 분할 금지 패킷을 보내며 그 한도를 알아내는 절차다. 어원 그대로 '경로의 전송 단위를 발견'한다. 중간 라우터가 너무 큰 패킷에 ICMP 오류를 돌려보내면 송신 측이 크기를 줄여 가며 적정 값을 찾는다."
+  },
+  {
+    "keyword": "alpn",
+    "aliases": [
+      "ALPN",
+      "응용 계층 프로토콜 협상"
+    ],
+    "category": "네트워크",
+    "summary": "TLS 중 상위 응용 프로토콜을 고르는 확장",
+    "etymology": "Application-Layer Protocol Negotiation의 두문자어로, 응용 계층(Application-Layer)에서 쓸 프로토콜을 협상한다는 뜻이다.",
+    "namingReason": "TLS 핸드셰이크를 주고받는 동안, 그 위에서 쓸 응용 계층 프로토콜을 클라이언트와 서버가 함께 골라 정하는 TLS 확장이다. 어원 그대로 '응용 계층 프로토콜을 협상'한다. 별도 왕복 없이 HTTP/2 사용 여부를 정하려 고안됐으며 RFC 7301로 표준화됐다. 이전의 NPN 확장을 대체했으며, HTTPS 위에서 HTTP/2를 지연 없이 협상하는 데 핵심 역할을 한다."
+  },
+  {
+    "keyword": "mtls",
+    "aliases": [
+      "mTLS",
+      "상호 TLS"
+    ],
+    "category": "네트워크",
+    "summary": "양쪽이 서로 인증서를 검증하는 TLS",
+    "etymology": "'상호의'를 뜻하는 라틴어 mutuus에서 온 mutual의 머리글자 m과, 전송 계층 보안을 뜻하는 TLS(Transport Layer Security)를 합친 이름이다.",
+    "namingReason": "보통의 TLS가 클라이언트만 서버 인증서를 검증하는 것과 달리, 양쪽이 서로의 인증서를 제시하고 검증해 쌍방향으로 신원을 확인하는 방식이다. 어원의 '상호'가 단방향이던 인증을 양방향으로 넓혔음을 가리킨다. 서비스 간 통신을 자동 인증하는 제로 트러스트·서비스 메시 구성에서 널리 쓰인다."
+  }
+]

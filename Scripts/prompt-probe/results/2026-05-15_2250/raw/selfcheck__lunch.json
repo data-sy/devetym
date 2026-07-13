@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "cell": "selfcheck",
+    "keyword": "lunch",
+    "group": "branch_check",
+    "prompt_hash": "547cd6ba99746461d391eea735cf999712969f7bc12fa82f23cd4e5ad978f287",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:57:17.780586",
+    "latency_ms": 2455
+  },
+  "expected": {
+    "keyword": "lunch",
+    "group": "branch_check",
+    "expected_branch": "not_dev_term"
+  },
+  "response": {
+    "id": "msg_01Jb5xsKKQdMJXHirQG2yKdS",
+    "container": null,
+    "content": [
+      {
+        "signature": "ErUCClsIDRgCKkDR3cs+L7ROzAbDog3mgmG2/ygtnKJPxCw3fAJsVRwvFcVM0Hyf1i5/FAcLqBFBtTj+rA2Gyzo4TES3F1ugJYF3MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgzbMbPQrQb/PRFm2zQaDDYDGBigsP1BIKo4aSIwRPDV2RDhcWYF+kdh5dC1H1TJeSLKv4yn2AIge8tGYuimSBD0eb8932zIoLv4f/BmKocBmPJ1bcxsVFkTC6C/TOebAhPkzFHQWf0NtLMdXKGL3k73NX9uWPB07d+Pl1VSNRHCJlN35cppzq18IN6vE0AQh03rTOTqxk9W/nn+o5OygYKZdtUvzXaSDbuh7Ttz3WDTmkju5/4DcS5n+vlLBcO/+NhKNfxF0VE9d2oM8WJ+1zM9agn9yqlAGAE=",
+        "thinking": "\"lunch\" is not a development term. It's a common English word meaning a midday meal. I should call return_not_dev_term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01RVPf5jCHWTicx2xXdifsTC",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {},
+        "name": "return_not_dev_term",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3536,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 80,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

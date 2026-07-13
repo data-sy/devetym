@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "null",
+    "group": "out_of_shot",
+    "prompt_hash": "a26d467de6d1f81437daf4a7edc0f5559ddbf78c55c7481ed3c8e2f1cf948c0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:58:55.776700",
+    "latency_ms": 2448
+  },
+  "expected": {
+    "keyword": "null",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01Mc194fnSnPhqiwkpsU5Yfe",
+    "container": null,
+    "content": [
+      {
+        "signature": "EqYCClsIDRgCKkAFKqsHRI6KLiQLDj5JAivfY8LbWvdcb4h2COwZ88PqQSjXOOIr+gYoCsh6lqiuDtZdEYHaLCrdVPIZFJFk2KDsMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxZblWIQYE1hX3DtokaDFUK7oi1nJL44YeEdCIwpswcwmVabCGWzNDdZ+uX9h/3PxK4rNsf2IRCLu5kWN50FAZncUBsKQpXEiW/uYhWKnmIYf5ZPJOtJIgq/A5bUq5aUaVgL4Rd+W67a11k2DmYpFubJDJWWWF8WydeoW2ljEMFP7hxF30Bj6ca8A3blLmFeJ1Vd3vimA85cW+GDTQIcEk1EcayIdj+jleo/pb599/QnnPoSdVOcRLX15pd2lHM3B+baDth5lPmGAE=",
+        "thinking": "The user sent a null/empty message. This is not a development term, so I should call return_not_dev_term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_017SuDytmQNrVNct5k3LXFy5",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {},
+        "name": "return_not_dev_term",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3456,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 76,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

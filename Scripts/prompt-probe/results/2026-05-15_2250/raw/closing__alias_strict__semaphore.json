@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing__alias_strict",
+    "keyword": "semaphore",
+    "group": "out_of_shot",
+    "prompt_hash": "1fe8a1815b90d220dd1a0b048772ca32c437b58fbbf90bdda9a2814b2bce11bf",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:03:46.897765",
+    "latency_ms": 14025
+  },
+  "expected": {
+    "keyword": "semaphore",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01VoFDkuhP9wE1HF2CKajh72",
+    "container": null,
+    "content": [
+      {
+        "signature": "EqECClsIDRgCKkAj4NdfZ5xVjYZ9noxYiyQhAyCokfAWevcUEzUj7WRcUHm0mobBCoir6LkV09cCVIJeA+K2cLTbbCM3Yk9oSZZQMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgyKFvTDZEQsuo72Q00aDNobeRlKa4tG/jQ2JSIwtEWpVVJttQm6TM58+UnyQ7vAnN6mW8R9IjPFMFPGhEMU9tv4H6hl53tDWO0d3gHMKnRtNosdhsdZg1MJILyUGdPLDrPbfPcprk2hjHg3oU61iGGjeY5XW9navsJMwOUKyKa6JiF0rk191fn0RLqi4SvVnSlgsclhtsaC6vApSOVaDAkgcquDSy4YYwoZGJM5Cp1OWHg47xJ4YtPMvgB/Os5iEPbonhgB",
+        "thinking": "The user input is \"semaphore\" which is a well-known concurrency/synchronization term in development.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_013Fc91SXaBNuLwgspRicWaX",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "semaphore",
+          "aliases": [
+            "세마포어",
+            "세마포"
+          ],
+          "category": "동시성",
+          "summary": "공유 자원의 접근 가능 수를 카운터로 제어하는 동기화 기본형",
+          "etymology": "그리스어 sēma(신호)와 phoros(운반하는 자)의 합성어. 19세기 철도·군사에서 깃발이나 팔을 들어 진입 허가 여부를 전달하던 신호 장치를 가리켰다.",
+          "namingReason": "철도 세마포어는 선로 구간에 몇 대의 열차가 들어올 수 있는지를 신호로 통제했다. 에츠허르 다익스트라(Edsger Dijkstra)는 1965년 논문 \"Cooperating Sequential Processes\"에서 이 은유를 차용해, 정수 카운터를 올리고(V 연산, verhogen) 내리는(P 연산, proberen) 방식으로 공유 자원의 동시 접근 허용 수를 제어하는 기본형에 semaphore라는 이름을 붙였다. 카운터가 0이 되면 추가 진입을 막는 구조가 선로 포화 시 열차를 대기시키는 신호기의 작동 방식과 정확히 대응된다. 뮤텍스가 소유권 개념을 가진 이진(0/1) 잠금인 반면, 세마포어는 소유권 없이 카운터만으로 N개의 동시 접근을 허용하는 더 일반적인 형태다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3611,
+      "inference_geo": "global",
+      "input_tokens": 333,
+      "output_tokens": 632,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "redus",
+    "group": "branch_check",
+    "prompt_hash": "956ba44a7c48f75b2abbcf7faecda24ac6d0fdca7c4e1d0bd1da3b5452801ad7",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-16T00:51:04.308070",
+    "latency_ms": 2975
+  },
+  "expected": {
+    "keyword": "redus",
+    "group": "branch_check",
+    "expected_branch": "possible_typo",
+    "expected_suggestion": "redis"
+  },
+  "response": {
+    "id": "msg_01SA1vn65SLmGem4iP3YMg2Z",
+    "container": null,
+    "content": [
+      {
+        "signature": "Eq8CClsIDRgCKkCNIjv0JbEqAnS+nglqMcmQjpMPOadToUDtAC3p+gisSY/9zdj60mJOAZL068ttxebqlX9H5Vhqatyc1Y+/1hDuMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgyFA/Yz/zp4EZ61NfYaDAkgb7T9djggYQ4VNSIwoaF4ejBQyAHBK+KhcLMprddoeT39w/AHq7fF7JMNlVQnrJMNrLQavi627FXUmTIaKoEBkyJjQdeKlH7lkGidcziKJP0GW4u9060Jof2k+fuvtnZPv/BQ1sOjuRqT8V3NYITU0MSdZQsbNYfYBDx27vfTrUXi+yY0XsxewVzIJwJSQkTzDTqzOEd4YoXXjTSfAhUpMYgII2CBpw0b0TFGsEdjYe6Xx+H+S43DEp80md4fJoSsGAE=",
+        "thinking": "The input \"redus\" looks like a typo. It's likely a typo for \"redis\" - the popular in-memory data structure store.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01AD3xjpV8MT2tHPRWfhX5Ei",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "suggestion": "redis"
+        },
+        "name": "return_possible_typo",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3540,
+      "inference_geo": "global",
+      "input_tokens": 332,
+      "output_tokens": 96,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

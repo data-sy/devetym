@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "cell": "closing",
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "prompt_hash": "a375f07f70512ed802370765aaeda70d0278f7253f21cbdd2bfef2268c398ad2",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:53:24.821764",
+    "latency_ms": 13309
+  },
+  "expected": {
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_011Abr23AyZaHXee6GBVgh1F",
+    "container": null,
+    "content": [
+      {
+        "signature": "EsQCClsIDRgCKkDk9anyfhLdu5z8U//acG+euO/UP+FmZRDofyOYXbX2nbE9/kebOQJcxi+J002zg4MzleZ0XqQeVZrnxgoNEAXMMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgz3QZYkBi3LCVgHzxMaDI7PrtioyWJ7iNUwFyIwVB1PYAfp8sLUuFcLmBztYp8msJ/EkjAbyfernyOyyrOVESrV5nmhhnP8WPve5W1rKpYB0ZXBlnfNf22JnoLOlozdtBsA872haPn/yAAT7R3CZy3JTCSdHOkSkEMVIFyxzSKnuAbF4TGw1SzqZgv26ih9sEI7C7TQK+HRtDYlA06Rs99luTKa/MaNh9Aql1cnJ6sIjTgUTdaACiRPiuI7KTL/KyIat/Vak/FxkHyiPsBshNNFz3QP9RLUlEU+cy/jhkYrtGhC0DuKGAE=",
+        "thinking": "The user input is \"cookie\", which is a development term related to web/network technology (HTTP cookies). I'll call return_term_entry.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01QBKLE2bfi7Jxrx4My9hzUT",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "cookie",
+          "aliases": [
+            "쿠키",
+            "HTTP 쿠키",
+            "웹 쿠키"
+          ],
+          "category": "네트워크",
+          "summary": "서버가 클라이언트에 저장하는 소규모 상태 데이터",
+          "etymology": "영어 'cookie'(과자)에서 비롯되었으나, 직접적으로는 Unix 프로그래밍 속어 'magic cookie'에서 유래한다. 'magic cookie'는 프로그램 간에 주고받는 불투명한 식별 토큰을 뜻하는 표현으로, 1970년대부터 쓰였다.",
+          "namingReason": "HTTP는 기본적으로 무상태(stateless) 프로토콜이어서 서버는 요청마다 클라이언트를 식별할 수 없다. 1994년 넷스케이프의 엔지니어 루 몬툴리(Lou Montulli)가 이 문제를 해결하기 위해 서버가 브라우저에 소량의 데이터를 심고, 브라우저가 이후 요청마다 그 데이터를 되돌려 보내는 메커니즘을 설계했다. 그는 당시 Unix에서 프로그램 간 교환되는 불투명한 식별 토큰을 지칭하던 'magic cookie'를 차용하여 이 데이터 조각을 'cookie'라 명명했다. 서버가 건네주고 클라이언트가 고스란히 돌려주는 작은 데이터 덩어리라는 교환 방식이 '받아서 다시 내미는 과자 조각'의 이미지와 맞닿아 있다. 이후 RFC 2109(1997)와 RFC 6265(2011)를 통해 표준화되었으며, 세션 관리·개인화·추적 등 다양한 용도로 확장 사용되고 있다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3519,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 730,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

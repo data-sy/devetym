@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "alias_strict",
+    "keyword": "request",
+    "group": "out_of_shot",
+    "prompt_hash": "a26d467de6d1f81437daf4a7edc0f5559ddbf78c55c7481ed3c8e2f1cf948c0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:58:43.284929",
+    "latency_ms": 9031
+  },
+  "expected": {
+    "keyword": "request",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_018MeiWbunnR3F9eRqwH4GP4",
+    "container": null,
+    "content": [
+      {
+        "signature": "EukCClsIDRgCKkC6qQSAW9QlDUAM8fPl061kMbfCUc1yBGex98k+B1Q4SO5FZkAy7CbbZD/iKoCBmeSvR5EDVgesgyOI7gr5wjn8MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgziFxMjuR4UbgGdMzsaDN/MmxwKEDsczC15yCIwhhtUxpCR4sV9PKjNCROpdAdmcJ4mEZuzDIWaruy7HSa5Pc1cWnWjkxVPXxFF2RV3KrsB9+Av3PILi2EB8jNJEPNUF5Y+vy/V5Z6XuKSEH7KcvrNcAJNlePKTvLwuojDrVfrwmK7j/n8yVce0wDPAWUoyd8yLZ8jClCl+Z/I/fP7b/R5dPyBEXBKBxEU2WDAH6Ay5WmN4wIvNMfYqRCFJo6YqrAPDGohD1m3fwdNwetH+4fNjIAg5Sy1oo8jU89+rswlHeMpBHQeLt13h6lXiIUM4sfGIj2zN+mFL97SPSSBAjL+hMoDQw4zHA69q9xgB",
+        "thinking": "The input is \"request\" - this is a development term commonly used in web/network contexts referring to an HTTP request or a general request in client-server communication.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01SCHqBhwu4AvUFFe6k543xR",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "request",
+          "aliases": [
+            "리퀘스트",
+            "요청"
+          ],
+          "category": "네트워크",
+          "summary": "클라이언트가 서버에 보내는 처리 요구 메시지",
+          "etymology": "라틴어 requirere(re-: 다시, quaerere: 구하다·묻다)에서 유래한 영어 단어. 중세 라틴어 requestus를 거쳐 '필요한 것을 공식적으로 요구하는 행위'를 뜻하게 되었다.",
+          "namingReason": "클라이언트가 서버에 특정 자원이나 동작을 '공식적으로 요구한다'는 원의미가 네트워크 통신 모델에 그대로 이식된 용어다. HTTP에서는 메서드(GET·POST 등)·헤더·본문으로 구성된 구조화된 메시지가 서버로 전달되며, 서버는 이에 대한 응답(response)을 반환한다. 요청-응답(request-response) 쌍을 축으로 하는 클라이언트-서버 아키텍처에서 통신의 시작점을 가리키는 핵심 단어로 자리 잡았다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3456,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 520,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

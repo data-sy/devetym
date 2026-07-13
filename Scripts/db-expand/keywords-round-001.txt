@@ -1,0 +1,23 @@
+# Round-001 keyword 10개 (Phase 1 POC)
+# 카테고리 분포: 동시성·자료구조·네트워크·DB·패턴 각 2개. 기타 0개 (기존 137 편중 회피).
+# 모두 기존 500과 keyword·alias 충돌 없음 확인됨 (2026-05-26).
+
+# 동시성
+priority-inversion
+aba-problem
+
+# 자료구조
+merkle-tree
+persistent-data-structure
+
+# 네트워크
+sni
+hsts
+
+# DB
+sharding
+materialized-view
+
+# 패턴
+command-pattern
+aggregate-root

@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.robin.devetym.Constants
 import com.robin.devetym.ui.platform.AppActions
 import com.robin.devetym.ui.platform.AppearanceStore
 import com.robin.devetym.ui.platform.DeviceInfo
@@ -70,9 +71,9 @@ fun SettingsContent(
             InfoRow("버전", appVersion)
         }
         Section("지원") {
-            ActionRow("개발자에게 문의") { actions.sendMail("data.sy.2@gmail.com", "DevEtym 문의", "") }
+            ActionRow("개발자에게 문의") { actions.sendMail(Constants.supportEmail, "DevEtym 문의", "") }
             ActionRow("앱 평가하기") { actions.requestReview() }
-            ActionRow("오류 제보") { actions.sendMail("data.sy.2@gmail.com", "DevEtym 오류 제보", "") }
+            ActionRow("오류 제보") { actions.sendMail(Constants.supportEmail, "DevEtym 오류 제보", "") }
         }
         Section("데이터 수집") {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -80,7 +81,8 @@ fun SettingsContent(
                     modifier = Modifier.weight(1f))
                 Switch(checked = consentGiven, onCheckedChange = onConsentChange)
             }
-            ActionRow("개인정보 처리방침") { actions.openUrl("https://devetym.app/privacy") }
+            // M9-후속 §2-D: stale 리터럴(미보유 도메인) → Constants 정본(WU-1 라이브, 스토어 라벨과 단일 소스).
+            ActionRow("개인정보 처리방침") { actions.openUrl(Constants.privacyPolicyUrl) }
         }
         Section("법적 고지") {
             ActionRow("오픈소스 라이선스", onOpenLicenses)

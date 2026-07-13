@@ -20,10 +20,19 @@
 	<string>1</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>SentryDsn</key>
+	<string>$(SENTRY_DSN)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchScreen</key>
-	<dict/>
+	<dict>
+		<key>UIColorName</key>
+		<string>Theme/brand</string>
+		<key>UIImageName</key>
+		<string>LaunchLogo</string>
+		<key>UIImageRespectsSafeAreaInsets</key>
+		<true/>
+	</dict>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

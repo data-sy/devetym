@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "closing__alias_strict",
+    "keyword": "bug",
+    "group": "in_shot",
+    "prompt_hash": "1fe8a1815b90d220dd1a0b048772ca32c437b58fbbf90bdda9a2814b2bce11bf",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:03:10.274573",
+    "latency_ms": 7915
+  },
+  "expected": {
+    "keyword": "bug",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_019HYDS57WpUnLToLPbUgRvF",
+    "container": null,
+    "content": [
+      {
+        "signature": "EvIBClsIDRgCKkCAYK3njZfFhOKSuZj3BZcFPrZ6gOm2pkcZHPKTklxuWZ+Vcu15UBq1ShEtltjXmfnXOQ4IYGUdDNMbE1+ET5XaMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxg1dgke6XTSCYcl+QaDG9qPZrLGidZIA/xJCIwrA+EEDWoYBZHejxsRgczBAhL0IO3g9Sl47p/+aZuVt4n3UoetS8mJXOq9tcT9mIuKkXUFb8D9fZsQHVVDa3ewdhW/RYv0JtX6+vf4zilGuzspDvqiISyv/zRPxQlTOB4S3ju8WKbtskMLRu69/TpPBH1MtvZGMQYAQ==",
+        "thinking": "The user input is \"bug\", which is a development term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01EihrMLkEUnaYr7EBngH77i",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "bug",
+          "aliases": [
+            "버그"
+          ],
+          "category": "기타",
+          "summary": "프로그램의 의도치 않은 오작동이나 결함",
+          "etymology": "정확한 어원은 불분명하나, 영어 'bug'(벌레)의 비유적 용법에서 유래한 것으로 본다. 1878년 에디슨이 편지에서 기계 결함을 'bug'로 지칭한 기록이 있어, 소프트웨어 이전 엔지니어링 속어로 이미 쓰이고 있었다.",
+          "namingReason": "1947년 하버드 Mark II 컴퓨터의 릴레이에서 실제 나방이 발견되어 로그에 붙여진 'first actual case of bug being found'라는 일화가 유명하나, 이는 기존 은유를 문자 그대로 실행한 농담에 가깝고 용어의 기원 자체는 아니다. 기계 속을 기어다니며 예측 불가능한 고장을 일으키는 '벌레'라는 은유가 소프트웨어의 숨은 결함을 지칭하는 데 자연스럽게 옮겨 붙었다. 나방 일화의 주인공은 프로그래밍 언어 COBOL을 설계한 그레이스 호퍼(Grace Hopper)로, 해당 나방은 실제로 테이프에 붙여 로그 노트에 보관되었으며 현재 미국 국립역사박물관에 소장되어 있다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3611,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 611,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

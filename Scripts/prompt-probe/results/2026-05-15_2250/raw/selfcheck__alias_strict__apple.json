@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "cell": "selfcheck__alias_strict",
+    "keyword": "apple",
+    "group": "branch_check",
+    "prompt_hash": "4008c10903ca57f9d7fd33e5647635c88267624ec0171e04942fd35755670e0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:07:37.612417",
+    "latency_ms": 2849
+  },
+  "expected": {
+    "keyword": "apple",
+    "group": "branch_check",
+    "expected_branch": "not_dev_term"
+  },
+  "response": {
+    "id": "msg_01MfLh98Zphfrs9wcBH4MXnb",
+    "container": null,
+    "content": [
+      {
+        "signature": "EtYCClsIDRgCKkCIQOdW59yi1TcpsTGuW07pjy2wUhQhzbjl6RIurEwKtRe21l74o723+/q2Ir8qhfwo7VbNPQPDKsQrxaJLqfBfMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgyHhJFB23Pz0geegYsaDAnz9brYFf8Ev4NV8CIwuDN+Z4pa32Mjr8TwZNF7IKybVU3Zdbwn0M0lLjIklc49rgwGI5TZaU/sQPZvPUNjKqgBhNpO8LoOYXUy1VYZiUbtEt31cR5RUn8ltx37eANV5K05JLYkTdCCBoI/4z+8Mys99R3eVpBFZvQeHtEQW7jF9sQKPMU6QzGJ4N4U+NpqzS93Qv2/7f+S9EueTf4ZbmdJCUrdwRyHhUC9bqB4iofZKJoWDUk4tRm2kgRowoWfVfl4p8z3qw4DMfkTmDdsuKlZvhNTWkhGLqycS8vaYi6gSKSJkzg5AJalGAE=",
+        "thinking": "\"apple\" is not a development term. It's a fruit, or a company name. It's not a specific development/programming term. I should call return_not_dev_term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01RdzDMt5fZEJ4zzVKDacta9",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {},
+        "name": "return_not_dev_term",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3628,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 88,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

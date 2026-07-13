@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck",
+    "keyword": "semafore",
+    "group": "branch_check",
+    "prompt_hash": "b0396852d6b88ba3bbe9657fed3a73fac75ed7ae06f2c3035db7ec760d72f425",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:02:32.556700",
+    "latency_ms": 2661
+  },
+  "expected": {
+    "keyword": "semafore",
+    "group": "branch_check",
+    "expected_branch": "possible_typo",
+    "expected_suggestion": "semaphore"
+  },
+  "response": {
+    "id": "msg_01Crne96Upd9C1QsQu9YJ8p8",
+    "container": null,
+    "content": [
+      {
+        "signature": "EswCClsIDRgCKkB1Q0Qvs/Bq8WK5C3vumFltqTaFxV7MtaNHDLOrSmOd/DICNy/KHWL5GgUTzDUhK8yEjsNHQK5Yx7me+ASsM+3pMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgywg3Wwtv5loP99p10aDHlLvRIAVwnAfG3vOiIwhXGzcvLDtW4XSkXdOvXzTFNaxBhtDNn0Ap7juEGIVhXSlgEOMeMb/XbOB2sgFfa9Kp4B/tgyQxoTIS5auY/HTFeLLOq33mTEmg/1ByTQ6CjRRIR0bFku3MqvpSapx+8lK6d7MY/2aIe1TaFE+NXzqT+/tOgp7lQxA4QlXS/QpqQRuSMYnPFEwSdWpC8JYiRVns4Y5ttJSFpT2ziL75g4vSKhwC6qpRQWSww4FfMyZiOzOk0AQWTkkWsDGaMc300tOoNofXdgTisEcFyY1yvNDboYAQ==",
+        "thinking": "The input \"semafore\" appears to be a typo of the development term \"semaphore\". I should call return_possible_typo with suggestion \"semaphore\".",
+        "type": "thinking"
+      },
+      {
+        "citations": null,
+        "text": "好的",
+        "type": "text"
+      },
+      {
+        "id": "toolu_018uK74ssei5QMWHyUuRQo6R",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "suggestion": "semaphore"
+        },
+        "name": "return_possible_typo",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3691,
+      "inference_geo": "global",
+      "input_tokens": 333,
+      "output_tokens": 107,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

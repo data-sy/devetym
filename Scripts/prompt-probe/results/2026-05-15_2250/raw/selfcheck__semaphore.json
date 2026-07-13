@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "selfcheck",
+    "keyword": "semaphore",
+    "group": "out_of_shot",
+    "prompt_hash": "547cd6ba99746461d391eea735cf999712969f7bc12fa82f23cd4e5ad978f287",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:56:14.404268",
+    "latency_ms": 26143
+  },
+  "expected": {
+    "keyword": "semaphore",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_016NNnH1dTNT8q1ctUviLskR",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"semaphore\" - this is a development term related to concurrency/synchronization.\n\nLet me work through the etymology and naming reason:\n\n**Etymology:**\n- Semaphore comes from French \"sémaphore\", which itself comes from Greek: \"sēma\" (σῆμα, sign/signal) + \"phoros\" (φορός, bearer/carrier, from pherein, to carry).\n- Originally referred to a visual signaling device (like railway signals or flag signals) used to communicate at a distance.\n\n**Naming Reason:**\n- The concept was introduced by Edsger W. Dijkstra in 1965 in his paper \"Cooperating Sequential Processes.\"\n\n\n- Dijkstra drew the parallel between railway semaphores controlling train access to shared tracks and how semaphores in programming control thread access to shared resources. The railway signal arm's raise or lower mirrors the counting semaphore's counter mechanism, where P operations (decrement, potentially blocking) and V operations (increment, potentially unblocking) — derived from the Dutch words \"Proberen\" and \"Verhogen\" — manage whether threads can proceed.\n\nNow I'm working through the etymology and field definitions, starting with the Greek roots of \"semaphore\" from sēma (signal/mark) and phoros (carrier), then tracing how the term evolved through French before Dijkstra applied it to concurrent programming. 다익스트라가 1965년 \"Cooperating Sequential Processes\" 논문에서 세마포어 개념을 도입했는데, 철도 신호기의 작동 원리를 동시성 제어에 그대로 적용한 것이다. 자원 접근 가능 여부를 카운터 값으로 관리하는 구조가 신호기의 통행 허가와 차단 메커니즘과 정확히 부합한다. 그는 대기 연산을 네덜란드어 용어로 명명했는데...\n\n실제로 P와 V라는 연산자 이름도 네덜란드어에서 비롯됐다. P는 '시도하다'라는 뜻이고, V는 '올리다'라는 의미인데, 특히 V가 신호 팔을 올리는 동작에서 직접 파생된 것이 이 은유의 일관성을 보여준다.\n\n이제 별칭을 정리하면 세마포어가 주요 용어고, 카테고리는 동시성이다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01C5PVvWMbfe4D1D4Yn89gUA",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "semaphore",
+          "aliases": [
+            "세마포어"
+          ],
+          "category": "동시성",
+          "summary": "공유 자원 접근을 카운터로 제어하는 동기화 기본형",
+          "etymology": "그리스어 sēma(σῆμα, 신호·표시)와 phoros(φορός, 전달자; pherein '나르다'에서 유래)의 합성어. 프랑스어 sémaphore를 거쳐 영어에 유입되었으며, 원래는 기차역 등에서 사용하는 시각적 신호 장치를 뜻했다.",
+          "namingReason": "1965년 에츠허르 다익스트라(Edsger W. Dijkstra)가 \"Cooperating Sequential Processes\" 논문에서 도입한 개념이다. 철도 세마포어는 신호 팔을 올리거나 내려 열차의 진입 가능 여부를 알리는 장치인데, 다익스트라는 이 은유를 동시성 제어에 그대로 이식했다. 카운터 값이 0보다 크면 자원에 진입 가능하고 0이면 대기해야 한다는 구조가 신호기의 '통행 허가/차단'과 정확히 대응한다. 다익스트라는 대기 연산을 P(네덜란드어 Proberen, '시도하다'), 해제 연산을 V(Verhogen, '올리다')로 명명했는데, V가 신호 팔을 '올리는' 동작에서 직접 파생된 점도 이 은유를 뒷받침한다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3536,
+      "inference_geo": "global",
+      "input_tokens": 333,
+      "output_tokens": 1796,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

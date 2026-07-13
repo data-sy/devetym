@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck__alias_strict",
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "prompt_hash": "d2be35897b3d540d7d9da0024812d073ee1e3e3b9bc5b9181b12c813f839d753",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:09:29.726337",
+    "latency_ms": 21534
+  },
+  "expected": {
+    "keyword": "cookie",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_016wtUxTQvYb7CPcduPNzYmn",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"cookie\" - this is a development term (HTTP cookie). Let me work through the etymology and naming reason.\n\n1. It's a dev term - specifically related to networking/web (HTTP cookies).\n\n2. Etymology: The term \"cookie\" in computing comes from \"magic cookie\" - a term used in Unix for a token or piece of data passed between programs. The origin traces back to \"fortune cookie\" metaphor - small pieces of data that hold information. The term \"magic cookie\" was used in Unix computing before HTTP cookies.\n\n3. Aliases: \"쿠키\", \"HTTP cookie\" - but wait, per the alias rules, \"HTTP cookie\" would be adding a qualifier to the base term, which the rules say is NOT an alias unless it's an acronym expansion. So I should not include \"HTTP cookie\" as an alias. Just \"쿠키\".\n   \nLou Montulli at Netscape coined the term in 1994, drawing from the Unix \"magic cookie\" concept where a small piece of data gets exchanged between server and browser like a token - similar to how a fortune cookie contains something hidden inside. 럼 안에 정보를 담고 있다는 은유에서 비롯되었다. (about 90 chars)\n\nnamingReason: 1994년 넷스케이프의 루 몬툴리(Lou Montulli)가 HTTP 상태 관리 메커니즘에 이 이름을 붙였다. 서버가 클라이언트에게 작은 데이터 조각을 건네고, 클라이언트는 이후 요청마다 그것을 되돌려 보내는 구조가, 포춘 쿠키처럼 정보를 내부에 감춘 채 전달되는 토큰의 은유와 맞아떨어졌다. Unix의 'magic cookie' 개념에서 이미 '출처를 알 필요 없이 그냥 돌려주는 불투명한 값'이라는 의미로 쓰이고 있었기 때문에, Montulli는 이를 웹의 세션 유지 문제에 그대로 적용했다.\n\nCategory: 네트워크\n\naliases: [\"쿠키\"]",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_013iNrrS6gx7m4A6MzgDEUA8",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "cookie",
+          "aliases": [
+            "쿠키"
+          ],
+          "category": "네트워크",
+          "summary": "서버가 클라이언트에 저장시키는 소형 상태 데이터",
+          "etymology": "영어 'magic cookie'에서 축약된 표현. Unix에서 프로그램 간에 주고받는 불투명한 토큰 데이터를 뜻하던 속어로, '포춘 쿠키(fortune cookie)'처럼 안에 정보를 담고 있다는 은유에서 비롯되었다.",
+          "namingReason": "1994년 넷스케이프의 루 몬툴리(Lou Montulli)가 HTTP 상태 관리 메커니즘에 이 이름을 붙였다. 서버가 클라이언트에 작은 데이터 조각을 건네고 클라이언트는 이후 요청마다 그것을 되돌려 보내는 구조가, 포춘 쿠키처럼 내용을 감춘 채 전달되는 토큰의 은유와 맞아떨어졌다. Unix의 'magic cookie'가 이미 '출처를 알 필요 없이 그냥 돌려주는 불투명한 값'이라는 의미로 쓰이고 있었기 때문에, Montulli는 이를 웹의 세션 유지 문제에 적용하면서 앞의 'magic'을 떼고 'cookie'만 남겼다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3783,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1423,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

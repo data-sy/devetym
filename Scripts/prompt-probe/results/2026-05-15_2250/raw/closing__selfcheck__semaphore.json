@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck",
+    "keyword": "semaphore",
+    "group": "out_of_shot",
+    "prompt_hash": "b0396852d6b88ba3bbe9657fed3a73fac75ed7ae06f2c3035db7ec760d72f425",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:01:10.741660",
+    "latency_ms": 20170
+  },
+  "expected": {
+    "keyword": "semaphore",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01Rdw8u8AD59sq2MiVg9zx8Z",
+    "container": null,
+    "content": [
+      {
+        "signature": "EtEVClsIDRgCKkDEdnyI0KsAPrwhG+J5OnX1xUrSaG4oRyLgvFDAx3pDkjMeQCS4dve1F4z2n1MtC6XX0Kq3vzyIHUOfblWPRX1eMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxnMFqjEq6ZrHSRSWAaDECyt5XansVoBttJNyIwSB8vlgppc/v/RpJRtjNZPDctPZzM7t/At79XCNqBUv9KZlwvtG42+t9Q4Er+2huSKqMU8aaR53afmRD5vqvK2Wm2jzUUTuSWwKmA0U2Qy6hS/18jVYkLDwmKRMWgo4eN63h0prvA0VvSPue93Oq239XYQ3RNxSB4uU3Bw5t6PgOepGBhRWDpCFXfs/SB2PQaPZGLFlWMl/DgKxj8V4ZCgjimrruk73Uh+smuJ57697znvkJEmGZ5blPAZkZSOoLa1RRvpB6gGiUv9tCEFwlfXrFZ+NUSf1B1QQIn5VPvFCqLpvgFAh8YiIy2jft4mxP3Il5ZJsAEduAJ/v/WXkQoJVhg7pY808unGaulQFoWHfIzm1ZqSMQbKtWxpthPnB0lUAqkqZ51CS6pKLDsNTG6v3ENF/EjfT2bZYGfgcjj6up6PD/nk0QrltZP9aQXzMWqZPz85Ah5a+HJy8N12YNPX3qqScINJiR4SYViRkrRpHQ/1WQrZ7yoTFLnsBZtaggUeL4N6WuD1sgV6y6kjN2UBB4lAEEgup7U/nPTP6I9MGzd9DwRiQypwlVUbybOtlI9xp6UxpIxiIUBUTFvMNLOVzzIFzVaHDdaRifDG9tMAB26uA88wj+5gTw00uxyS0JQjOPsh4qBwDyXeN/bS0v6Hxvl/NYuxICKhTm9Yx/gAe4JLTSbz7flWU9PvbLjPvDF4owolKBys4/XIQPjWmXq4/itIeNW/blpJr0FFEW8whpEBqTrE9WDue6+fjAUa+ZY9KnrztQurKkig4wBdFhA73JjRwZAeIIhj2Pr3uQcRiaE0Ge82beAQXlXQI5/FGMOGnw3A50ZalT4h+TgeFGCefsSpCaJ8PR7MQvqYGhYPsGE2kX8R7khEl9CeG/U2DRe4DZh0pnPOWQqFzYZsIn4Jq8RrUGnSV/g29/zy7tSwtOxO9LqJ4H6SxwV9oSdEYWTR5ZdWMlspLfOGuLrlsgRnKTB/GXW6PgM775oOsjx5L/auAtqDCjsjHhVxmRs7j4s8+lwFHAm7oo/ZkoWp4GM6gvwaaAXn4BdTz6muqV5dpewoEVPtc2vxxnjRgmu7kPADZCj2TcMvBX1OGlbr6rmr7IAP9m/dTLO7nZJc98y+n3xs0Tc3xRa2Mrh5TCAWpoedighLxHQvhBM2Mihc0YBwCh0mZYyWE9vuaJgUUYamSqheTeYt/wZQ4OjoAzO41Vzv4vo/OKyOrPitJXv0XhxnHtvRFngPTn576uFTBkE/tQ9UCfzEZO2IVAxQW6Duu5aMq94S2BupQ9F7yj8SH6wXbBF/VJn+PheMZuKpDMGc3h0ejCHPJNS/O3dSS78de4EzO3hYsSVsAFtgVS9BTIQbuXsDHMiuwB5Hx2nixEyV88PApRkZiMOXqQaJ7iZSJu9DO09nn24vdx0mk/z0QSm692GZhLuI6yAAHSeFFlli5uqNebCCIVS84hixFDC/t8iVQBTK8f2ywNevsZNfnnaoDdO0FqgWPY80zW6EEcrnYX/aDjq0fW8r194LWYuhUuf3H/vdDK08VwCRnqaNSeOvb65EIG10KbWuht7Cn1+LU49w98WrW+xEw96VTBSYaznP6Cy5SOz4g0hJD+KopoUfTFymoBk4cn51PibjaVKm++Vum5JJx7yi0BgFHdu/S+UP6qLeHr3jn/9c/OZcJShXgIB/fI4TkFlb/rtKQVLvikG7gEQQc/65zUu+wLLo5Jivl1yjXSvxZK5bFwSUqE+mWI9Gy9Abc7R+NnQifi8vWGK1mnhmYVG9K+o0NLQWHSkSyhvgyXTPLvbcqp15hmH3YsrOW5RFl9VQFEk2df8MV7zRLd7PjyHHFEI6p882qb3V37brbw7hVp97smsASeUZ3H1Pe9VDLrlgkiBpedlZrEf5DW2AGebeTet+i86elW8ephm56UzOiJEd2Kre8WKQ1WyTkgCS15wJt4LICHbtpeANidxgt7CJjXOpET79SX00k/9/OQbgCm+yzdLzIYN/l7GVy7GkdD52vD4DaJQ9kJlwENG3Gr0piHs6fzaOoPZmKBEfJt/6O2CYEfa7EgME42co7INs0OdY3f5FZUPQ7uSKbM8JuWKo967gaXxHiNjMSXjG/1Uu1u87G/L9gHfhMVMryIAZ9NOoN9s/Uv7Y/tuK+zLSgo0iSXfTCj8O7zpdBeVEIelOOsqT04vD1lNERxxs91hB7dATJ+I7Oa0704GjpLh0FESeEnoh3x1v+4m7SUtzue5IdcdWhy5Tg1JLnQz9mI7czQ0kbfLGTnDzygnzRtjbkd08Q6rNj9aWr81SHNY+u5lO/oiJTQa8emZXCvf/QTowWqUGU43CGi3rxSbThEzJ5fwlqwAfUhkhuxJKeemvQ2RWW4LRaBTOWezkxOCbTbylvobUA2EDkjBWJzP0KuYj+SKC0PcsUVZQqshBvHLUBMQJc0/1zBKrSabI4tYCNaynXPwOSKHbtqZTEF0AmfcbmYQP/wrXz/6MgaSrBbNwXqh5eCm5B+SFX7SFiO9kGCHbrXLRQABndet07J0nSb2OB5+4vnjaU/EJe08wXcLVs6Jvkcf93R+jzOL+bW2AVGMpgont+VovOq5qCC6w6kNit9jfYBmVnx4gImiSGIsLfQ43kYLJsMnAT3YUpcLezUQl6JoCsPfMVOFZqD2mskwQtQ50IfQB6igiQ+hgV5J9gishdAEuFIV3cRoSeIKYsOAUkZAB+7G/elCM2z95UKoqFt6uX8Y4RbrJrJIAp7lAsoW/AFD0eCi+80kDhuYRojPggzuU/r1AnbAF1a8TJW4woG8pgu/m06EbdD3d9SCagzd+LCbIyyQqgB/PfDFSAx6MDSSQr9UxtPpmi8R1ZVGvdDOFN8K58FUfJV5KaB6bLaA5V/ota0+GIu+MA5cKVocOXzWX9MiGwCnjIQ9dGDWh1mXJ6bhOMaAhC2+lkMdKV/DEI+yWWKFw+YpQlVSWzp1SGzCtRm7z6sUj7MtYA3HsRIzySaSCMV4wETL86fsiTA7mdzOrERFaWRrMc77nnZ7iJZr3V8oDwDR5G4K72R5cpzVlP419r7vl+gmBZ8yoxhXZdq7ykfoX0WfO+LoQwCwiy+hGakFkUK/aU1aLQlqQl4kmaX7Tvf5WERMKKzfrsOtjr+7Y11ncdnRWs5pb+bgUtBKdHLDKVOmJvhFexaauY0BZc/UE/z8DWNlXGDGF2vGrxKy9GGGOP1z5IMqpVsTK6vXemZrNkUtcx5j+Daqpx92H2xfRNoUG6H2s2IY+xRSombaRKREdlRU6eunzqeg75zDkH7qzRDlfdZo9WNsQqqtJvTuVh7YqfbQ3EUttBiijd0FzIyxkluQhDIy+DDh4ss1Q0sM6WUMVFkqk2FIOLrt7pb8VPbhOwuDzHUUfzIBuTaL0lH+vVNc5VFgCOnNITYYpsrgEyg3/XxDaUoeyubTdxbh5pS/hKJCttyCucQ/fV0aXC9TmZk+UYnDZibhT05p6F//RifznlqsttrA2f37R6jJ7RJs5NiWftmFmOWUGAE=",
+        "thinking": "The input \"semaphore\" is a development term related to concurrency/synchronization. Let me work through the fields.\n\n1. It's a dev term — return_term_entry.\n2. Etymology: From French \"sémaphore,\" from Greek sēma (σῆμα, signal/sign) + phoros (φόρος, bearer/carrier). So it's \"signal bearer.\" Originally a visual signaling device used in telecommunications/railway systems.\n3. Category: 동시성\n4. aliases: [\"세마포어\", \"세마포\"]\n5. summary: 공유 자원 접근을 제어하는 정수 기반 동기화 기본형 (that's around 24 chars)\n\n\n6. etymology: 그리스어 σῆμα(sēma, 신호)와 φόρος(phoros, 운반자)의 합성어에서 유래한 프랑스어 sémaphore. 본래 깃발이나 장치를 이용해 원거리에 신호를 전달하는 통신 수단을 뜻한다. (roughly 90 chars)\n\nNow I'm drafting the naming reason — Dijkstra introduced this concept in 1965, so I need to explain how the signal-bearing metaphor connects to the synchronization primitive's function.\n\n다익스트라가 1965년 고안한 동기화 기법으로, 정수 카운터를 통해 프로세스 간에 \"진입 가능\" 또는 \"대기\" 신호를 전달한다. 철도 신호기가 기차의 진입과 정지를 제어하듯, 세마포어는 임계 구역 접근을 숫자 신호로 제어하며, P(시도)와 V(증가) 연산으로 구현된다. So Dijkstra designed this synchronization mechanism using an integer counter to send \"proceed\" or \"wait\" signals between processes—much like how railway signals control train movement, semaphores regulate access to critical sections through integer-valued signals. He formalized it with two operations, P and V, which correspond to the wait and signal operations we use today.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01WJRepE28uyL1cqspYhVv9c",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "semaphore",
+          "aliases": [
+            "세마포어",
+            "세마포"
+          ],
+          "category": "동시성",
+          "summary": "공유 자원 접근을 제어하는 정수 기반 동기화 기본형",
+          "etymology": "그리스어 σῆμα(sēma, 신호)와 φόρος(phoros, 운반자)의 합성어에서 유래한 프랑스어 sémaphore. 본래 깃발이나 기계 장치로 원거리에 신호를 전달하는 통신 수단을 뜻한다.",
+          "namingReason": "1965년 다익스트라(Edsger Dijkstra)가 고안한 동기화 기법으로, 정수 카운터를 이용해 '진입 가능' 또는 '대기'라는 신호를 프로세스 간에 전달한다. 철도 신호기가 열차의 진입과 정지를 제어하듯, 세마포어는 임계 구역 진입 여부를 정수 값으로 표현된 신호로 제어한다. 다익스트라는 이 기법을 P(네덜란드어 proberen, 시도하다)와 V(verhogen, 증가시키다) 두 연산으로 정의했으며, 현재는 wait/signal이라는 이름으로 이어진다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3691,
+      "inference_geo": "global",
+      "input_tokens": 333,
+      "output_tokens": 1488,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

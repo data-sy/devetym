@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DevEtym 안드로이드 adaptive icon · FOREGROUND 레이어
+     캔버스: 108dp(=1024) / 세이프존: 중앙 66dp(≈626px, 반지름 313)
+     배경은 투명 — 초록 배경(#2E5D3A)은 adaptive background 레이어가 담당.
+     iOS용 edge-to-edge 마스터(icon.svg)의 lockup을 세이프존 안으로 0.62배 축소·중앙정렬.
+     원본 lockup bbox: x[184,840] y[150,946], 시각중심(512,548).
+     transform: 콘텐츠중심(512,548)→캔버스중심(512,512)로 이동 후 0.62배 스케일.
+     출처: ~/dev-etymology/docs/design/icon/assets/v2/icon.svg (마스터 lockup·별도 design repo) (라이트 v2, 채택 후보) 규격 재구성. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <g transform="translate(512 512) scale(0.62) translate(-512 -548)">
+    <text x="512" y="410" text-anchor="middle"
+          font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Pretendard', sans-serif"
+          font-weight="900" font-size="320"
+          fill="#F7E8D0"
+          letter-spacing="16">개발</text>
+    <text x="512" y="720" text-anchor="middle"
+          font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Pretendard', sans-serif"
+          font-weight="900" font-size="320"
+          fill="#F7E8D0"
+          letter-spacing="16">어원</text>
+
+    <rect x="336" y="790" width="352" height="156" rx="18" fill="#F7E8D0"/>
+    <text x="512" y="912" text-anchor="middle"
+          font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', sans-serif"
+          font-weight="900" font-size="116"
+          fill="#2E5D3A"
+          letter-spacing="10">사전</text>
+  </g>
+</svg>

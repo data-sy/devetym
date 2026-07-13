@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck",
+    "keyword": "request",
+    "group": "out_of_shot",
+    "prompt_hash": "b0396852d6b88ba3bbe9657fed3a73fac75ed7ae06f2c3035db7ec760d72f425",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:01:36.925136",
+    "latency_ms": 26181
+  },
+  "expected": {
+    "keyword": "request",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_019cdufbWKDnDHjGvXBCSJcx",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"request\". This is a common development term, especially in the context of networking/HTTP. Let me analyze it.\n\n1. It's a development term - specifically in web/network context, an HTTP request is a fundamental concept.\n2. Etymology: From Latin \"requestus\" / \"requirere\" - re- (again) + quaerere (to seek/ask). In English, \"request\" means asking for something.\n3. Category: 네트워크 seems most appropriate.\n\naliases: \"리퀘스트\", \"HTTP 요청\" - wait, \"HTTP 요청\" is a translation, not an alias. So just \"리퀘스트\".\n\n\nThe naming makes sense because it describes the fundamental action of a client seeking resources or processing from a server—the term captures that \"seeking\" behavior inherent in how HTTP communication works. \"Request\"는 개발 용어로서 클라이언트-서버 구조에서 클라이언트가 서버로 전송하는 메시지를 의미하며, HTTP/1.0에서 공식화되었다. Express.js의 req 객체나 HTTP 명세에서도 이 용어가 핵심적인 역할을 한다. HTTP에서 클라이언트가 서버에 자원이나 처리를 '구하는' 단방향 메시지를 가리킨다. 라틴어 원의미인 '무언가를 찾아 구하다'가 클라이언트의 명시적 요청 구조와 자연스럽게 맞아떨어졌으며, HTTP/1.0에서 request-line·헤더·바디 구조가 공식 명세로 확립된 이후 대부분의 웹 프레임워크가 이를 req 또는 request 객체로 추상화했다. 웹 프레임워크들이 이 HTTP 메시지를 req나 request 객체로 추상화해서 개발자들이 쉽게 접근할 수 있도록 만들었다.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01Ur19MUEZQcvH4RUJVvrRd5",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "request",
+          "aliases": [
+            "리퀘스트"
+          ],
+          "category": "네트워크",
+          "summary": "클라이언트가 서버에 자원이나 처리를 요청하는 메시지",
+          "etymology": "라틴어 requirere(다시 구하다)에서 유래. re-(다시)와 quaerere(구하다·묻다)의 합성어로, 중세 프랑스어 requeste를 거쳐 영어에서 '무언가를 요청하는 행위 또는 메시지'를 뜻하는 명사로 정착했다.",
+          "namingReason": "HTTP에서 클라이언트가 서버에 자원이나 처리를 '구하는' 단방향 메시지를 가리킨다. HTTP/1.0(1996, RFC 1945)에서 request-line·헤더·바디의 구조로 공식화되었으며, 메서드(GET·POST·PUT 등)가 '무엇을 구하는 방식인지'를 명시한다. 대부분의 웹 프레임워크는 이 메시지를 req 또는 request 객체로 추상화하여 개발자에게 노출한다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3691,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1924,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

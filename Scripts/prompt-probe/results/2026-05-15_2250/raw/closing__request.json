@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing",
+    "keyword": "request",
+    "group": "out_of_shot",
+    "prompt_hash": "a375f07f70512ed802370765aaeda70d0278f7253f21cbdd2bfef2268c398ad2",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:53:49.237147",
+    "latency_ms": 10784
+  },
+  "expected": {
+    "keyword": "request",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_014Lp9iyVFGXmJxHcr9wXWGm",
+    "container": null,
+    "content": [
+      {
+        "signature": "EtMCClsIDRgCKkD0Y/B+Tolsb0IvxyC9d7YZS8keb5C6Y72cC3TN9ir0MVbxYa6FEpn7UVedz+6SXZqOu56dRCuvMFXd1UTtkGc4MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgz0l87ZlEm2Q+vYcI0aDHzzozvRAsddS7HtoCIwNK733UbCuyswrRJbzueVMfQih+odIT3IeK3bq+FtUsz1Q/9nRa3fSM1nh55HO4amKqUBqjjoaa2wIVuZqB5BeSceZYm4XMUFDtvwOtqPaKhQ+5G++jOliX/FmjSPiAamGS90nZSEYQ8T5TqMNK1TdAfIgxMcKp3O8crzrnJaWFlcMIyTsTu+Me7qMLsyM02UGQzxCFD20yG1Tz3CsvPXVOMPy+Q7HNtqs+hzJ8CzeNuwrAPvs6gNB0i0iX/pVbZvdwORl9Yt8qeQbAotMdbLx89YZhAjTrRmGAE=",
+        "thinking": "The input is \"request\" - this is a common development term related to networking (HTTP requests, etc.). Let me analyze it and call return_term_entry.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01CKAoNmiBTxrzN6QvLdpaF7",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "request",
+          "aliases": [
+            "리퀘스트",
+            "요청"
+          ],
+          "category": "네트워크",
+          "summary": "클라이언트가 서버에 처리를 요구하는 메시지",
+          "etymology": "라틴어 requirere(다시 구하다)에서 파생된 중세 라틴어 requestus, 이후 영어 request로 정착. re-(다시)와 quaerere(구하다·찾다)로 구성되며, '무언가를 적극적으로 요구하는 행위'를 뜻한다.",
+          "namingReason": "클라이언트가 서버를 향해 특정 동작(데이터 조회·전송·삭제 등)을 수행해 달라고 '요구'하는 구조가 어원의 '적극적으로 구하는 행위'와 정확히 대응된다. HTTP 명세에서 request는 메서드(GET·POST 등), 헤더, 본문으로 구성된 구조화된 메시지를 가리키며, 서버는 이에 대한 response(응답)를 반환하는 요청-응답 모델을 형성한다. 웹뿐 아니라 OS 커널·IPC·RPC 등 계층을 가리지 않고 '호출자가 피호출자에게 처리를 위임하는 행위' 전반을 지칭하는 범용 용어로 확장되었다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3519,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 576,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

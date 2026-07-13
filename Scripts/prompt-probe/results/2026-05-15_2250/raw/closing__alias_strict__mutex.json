@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "closing__alias_strict",
+    "keyword": "mutex",
+    "group": "in_shot",
+    "prompt_hash": "1fe8a1815b90d220dd1a0b048772ca32c437b58fbbf90bdda9a2814b2bce11bf",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:02:44.374422",
+    "latency_ms": 11816
+  },
+  "expected": {
+    "keyword": "mutex",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01XSg2F229ezBzAFMXNnde4N",
+    "container": null,
+    "content": [
+      {
+        "signature": "EosCClsIDRgCKkCAtoK1x0Laa6JvHyo5JXNE0+HFTbluiN6BQBKNLRitQntscy6soLJlUp+BWZowuo+UEbFMMi5TG3/5o+VC0VbTMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgyGlb5doUO+OIaZr+AaDCsDhuxFUs8QEkTQ5CIw1j9Kiu61DoJn+SzIuYk1oUyrMoXsKEE+dKVNsxo/pT2MGOtWLk19oKgpu9GZJUDRKl7gPO4jzITz3DU3xqYVSMJnQkfdcLDO9AZ+ZpNTrFPMPefcchPSkax6hJiQxSeM6pK1uLwacj01TLRHlyqfHKCy0zFwEAHNLXZMvD+QB2kbc6e9C/Qm8UpMcl0no2DcGAE=",
+        "thinking": "The user input is \"mutex\", which is a development term related to concurrency.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01VR1Nh9oVk6NH7FN1vWeDfR",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "mutex",
+          "aliases": [
+            "뮤텍스",
+            "mutual exclusion"
+          ],
+          "category": "동시성",
+          "summary": "여러 스레드의 동시 접근을 막는 잠금 장치",
+          "etymology": "라틴어 mutuus(상호의)와 영어 exclusion(배제, 라틴어 excludere에서 유래)을 합친 'mutual exclusion'의 축약어. 두 주체가 서로를 배제한다는 대칭적 관계를 담고 있다.",
+          "namingReason": "한 스레드가 공유 자원을 사용하는 동안 다른 스레드의 접근을 '상호 배제'하여 경쟁 조건(race condition)을 방지하는 동기화 기본형이다. '서로가 서로를 막는다'는 어원의 대칭 구조가 락을 쥔 쪽과 대기하는 쪽이 번갈아 역할을 바꾼다는 동작 원리를 정확히 반영한다. 세마포어(semaphore)와 달리 뮤텍스는 락을 획득한 스레드만 해제할 수 있는 소유권 개념을 강제하며, 이 제약이 'mutual(상호)'이라는 단어의 대등성에서 비롯된다. 1965년 에츠허르 다익스트라가 임계 구역(critical section) 문제를 정식화하면서 mutual exclusion이라는 표현이 학술 용어로 확립되었고, 이후 축약형 mutex가 운영체제 API 전반에 퍼졌다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 3611
+      },
+      "cache_creation_input_tokens": 3611,
+      "cache_read_input_tokens": 0,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 622,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

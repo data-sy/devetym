@@ -1,5 +1,7 @@
 package com.robin.devetym.ui
 
+import com.robin.devetym.model.TermEntry
+
 /**
  * `ErrorKind`(M5) → 사용자 한글 메시지 순수 매핑 (M6 §3-9-3). `when` 전수·`else` 없음(DR-3 canary —
  * 새 ErrorKind 추가 시 컴파일 실패). §6 `test_errorKind_메시지_전수` 네이티브 실측.
@@ -11,6 +13,28 @@ fun errorMessage(kind: ErrorKind): String = when (kind) {
     ErrorKind.InvalidResponse -> "결과를 불러오지 못했어요"
     ErrorKind.Unknown -> "문제가 발생했어요"
 }
+
+/**
+ * 로딩 안내 문구 교차 (M9-후속 UX-3) — 단일 고정 문구가 길게 느껴진다는 실기기 피드백.
+ * 차분한 안내형 2문구를 ~3초 간격 크로스페이드로 순환. tick은 0부터 증가(음수 없음).
+ */
+val LOADING_PHRASES = listOf("AI가 어원을 찾고 있어요", "잠시만 기다려 주세요")
+
+fun loadingPhrase(tick: Int): String = LOADING_PHRASES[tick % LOADING_PHRASES.size]
+
+/**
+ * 상세 복사 페이로드 조립 (M9-후속 셸 재설계 §2-E) — 순수 함수(commonTest 대상). 종전 어원 단일 필드 복사가
+ * 버튼 위치("왜 이 이름인가" 밑) 탓에 오인됐다(UX-4) — 키워드+두 섹션을 라벨과 함께 전부 담는다.
+ */
+fun detailCopyPayload(entry: TermEntry): String =
+    "${entry.keyword}\n\n어원\n${entry.etymology}\n\n왜 이 이름인가\n${entry.namingReason}"
+
+/**
+ * 상세 공유 페이로드 (실기기 라운드 2 — 종전 요약 한 줄만 나가던 것을 전체 페이지로).
+ * 복사(§2-E)와 관례 분리: 복사=콘텐츠만(출처 자동 부착은 안티패턴), 공유=요약 포함 전문+출처 표기.
+ */
+fun detailSharePayload(entry: TermEntry): String =
+    "${entry.keyword}\n${entry.summary}\n\n어원\n${entry.etymology}\n\n왜 이 이름인가\n${entry.namingReason}\n\n— DevEtym"
 
 /**
  * 경과 diff 기반 상대시간 라벨 (M6 §3-6). 캘린더/타임존/DST 비의존 — `now - epochMillis`만 사용.

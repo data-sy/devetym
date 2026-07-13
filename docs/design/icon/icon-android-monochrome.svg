@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DevEtym 안드로이드 테마 아이콘 · MONOCHROME 레이어 (Android 13+ Material You)
+     시스템이 알파/실루엣을 테마색으로 틴트. 단색이어야 하므로 흰색 단색 실루엣.
+     '사전' 박스는 채우면 안쪽 글자가 같은 색으로 사라지므로 외곽선(stroke)으로 처리해 가독 유지.
+     세이프존 동일 0.62배·중앙정렬(전경과 정합). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <g transform="translate(512 512) scale(0.62) translate(-512 -548)" fill="#FFFFFF">
+    <text x="512" y="410" text-anchor="middle"
+          font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Pretendard', sans-serif"
+          font-weight="900" font-size="320" letter-spacing="16">개발</text>
+    <text x="512" y="720" text-anchor="middle"
+          font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Pretendard', sans-serif"
+          font-weight="900" font-size="320" letter-spacing="16">어원</text>
+    <rect x="336" y="790" width="352" height="156" rx="18"
+          fill="none" stroke="#FFFFFF" stroke-width="16"/>
+    <text x="512" y="912" text-anchor="middle"
+          font-family="'Apple SD Gothic Neo', 'Noto Sans CJK KR', sans-serif"
+          font-weight="900" font-size="116" letter-spacing="10">사전</text>
+  </g>
+</svg>

@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "baseline",
+    "keyword": "request",
+    "group": "out_of_shot",
+    "prompt_hash": "037754b355208bf3db2f2e58c5f32c9ddde4a8a13c511b973606f3ff6e30b0ca",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:51:31.564662",
+    "latency_ms": 10851
+  },
+  "expected": {
+    "keyword": "request",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01HVrUCuzsvcbUrBCeBfgMtq",
+    "container": null,
+    "content": [
+      {
+        "signature": "EosEClsIDRgCKkAaHO9yJX5pqTi7b6Dsiyu2E9eUeUn5YYymy5MrcrBQotTO9Rd7LTJw65h4mR6adw0QGqmmHXHBaUiIjh1wftrwMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgz7gxAsbjM2EoGSZOQaDE7A/qmUBYDLQgiH2iIwTdKuDl8gg3ozIIFY93/hVeO1slC1XwpgbskLHsrhmlpH1yGTRPKVQ7VGnCmwLRiFKt0Ce5P9XdQQgjt6yTmOFzjfRgtqM0RFoNBK7DMqI6lq1/qvc6CjhpE+TYjaCfW/nRuRPn+3Qp9P2aJv4bzdKMkqxGubvP0RfSK7pUzFeO/soMz7ZhCsILZCni25DfEpwGc1T7ayeIPgu1NLPV7ZED3njQtO+QffcuJ8nKUJfHd0g/I+mNeWPTAh6TtFm3GT8saZBgZRtQ1/8Um4pMBuUJKTWo5Vrm/2IMlt+fOQTXwGx85OxR1Ir8Z4spHR1p5ubN0NcOgo/S1ZXc+kBNGJBAbK7ZVDy4l/iAkb+Ex6mu7N5UDtnazx+eSa9OdmUaNiFyu9Nm+XujZlxH5vdAiaF3PM83TjGvEdye+4BDjXkEqJzroCQGVb7vXrAAeZsxsIPcIy1ZxB+wF7cCZJdWRAXV90sgM4d/O8wpGg98QdKfgAjW57ck/w6vcqqiIOFAkUOS+Ixn/O1m2GswJ8+EImExgB",
+        "thinking": "The input \"request\" could be a development term (HTTP request, etc.) but it's also a very common English word. In the context of a development terminology dictionary, \"request\" is indeed a development term related to networking - it refers to an HTTP request or a general client-server request. Let me treat it as a development term.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01TAiD7xdTn2ngCiYknDs6xX",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "request",
+          "aliases": [
+            "리퀘스트",
+            "요청"
+          ],
+          "category": "네트워크",
+          "summary": "클라이언트가 서버에 처리를 요청하는 메시지",
+          "etymology": "라틴어 requirere(다시 구하다)에서 유래한 영어 request. re-(다시) + quaerere(구하다·묻다)로 구성된다. 중세 영어를 거쳐 '무언가를 공식적으로 요구하거나 청하는 행위'를 뜻하게 되었다.",
+          "namingReason": "클라이언트-서버 모델에서 클라이언트가 서버 측 자원이나 처리를 '요청'하는 행위는, 어원상 '필요한 것을 공식적으로 구하다'는 의미와 정확히 맞닿는다. HTTP에서는 GET·POST 등 메서드, URL, 헤더, 바디로 구성된 표준 메시지 형식으로 정의되며, 서버가 반환하는 response와 쌍을 이루는 개념이다. 요청-응답(request-response) 패턴은 웹·API·RPC 등 거의 모든 네트워크 통신 모델의 기반이 된다. 어원의 '구하다'는 능동적 행위성이 통신에서 항상 클라이언트가 먼저 메시지를 보낸다는 방향성을 명확히 드러낸다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3364,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 635,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

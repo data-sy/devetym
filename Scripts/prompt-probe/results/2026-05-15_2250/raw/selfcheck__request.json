@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "selfcheck",
+    "keyword": "request",
+    "group": "out_of_shot",
+    "prompt_hash": "547cd6ba99746461d391eea735cf999712969f7bc12fa82f23cd4e5ad978f287",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:56:37.232038",
+    "latency_ms": 22826
+  },
+  "expected": {
+    "keyword": "request",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01XZyedUggomM7VNTbKExbWC",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"request\". This could be an HTTP request or a general programming concept. However, \"request\" in itself is a very general English word, not specifically a development term with a distinct etymology that warrants a term entry. But it is heavily used in web development (HTTP request, etc.).\n\nActually, \"request\" is a common English word that is used in development contexts (HTTP request, API request, etc.), but it's not really a specialized development term with a unique naming story. It's more of a general English word applied to development.\n\nHmm, but it does have a specific meaning in web/network development - an HTTP request is a fundamental concept. \n\nI think \"request\" as used in HTTP/web development qualifies as a development term worth explaining, given its specific technical meaning in client-server communication. I'll categorize it as a network/web development term and trace its etymology back through Latin roots—re- meaning \"again\" or \"emphasize\" combined with quaerere meaning \"to seek or ask\"—which evolved through Middle English into the modern form we use today.\n\nThe term stuck in web development because it perfectly captures what happens when a client sends an HTTP message to a server asking for a resource or action. The original meaning of \"seeking something out\" maps directly onto how a client queries a server for a specific resource at a URL. When HTTP/1.1 was formally specified in RFC 2616, the client-to-server message was officially defined as a \"request,\" cementing it as the standard terminology across web development, APIs, and framework objects. 어원의 의미가 네트워크 통신에서 클라이언트가 서버에 자원을 요구하는 행위와 정확히 맞아떨어진다. RFC 2616에서 HTTP 메시지를 공식적으로 'request'로 정의하면서 웹 표준 용어로 자리잡았고, 이후 프레임워크와 API 문서에서도 동일하게 사용되고 있다.\n\n이제 별칭은 \"리퀘스트\"와 \"HTTP request\"로 정하고, 요약은 \"클라이언트가 서버에 보내는 요청 메시지\"로 간단히 정리하자.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_018CY9ukts1uJXQ7G2Cn9zKT",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "request",
+          "aliases": [
+            "리퀘스트",
+            "HTTP request"
+          ],
+          "category": "네트워크",
+          "summary": "클라이언트가 서버에 보내는 요청 메시지",
+          "etymology": "라틴어 re-(강조 접두사)와 quaerere(구하다, 찾다)의 합성에서 유래한 영어 단어. '무언가를 적극적으로 찾아 구하다'가 원의미이며, 중세 영어 requesten을 거쳐 현대 영어의 'request(요청하다)'로 정착했다.",
+          "namingReason": "클라이언트가 서버에 특정 자원이나 동작을 달라고 보내는 HTTP 메시지 단위를 지칭한다. 어원의 '무언가를 찾아 구한다'는 의미가 네트워크 통신에서 클라이언트가 서버에 URL로 자원을 요구하는 행위와 정확히 대응된다. RFC 2616(HTTP/1.1 명세)에서 클라이언트→서버 방향 메시지를 공식적으로 'request'로 정의하면서 웹 개발 표준 용어로 굳었고, 이후 프레임워크 객체명(HttpServletRequest, Flask의 request 등)과 REST API 문서에도 같은 단어가 그대로 쓰인다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3536,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1569,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

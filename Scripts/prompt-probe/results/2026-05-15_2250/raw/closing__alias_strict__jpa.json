@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "cell": "closing__alias_strict",
+    "keyword": "jpa",
+    "group": "in_shot",
+    "prompt_hash": "1fe8a1815b90d220dd1a0b048772ca32c437b58fbbf90bdda9a2814b2bce11bf",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:02:53.754409",
+    "latency_ms": 9378
+  },
+  "expected": {
+    "keyword": "jpa",
+    "group": "in_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01PByGuQz7QCbF2CoS8BWtH2",
+    "container": null,
+    "content": [
+      {
+        "signature": "EqoCClsIDRgCKkAReJ6Ies2b6Pskth/oQs4mL+35XwRH9YnDBLnWZ3YeKcH6lk0HxkA4UgB929ikCAmKx9q3bD7s14suyttcSiJYMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgzHpi8HnoNM0wR8Q+QaDK89POPUJMu/+CYOciIwLBLh90ahdl2NFg3UcURgdtFCgQLKuzSYcrUXMzOdC1ElYBUcdngVT0UMskZzi8omKn2tqzCAogSuPnvKrNsd+DWz6ekYppIKoHudijAeh6sUR7TsIShtpdCSD3WVkCUkXRYKZE69ClmVtBOJdNvctFi4aWaU7xOtMDPsgRDYvzxs600j9pmATgmlr6ncCx0eyESqJX74MDuIsLGzksLjtSlg+EGzfNGWq6F2W8iirhgB",
+        "thinking": "The user input is \"jpa\", which is a development term (Java Persistence API). I should call return_term_entry.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01FVNKtkgmWf8aeCzu8tof9V",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "jpa",
+          "aliases": [
+            "Java Persistence API"
+          ],
+          "category": "DB",
+          "summary": "자바 객체를 DB에 매핑하는 영속성 표준 명세",
+          "etymology": "Java Persistence API의 약어. Java(자바 언어), Persistence(영속성, 프로그램 종료 후에도 데이터가 유지되는 성질), API(Application Programming Interface, 응용 프로그래밍 인터페이스)로 구성된 순수 두문자어.",
+          "namingReason": "Persistence(영속성)는 라틴어 persistere(끝까지 버티다, per- '완전히' + sistere '서다')에서 유래하며, 메모리상에만 존재하는 객체를 디스크에 '지속'시킨다는 의미를 담는다. 자바 객체는 프로그램이 종료되면 소멸하므로, 이를 관계형 DB에 저장해 생존 기간을 연장한다는 설계 의도가 단어 선택에 반영되어 있다. 2006년 Java EE 5 사양(JSR-220)의 일부로 표준화되었으며, Hibernate·EclipseLink·OpenJPA 등 구현체가 이 명세를 따른다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3611,
+      "inference_geo": "global",
+      "input_tokens": 332,
+      "output_tokens": 519,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

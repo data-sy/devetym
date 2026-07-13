@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "cell": "baseline",
+    "keyword": "semafore",
+    "group": "branch_check",
+    "prompt_hash": "037754b355208bf3db2f2e58c5f32c9ddde4a8a13c511b973606f3ff6e30b0ca",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:52:22.559673",
+    "latency_ms": 3423
+  },
+  "expected": {
+    "keyword": "semafore",
+    "group": "branch_check",
+    "expected_branch": "possible_typo",
+    "expected_suggestion": "semaphore"
+  },
+  "response": {
+    "id": "msg_018sVJYg81ukRN5Ptwa7H1fo",
+    "container": null,
+    "content": [
+      {
+        "signature": "ErgCClsIDRgCKkAwWIpNg8wCK1SgmUJJITaOiLZMdmv9NsJNU4vIuyDoIn8US2QDYrrv9fvNHrKYlfGW/OXFwb/k01HtRq8MGkGhMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgxZ5kcwz+/MAkyITBYaDBDEQmHQfyCr+W3PgyIw3wO+ED/ZqG2cXP+nzAsqoN/09PneR38xs9rKaHZHL5c8ttKRtz6QtzrPygf+Fn+gKooBOpobzi8FiXFL/tGlXOavtALgdM9aJtBgZzRs/lHQ3yVjhYbU7y7KNXrnnp5ZDBP+krC7asjy2pivEBHgPTJDBAhdFHayi4+nv7XnlwyLJpShmsa706pfLjv6Gq1f1Sqaz2VpNdLXXRaFNI5F1BSCiZ/ZLcI5keABhPQgoL4mj/SVNd53wKcpV4GxGAE=",
+        "thinking": "The input \"semafore\" looks like a typo of \"semaphore\", which is a development term related to concurrency/synchronization.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01N5ppPJGVwDjBAxxAKQvT77",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "suggestion": "semaphore"
+        },
+        "name": "return_possible_typo",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3364,
+      "inference_geo": "global",
+      "input_tokens": 333,
+      "output_tokens": 97,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

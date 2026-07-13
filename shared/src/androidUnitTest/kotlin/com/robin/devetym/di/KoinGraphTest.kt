@@ -10,10 +10,12 @@ import com.robin.devetym.ui.HistoryViewModel
 import com.robin.devetym.ui.SearchViewModel
 import com.robin.devetym.ui.platform.AppActions
 import com.robin.devetym.ui.platform.AppearanceStore
+import com.robin.devetym.ui.platform.ConsentStore
 import com.robin.devetym.ui.platform.DeviceInfo
 import com.robin.devetym.ui.platform.NoopAppActions
 import com.robin.devetym.ui.platform.OnboardingStore
 import com.robin.devetym.ui.platform.StubAppearanceStore
+import com.robin.devetym.ui.platform.StubConsentStore
 import com.robin.devetym.ui.platform.StubDeviceInfo
 import com.robin.devetym.ui.platform.StubOnboardingStore
 import org.koin.core.KoinApplication
@@ -49,6 +51,7 @@ class KoinGraphTest {
                 single<AppActions> { NoopAppActions() }
                 single<AppearanceStore> { StubAppearanceStore() }
                 single<OnboardingStore> { StubOnboardingStore() }
+                single<ConsentStore> { StubConsentStore() }
                 single<DeviceInfo> { StubDeviceInfo() }
             },
         )
@@ -74,6 +77,7 @@ class KoinGraphTest {
         assertNotNull(deps.appearance)
         assertNotNull(deps.device)
         assertNotNull(deps.onboarding)   // M8 신규 seam — eager touch(§5 전 seam 대상)
+        assertNotNull(deps.consent)      // M9-후속 §2-F 신규 seam — eager touch
         assertNotNull(deps.now())
     }
 

@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "cell": "closing__selfcheck__alias_strict",
+    "keyword": "semafore",
+    "group": "branch_check",
+    "prompt_hash": "d2be35897b3d540d7d9da0024812d073ee1e3e3b9bc5b9181b12c813f839d753",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:10:46.427335",
+    "latency_ms": 3161
+  },
+  "expected": {
+    "keyword": "semafore",
+    "group": "branch_check",
+    "expected_branch": "possible_typo",
+    "expected_suggestion": "semaphore"
+  },
+  "response": {
+    "id": "msg_01ELma1Bso2x8nCAZbqukbcb",
+    "container": null,
+    "content": [
+      {
+        "signature": "EvgCClsIDRgCKkAYJiWiD+m177J2Rj26+eUUu+xPU9K3JxE36XFF54giYgJ1AJyZZ90IW+IQkS6SsZcqWzGgY2Fy6d4xgd/QkVk9MhFjbGF1ZGUtc29ubmV0LTQtNjgAEgw1aVrcKancKPv1aX8aDEVRjMDa0CvkeKmOFyIwSn0PgKnuQNb//3UUYO2Ac5LQfqtati16EeJle7f6hCImKOCyJuU7l1yxVllP6SDkKsoBt4lbKtI5QzSV8VWLu3wlCX5UzPUk8dTRkWpOdhADt5ENRM9jdNSQQRw2jUXp0akDaoScl2YJn9fnjYNyUbLFYBRe930YqgGPXQiK9/NDoJv9S4YICuTtLyFOIGvakvn13kYJNxaQ5p5nDXW498DCRNcRvPjrMWY07M/kL5WgkvPUKD1b4uexx0oREmmEiijlh8v/j0MQDvRi62voeILVnRv0epeEhdh/J1hL7wOlMbda1yKP45UsDnvvCmnI3vVdfjrhMSWIcIBxNBgB",
+        "thinking": "The input \"semafore\" looks like a typo of \"semaphore\", which is a development term related to concurrency/synchronization. I should call return_possible_typo with suggestion \"semaphore\".",
+        "type": "thinking"
+      },
+      {
+        "citations": null,
+        "text": "`semafore`는 개발 용어 **semaphore**의 오타로 추정됩니다.",
+        "type": "text"
+      },
+      {
+        "id": "toolu_01U3iz79R4CHMuRSNWBhQp4e",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "suggestion": "semaphore"
+        },
+        "name": "return_possible_typo",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3783,
+      "inference_geo": "global",
+      "input_tokens": 333,
+      "output_tokens": 145,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

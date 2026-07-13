@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "cell": "selfcheck__alias_strict",
+    "keyword": "boolean",
+    "group": "out_of_shot",
+    "prompt_hash": "4008c10903ca57f9d7fd33e5647635c88267624ec0171e04942fd35755670e0c",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T23:07:31.675352",
+    "latency_ms": 26619
+  },
+  "expected": {
+    "keyword": "boolean",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_0118jfHFY2gMD3GZ8bz5bvb3",
+    "container": null,
+    "content": [
+      {
+        "signature": "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",
+        "thinking": "The input is \"boolean\" - this is clearly a development term. Let me work through the thinking steps.\n\n1. It's a development term - a fundamental data type in programming.\n\n2. Etymology: Named after George Boole, the British mathematician who developed Boolean algebra. \"Boolean\" is an adjective derived from his name. Boolean algebra deals with true/false, 1/0 values.\n\n3. NamingReason draft:\nGeorge Boole이 1854년 저서 《An Investigation of the Laws of Thought》에서 true/false 두 값만을 다루는 대수 체계인 '불 대수(Boolean algebra)'를 정립했다. \n\n프로그래밍에서 조건 분기와 논리 연산을 가능하게 하는 이 두 값 체계가 자료형으로 채택되었고, 현대 컴퓨터의 논리 회로 설계에서도 불 대수가 핵심 원리로 작용하고 있다. 따라서 이 자료형의 이름은 그 수학적 기원을 직접 기리는 것이다.\n\n이 이름은 영국 수학자 George Boole의 성에서 파생된 형용사 Boolean에서 비롯되었으며, 1854년 그가 저술한 《An Investigation of the Laws of Thought》에서 참과 거짓 두 값만으로 논리 명제를 계산하는 체계를 제시했다.\n\n컴퓨터 과학자들은 이 논리 체계의 기본 값인 true/false를 담는 자료형에 Boole의 이름을 붙임으로써 수학적 기원을 명시했으며, 논리 회로 설계부터 프로그래밍의 조건 분기까지 불 대수의 두 진리값을 직접 프로그램에 구현한 타입으로 사용되고 있다. I need to see the next thinking content to rewrite it. Could you provide the next thinking that follows the current rewritten thinking about the Boolean data type etymology and properties?",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01R3SZk1YLc64pbY2r69XEw6",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "boolean",
+          "aliases": [
+            "불리언",
+            "bool"
+          ],
+          "category": "기타",
+          "summary": "참(true)과 거짓(false) 두 값만 갖는 논리 자료형",
+          "etymology": "영국 수학자 George Boole(1815~1864)의 성에서 파생된 형용사. 접미사 -an은 '~에 속하는', '~의'를 뜻하는 라틴어계 형용사 접미사로, \"Boole의 것\"을 의미한다.",
+          "namingReason": "George Boole은 1854년 저서 《An Investigation of the Laws of Thought》에서 참(1)과 거짓(0) 두 값만으로 논리 명제를 계산하는 불 대수(Boolean algebra)를 정립했다. 컴퓨터 과학자들은 이 대수 체계의 기본 값인 true/false를 담는 자료형에 Boole의 이름을 붙임으로써 수학적 기원을 명시했다. 논리 회로 설계부터 프로그래밍 언어의 조건 분기(if, while)까지, 이 자료형은 불 대수의 두 진리값을 프로그램 안으로 직접 이식한 것이다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3628,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 1403,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}

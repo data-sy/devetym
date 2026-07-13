@@ -1,0 +1,2 @@
+cell,n_total,branch_correct,oos_naming_avg,oos_naming_max,oos_under_270,in_shot_naming_avg,aliases_qualifier,latency_avg_ms,thinking_chars_avg
+alias_strict,15,15/15,284.3,348,3/6,269.2,1/10,7696,165

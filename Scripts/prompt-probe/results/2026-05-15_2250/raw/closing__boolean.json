@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "cell": "closing",
+    "keyword": "boolean",
+    "group": "out_of_shot",
+    "prompt_hash": "a375f07f70512ed802370765aaeda70d0278f7253f21cbdd2bfef2268c398ad2",
+    "model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-15T22:54:01.193904",
+    "latency_ms": 11955
+  },
+  "expected": {
+    "keyword": "boolean",
+    "group": "out_of_shot",
+    "expected_branch": "term_entry"
+  },
+  "response": {
+    "id": "msg_01H442EpRBbkcz58bLRpVCfF",
+    "container": null,
+    "content": [
+      {
+        "signature": "EpMCClsIDRgCKkDQjh+8jgPZRsWhwNCYweDzoIsWYLdgxp2n+JfP5pDJX4RZvBi18ngVGHcLeGV47uNo/KwodziG0ICQzJ5o0BBtMhFjbGF1ZGUtc29ubmV0LTQtNjgAEgzz6QFjVW8NINm4r8EaDBdrYOvcwSzP/fxLvyIwFDBkad2C9n4Mk8++Cor4Udq9IRb3DuVeBcNy+NgQQdgfQ9vCon9wgDCoEKRyS1yFKmbjPek2HK56zNaoPxVlBrMjjtfuUCg5/J1+1vTUQGwcM0cNOBu9H9x8lIPwlhQ0VbzCPj6O/S/qndzEVDpjiHgI7TWb1vg5dM8ncs7L9uPwOhicdmMXHyK0p4DmmLEuXB3zMzhTTGAYAQ==",
+        "thinking": "The user input is \"boolean\", which is a development term. I'll call return_term_entry.",
+        "type": "thinking"
+      },
+      {
+        "id": "toolu_01GCNZ3HJcwM465LR7U4xExk",
+        "caller": {
+          "type": "direct"
+        },
+        "input": {
+          "keyword": "boolean",
+          "aliases": [
+            "불리언",
+            "bool",
+            "논리형"
+          ],
+          "category": "기타",
+          "summary": "참(true)과 거짓(false) 두 값만 갖는 논리 자료형",
+          "etymology": "19세기 영국 수학자 조지 불(George Boole)의 성(Boole)에 형용사 접미사 -an을 붙인 고유명사 파생어. 불이 1847년 《논리의 수학적 분석》에서 정립한 대수 체계, 즉 '불 대수(Boolean algebra)'에서 직접 유래한다.",
+          "namingReason": "조지 불은 '참·거짓'을 1과 0으로 표현하고 AND·OR·NOT 연산으로 논리 명제를 수식화하는 체계를 구축했다. 이 체계가 20세기 디지털 회로 설계에 채택되면서, 두 상태(참·거짓)만 다루는 자료형에 그의 이름을 붙여 'Boolean'으로 부르게 되었다. 개발 현장에서 boolean은 조건 분기·플래그·상태 표현의 최소 단위로 쓰이며, 변수 하나로 이진 논리 전체를 담는다는 개념이 불 대수의 핵심 아이디어와 일치한다. C언어에서는 오랫동안 int로 대체되다가 C99에서 _Bool 타입이 공식 도입되었고, 각 언어마다 bool·Boolean·boolean 등 표기가 조금씩 다르다."
+        },
+        "name": "return_term_entry",
+        "type": "tool_use"
+      }
+    ],
+    "model": "claude-sonnet-4-6",
+    "role": "assistant",
+    "stop_details": null,
+    "stop_reason": "tool_use",
+    "stop_sequence": null,
+    "type": "message",
+    "usage": {
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 3519,
+      "inference_geo": "global",
+      "input_tokens": 331,
+      "output_tokens": 620,
+      "server_tool_use": null,
+      "service_tier": "standard"
+    }
+  }
+}
