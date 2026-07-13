@@ -44,7 +44,7 @@ xcrun simctl io "$SIM" screenshot shot.png     # 임의 시점 캡처
 - ✅ 상세→북마크 토글→북마크 탭 즉시 반영→재기동 유지 + 어원 복사→`simctl pbpaste` 클립보드 seam actual
 - ✅ 히스토리 탭·개별 삭제·실검색 타임스탬프 · 설정 외관 라이트/다크 실조작 · 라이선스 실스크롤
 - ✅ 아이콘: 홈스크린 라이트/다크 렌더(이번에 AppIcon·LaunchLogo·brand 이관 배선 — 리포트 §1)
-- ☐ VoiceOver: 시뮬 Accessibility Inspector([접근성 대본](m9-accessibility-audit-script.md) B) — 사람 상호작용 필요, Tier 2와 함께
+- ✅ VoiceOver: 시뮬 Inspector 감사 생략 — **실기기 VoiceOver 사용자 사인오프로 대체**(2026-07-13, Tier 2 참조)
 - 🐛 **발견 결함(수정 대기)**: iOS Found 상세 탈출 불가 — ROADMAP M9 등재, 리포트 §3
 
 ### Android 에뮬레이터 — ✅ Tier 1 완주 (2026-07-05, adb 자율 주행)
@@ -73,11 +73,11 @@ adb logcat -d | grep -iE "devetym|AndroidRuntime|FATAL"   # 첫 기동 크래시
 > 이미 Robolectric JVM으로 그래프 닫음).
 
 ## Tier 2 · `[사람]` 실기기 전용 — 하드웨어 감각 (시뮬로 대체 불가)
-- ☐ **메일앱 실제 전송**(시뮬엔 메일 계정 없음) · **앱간 클립보드 실붙여넣기 체감**
-- ☐ iOS 공유시트 실동작 — ⚠️ 현재 `IosAppActions.share`는 no-op(백로그) → iOS는 "미동작"이 정상
+- ☐ **메일앱 실제 전송**(시뮬엔 메일 계정 없음) · ✅ **앱간 클립보드 실붙여넣기 체감**(2026-07-13 아이폰 13 mini — 복사 내용 확인 과정에서 실붙여넣기 확인. 파생 피드백: 복사 범위 오인 → ROADMAP 실기기 피드백 2차 UX-4)
+- ☐ iOS 공유시트 실동작 — ⚠️ 현재 `IosAppActions.share`는 no-op(백로그) → iOS는 "미동작"이 정상. **실기기서 사용자가 dead button으로 재확인(2026-07-13)** → 출시 전 구현/숨김 결정 = ROADMAP 실기기 피드백 2차 UX-6
 - ☐ **실 DPI 아이콘 선명도**·홈스크린 실렌더(시뮬은 근사)
 - ☐ 햅틱·실 제스처 나uance
-- ☐ TalkBack/VoiceOver **실기기 제스처 주행**(시뮬 Inspector로 상당부분 선검증 후 잔여만)
+- ✅ VoiceOver **실기기 사용자 사인오프**(2026-07-13 아이폰 13 mini — "보이스오버는 됐다" 판정, Inspector 감사 생략 대체) · ☐ TalkBack(Android)은 실기기 확보 시 잔여
 - ☐ Dynamic Type 실반영(시뮬로도 상당부분 가능)
 
 ## Tier 3 · `[사람/외부]` — 환원 불가 (자율 금지, 지시 대기)
