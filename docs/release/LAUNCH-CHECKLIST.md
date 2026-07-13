@@ -6,7 +6,9 @@
 >
 > **App:** 개발 어원 사전 (DevEtym) · KMP/Compose Multiplatform, single codebase for **Android + iOS**.
 > **IDs:** appId/bundleId `com.robin.devetym` · Android 8.0+ (API 26) · iOS 16+ · `versionName=0.1.0`, `versionCode=1`.
-> **Last synced to repo state:** 2026-07-06.
+> **Last synced to repo state:** 2026-07-13.
+>
+> **🧭 Launch sequence (decided 2026-07-13).** Critical path **A → (B·C·D parallel) → E·F**: **A** flip repo public (secret sweep first, irreversible; upstream of everything) → **B** deploy Pages (policy URL, WU-1) · **C** real-device smoke + a11y audit (WU-11) · **D** capture screenshots → **E iOS store submit FIRST** (dev account paid, prior launch experience, no cohort gate → review直行) · **F Android LATER** (closed-testing gate: 20 testers × 14 days). **iOS and Android ship as separate todos** (WU-12a / WU-12b) — different store gates. Source of truth: ROADMAP M9 "출시 시퀀스 확정".
 
 ## Legend
 
@@ -29,7 +31,7 @@ These are the items that can actually stop or misrepresent the launch. Everythin
 3. ✅ **Terms of Service — drafted (2026-07-06).** [`site/terms-of-service.md`](../../site/terms-of-service.md), incl. AI-generated-content disclaimer + acceptable-use (rate limits). ⚠️ Legal review recommended before publish.
 4. 🟡 **Store screenshots not produced.** Full capture recipe handed off: [m9-screenshot-capture-handoff](m9-screenshot-capture-handoff.md) (own session — live sim/emu, per-store sizes). Still blocks store listing until executed.
 5. 🟡 **Signing not wired.** `androidApp/build.gradle.kts` release buildType has no `signingConfig`. Guide exists ([signing-upload-guide](m9-signing-upload-guide.md)); keystore creation is `[H]` (secret key).
-6. ⬜ **Developer accounts not confirmed.** Apple Developer Program + Google Play Console enrollment / billing status unknown in-repo.
+6. 🟡 **Developer accounts — Apple confirmed (2026-07-13), Google unknown.** Apple Developer Program **enrolled + billed** (user has prior iOS launch experience) → iOS submit unblocked on this axis. Google Play Console enrollment / billing status still unknown in-repo (needed for F/WU-12b).
 7. 🟢 **Crash reporting added & unified (WU-4 → WU-4B, 2026-07-10).** Sentry now wired as a **single commonMain KMP** (`sentry-kotlin-multiplatform` 0.27.0) — the WU-4 platform-split seam was superseded by WU-4B. **Android = real** (via KMP's transitive `sentry-android`, uncaught-handler, CI-green). **iOS = real** — Kotlin `CrashReporter` initializes Sentry (iosMain no-op removed; `doInitKoin` reads Info.plist `SentryDsn`); Sentry Cocoa static xcframework linked into the app (project.yml) with **Xcode simulator build verified SUCCEEDED**. The old WU-11 SPM/Swift activation path is obsolete. Privacy policy §2-2 + store labels updated. Analytics still deferred (Blocker #1 → Firebase-later). **Blocker #7: closed on both platforms** (only real-DSN runtime delivery remains, at the device-smoke gate like everything else). See [WU-4 ledger §5](../handoff/26-07-10-wu4-crash-reporting-ledger.md).
 
 ---

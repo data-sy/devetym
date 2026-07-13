@@ -105,6 +105,8 @@ Compose UI 6화면(M6)·Koin 배선(M7)·통합·자산·seam actual(M8)까지 *
 seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 green이 못 잡은 실 첫 기동 크래시 2건 포착·수정**: iOS 앱 링크
 `-lsqlite3` 누락 + **Android manifest 클래스 경로 오류**(`.DevEtymApp`→`.android.DevEtymApp`, `ClassNotFoundException` 즉사).
 남은 것 = 티어형 게이트: **[시뮬]** iOS 입력 주입분(라이브 탭/idb) · **[실기기]** 하드웨어 감각(실 메일 전송·클립보드·DPI·햅틱·
-TalkBack/VoiceOver) · **[외부]** 코드서명·심사·게시. 진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md)(M9), 출시 지그·게이트는 [`docs/release/`](docs/release/).
+TalkBack/VoiceOver) · **[외부]** 코드서명·심사·게시. **출시 시퀀스 확정(2026-07-13): A public 전환 → B/C/D(Pages·실기기·스크린샷) 병렬 →
+E iOS 배포(우선·심사 직행) · F Android 배포(후행·폐쇄테스트 20명×14일 게이트).** iOS/Android 배포는 게이트가 달라 분리 투두다.
+진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md)(M9), 출시 지그·게이트는 [`docs/release/`](docs/release/).
 
 **병행 트랙 (2026-07-10 착수).** private 원격 `data-sy/devetym` 생성 → `m1`~`m8` 스택 PR(#1~8) 병합(main=M8, m9 draft #9) + 원본 repo `~/dev-etymology` **이관·자기완결화** + 코드 갭 정리. **완료**: 이관 WU-2(Scripts·db-expand 검증)·WU-3(ai-quality→ADR-0007)·WU-4(크래시 리포팅 Sentry — 방침 사인오프 + **WU-4B 단일 KMP 통합**까지 완료, iOS도 실배선)·WU-5(launch-prep 대조)·WU-6(네이티브 iOS 전수 스윕·자기완결성 확증) + 코드 갭 WU-8(클립보드)·WU-9(스플래시)·WU-10(셸 회귀가드). **잔여**: WU-1(Pages) — 착수했으나 ⚠️ **private repo + GitHub 무료 플랜이라 Pages 활성화 불가**(무료는 public repo만 허용) → **보류**(방침·워크플로는 [PR #10](https://github.com/data-sy/devetym/pull/10) 스테이징) · WU-7(원본 repo 폐기·사람). **독립 작업단위 WU-1~12 + 확정 결정(크래시 SDK=Sentry KMP 등)의 정본 = [`docs/handoff/26-07-10-selfcontained-migration-plan.md`](docs/handoff/26-07-10-selfcontained-migration-plan.md)** — 미래 세션이 WU 단위로 실행.
