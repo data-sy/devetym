@@ -2,55 +2,111 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<title>M9 스크린샷 캡션 밴드 지그 (D1 확정 — 경량 프레이밍)</title>
+<title>M9 스크린샷 캡션 지그 (D2 — 대비 배경 + 디바이스 카드)</title>
 <!--
-  용도: 스토어 스크린샷 후처리 — raw 캡처(1320×2868) 위에 캡션 텍스트 밴드를 얹어
-        같은 해상도(1320×2868)의 제출용 PNG를 만든다. 디바이스 베젤 없음(D1: 경량 캡션 밴드).
+  용도: 스토어 스크린샷 후처리 — raw 캡처(1320×2868) 위에 캡션을 얹어 제출용 PNG를 만든다.
+  D2 (2026-07-14): D1 경량 밴드는 다크 앱 위 다크 밴드라 앱/설명 경계가 안 보임(사용자 피드백).
+    → QLT-App 스토어 스샷 방식 계승: 밝은 브랜드 틴트 배경 + 검은 디바이스 카드(베젤풍) +
+      상단 큰 카피, 디바이스는 하단에서 크롭. 다크/라이트 앱 모두 배경과 대비 확보.
+  출력 사이즈도 파라미터화 — App Store Connect는 6.9"(1320×2868)와 6.5"(1242×2688) 슬롯이 따로 있음.
 
   사용법 (헤드리스 Chrome — 재현 가능한 일괄 생성):
     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
       --headless=new --disable-gpu --hide-scrollbars \
       --window-size=1320,2868 \
       --screenshot=OUT.png \
-      "file://$PWD/m9-screenshot-caption-jig.html?img=file:///abs/path/raw.png&caption=왜%20버그일까%3F%20어원부터%20알려줘요&theme=dark"
+      "file://$PWD/m9-screenshot-caption-jig.html?img=file:///abs/path/raw.png&caption=...&w=1320&h=2868"
 
   파라미터:
-    img     = raw 스크린샷 file:// URL (1320×2868)
-    caption = 밴드에 올릴 한 줄 카피 (URL 인코딩). 캡션 정본은 m9-screenshot-capture-handoff.md §1b — 과장 금지.
-    theme   = dark(기본) | light  — 앱 배경과 이어지는 밴드 색.
+    img     = raw 스크린샷 file:// URL (1320×2868 캡처를 두 사이즈 공용으로 사용)
+    caption = 상단 카피 (URL 인코딩). *단어* 는 accent 색. 정본은 m9-screenshot-capture-handoff.md §1b — 과장 금지.
+    w, h    = 출력 캔버스 px (기본 1320×2868). 6.5" = 1242×2688. --window-size와 반드시 일치시킬 것.
 
-  캡션이 없으면(파라미터 생략) 밴드 없이 raw를 그대로 1320×2868로 렌더한다.
+  캡션이 없으면(파라미터 생략) 프레임 없이 raw를 캔버스 크기로 그대로 렌더한다.
 -->
 <style>
-  html,body { margin:0; padding:0; width:1320px; height:2868px; overflow:hidden; }
-  body { display:flex; flex-direction:column; font-family:"Apple SD Gothic Neo","Pretendard",sans-serif; }
-  body.dark  { background:#0A0A0A; }
-  body.light { background:#F5F5F3; }
-  #band { box-sizing:border-box; height:400px; flex:0 0 auto; display:flex; align-items:center; justify-content:center; padding:0 90px; text-align:center; }
-  body.dark  #band { color:#FFFFFF; }
-  body.light #band { color:#111111; }
-  #band span { font-size:88px; font-weight:800; line-height:1.28; letter-spacing:-1px; word-break:keep-all; }
-  body.dark  #band em  { color:#C8F542; font-style:normal; }
-  body.light #band em  { color:#2E5D3A; font-style:normal; }
-  #shot { flex:1 1 auto; display:flex; align-items:flex-start; justify-content:center; min-height:0; }
-  #shot img { height:100%; width:auto; border-radius:48px; }
+  html,body { margin:0; padding:0; overflow:hidden; }
+  body {
+    display:flex; flex-direction:column;
+    font-family:"Apple SD Gothic Neo","Pretendard",sans-serif;
+    /* 브랜드 라임(#C8F542)의 연한 틴트 2톤 — QLT 하늘색 배경의 devetym 버전 */
+    background:#E7F3C6;
+    background-image:radial-gradient(ellipse 120% 75% at 85% -10%, #F4FBDF 0%, rgba(244,251,223,0) 60%);
+  }
+  #band {
+    box-sizing:border-box; flex:0 0 auto;
+    height:calc(var(--s) * 560px);
+    display:flex; align-items:center; justify-content:center;
+    padding:0 calc(var(--s) * 96px); text-align:center;
+    color:#16210B;
+  }
+  #band span {
+    font-size:calc(var(--s) * 94px); font-weight:800;
+    line-height:1.3; letter-spacing:-1px; word-break:keep-all;
+  }
+  #band em { color:#3F6D14; font-style:normal; }
+  #shot {
+    flex:1 1 auto; min-height:0; overflow:hidden;
+    display:flex; align-items:flex-start; justify-content:center;
+  }
+  /* 검은 베젤풍 카드 — 하단은 캔버스 밖으로 크롭 */
+  #device {
+    background:#101010;
+    border-radius:calc(var(--s) * 84px) calc(var(--s) * 84px) 0 0;
+    padding:calc(var(--s) * 24px);
+    padding-bottom:0;
+    box-shadow:0 calc(var(--s) * 30px) calc(var(--s) * 70px) rgba(22,33,11,0.28);
+  }
+  #device img {
+    display:block; width:calc(var(--s) * 1000px); height:auto;
+    border-radius:calc(var(--s) * 62px) calc(var(--s) * 62px) 0 0;
+  }
+  body.noband { background:none; }
   body.noband #band { display:none; }
-  body.noband #shot img { border-radius:0; height:2868px; }
+  body.noband #shot { overflow:visible; }
+  body.noband #device { background:none; border-radius:0; padding:0; box-shadow:none; }
+  body.noband #device img { width:auto; height:100%; border-radius:0; }
+  /* 파라미터 없이 브라우저로 직접 열었을 때의 안내 화면 */
+  body.help { width:auto !important; height:auto !important; display:block; background:#E7F3C6; }
+  #help { display:none; max-width:720px; margin:60px auto; padding:0 24px; color:#16210B;
+          font-size:15px; line-height:1.7; }
+  body.help #help { display:block; }
+  body.help #band, body.help #shot { display:none; }
+  #help code, #help pre { background:#F4FBDF; border-radius:6px; padding:2px 6px; }
+  #help pre { padding:14px 16px; overflow-x:auto; white-space:pre-wrap; word-break:break-all; }
 </style>
 </head>
-<body class="dark">
+<body>
   <div id="band"><span id="cap"></span></div>
-  <div id="shot"><img id="img" alt=""></div>
+  <div id="shot"><div id="device"><img id="img" alt=""></div></div>
+  <div id="help">
+    <h1>M9 스크린샷 캡션 지그 (D2)</h1>
+    <p><code>img</code> 파라미터 없이 열려서 안내 화면이 표시됐어요.
+       raw 캡처와 캡션을 쿼리 파라미터로 넘기면 프레임이 렌더됩니다.</p>
+    <p>브라우저 미리보기 예시 (터미널에서):</p>
+    <pre>open -a "Google Chrome" "file://$PWD/m9-screenshot-caption-jig.html?img=file://$HOME/devetym-shots/ios/03-term-detail.png&amp;caption=%EC%99%9C%20*%EB%B2%84%EA%B7%B8*%EC%9D%BC%EA%B9%8C%3F%20%EC%96%B4%EC%9B%90%EB%B6%80%ED%84%B0%20%EC%95%8C%EB%A0%A4%EC%A4%98%EC%9A%94&amp;w=1320&amp;h=2868"</pre>
+    <p>일괄 생성(헤드리스)은 이 파일 상단 주석 참조.
+       파라미터: <code>img</code>(raw file:// URL) · <code>caption</code>(URL 인코딩, <code>*단어*</code>=강조) ·
+       <code>w</code>/<code>h</code>(기본 1320×2868, 6.5"=1242×2688).</p>
+  </div>
 <script>
   const q = new URLSearchParams(location.search);
-  const theme = q.get("theme") === "light" ? "light" : "dark";
-  document.body.className = theme;
-  const cap = q.get("caption") || "";
-  if (!cap) document.body.classList.add("noband");
-  // *단어* 를 accent 색으로 (선택 문법)
-  document.getElementById("cap").innerHTML =
-    cap.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\*([^*]+)\*/g,"<em>$1</em>");
-  document.getElementById("img").src = q.get("img") || "";
+  const img = q.get("img") || "";
+  if (!img) {
+    document.body.classList.add("help");
+  } else {
+    const w = parseInt(q.get("w") || "1320", 10);
+    const h = parseInt(q.get("h") || "2868", 10);
+    document.body.style.width  = w + "px";
+    document.body.style.height = h + "px";
+    document.body.style.setProperty("--s", (w / 1320).toString());
+    const cap = q.get("caption") || "";
+    if (!cap) document.body.classList.add("noband");
+    document.getElementById("cap").innerHTML =
+      cap.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\*([^*]+)\*/g,"<em>$1</em>");
+    document.getElementById("img").src = img;
+    if (!cap) { const im = document.getElementById("img"); im.style.height = h + "px"; }
+  }
 </script>
 </body>
 </html>

@@ -30,16 +30,22 @@ Same order as the smoke script's flow. Aim for 5–8 shots (both stores cap at 8
 
 프레이밍(§4)에서 캡션을 얹을 때 쓸 한 줄 카피. 원본은 iOS App Store 초안이나 문구는 양 스토어 공통. **과장 금지**(스토어가 misleading 스크린샷 리젝) — 아래는 사실 기반.
 
-| 매핑 컷 | 화면 | 캡션 | 판다 메시지 |
-|---|---|---|---|
-| #2/#3 | 검색 결과(예: `bug`) | **"왜 버그일까? 어원부터 알려줘요"** | 후크·핵심 차별점 |
-| #2 | 자동완성/검색창 | **"650개 용어, 오프라인에서 즉시"** | 규모·오프라인 속도 |
-| #3 | 상세(어원·작명) | **"정의가 아니라 '이름의 이유'까지"** | 깊이 |
-| #4 | AI 생성 결과 | **"없는 용어는 AI가 그 자리에서"** | 커버리지 확장 |
-| #5/#6 | 북마크/검색 기록 | **"면접·복습용으로 모아두기"** | 타깃 유스케이스 |
-| 라이트 보조컷 | 상세(라이트) | **"라이트/다크, 눈이 편한 쪽으로"** | 폴리시(외관 3모드 — 캡처 세션 추가, 사실 기반) |
+2026-07-14 페르소나 라운드테이블([ASO]·[카피]·[사용자]·[심사]) + 사용자 검토로 전면 개정. 결정 근거:
+- **앞 3장 = 광고 지면**(검색 결과 노출)이므로 "다운로드 이유"가 되는 주장만 배치: 후크 → AI 커버리지 → 타깃 유스케이스.
+- **"650개" 숫자 캡션 폐기** — 숫자가 비인상적·갱신 부채·타깃에 역효과. 숫자는 description 본문 몫.
+- **"인터넷 없어도"(오프라인 각) 폐기** — 한국 타깃에게 오프라인 장면은 약함. 속도는 기대치(table stakes)지 다운로드 이유가 아니므로 4번으로 강등.
+- **"이름의 이유" 컷 삭제** — 후크 컷과 메시지·화면 중복(6컷→5컷).
+- **캡션 자립 원칙**(QLT-App 계승): 각 캡션은 앞뒤 컷 없이 혼자 완결되게. "없는 용어는~" 같은 앞 컷 의존 지시어 금지.
 
-첫 컷(온보딩 또는 검색 후크)이 첫인상이므로 가장 공들일 것. 다크 기본 + 라이트 1장 섞으면 완성도 인상↑.
+| 컷 | 화면 | 캡션 | 판다 메시지 |
+|---|---|---|---|
+| f1 | 상세(예: `bug`) | **"왜 *버그*일까? 어원부터 알려줘요"** | 후크·핵심 차별점 |
+| f2 | AI 생성 결과 | **"모르는 용어도 *AI*가 바로 답해줘요"** | 커버리지 보증 (구: "없는 용어는 AI가 그 자리에서" — 자립형으로 교체) |
+| f3 | 북마크 | **"면접·복습용으로 모아두기"** | 타깃 유스케이스 |
+| f4 | 자동완성/검색창 | **"치는 순간, 결과가 *바로*"** | 즉답·사전다움 (구: 650개→인터넷 없어도 — 순차 폐기) |
+| f5 | 상세(라이트) | **"라이트/다크, 눈이 편한 쪽으로"** | 폴리시(외관 3모드 — 사실 기반) |
+
+다크 기본 + 라이트 1장 섞으면 완성도 인상↑. f4는 빼고 4컷으로 가도 무방(사람 판단).
 
 ## 2. iOS — required sizes & capture
 
@@ -97,7 +103,8 @@ Raw device screenshots are acceptable. If you want marketing frames (device beze
 
 ## 7. Definition of done
 
-- [x] iOS 6.9"/6.7" set (5–8 shots), dark primary + a light alternate or two, clean status bar. — **✅ 2026-07-13**: iPhone 16 Pro Max sim, 1320×2868, dark 9 + light 2 (`~/devetym-shots/ios/`), detail cut = `bug` (설명 후크와 정합). D1 caption-band framing via [caption jig](m9-screenshot-caption-jig.html) → framed 6 (`~/devetym-shots/ios/framed/`).
+- [x] iOS 6.9"/6.7" set (5–8 shots), dark primary + a light alternate or two, clean status bar. — **✅ 2026-07-13**: iPhone 16 Pro Max sim, 1320×2868, dark 9 + light 2 (`~/devetym-shots/ios/`), detail cut = `bug` (설명 후크와 정합).
+- [x] Framing — **D2 ✅ 2026-07-14** (D1 다크 캡션 밴드는 다크 앱과 경계 불가 판정·폐기, QLT-App 스샷 방식 계승): 밝은 라임 틴트 배경 + 검은 디바이스 카드(하단 크롭) via [caption jig](m9-screenshot-caption-jig.html). App Store Connect 슬롯별 **5컷** × 2사이즈 (§1b 개정: 650 캡션 교체·f4 삭제) — **6.9"** `~/devetym-shots/ios/framed-6.9/` (1320×2868), **6.5"** `~/devetym-shots/ios/framed-6.5/` (1242×2688). 구 `framed/`는 superseded(참고용 보존). 재생성 스크립트 패턴은 지그 파일 헤더 주석 참조.
 - [ ] Android phone set (2–8 shots), 9:16, dark primary. — 별도 세션 잔여.
 - [ ] Play feature graphic 1024×500 + hi-res icon 512×512. — Android 트랙 잔여.
 - [x] Store specs re-verified against current console requirements at capture time. — 2026-07-13 웹 확인: 6.9" 필수(1320×2868 허용), 1~10장, iPad 미지원 시 불필요.
