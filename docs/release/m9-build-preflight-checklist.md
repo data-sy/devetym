@@ -30,7 +30,7 @@
 
 - [x] **[AI]** `CFBundleVersion` 1 → **2** 증가 *(완료 2026-07-14: Info.plist 직접 편집 — INFOPLIST_FILE 직접 참조 정본 확인)*
 - [x] **[AI]** `CFBundleShortVersionString` = 0.1.0 확인 *(정산 2026-07-14 저녁 재확인 OK)*
-- [x] **[AI]** 최종 main에서 5축 green 재실행 *(완료 2026-07-14: 병합 커밋 위에서 unit·native·link·assemble·guard 일괄 BUILD SUCCESSFUL)*
+- [x] **[AI]** 최종 main에서 5축 green 재실행 *(재실행 2026-07-14 밤: Sentry 병합 커밋 `764de6e` 위에서 unit·native·link·assemble·guard 일괄 BUILD SUCCESSFUL + 코드젠 `SentryConfig.kt` 비어있지 않은 DSN 상수 생성 확인)*
 - [x] **[AI]** 릴리즈 런타임 설정 확인 — Sentry DSN 주입 경로 · 프록시 endpoint가 prod인지 (LAUNCH-CHECKLIST §4) *(재정산 2026-07-14 밤: 구 Info.plist `SentryDsn`/`$(SENTRY_DSN)` 경로는 **PR #14로 폐지** — 이제 코드젠이 루트 `.env`의 `SENTRY_DSN`을 빌드타임에 commonMain 상수로 주입, 아카이브 시 수동 주입 절차 불요(`.env`만 존재하면 됨 — 존재 확인됨). 프록시 endpoint ✓ `Constants.kt` = `devetym-proxy.data-sy-2.workers.dev` — 라이브 스모크 통과한 prod URL과 동일)*
 - [ ] **[사람]** Xcode Signing & Capabilities — Team 선택·자동 서명 동작 확인 (Apple Developer 결제 완료 상태) *(참고: 병합으로 pbxproj에 DevelopmentTeam `4H79F9W5AQ`·자동 서명이 이미 박혀 있음 — Xcode에서 열어 확인만)*
 - [x] **[사람]** **Sentry DSN 발급(신규 결정 2026-07-14 — 주입 출시 확정)** *(완료 2026-07-14: sentry.io 발급 → 루트 `.env` `SENTRY_DSN=…` 보관. 배선은 PR #14 — 코드젠 주입·심볼 업로드·임시 크래시 버튼으로 iOS·Android 실 크래시 Sentry 도달 실증 후 버튼 제거)*
