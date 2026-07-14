@@ -5,7 +5,7 @@
 > **What this is NOT.** The milestone status source of truth. That stays in [`../../ROADMAP.md`](../../ROADMAP.md) (M9). When a status here disagrees with ROADMAP, **ROADMAP wins** and this file is the stale one — fix it here.
 >
 > **App:** 개발 어원 사전 (DevEtym) · KMP/Compose Multiplatform, single codebase for **Android + iOS**.
-> **IDs:** appId/bundleId `com.robin.devetym` · Android 8.0+ (API 26) · iOS 16+ · `versionName=0.1.0`, `versionCode=1`.
+> **IDs:** appId/bundleId `com.oddmuffin.devetym` · Android 8.0+ (API 26) · iOS 16+ · `versionName=0.1.0`, `versionCode=1`.
 > **Last synced to repo state:** 2026-07-13.
 >
 > **🧭 Launch sequence (decided 2026-07-13).** Critical path **A → (B·C·D parallel) → E·F**: **A** flip repo public (secret sweep first, irreversible; upstream of everything) → **B** deploy Pages (policy URL, WU-1) · **C** real-device smoke + a11y audit (WU-11) · **D** capture screenshots → **E iOS store submit FIRST** (dev account paid, prior launch experience, no cohort gate → review直行) · **F Android LATER** (closed-testing gate: 20 testers × 14 days). **iOS and Android ship as separate todos** (WU-12a / WU-12b) — different store gates. Source of truth: ROADMAP M9 "출시 시퀀스 확정". **Current (2026-07-13 night): A·B·C done → next = D screenshots, then E (iOS submit) / F (Android closed-testing kickoff).**
@@ -52,16 +52,16 @@ These are the items that can actually stop or misrepresent the launch. Everythin
 - ✅ `[AI]`/`[H]` **Privacy policy written & hosted.** Rewritten to match implementation (2026-07-06); **live since 2026-07-13** (Blocker #2 resolved): <https://data-sy.github.io/devetym/privacy-policy>. Legal review still recommended.
 - ✅ `[AI]`/`[H]` **Terms of Service.** Live: <https://data-sy.github.io/devetym/terms-of-service>. Legal review recommended.
 - ✅ `[AI]` **Collected PII disclosed + consent flow.** Policy states no analytics collected. Onboarding consent choice now **persists** (ConsentStore, 2026-07-13) and syncs with the Settings toggle — still display-only (gates nothing; nothing is collected, consistent with policy). Search-keyword transmission for AI fallback honestly disclosed (policy §2).
-- 🟡 `[H]` **Data-regulation compliance.** Policy targets **Korea PIPA**. **GDPR / CCPA not explicitly addressed** — decide based on release regions (§3 country selection). If EU/US launch, policy needs a GDPR/CCPA section + legal review.
+- ✅ `[H]` **Data-regulation compliance.** Policy targets **Korea PIPA**. **D2 decision (2026-07-13): Korea-only launch** — GDPR/CCPA N/A, closed. Reopen (policy amendment + legal review) only if expanding regions later.
 - ✅ `[AI]` **Open-source license notice.** In-app Licenses screen renders OFL (3 fonts); load tested (`Res.readBytes` non-empty). Real scroll render is `[H]`.
 - 🟡 `[AI→H]` **Content / age rating.** Drafted as **14+** (not child-directed), category Education / Developer Tools. Actual rating questionnaire in each console is `[H]`. Draft: [store-metadata §1](m9-store-metadata-draft.md).
 
 ## 3. Store Listing Assets
 
 - ✅ `[AI]` / 🟡 `[H]` **App icon (all resolutions).** Android adaptive icon (`#2E5D3A` bg) rendered & confirmed on emulator; 17 mipmap entries. **iOS appiconset needs an Xcode build** (`[H]`, off-axis). Render sheet: [m9-icon-render-sheet.html](m9-icon-render-sheet.html).
-- 🟡 `[AI→H]` **Screenshots (per device spec).** Capture recipe handed off ([m9-screenshot-capture-handoff](m9-screenshot-capture-handoff.md)) — own session. Not yet captured (Blocker #4).
-- ⬜ `[Defer]` **App preview video.** Optional.
-- 🟡 `[AI→H]` **Name / subtitle / description (with keywords).** Drafted (short + full + App Store keywords). Human review/paste pending. Draft: [store-metadata §2](m9-store-metadata-draft.md).
+- ✅(iOS) / 🟡(Android) `[AI→H]` **Screenshots (per device spec).** **iOS set captured 2026-07-13** (iPhone 16 Pro Max sim, 1320×2868, dark 9 + light 2, raw = `~/devetym-shots/ios/`). Framing **D2 (2026-07-14)**: D1 다크 밴드는 다크 앱과 경계가 안 보여 폐기 → 밝은 라임 틴트 배경 + 검은 디바이스 카드로 재생성 via [caption jig](m9-screenshot-caption-jig.html). 제출용 **5컷** × 2사이즈 (캡션·순서 전면 개정 2026-07-14 — 라인업: 후크→AI→북마크→검색→라이트, 숫자·오프라인 각 폐기, 캡션 자립 원칙. 근거·최종 표는 [capture handoff](m9-screenshot-capture-handoff.md) §1b): **6.9" 슬롯** = `~/devetym-shots/ios/framed-6.9/` (1320×2868), **6.5" 슬롯** = `~/devetym-shots/ios/framed-6.5/` (1242×2688). 구 D1 산출물(`framed/`)은 superseded. Remaining `[H]`: pick order & upload to console. **Android set not yet captured** (separate run; recipe in [capture handoff](m9-screenshot-capture-handoff.md)).
+- ✅ `[Defer]` **App preview video.** Optional — **D8 decision (2026-07-13): skip for v1**, revisit in v1.x on screenshot conversion data.
+- ✅ `[AI→H]` **Name / subtitle / description (with keywords).** **Confirmed D3~D5 (2026-07-13)**: name 「개발 어원 사전」 + subtitle A · keywords 95자 final · hook-style description + promo text (stale "opt-in collection" copy retired). Canon: [store-metadata](m9-store-metadata-draft.md) §2·부록 A. Remaining `[H]`: paste into console.
 - 🟡 `[AI→H]` **Category.** Drafted (Education / Developer Tools). Confirm in console.
 - ⬜ `[H]` **Release countries / regions.** Not set. Drives Blocker/GDPR decision (§2).
 - ⬜ `[H]` **Developer account + billing** (Apple Developer / Play Console). Not confirmed (Blocker #6).

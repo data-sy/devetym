@@ -24,6 +24,9 @@
 	<string>$(SENTRY_DSN)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<!-- M9 b5 — 수출 규정: HTTPS(URLSession/Ktor) 표준 암호화만 사용 → 면제. 업로드 후 콘솔 암호화 문답 생략 -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>

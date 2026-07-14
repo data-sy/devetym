@@ -18,19 +18,20 @@
 **짧은 설명(80자 이내):**
 > 개발 용어의 어원과 명명 이유를 찾아주는 사전. 오프라인 번들 + AI 생성.
 
-**전체 설명:**
-> 개발자가 매일 쓰는 용어 — mutex, daemon, kernel, Arne Andersson tree… 이름은 어디서 왔을까?
-> "개발 어원 사전"은 용어의 **어원·명명 이유·카테고리**를 간결히 정리해 보여줍니다.
->
-> • 오프라인 번들 사전(650+ 용어) — 네트워크 없이 즉시 검색
-> • 번들에 없으면 AI가 생성해 로컬에 캐시
-> • 북마크·검색 히스토리(모두 기기 내 저장)
-> • 라이트/다크/시스템 외관, Dynamic Type 지원
->
-> 검색 키워드 등 익명 이용 데이터는 **동의한 경우에만** 수집하며(사전 확장·품질 개선 목적), 광고 식별자·위치·
-> 연락처는 수집하지 않습니다. 자세한 내용은 개인정보 처리방침을 참고하세요.
+**전체 설명 — D5 확정(2026-07-13): 후크형(부록 A) 채택.** 정본 텍스트는 [부록 A "후크형 전체 설명"](#부록-a-대안-aso-카피-옵션-dev-etymology-초안-계승--wu-5) — 콘솔 입력 시 그대로 사용.
 
-**키워드(App Store):** 어원, 개발용어, 프로그래밍, 사전, etymology, developer, glossary, CS
+> ~~구 현행안(기능 나열형)은 폐기~~ — "익명 이용 데이터는 동의한 경우에만 수집" 문구가 방침 "현재 미수집"과 불일치(정합 결함)했고, 후크형은 수집 문구 없이 정합. 결정 로그 D5 참조.
+
+**프로모션 텍스트 — D5 추기(2026-07-13 사용자 결정): 공감형 87자 채택** — `단어는 외웠는데, 왜 그렇게 부르는지는 모른다. 그래서 또 까먹는다. 어원과 작명 맥락을 알면 개념이 오래 남습니다. 개발 용어, 물어보면 AI가 한국어로.`
+
+> 문두는 "뜻은 외웠는데"에서 **"단어는 외웠는데"로 확정** — 뒤 절이 "왜 그렇게 부르는지"(유래)라 "뜻"이면 뜻≠유래가 한 문장에 섞임. "단어(철자·표기)는 외웠지만 유래는 모른다"로 층 분리, 부제·설명의 "철자만 외운" 프레임과 정합. "그래서 또 까먹는다"는 구어 뜨끔함이 톤에 맞아 유지(담백형 "금방 잊는다" 변형 기각).
+
+> ~~구 107자안('버그'는 왜 버그일까? … 북마크와 검색 기록까지.)은 폐기~~ — 프로모션 텍스트는 전체 설명 바로 위에 노출되는데 구안의 나방 후크가 전체 설명 첫 줄과 중복. 공감형은 표현이 겹치지 않아 역할 분담(프로모션=공감 환기 → 설명=후크·해결책). "650개 오프라인" 팩트는 의도적 제외(번들도 AI 생성이라 별도 강조 불필요 — 사용자). 결정 로그 D5 추기 참조.
+
+**키워드(App Store) — D4 확정(2026-07-13), 95자:**
+> `코딩,컴퓨터공학,CS,IT,개발자,기술면접,취업,자료구조,알고리즘,주니어,비전공,용어집,영어단어,학습,깃허브,오픈소스,뜻,의미,신입,부트캠프,컴공,개발상식,전산,바이브코딩`
+
+(구 기본 8개안은 D3 확정 이름·부제와 중복이라 폐기 — 결정 로그 D4 참조)
 
 ## 3. 데이터 안전 / 개인정보 라벨 (방침에서 파생 — 정본은 방침)
 
@@ -72,26 +73,64 @@
 
 ---
 
+## 5. App Review 심사 노트 (D9 확정 — 2026-07-13) `[사람: 콘솔 App Review Information란에 붙여넣기]`
+
+> 리젝 리스크 상위 3종(무검수 AI 생성 · 심사 환경 네트워크 실패 · 최소 기능성 오해)을 선제 해소하는 구조. 영어 단독(App Review 글로벌 팀 표준).
+
+```
+[App overview] "개발 어원 사전" (DevEtym) is a Korean-language dictionary that explains
+the etymology and naming rationale of software development terms (e.g. why a "bug" is
+called a bug). Korean UI, releasing in South Korea only.
+
+[No account needed] No login, no registration. All features are available immediately
+after install.
+
+[How to demo — offline] 650+ terms are bundled offline. Search "mutex" or "daemon" to
+see a full entry (etymology, naming rationale, category) with no network required.
+
+[How to demo — AI fallback] Searching a term not in the bundle (e.g. "quicksort")
+generates an entry via AI. Requests go through our proxy server — no API key is
+embedded in the app. AI generation has a per-device daily limit; the bundled 650 terms
+are unlimited and work offline, so the app remains fully functional if the network or
+the daily limit blocks AI generation during review.
+
+[AI-generated content] AI-generated entries are disclosed to users as AI-generated and
+are not individually human-reviewed. Safeguards: generation is domain-limited to
+explaining the searched programming term's etymology (not an open chatbot), per-device
+daily limit, and an in-app report path for flagging incorrect content. This is also
+reflected in our age-rating questionnaire answers.
+
+[Privacy] No analytics SDK. Data leaving the device: the searched keyword + a random
+per-install device ID (only on AI fallback, for the daily limit), and crash diagnostics
+via Sentry (no PII). Bookmarks/history stay on device.
+Policy: https://data-sy.github.io/devetym/privacy-policy
+
+[Contact] oddmuffinstudio@gmail.com
+```
+
+---
+
 ## 부록 A. 대안 ASO 카피 옵션 (dev-etymology 초안 계승 — WU-5)
 
 > **성격: 선택적 카피 대안 풀.** dev-etymology(iOS) App Store 초안의 ASO 카피를 계승. **§1·§3(연령·카테고리·개인정보)은 devetym 정본이 우선** — 아래 iOS 초안이 권했던 `4+`·Firebase 수집 전제는 **무효**(devetym은 만 14세 이상·미수집). 이름/설명 카피만 재사용 후보로 둔다.
 > **`부제(subtitle)`·`프로모션 텍스트`는 App Store 전용 필드**(Play는 대응 필드 없음).
 
-### 앱 이름 (≤30자)
-- **A (권장·현행)**: `개발 어원 사전` — 브랜드 단순·정확 매칭. (§1 등록명)
-- B: `개발 어원 사전: 코딩 용어 뜻` (17자) — "코딩·용어·뜻" 키워드 흡수. 노출 데이터 보고 전환 고려.
+### 앱 이름 (≤30자) — **D3 확정(2026-07-13): A**
+- **A (✅ 확정)**: `개발 어원 사전` — 브랜드 단순·정확 매칭. (§1 등록명)
+- ~~B: `개발 어원 사전: 코딩 용어 뜻`~~ — 2.3.7 키워드 스터핑 인상 리스크로 기각.
 
-### 부제 (App Store, ≤30자)
-- A: `프로그래밍 용어의 유래와 작명 이유` (19자) — 차별점형.
-- B: `면접 준비 코딩 용어, 오프라인 즉답` (20자) — 의도어(면접)+기능(오프라인). *리뷰 1순위: 이름 A + 부제 B.*
-- C: `650개 용어 오프라인 사전+AI 설명` (21자) — 기능 요약형.
+### 부제 (App Store, ≤30자) — **D3 확정(2026-07-13): A**
+- **A (✅ 확정)**: `프로그래밍 용어의 유래와 작명 이유` (19자) — 차별점형·포지셔닝 일관성 우선(사용자 확정).
+- ~~B: `면접 준비 코딩 용어, 오프라인 즉답`~~ — 세션 추천이었으나 기각.
+- ~~C: `650개 용어 오프라인 사전+AI 설명`~~ — 기각.
 
 ### 키워드 대안 (App Store, ≤100자·쉼표구분·공백없음)
 이름/부제 단어는 자동 색인 → 중복 제외 후 100자 가깝게 충전 권장.
 - `코딩,컴퓨터공학,CS,IT,개발자,기술면접,취업,자료구조,알고리즘,주니어,비전공,용어집,영어단어,학습,깃허브,오픈소스`
 
-### 프로모션 텍스트 (App Store, ≤170자·심사없이 교체 가능)
-- `'버그'는 왜 버그일까? 개발 용어의 어원과 작명 이유를 한국어로 풀어주는 사전. 650개 용어를 오프라인에서 즉시 찾고, 없는 용어는 AI가 설명합니다. 면접·학습용 북마크와 검색 기록까지.` (107자)
+### 프로모션 텍스트 (App Store, ≤170자·심사없이 교체 가능) — **D5 추기(2026-07-13): 공감형 채택**
+- **✅ 확정**: `단어는 외웠는데, 왜 그렇게 부르는지는 모른다. 그래서 또 까먹는다. 어원과 작명 맥락을 알면 개념이 오래 남습니다. 개발 용어, 물어보면 AI가 한국어로.` (87자)
+- ~~구안: `'버그'는 왜 버그일까? … 면접·학습용 북마크와 검색 기록까지.` (107자)~~ — 전체 설명 후크와 중복으로 폐기(§2 참조).
 
 ### 후크형 전체 설명 대안 (도입 3줄에 후크+정의)
 > `'버그(bug)'는 왜 버그일까요? 진짜 나방 때문이었습니다.`

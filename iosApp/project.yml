@@ -3,7 +3,7 @@
 # 셸 배선: shared의 Shared.framework(Kotlin/Native + SKIE)를 gradle로 빌드·임베드하고 링크만 한다.
 name: iosApp
 options:
-  bundleIdPrefix: com.robin.devetym
+  bundleIdPrefix: com.oddmuffin.devetym
   deploymentTarget:
     iOS: "16.0"
   createIntermediateGroups: true
@@ -20,7 +20,7 @@ targets:
     settings:
       base:
         INFOPLIST_FILE: iosApp/Info.plist
-        PRODUCT_BUNDLE_IDENTIFIER: com.robin.devetym
+        PRODUCT_BUNDLE_IDENTIFIER: com.oddmuffin.devetym
         SWIFT_VERSION: "5.0"
         # M9 — 원본(dev-etymology) Assets.xcassets 이관분: AppIcon(라이트/다크 단일 1024)·
         # LaunchLogo·Theme/brand(#2E5D3A, UILaunchScreen 배경). WU-6 원장 §3 NEEDS-MIGRATION 해소.

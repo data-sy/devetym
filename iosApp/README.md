@@ -24,7 +24,7 @@ xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug 
   CODE_SIGNING_ALLOWED=NO build
 xcrun simctl boot "$UDID"; open -a Simulator
 xcrun simctl install "$UDID" iosApp/build/DerivedData/Build/Products/Debug-iphonesimulator/iosApp.app
-xcrun simctl launch "$UDID" com.robin.devetym
+xcrun simctl launch "$UDID" com.oddmuffin.devetym
 ```
 ✅ M0 검증됨: 시뮬레이터에서 공유 Compose 화면("Hello, iOS …")이 렌더된다.
 

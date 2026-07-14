@@ -308,7 +308,7 @@
 					Shared,
 					"-lsqlite3",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.robin.devetym;
+				PRODUCT_BUNDLE_IDENTIFIER = com.oddmuffin.devetym;
 				SDKROOT = iphoneos;
 				SENTRY_DSN = "";
 				SWIFT_VERSION = 5.0;
@@ -338,7 +338,7 @@
 					Shared,
 					"-lsqlite3",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.robin.devetym;
+				PRODUCT_BUNDLE_IDENTIFIER = com.oddmuffin.devetym;
 				SDKROOT = iphoneos;
 				SENTRY_DSN = "";
 				SWIFT_VERSION = 5.0;
