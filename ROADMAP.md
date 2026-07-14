@@ -129,6 +129,7 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 - **[UI] 디자인 후속** — 다크/라이트 폴리시·대비·플랫폼별 미세 조정.
 - **[Server] 프록시 토큰 usage 기록(M9 실기기 검증 파생, 2026-07-13)** — 현행 `devetym-proxy`는 Anthropic 응답의 `usage`를 버려 토큰 회계 불가(콘솔만 의존). 검색 1회당 usage(input/output)를 로깅(D1 캐시 도입 시 함께). *제안 상태 — 사람 확정 대기.*
 - ~~**[Arch] 크래시 리포팅 commonMain 단일 KMP 배선으로 통합 (WU-4 후속)**~~ — ✅ **완료(WU-4B, 2026-07-10)**. Approach A(Kotlin Cocoapods)는 `pod` CLI 부재로 스킵 → **Approach B(Sentry.xcframework 벤더링 + linkerOpts + Swift 백호환 라이브러리 경로)** 채택. commonMain 단일 `sentry-kotlin-multiplatform` 0.27.0(iOS Cocoa 8.58.2 정적 xcframework, 비커밋 gradle 다운로드) 배선 + **5축 green** + **Xcode 시뮬 빌드 SUCCEEDED**(iOS도 Sentry 실링크 — WU-11 SPM 절차 대체). seam 이원화 해소. 정본 상세 = [WU-4 원장 §5](docs/handoff/26-07-10-wu4-crash-reporting-ledger.md).
+- **[Feature] 하루 한 단어 알림 (Word of the Day, 2026-07-14)** — 매일 1회 단어를 로컬 알림으로 푸시. 서버 푸시 불요(번들 DB 650개에서 로컬 선정 — 랜덤 또는 승격 잡 hot 우선순위 연동 가능, 위 [Data] 항목과 시너지). 구현 좌표: 공통 선정 로직은 `commonMain`, 알림 스케줄링은 플랫폼 seam(expect/actual) — iOS `UNUserNotificationCenter` 반복 로컬 알림 + Android `AlarmManager`/`WorkManager`+`NotificationManager`. ⚠️ iOS 26 신규 **AlarmKit**(무음·집중모드 관통, 전체화면 알람)은 알람·타이머용이라 데일리 학습 알림엔 과함 — 표준 로컬 알림이 적합, 단 iOS 26+ 위젯/Live Activity 노출은 후속 검토. 알림 권한 요청 UX(온보딩 or 설정 토글)·방침 영향(수집 0 유지, 로컬 온리) 함께 설계.
 - (아이디어 추가 시 여기로)
 
 ---
