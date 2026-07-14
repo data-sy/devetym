@@ -27,3 +27,6 @@ __pycache__/
 *.pyc
 .venv/
 Scripts/**/.env.local
+
+# 비밀 키 (Anthropic Admin 등)
+.env
