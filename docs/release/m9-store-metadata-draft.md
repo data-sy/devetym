@@ -11,6 +11,9 @@
 | 앱 이름 | 개발 어원 사전 (DevEtym) |
 | 개인정보 처리방침 URL | https://data-sy.github.io/devetym/privacy-policy (약관: https://data-sy.github.io/devetym/terms-of-service) — 2026-07-13 Pages 배포·라이브 |
 | 지원 이메일 | oddmuffinstudio@gmail.com (방침 §8) |
+| 지원 URL | https://data-sy.github.io/devetym/ (랜딩 페이지 — 2026-07-13 Pages 라이브) |
+| 저작권 (App Store) | © 2026 Oddmuffin Studio — **2026-07-14 신규 확정**(콘솔 입력 시점에 값 부재 발견, 이 세션에서 결정·입력) |
+| 배포 국가 | 대한민국 단독 (D2 확정 2026-07-13 — Korea-only, 심사 노트 §5와 정합) |
 | 카테고리 | 교육 / 개발자 도구 (Education / Developer Tools) |
 | 대상 연령 | 만 14세 이상 (방침 §6 — 아동 대상 아님) |
 
