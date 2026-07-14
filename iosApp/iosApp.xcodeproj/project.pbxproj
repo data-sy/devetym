@@ -14,7 +14,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4418FA341D4D8A02F38AF9A6 /* Sentry.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:97JCY7859U:GetSentry LLC"; lastKnownFileType = wrapper.xcframework; name = Sentry.xcframework; path = ../shared/build/sentry/Sentry.xcframework; sourceTree = "<group>"; };
+		4418FA341D4D8A02F38AF9A6 /* Sentry.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Sentry.xcframework; path = ../shared/build/sentry/Sentry.xcframework; sourceTree = "<group>"; };
 		668CECA83ACC03A83C85A623 /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		86038AE1032E284E79B32AD6 /* iosApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE8509E5A49E4A5CAAEB3ADB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -174,7 +174,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"$CONFIGURATION\" != \"Release\" ]; then exit 0; fi\nENV_FILE=\"$SRCROOT/../.env\"\nif [ -f \"$ENV_FILE\" ]; then\n  SENTRY_AUTH_TOKEN=\"${SENTRY_AUTH_TOKEN:-$(sed -n 's/^SENTRY_AUTH_TOKEN=//p' \"$ENV_FILE\" | tr -d '\"' | head -1)}\"\n  SENTRY_PROJECT=\"${SENTRY_PROJECT:-$(sed -n 's/^SENTRY_PROJECT=//p' \"$ENV_FILE\" | tr -d '\"' | head -1)}\"\nfi\nif [ -z \"$SENTRY_AUTH_TOKEN\" ] || [ -z \"$SENTRY_PROJECT\" ]; then\n  echo \"warning: Sentry dSYM 업로드 스킵 — .env에 SENTRY_AUTH_TOKEN/SENTRY_PROJECT 미설정\"\n  exit 0\nfi\nif ! command -v sentry-cli >/dev/null 2>&1; then\n  echo \"warning: sentry-cli 미설치 — dSYM 업로드 스킵 (brew install getsentry/tools/sentry-cli)\"\n  exit 0\nfi\nexport SENTRY_AUTH_TOKEN\nsentry-cli debug-files upload --org oddmuffin-studio --project \"$SENTRY_PROJECT\" \"$DWARF_DSYM_FOLDER_PATH\"\n";
+			shellScript = "if [ \"$CONFIGURATION\" != \"Release\" ]; then exit 0; fi\nENV_FILE=\"$SRCROOT/../.env\"\nif [ -f \"$ENV_FILE\" ]; then\n  SENTRY_AUTH_TOKEN=\"${SENTRY_AUTH_TOKEN:-$(sed -n 's/^SENTRY_AUTH_TOKEN=//p' \"$ENV_FILE\" | tr -d '\"' | head -1)}\"\n  SENTRY_PROJECT=\"${SENTRY_PROJECT:-$(sed -n 's/^SENTRY_PROJECT=//p' \"$ENV_FILE\" | tr -d '\"' | head -1)}\"\nfi\nif [ -z \"$SENTRY_AUTH_TOKEN\" ] || [ -z \"$SENTRY_PROJECT\" ]; then\n  echo \"warning: Sentry dSYM 업로드 스킵 — .env에 SENTRY_AUTH_TOKEN/SENTRY_PROJECT 미설정\"\n  exit 0\nfi\n# Xcode 스크립트 페이즈 PATH엔 homebrew가 없다(실측: 2026-07-14 아카이브서 '미설치' 오판 스킵) — 폴백 추가.\nexport PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin\"\nif ! command -v sentry-cli >/dev/null 2>&1; then\n  echo \"warning: sentry-cli 미설치 — dSYM 업로드 스킵 (brew install getsentry/tools/sentry-cli)\"\n  exit 0\nfi\nexport SENTRY_AUTH_TOKEN\nsentry-cli debug-files upload --org oddmuffin-studio --project \"$SENTRY_PROJECT\" \"$DWARF_DSYM_FOLDER_PATH\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
