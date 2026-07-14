@@ -54,6 +54,7 @@ class ViewModelTest {
         assertEquals(ErrorKind.Network, ClaudeException.Network(RuntimeException()).toErrorKind())
         assertEquals(ErrorKind.InvalidResponse, ClaudeException.InvalidResponse.toErrorKind())
         assertEquals(ErrorKind.DailyLimitExceeded, ClaudeException.DailyLimitExceeded.toErrorKind())
+        assertEquals(ErrorKind.ServiceExhausted, ClaudeException.ServiceExhausted.toErrorKind())
         assertEquals(ErrorKind.Unknown, IllegalStateException("기타").toErrorKind())
     }
 

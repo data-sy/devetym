@@ -5,7 +5,7 @@ import com.robin.devetym.data.remote.ClaudeException
 /**
  * 오류 화면이 분기할 오류 분류 (M5 슬라이스 §3-1). 문구(오프라인 구분 등)는 M6 UI 소관 — 여기선 분류만.
  */
-enum class ErrorKind { Timeout, Network, InvalidResponse, DailyLimitExceeded, Unknown }
+enum class ErrorKind { Timeout, Network, InvalidResponse, DailyLimitExceeded, ServiceExhausted, Unknown }
 
 /**
  * `Throwable` → [ErrorKind] 순수 매핑 (§3-1).
@@ -21,6 +21,7 @@ fun Throwable.toErrorKind(): ErrorKind = when (this) {
         is ClaudeException.Network -> ErrorKind.Network
         is ClaudeException.InvalidResponse -> ErrorKind.InvalidResponse
         is ClaudeException.DailyLimitExceeded -> ErrorKind.DailyLimitExceeded
+        is ClaudeException.ServiceExhausted -> ErrorKind.ServiceExhausted
     }
     else -> ErrorKind.Unknown
 }

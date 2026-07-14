@@ -51,6 +51,11 @@ THINKING_BUDGET = 2000          # shared/.../ClaudePrompt.kt와 동일
 MAX_RETRIES = 3
 RETRY_DELAY_SEC = 5
 
+# 호출당 예상 비용 범위(USD) — Sonnet 4.6, 시스템 프롬프트+도구 입력 ~4k 토큰(캐시 여부에 따라)
+# + thinking 포함 출력 ~1-2k 토큰 기준의 보수적 추정. 실측 정본은 Scripts/cost/report.py.
+EST_COST_PER_CALL_LOW = 0.02
+EST_COST_PER_CALL_HIGH = 0.05
+
 # ──────────────────────────────────────────────────────────────────
 
 
@@ -254,6 +259,21 @@ def run_measurement():
     if not verify_cells():
         print("\nSanity check 실패. 측정 중단.")
         sys.exit(1)
+    print()
+
+    # 비용 확인 게이트 (docs/cost/cost-management-decision.md 스크립트 측 가드).
+    # 자동화에서는 --yes로 스킵.
+    n_calls = len(CELLS) * len(KEYWORDS)
+    print(
+        f"이 측정은 API를 {n_calls}회 호출합니다. "
+        f"예상 비용 ${n_calls * EST_COST_PER_CALL_LOW:.2f}~${n_calls * EST_COST_PER_CALL_HIGH:.2f} "
+        f"(호출당 ${EST_COST_PER_CALL_LOW}~${EST_COST_PER_CALL_HIGH} 추정)"
+    )
+    if "--yes" not in sys.argv:
+        answer = input("계속할까요? [y/N] ").strip().lower()
+        if answer not in ("y", "yes"):
+            print("중단했습니다. (확인 없이 실행하려면: python probe_prompt.py --yes)")
+            sys.exit(0)
     print()
 
     # 결과 폴더 준비

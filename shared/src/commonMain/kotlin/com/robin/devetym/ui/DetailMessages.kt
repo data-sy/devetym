@@ -10,6 +10,7 @@ fun errorMessage(kind: ErrorKind): String = when (kind) {
     ErrorKind.Timeout -> "응답이 지연되고 있어요. 잠시 후 다시 시도해주세요"
     ErrorKind.Network -> "인터넷 연결을 확인해주세요"
     ErrorKind.DailyLimitExceeded -> "오늘 사용량을 모두 사용했어요"
+    ErrorKind.ServiceExhausted -> "AI 생성에 문제가 있어요. 잠시 후 다시 시도해주세요"
     ErrorKind.InvalidResponse -> "결과를 불러오지 못했어요"
     ErrorKind.Unknown -> "문제가 발생했어요"
 }
