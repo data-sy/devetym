@@ -25,6 +25,8 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -148,7 +150,9 @@ fun SearchContent(
             trailingIcon = {
                 if (query.isNotEmpty()) {
                     IconButton(onClick = { onQueryChange("") }) {
-                        Text("✕", style = AppScheme.type.codeAction, color = AppScheme.colors.textMuted)
+                        // "✕" TTS 낭독 이름 부재 → 라벨 부여(히스토리 삭제 버튼과 동일 계열).
+                        Text("✕", style = AppScheme.type.codeAction, color = AppScheme.colors.textMuted,
+                            modifier = Modifier.semantics { contentDescription = "검색어 지우기" })
                     }
                 }
             },

@@ -7,6 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -137,6 +139,7 @@ fun DetailContent(
 }
 
 @Composable
+@OptIn(ExperimentalLayoutApi::class)
 private fun FoundBody(
     entry: TermEntry,
     source: Source,
@@ -172,7 +175,13 @@ private fun FoundBody(
         // copyToClipboard seam 호출처)·북마크·공유 3개 accent 틴트, 오류 제보는 회색 톤 분리.
         val tonalContainer = colors.accent.copy(alpha = TONAL_CONTAINER_ALPHA)
         val tonalContent = tonalActionColor(colors)
-        Row(Modifier.padding(top = dim.sectionGap), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        // 실주행 B-5(2026-07-14): Dynamic Type 최대에서 3알약이 한 줄에 안 들어가 공유가 세로로
+        // 짜부라짐 → FlowRow로 줄바꿈. 일반 크기에선 종전과 동일한 한 줄.
+        FlowRow(
+            Modifier.padding(top = dim.sectionGap),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
             // M9-후속 §2-E(UX-4): 어원 단일 필드 → 전체 페이로드(키워드+어원+왜 이 이름인가, 순수 함수).
             TonalPillButton("❏", "복사", tonalContainer, tonalContent) { onCopy(detailCopyPayload(entry)) }
             TonalPillButton(

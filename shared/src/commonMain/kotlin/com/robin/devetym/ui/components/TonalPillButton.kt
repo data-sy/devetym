@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import com.robin.devetym.ui.theme.AppScheme
 
@@ -40,7 +41,10 @@ fun TonalPillButton(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(glyph, style = AppScheme.type.codeAction, color = content)
+        // 글리프는 장식 — 스크린리더가 "검은 별" 등 유니코드 이름을 읽지 않도록 시맨틱에서 제외.
+        // 상태는 label 텍스트("북마크됨" 등)가 전달한다(접근성 감사 실주행 2026-07-14).
+        Text(glyph, style = AppScheme.type.codeAction, color = content,
+            modifier = Modifier.clearAndSetSemantics {})
         Text(label, style = AppScheme.type.codeAction, color = content)
     }
 }
