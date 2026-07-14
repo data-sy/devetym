@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.robin.devetym.Constants
+import com.robin.devetym.crash.CrashReporter
 import com.robin.devetym.ui.platform.AppActions
 import com.robin.devetym.ui.platform.AppearanceStore
 import com.robin.devetym.ui.platform.DeviceInfo
@@ -88,6 +89,15 @@ fun SettingsContent(
             ActionRow("오픈소스 라이선스", onOpenLicenses)
             Text("✦ 어원 정보는 AI가 생성하며 부정확할 수 있어요", style = AppScheme.type.caption,
                 color = AppScheme.colors.textMuted, modifier = Modifier.padding(top = 8.dp))
+        }
+        // ⚠️ 임시(검증 후 제거) — Sentry 배선 실증용. 잡힌 예외 캡처 + uncaught 강제 크래시(iOS는 다음 기동 시 전송).
+        Section("SENTRY 검증(임시)") {
+            ActionRow("테스트 이벤트 전송(잡힌 예외)") {
+                CrashReporter.capture(RuntimeException("Sentry 배선 검증 — 잡힌 예외 테스트 이벤트"))
+            }
+            ActionRow("강제 크래시(uncaught)") {
+                throw RuntimeException("Sentry 배선 검증 — 강제 크래시 테스트")
+            }
         }
     }
 }
