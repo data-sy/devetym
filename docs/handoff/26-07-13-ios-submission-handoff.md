@@ -16,8 +16,9 @@ D1~D9 결정 세션의 4인 패널은 **판단**용이었고 전건 확정됐다
 - **✅ 제출 준비분 main 병합**: `feat/m9-store-submission`(식별자·수출규정·D1~D9 결정·스크린샷 포함) → **PR #11로 main 병합 완료(2026-07-14)**. 구 "아카이브 전 feat→main 병합 필수" 전제는 해소. 브랜치 보존.
 - **⚠️ 1차 업로드 거부 → 해소(2026-07-14)**: Release 아카이브 → App Store Connect 업로드 시도 → **ITMS-90474 거부**(iPad 지원 요건) → **아이폰 전용 전환**(`TARGETED_DEVICE_FAMILY=1`, `project.yml`·pbxproj — 커밋 `d545f03`)으로 해소.
 - **✅ 접근성 감사 종결(2026-07-14)**: VoiceOver 대본 정식 주행(iPhone 13 mini) → 결함 3건 수정(글리프 과낭독·Dynamic Type 알약 줄바꿈·✕ 라벨, 커밋 `f52f380`) → 실기기 재확인 통과. 잔여 = 출시 후 백로그 2건 + TalkBack([감사 대본 §D](../release/m9-accessibility-audit-script.md)).
-- **🔀 새 작업 브랜치 = `fix/m9-iphone-only`**(main 위 스택, push됨): 위 아이폰 전용·VoiceOver 수정 + 접근성 종결·대시보드 문서 갱신이 여기 있음. **⚠️ 재아카이브 전제 = 이 브랜치 → main 병합 후 main 기준 빌드**(병합·push=사람 지시) — 병합 전 main을 빌드하면 iPad 겸용(재거부)·VoiceOver 미수정 빌드가 나간다.
-- **다음 실행 = 재아카이브 → 재업로드**(대시보드 b6): 수출 규정 문답은 Info.plist 키로 생략, 빌드 번호는 1차 업로드가 검증 단계에서 거부돼 재사용 가능(콘솔서 충돌 시 +1).
+- **✅ `fix/m9-iphone-only` → main 병합 완료(2026-07-14, PR #12)**: 아이폰 전용·VoiceOver 수정 + 접근성 종결분 착지. 아카이브 준비 커밋(`9f61b32` — CFBundleVersion 2·프리플라이트 A~C[AI] 정산)도 main에 있음.
+- **✅ Sentry 실 DSN 배선 완료(2026-07-14, `feat/m9-sentry-wiring` → PR #14)**: DSN 발급·루트 `.env` 보관 → 빌드타임 코드젠 주입(구 Info.plist `SentryDsn` 경로 폐지 — **아카이브 시 수동 주입 절차 불요**) + 심볼 업로드(Android mapping·iOS dSYM) + 임시 크래시 버튼으로 iOS·Android 실 크래시 Sentry 도달 실증.
+- **다음 실행 = main 기준 재아카이브 → 재업로드**(대시보드 b6): 수출 규정 문답은 Info.plist 키로 생략, 빌드 번호는 1차 업로드가 검증 단계에서 거부돼 재사용 가능(콘솔서 충돌 시 +1).
 
 ### 1b. 이력 — 2026-07-13 밤 시점 (참고)
 
@@ -48,7 +49,7 @@ D1~D9 결정 세션의 4인 패널은 **판단**용이었고 전건 확정됐다
 ## 3. 실행 순서 (대시보드 섹션 2 → 4 → 5)
 
 1. **콘솔 메타 입력 `[사람]`** — ⓪ 번들 ID가 신규라 developer portal Identifiers에 App ID `com.oddmuffin.devetym` 등록(Explicit, Capabilities 기본값 — 드롭다운에 없을 때) → App Store Connect 앱 레코드 생성(iOS·한국어·SKU `devetym`) → §2 표의 값 입력. AI는 화면별 입력값을 옆에서 대준다.
-2. **빌드·서명 `[사람+AI]`** — [서명·업로드 가이드](../release/m9-signing-upload-guide.md) 절차. 체크: ⓪ **`fix/m9-iphone-only`→main 병합**(아이폰 전용·VoiceOver 수정 커밋 — 병합·push=사람. 구 feat→main은 PR #11로 완료) ① **main 기준** 빌드 ② iOS appiconset Xcode 확정(자산 이관됨 — 빌드에서 최종 확인) ③ **실 Sentry DSN 주입**(Info.plist `SentryDsn` — [메타 초안 §4](../release/m9-store-metadata-draft.md) 체크) ④ 버전 0.1.0 / 빌드 번호 ⑤ 아카이브 → 업로드(수출 규정 문답은 Info.plist 키로 생략됨).
+2. **빌드·서명 `[사람+AI]`** — [서명·업로드 가이드](../release/m9-signing-upload-guide.md) 절차. 체크: ⓪ ~~`fix/m9-iphone-only`→main 병합~~ ✅ PR #12 완료(Sentry 배선도 PR #14로 병합 완료) ① **main 기준** 빌드 ② iOS appiconset Xcode 확정(자산 이관됨 — 빌드에서 최종 확인) ③ ~~실 Sentry DSN 주입(Info.plist)~~ ✅ 코드젠 자동 주입(루트 `.env` — 발급·실증 완료, 수동 절차 불요) ④ 버전 0.1.0 / 빌드 번호(CFBundleVersion 2 준비됨) ⑤ 아카이브 → 업로드(수출 규정 문답은 Info.plist 키로 생략됨).
 3. **제출 전 최종 대조 `[AI]`** — 라벨↔방침↔설명 3자 정합 재확인(§2 표), 심사 노트 붙여넣기 확인(리안).
 4. **심사 제출 `[사람 지시로만]`** → 승인 후 **수동 게시 버튼도 사람** → 게시 시점에 `v0.1.0` 태그(핫픽스 런북 전제).
 5. **리젝 시** — 리안 리드로 사유 분석 → 대응은 결정 로그에 추기.

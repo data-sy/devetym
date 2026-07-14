@@ -41,6 +41,35 @@ val downloadSentryCocoa by tasks.registering(Exec::class) {
 // K/N 링크(테스트 실행파일 포함)는 Sentry.xcframework가 있어야 심볼을 해석한다.
 tasks.withType<KotlinNativeLink>().configureEach { dependsOn(downloadSentryCocoa) }
 
+// ── Sentry DSN 빌드타임 주입(경량 코드젠) — 루트 .env → commonMain 상수 ─────────────────────────────
+// DSN은 클라이언트 노출 가능한 공개 식별자(시크릿 아님)나, 레포 커밋은 피한다(.env는 gitignore).
+// 우선순위: 루트 .env의 SENTRY_DSN → 환경변수 SENTRY_DSN → 빈값(CrashReporter no-op — 개발/CI 안전).
+// BuildKonfig 등 플러그인 대신 경량 코드젠 채택(신규 플러그인이 K/N 축을 건드릴 리스크 회피, 사람 결정 2026-07-14).
+fun envFileValue(key: String): String? = rootProject.file(".env").takeIf { it.exists() }
+    ?.readLines()
+    ?.firstNotNullOfOrNull { line ->
+        line.trim().takeIf { it.startsWith("$key=") }?.substringAfter("=")?.trim()?.trim('"', '\'')
+    }
+val sentryDsn: String = envFileValue("SENTRY_DSN") ?: System.getenv("SENTRY_DSN") ?: ""
+val generateSentryConfig by tasks.registering {
+    val outDir = layout.buildDirectory.dir("generated/sentryConfig/commonMain/kotlin")
+    inputs.property("sentryDsn", sentryDsn)
+    outputs.dir(outDir)
+    doLast {
+        val escaped = sentryDsn.replace("\\", "\\\\").replace("\"", "\\\"").replace("$", "\\$")
+        val file = outDir.get().file("com/robin/devetym/crash/SentryConfig.kt").asFile
+        file.parentFile.mkdirs()
+        file.writeText(
+            """
+            |package com.robin.devetym.crash
+            |
+            |// 빌드타임 생성 파일 — 편집 금지. 정본: shared/build.gradle.kts `generateSentryConfig`(.env SENTRY_DSN).
+            |internal const val SENTRY_DSN: String = "$escaped"
+            |""".trimMargin()
+        )
+    }
+}
+
 kotlin {
     androidTarget {
         compilerOptions {
@@ -79,6 +108,8 @@ kotlin {
     }
 
     sourceSets {
+        // 코드젠 상수(SentryConfig.kt)를 commonMain 소스로 등록 — TaskProvider 전달로 컴파일 의존 자동 성립.
+        commonMain.configure { kotlin.srcDir(generateSentryConfig) }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)

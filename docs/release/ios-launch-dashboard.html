@@ -315,8 +315,8 @@
         <div class="meta">Xcode Signing &amp; Capabilities → Team → 자동 서명. 인증서는 비밀키(자율 금지) — <a href="m9-signing-upload-guide.md">서명 가이드 §2</a>.</div>
       </li>
       <li class="item" data-id="b4">
-        <input type="checkbox" id="b4"><label class="title" for="b4">Sentry 실 DSN 주입<span class="tag human">사람</span></label>
-        <div class="meta">Info.plist `SentryDsn` 빌드 세팅/xcconfig — 시크릿 미커밋. 비면 no-op(현재 상태).</div>
+        <input type="checkbox" id="b4" checked><label class="title" for="b4">Sentry 실 DSN 주입<span class="tag human">사람</span></label>
+        <div class="meta">✅ 2026-07-14 완료(PR #14): DSN 발급·루트 `.env` 보관(gitignore) → 빌드타임 코드젠이 commonMain 상수로 주입(구 Info.plist `SentryDsn`/xcconfig 경로 폐지 — 아카이브 시 수동 주입 불요). 심볼 업로드(Android mapping·iOS dSYM)도 배선. 임시 크래시 버튼으로 iOS·Android 실 크래시 Sentry 도달 실증.</div>
       </li>
       <li class="item" data-id="b5">
         <input type="checkbox" id="b5" checked><label class="title" for="b5">수출 규정(암호화) 신고 설정<span class="tag aih">AI→사람</span></label>
@@ -328,7 +328,7 @@
       </li>
       <li class="item" data-id="b7">
         <input type="checkbox" id="b7"><label class="title" for="b7">TestFlight 설치 + 실 DSN 도달 확인<span class="tag human">사람</span></label>
-        <div class="meta">릴리즈 빌드 실기기 확인 + 크래시 리포팅 실 왕복(WU-4B 마지막 잔여) — 테스트 크래시 1건이 Sentry 콘솔에 찍히는지.</div>
+        <div class="meta">릴리즈 빌드 실기기 확인 + 크래시 리포팅 실 왕복 — 개발 빌드 실증은 완료(2026-07-14, b4)이므로 릴리즈 아카이브 빌드에서의 도달·dSYM 심볼화 재확인만.</div>
       </li>
     </ul>
   </section>

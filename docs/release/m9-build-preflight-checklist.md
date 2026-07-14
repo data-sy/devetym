@@ -1,12 +1,12 @@
 # M9 빌드(제출 아카이브) 착수 전 준비 체크리스트
 
 > 노션 복붙용. 2026-07-14 repo 실측 기준 (git 상태·pbxproj·Info.plist 대조 완료).
-> **정산(2026-07-14 저녁, 비용 트랙 세션)**: 실제 상태와 재대조 — 비용 트랙 착지 완료로 A-1의 미커밋 3건(ROADMAP·docs/cost) 해소, C-2·C-4 검증 통과 체크. 최대 blocker는 여전히 A-2(`fix/m9-iphone-only` 병합, main 대비 +8커밋).
+> **정산(2026-07-14 저녁, 비용 트랙 세션)**: 실제 상태와 재대조 — 비용 트랙 착지 완료로 A-1의 미커밋 3건(ROADMAP·docs/cost) 해소, C-2·C-4 검증 통과 체크. ~~최대 blocker는 여전히 A-2~~ → **재정산(2026-07-14 밤)**: A-2 병합 완료(PR #12)·Sentry DSN 배선 완료(PR #14) — 남은 blocker는 [사람] 항목(A-1 선언·C 서명·D 비준)뿐.
 
 **전제** — 여기서 "빌드" = **iOS 제출 아카이브**(출시 시퀀스 E: Xcode Archive → App Store Connect 업로드, main 기준·`v0.1.0`). Android AAB(F 트랙)는 서명 미배선(Blocker #5)·Play 계정 미확인(Blocker #6)이라 이 체크리스트 범위 밖.
 
 - **목표**: main의 최종 커밋으로 iOS 아카이브를 빌드해 ASC에 재업로드 가능한 상태(ITMS-90474 해소분 포함)에 도달한다.
-- **지금 상태**: 스크린샷 5컷×2사이즈·메타데이터는 ASC 업로드 완료. 직전 업로드가 **ITMS-90474로 거부** → 해소 커밋(`TARGETED_DEVICE_FAMILY=1`)은 `fix/m9-iphone-only`에 있고 **main 미머지** (main은 아직 `"1,2"`). main 작업트리에 미커밋 변경 + 미추적 파일 있음. 다른 세션들이 작업 중.
+- **지금 상태(2026-07-14 밤 재정산)**: 스크린샷 5컷×2사이즈·메타데이터는 ASC 업로드 완료. ITMS-90474 해소분은 `fix/m9-iphone-only` → **PR #12로 main 병합 완료**(pbxproj `TARGETED_DEVICE_FAMILY=1` 확인). 아카이브 준비 커밋(`9f61b32`)·Sentry 실 DSN 배선(`feat/m9-sentry-wiring` → PR #14)까지 main 착지 — **A~C의 [AI] 항목 전부 정산 완료**, 남은 것은 아래 [사람] 항목(A-1 선언·C 서명 확인·D 비준)뿐.
 - **착수 경계**: Xcode Product → Archive 실행 (사람+AI 협업).
 - **관련 파일**: `docs/release/m9-signing-upload-guide.md`(절차 정본) · `docs/release/LAUNCH-CHECKLIST.md` · `ROADMAP.md` M9 · `iosApp/iosApp/Info.plist` · `iosApp/iosApp.xcodeproj/project.pbxproj`
 - **등장 주체**: 나(AI), 사용자(사람), 다른 세션들(작업 중), App Store Connect(외부)
@@ -31,9 +31,9 @@
 - [x] **[AI]** `CFBundleVersion` 1 → **2** 증가 *(완료 2026-07-14: Info.plist 직접 편집 — INFOPLIST_FILE 직접 참조 정본 확인)*
 - [x] **[AI]** `CFBundleShortVersionString` = 0.1.0 확인 *(정산 2026-07-14 저녁 재확인 OK)*
 - [x] **[AI]** 최종 main에서 5축 green 재실행 *(완료 2026-07-14: 병합 커밋 위에서 unit·native·link·assemble·guard 일괄 BUILD SUCCESSFUL)*
-- [x] **[AI]** 릴리즈 런타임 설정 확인 — Info.plist `SentryDsn` 존재 · 프록시 endpoint가 prod인지 (LAUNCH-CHECKLIST §4) *(정산: `SentryDsn` 키 존재 ✓, 값은 `$(SENTRY_DSN)`이고 빌드 설정 기본값 `""` → 크래시 리포팅 no-op. 실 DSN 주입(예: `xcodebuild SENTRY_DSN=…`)은 아카이브 시 사람 결정 — LAUNCH-CHECKLIST Blocker #7 잔여와 동일 항목. 프록시 endpoint ✓ `Constants.kt` = `devetym-proxy.data-sy-2.workers.dev` — 오늘 라이브 스모크 통과한 prod URL과 동일)*
+- [x] **[AI]** 릴리즈 런타임 설정 확인 — Sentry DSN 주입 경로 · 프록시 endpoint가 prod인지 (LAUNCH-CHECKLIST §4) *(재정산 2026-07-14 밤: 구 Info.plist `SentryDsn`/`$(SENTRY_DSN)` 경로는 **PR #14로 폐지** — 이제 코드젠이 루트 `.env`의 `SENTRY_DSN`을 빌드타임에 commonMain 상수로 주입, 아카이브 시 수동 주입 절차 불요(`.env`만 존재하면 됨 — 존재 확인됨). 프록시 endpoint ✓ `Constants.kt` = `devetym-proxy.data-sy-2.workers.dev` — 라이브 스모크 통과한 prod URL과 동일)*
 - [ ] **[사람]** Xcode Signing & Capabilities — Team 선택·자동 서명 동작 확인 (Apple Developer 결제 완료 상태) *(참고: 병합으로 pbxproj에 DevelopmentTeam `4H79F9W5AQ`·자동 서명이 이미 박혀 있음 — Xcode에서 열어 확인만)*
-- [ ] **[사람]** **Sentry DSN 발급(신규 결정 2026-07-14 — 주입 출시 확정)**: sentry.io 무료 플랜 계정·프로젝트 생성 → DSN을 루트 `.env`에 `SENTRY_DSN=…`으로 추가 → 아카이브 시 빌드 세팅 주입(절차는 AI가 안내)
+- [x] **[사람]** **Sentry DSN 발급(신규 결정 2026-07-14 — 주입 출시 확정)** *(완료 2026-07-14: sentry.io 발급 → 루트 `.env` `SENTRY_DSN=…` 보관. 배선은 PR #14 — 코드젠 주입·심볼 업로드·임시 크래시 버튼으로 iOS·Android 실 크래시 Sentry 도달 실증 후 버튼 제거)*
 
 ### D. 승인 게이트 (← 사람 결정 지점)
 
@@ -46,7 +46,7 @@
 
 ---
 
-**가장 먼저 막힌 의존성**: A-1 — 다른 세션들의 작업 완료 선언. 특히 `fix/m9-iphone-only` 병합 없이는 빌드 자체가 무의미(재거부 확정). 내가 지금 바로 도울 수 있는 것:
+**가장 먼저 막힌 의존성**: ~~A-1 — 특히 `fix/m9-iphone-only` 병합 없이는 빌드 자체가 무의미(재거부 확정)~~ → **해소(2026-07-14 밤)**: 병합 전건 착지. 남은 것은 D 승인 게이트(사람 비준) 진입뿐. 이력용 항목:
 
-- [ ] **[AI]** 병합 상태를 주기적으로 모니터링하다가 착지되면 B~C의 [AI] 항목 자동 진행
+- [x] **[AI]** 병합 상태를 주기적으로 모니터링하다가 착지되면 B~C의 [AI] 항목 자동 진행 *(정산 2026-07-14 밤: 병합 착지·B~C [AI] 전건 완료 — 해소)*
 - [x] **[AI]** 기다리는 동안 C 항목 중 병합과 무관한 것(SentryDsn·프록시 endpoint 확인) 선실행 *(정산: C-2·C-4 완료 — 위 참조)*

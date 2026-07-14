@@ -74,3 +74,11 @@ iosMain no-op이라 **iOS 실 크래시는 아직 미포착**. iOS 스토어 출
 - **Xcode 시뮬 빌드 SUCCEEDED**(`xcodebuild -scheme iosApp -sdk iphonesimulator -destination 'iPhone 17 Pro' ONLY_ACTIVE_ARCH=YES` — arm64 전용. ⚠️ 제네릭 시뮬 대상은 x86_64를 요구해 gradle 프레임워크 빌드가 깨지는데 이는 프로젝트가 `iosSimulatorArm64`만 지원하는 **기존 제약**·Sentry 무관). 앱에 Sentry Cocoa가 실제 링크됨 → iOS 크래시 포착이 no-op이 아니게 됨(WU-11 SPM 절차 대체).
 
 **되돌리기**: 실패 시 커밋 revert로 seam 분리(`eb939a7`) 복귀 가능하도록 원자적 커밋. (이번엔 성공이라 백아웃 불요.)
+
+## 6. 실 DSN 배선·실증 — 잔여 폐쇄 (2026-07-14, `feat/m9-sentry-wiring` → PR #14)
+
+§5의 마지막 잔여("실 DSN 런타임 도달 확인")를 폐쇄했다. 이 절이 §2·§5의 **DSN 주입 서술을 대체**한다:
+
+- **DSN 주입 = 빌드타임 코드젠으로 단일화**: `shared/build.gradle.kts`가 루트 `.env`의 `SENTRY_DSN`을 읽어 commonMain 상수를 생성. **구 경로 폐지** — Android BuildConfig `SENTRY_DSN`·iOS Info.plist `SentryDsn`(`$(SENTRY_DSN)` 빌드 세팅) 제거. 시크릿 규율 불변(루트 `.env`는 gitignore, 비면 no-op).
+- **심볼 업로드 배선**: Android mapping(Sentry Gradle 플러그인) + iOS dSYM(sentry-cli 빌드 페이즈). 인증 토큰 없으면 no-op 가드 — 개발·CI 안전.
+- **실 크래시 실증**: 사용자 DSN 발급(sentry.io 무료 플랜) 후 검증용 임시 크래시 버튼(설정 화면)으로 **iOS·Android 실 크래시가 Sentry 콘솔 도달 확인**, 버튼 제거. 잔여 = 릴리즈 아카이브 빌드에서의 도달·심볼화 재확인(TestFlight 게이트, 대시보드 b7).

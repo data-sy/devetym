@@ -31,9 +31,8 @@ targets:
         # M9 — 원본(dev-etymology) Assets.xcassets 이관분: AppIcon(라이트/다크 단일 1024)·
         # LaunchLogo·Theme/brand(#2E5D3A, UILaunchScreen 배경). WU-6 원장 §3 NEEDS-MIGRATION 해소.
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        # M9 WU-4 — 크래시 DSN 주입(Info.plist `SentryDsn`=$(SENTRY_DSN)). 빈값이면 CrashReporter no-op.
-        # 시크릿 미커밋: 배포 시 xcconfig/CI 시크릿으로 override(예: xcodebuild SENTRY_DSN=...).
-        SENTRY_DSN: ""
+        # (구 SENTRY_DSN 빌드 설정은 제거 — DSN은 이제 gradle 코드젠이 Shared.framework에 상수로 굽는다.
+        #  루트 .env SENTRY_DSN → shared generateSentryConfig. Xcode 쪽 주입 불필요.)
         # gradle이 여기로 프레임워크를 복사(embedAndSign) → 링커 검색 경로
         FRAMEWORK_SEARCH_PATHS:
           - $(inherited)
@@ -48,7 +47,7 @@ targets:
           - -lsqlite3
     # ── M9 WU-4B · iOS 크래시 리포팅 = commonMain 단일 KMP 배선(Sentry Cocoa) ────────────────────────
     # Kotlin `CrashReporter`(commonMain)가 `sentry-kotlin-multiplatform`으로 iOS에서 Sentry를 초기화한다
-    # (Swift `SentrySDK.start` 불요 — doInitKoin이 Info.plist `SentryDsn`을 읽어 넘김). 따라서 Shared.framework가
+    # (Swift `SentrySDK.start` 불요 — DSN은 gradle 코드젠 상수로 Shared.framework에 내장). 따라서 Shared.framework가
     # Sentry Cocoa 심볼을 참조하므로 **앱도 Sentry.xcframework를 링크**해야 한다(정적 → 링크만, embed 불요).
     # xcframework는 gradle이 shared/build/sentry/에 다운로드(비커밋) — preBuildScript의 embedAndSign 실행 시
     # downloadSentryCocoa 태스크가 선행하여 링크 시점엔 항상 존재한다. 슬라이스 선택은 Xcode가 SDK로 자동 처리.
@@ -62,3 +61,27 @@ targets:
         script: |
           cd "$SRCROOT/.."
           ./gradlew :shared:embedAndSignAppleFrameworkForXcode
+    # ── Sentry dSYM 업로드(심볼리케이션) — Release 전용·no-op 가드 ──────────────────────────────────
+    # auth token은 DSN과 달리 **진짜 시크릿** — 루트 .env SENTRY_AUTH_TOKEN(gitignore)로만 공급.
+    # 토큰/프로젝트 slug(.env SENTRY_PROJECT)/sentry-cli 셋 중 하나라도 없으면 경고만 내고 스킵(개발/CI 안전).
+    # Debug는 DEBUG_INFORMATION_FORMAT=dwarf(dSYM 미생성)라 Release(dwarf-with-dsym)에서만 의미 있음.
+    postBuildScripts:
+      - name: "Upload dSYMs to Sentry (Release · no-op without token)"
+        basedOnDependencyAnalysis: false
+        script: |
+          if [ "$CONFIGURATION" != "Release" ]; then exit 0; fi
+          ENV_FILE="$SRCROOT/../.env"
+          if [ -f "$ENV_FILE" ]; then
+            SENTRY_AUTH_TOKEN="${SENTRY_AUTH_TOKEN:-$(sed -n 's/^SENTRY_AUTH_TOKEN=//p' "$ENV_FILE" | tr -d '"' | head -1)}"
+            SENTRY_PROJECT="${SENTRY_PROJECT:-$(sed -n 's/^SENTRY_PROJECT=//p' "$ENV_FILE" | tr -d '"' | head -1)}"
+          fi
+          if [ -z "$SENTRY_AUTH_TOKEN" ] || [ -z "$SENTRY_PROJECT" ]; then
+            echo "warning: Sentry dSYM 업로드 스킵 — .env에 SENTRY_AUTH_TOKEN/SENTRY_PROJECT 미설정"
+            exit 0
+          fi
+          if ! command -v sentry-cli >/dev/null 2>&1; then
+            echo "warning: sentry-cli 미설치 — dSYM 업로드 스킵 (brew install getsentry/tools/sentry-cli)"
+            exit 0
+          fi
+          export SENTRY_AUTH_TOKEN
+          sentry-cli debug-files upload --org oddmuffin-studio --project "$SENTRY_PROJECT" "$DWARF_DSYM_FOLDER_PATH"

@@ -79,6 +79,7 @@
 				297B59D9CE634556D6007C40 /* Sources */,
 				1623B02D10928C8101C1F806 /* Resources */,
 				EF8A6E9BFD470986D9D5C9B5 /* Frameworks */,
+				AC2BD91718069A3C6EF96D8B /* Upload dSYMs to Sentry (Release · no-op without token) */,
 			);
 			buildRules = (
 			);
@@ -155,6 +156,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+		};
+		AC2BD91718069A3C6EF96D8B /* Upload dSYMs to Sentry (Release · no-op without token) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Upload dSYMs to Sentry (Release · no-op without token)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"$CONFIGURATION\" != \"Release\" ]; then exit 0; fi\nENV_FILE=\"$SRCROOT/../.env\"\nif [ -f \"$ENV_FILE\" ]; then\n  SENTRY_AUTH_TOKEN=\"${SENTRY_AUTH_TOKEN:-$(sed -n 's/^SENTRY_AUTH_TOKEN=//p' \"$ENV_FILE\" | tr -d '\"' | head -1)}\"\n  SENTRY_PROJECT=\"${SENTRY_PROJECT:-$(sed -n 's/^SENTRY_PROJECT=//p' \"$ENV_FILE\" | tr -d '\"' | head -1)}\"\nfi\nif [ -z \"$SENTRY_AUTH_TOKEN\" ] || [ -z \"$SENTRY_PROJECT\" ]; then\n  echo \"warning: Sentry dSYM 업로드 스킵 — .env에 SENTRY_AUTH_TOKEN/SENTRY_PROJECT 미설정\"\n  exit 0\nfi\nif ! command -v sentry-cli >/dev/null 2>&1; then\n  echo \"warning: sentry-cli 미설치 — dSYM 업로드 스킵 (brew install getsentry/tools/sentry-cli)\"\n  exit 0\nfi\nexport SENTRY_AUTH_TOKEN\nsentry-cli debug-files upload --org oddmuffin-studio --project \"$SENTRY_PROJECT\" \"$DWARF_DSYM_FOLDER_PATH\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -316,7 +336,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.oddmuffin.devetym;
 				SDKROOT = iphoneos;
-				SENTRY_DSN = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -348,7 +367,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.oddmuffin.devetym;
 				SDKROOT = iphoneos;
-				SENTRY_DSN = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
