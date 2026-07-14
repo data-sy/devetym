@@ -1,5 +1,6 @@
 # Claude API 비용 관리·모니터링 컨설팅 요청
 
+> ✅ **2026-07-14 실행 완료** — 결과 정본은 [`cost-management-decision.md`](cost-management-decision.md), 설정 스냅샷은 [`console-settings-log.md`](console-settings-log.md). 아래는 당시 입력 프롬프트의 불변 기록이며 일부 전제(예: "devetym-proxy 이 로컬에는 없음")는 당시 기준으로 현재와 다르다.
 > 이 프롬프트를 새 세션에 붙여넣어 컨설팅을 진행한다. 작업 디렉토리: `~/devetym`
 
 ## 내 상황

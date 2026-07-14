@@ -127,14 +127,15 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 - **[Arch] AI 스트리밍 도입 검토** — 현재 단발 응답. 토큰 스트리밍(`Flow<String>`)은 이후 선택지(architecture §4.3).
 - **[Arch] 프롬프트 서버 이전 검토** — 현재 클라이언트(`commonMain`) 소유. 프롬프트 핫픽스 필요성 커지면 재검토([ADR-0006](docs/adr/0006-server-cache-boundary.md) 유보 항목).
 - **[UI] 디자인 후속** — 다크/라이트 폴리시·대비·플랫폼별 미세 조정.
-- **[Server] 프록시 토큰 usage 기록(M9 실기기 검증 파생, 2026-07-13)** — 현행 `devetym-proxy`는 Anthropic 응답의 `usage`를 버려 토큰 회계 불가(콘솔만 의존). 검색 1회당 usage(input/output)를 로깅(D1 캐시 도입 시 함께). *제안 상태 — 사람 확정 대기.*
+- ~~**[Server] 프록시 토큰 usage 기록(M9 실기기 검증 파생, 2026-07-13)**~~ — ✅ **구현·배포 완료(비용 관리 트랙, 2026-07-14 — Done 참조)**. `usage_log` 적재 코드·마이그레이션이 프로덕션에 배포됨. **잔여 1건: D1 활성화** — wrangler 토큰에 D1 스코프가 없어(`npx wrangler login` 재인증 필요, 사람·브라우저) `d1 create devetym-usage` → `wrangler.toml` ⑤ 주석 해제 → `migrations apply --remote` → `deploy` 순서 남음. 그때까지 usage 기록은 자동 스킵(프록시 동작엔 무영향).
 - ~~**[Arch] 크래시 리포팅 commonMain 단일 KMP 배선으로 통합 (WU-4 후속)**~~ — ✅ **완료(WU-4B, 2026-07-10)**. Approach A(Kotlin Cocoapods)는 `pod` CLI 부재로 스킵 → **Approach B(Sentry.xcframework 벤더링 + linkerOpts + Swift 백호환 라이브러리 경로)** 채택. commonMain 단일 `sentry-kotlin-multiplatform` 0.27.0(iOS Cocoa 8.58.2 정적 xcframework, 비커밋 gradle 다운로드) 배선 + **5축 green** + **Xcode 시뮬 빌드 SUCCEEDED**(iOS도 Sentry 실링크 — WU-11 SPM 절차 대체). seam 이원화 해소. 정본 상세 = [WU-4 원장 §5](docs/handoff/26-07-10-wu4-crash-reporting-ledger.md).
-- (아이디어 추가 시 여기로)
+- **[Server] 서비스 소진(402) 시 놓친 검색어 수집 (2026-07-14 발의)** — 크레딧/월 한도 소진으로 생성 못 한 검색어를 프록시가 D1에 적재(키워드 + 시각 + device prefix). 의미: **수요가 실증된 미보유 용어 목록** → 나중에 Batch API(50% 할인) 일괄 생성으로 캐시/번들 선탑재, 승격 플라이휠(INV-12)의 hot 선정 입력과도 연동. 앱 변경 불요(프록시만). **의존**: D1 활성화(위 usage 기록 잔여와 동일 선행). 확장하면 402뿐 아니라 실패 전반(타임아웃 등)의 키워드 수집도 같은 테이블로 가능 — 설계는 착수 세션에서. *새 세션에서 진행 예정(사람 확정).*
 
 ---
 
 ## Done — 완료
 
+- **비용 관리·모니터링 체계 (운영 트랙)** — ✅ 2026-07-14 (devetym PR #13 + devetym-proxy PR #1 머지·**프로덕션 배포**, 브랜치 `feat/cost-management`·`feat/cost-hardening` 보존). 컨설팅([결정 문서](docs/cost/cost-management-decision.md)) → 구현: **가시성**(워크스페이스 분리 + `Scripts/cost/report.py` Admin API 리포트 + 프록시 usage D1 기록 코드) · **상한**(Console 월 $30 + 알림 10/20/25 + 크레딧 자동리로드 $5→$15 + 프록시 과금 파라미터 서버 강제·본문 32KB 캡·전역 200회/일 캡 + probe 실행 전 비용 게이트) · **오류 계약**(402=서비스측 소진 → `ServiceExhausted` → "AI 생성에 문제가 있어요" — ADR-0006 Decision 7). 검증: JVM+네이티브 green, 라이브 프록시 무과금 스모크 4경로. Console 설정 스냅샷 = [설정 로그](docs/cost/console-settings-log.md). **잔여**: D1 활성화(Later 백로그)·Admin 키 발급 여부 확인(report.py 사용 전제).
 - **M9-후속 · 실기기 피드백 UX 3건** — ✅ 2026-07-13 (브랜치 `feat/m9-release-verification`, 커밋 `3f1ce6a`·`35874bf`·`720f5d4` — 각각 독립 커밋·미푸시). M9 아이폰 13 mini 실기기 테스트 피드백 3건 전부 구현, 각 건 **5축 green + iPhone 16 Pro 시뮬 실주행 스크린샷 대조**로 닫음.
   - **[UX-1] 상세 액션 톤 알약 버튼(목업 A안)** — `ActionText` → `TonalPillButton` 아톰(Capsule accent 15% 틴트 + 글리프·라벨, 신규 의존성 0). 복사(WU-8 seam 유지)·북마크·공유 3개 + 오류 제보 회색 톤 분리. **전경 다크=accent(≈11:1)·라이트=brand(≈6:1)** — 라이트 accent가 틴트 위 AA 미달(≈4.1)이라 `tonalActionColor`로 분기, `AccessibilityContrastTest` 합성 쌍 게이트가 근거를 락. 시뮬: 다크/라이트 렌더·복사→`pbpaste` 회수·북마크 ☆↔★ 반응형.
   - **[UX-2] 스와이프 네비게이션** — 뎁스0 탭 4개 `HorizontalPager`(탭 상태 정본=pagerState, 탭바 클릭=animateScrollToPage, 재탭 pop 유지) + 뎁스1 엣지 스와이프-백(24dp 엣지·80dp 임계, `isEdgeSwipeBack` 순수 판정+테스트 5건). 상세 중 `userScrollEnabled=false`(제스처 충돌 관리). 〔구현 로어: `detectHorizontalDragGestures`의 onDragStart는 **터치 슬롭 통과 지점**이라 엣지 판정이 밀림 — 시뮬 실주행으로 적발, `awaitFirstDown` 실제 다운 지점 기준으로 교체〕 시뮬: 4탭 양방향 스와이프·클릭 점프·상세 중 본문 스와이프 무효·엣지 백·기존 탈출구 회귀 0.

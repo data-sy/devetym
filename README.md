@@ -73,6 +73,7 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 | [`docs/adr/`](docs/adr/) | 돌이킬 수 없는 결정 기록 (0001~0006: CMP·관용구 원칙·로컬 DB·프록시 경계·SKIE interop·서버 캐시 경계) | ✅ |
 | [`docs/specs/spec.md`](docs/specs/spec.md) | 화면·동작 구현 명세 (Phase 1~4, Claude Code 전용) | ✅ |
 | [`ROADMAP.md`](ROADMAP.md) | 이행 순서(코어 먼저, UI 나중) + **진행 상태 정본** | ✅ |
+| [`docs/cost/`](docs/cost/) | API 비용 관리 — 결정 문서·Console 설정 스냅샷 로그 (`Scripts/cost/report.py`가 리포트 도구) | ✅ |
 
 ---
 

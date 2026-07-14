@@ -103,13 +103,15 @@
 
 ## 5. 우선순위 로드맵
 
-### 지금 당장 (~1시간, 대부분 Console 클릭 — 사람 작업)
-- [ ] **Console에서 조직(Organization) 설정** — ⚠️ 구현 중 확인(2026-07-14): Admin API는 "개인 계정"에서 사용 불가. Console → Settings → Organization에서 조직을 만들어야 아래 Admin 키 발급이 열린다
-- [ ] Console에서 워크스페이스 2개 생성 (`dev-scripts`, `proxy-runtime`)
-- [ ] 워크스페이스별 spend limit 설정 (임시: dev $15 / runtime $10) + 사용량 알림 활성화
-- [ ] 새 API 키 2개 발급: 로컬 `ANTHROPIC_API_KEY` 교체(dev-scripts 키), 프록시 Worker secret 교체(runtime 키). 기존 키는 비활성화
-- [ ] Admin API 키 발급 (비용 리포트 스크립트용 — `ANTHROPIC_ADMIN_KEY`로 로컬 보관, repo 커밋 금지)
-- [ ] 프록시 하드닝 배포: `cd ~/devetym-proxy && npx wrangler deploy` (+ usage 기록 활성화는 `wrangler.toml` ⑤ 절차 — D1 생성 후 주석 해제)
+### 지금 당장 (~1시간, 대부분 Console 클릭 — 사람 작업) — 2026-07-14 실행 결과 반영
+- [x] **Console에서 조직(Organization) 설정** — 완료(사람, 2026-07-14). Admin API는 "개인 계정"에서 사용 불가했던 제약 해소
+- [x] Console에서 워크스페이스 생성 — 완료: `DevEtym — Proxy (Prod)` / `DevEtym — Experiments` (+Default). 제안 명칭(dev-scripts/proxy-runtime)과 다르나 역할 동일
+- [x] 지출 한도 설정 — **조직 월 $30** (제안 $25에서 사람이 상향 확정) + 알림 $10/$20/$25. 워크스페이스별 세분은 미적용(조직 단위만) — 현 규모에선 충분
+- [x] 크레딧 자동 리로드 ON — 잔액 $5 도달 시 $15로 복구 (Console 제약: 복구액 ≥ 최소잔액+$10). 상세 = [설정 로그](console-settings-log.md)
+- [x] API 키 세팅 — 사람이 워크스페이스 기준으로 재설정(2026-07-14 사용자 확인)
+- [ ] **Admin API 키 발급 — 확인 필요**: `report.py` 실행에 `ANTHROPIC_ADMIN_KEY`(sk-ant-admin...) 필요. 발급했다면 로컬 env로만 보관(repo 커밋 금지)
+- [x] 프록시 하드닝 배포 — 완료(2026-07-14, 버전 cf5a7158, 라이브 무과금 스모크 통과)
+- [ ] **usage 기록 D1 활성화 — 잔여**: wrangler 토큰에 D1 스코프 없음 → `npx wrangler login` 재인증(사람·브라우저) 후 `wrangler.toml` ⑤ 절차(d1 create → 주석 해제 → migrations apply → deploy). 그때까지 usage 기록만 자동 스킵
 
 ### 다음 마일스톤에 넣을 것 (Claude Code 구현 작업) — ✅ 2026-07-14 구현 완료
 - [x] `Scripts/cost/report.py` — Admin API 비용/사용량 리포트 (워크스페이스별 비용·일별 추이·캐시 적중률). `devetym` repo `feat/cost-management` 브랜치
