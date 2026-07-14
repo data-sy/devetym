@@ -284,7 +284,7 @@
       </li>
       <li class="item" data-id="a3">
         <input type="checkbox" id="a3" checked><label class="title" for="a3">스크린샷 캡처 — 6.9"/6.7" 5~8컷<span class="tag aih">AI→사람</span></label>
-        <div class="meta">✅ 2026-07-13 캡처 완료 — iPhone 16 Pro Max 시뮬 1320×2868, 다크 9컷+라이트 2컷, raw = <code>~/devetym-shots/ios/</code>. 상세컷은 후크 정합 위해 <b>bug</b>로 교체(사용자 지시). 잔여 [사람] = 콘솔 업로드·순서 확정.</div>
+        <div class="meta">✅ 2026-07-13 캡처 완료 — iPhone 16 Pro Max 시뮬 1320×2868, 다크 9컷+라이트 2컷, raw = <code>~/devetym-shots/ios/</code>. 상세컷은 후크 정합 위해 <b>bug</b>로 교체(사용자 지시). 순서는 a4 D2 개정으로 확정 — 잔여 [사람] = 콘솔 업로드.</div>
       </li>
       <li class="item" data-id="a4">
         <input type="checkbox" id="a4" checked><label class="title" for="a4">스크린샷 프레이밍·캡션 후처리<span class="tag aih">AI→사람</span></label>
@@ -324,7 +324,7 @@
       </li>
       <li class="item" data-id="b6">
         <input type="checkbox" id="b6"><label class="title" for="b6">Release 아카이브 → App Store Connect 업로드<span class="tag human">사람</span></label>
-        <div class="meta">Xcode Product → Archive → Distribute App — <a href="m9-signing-upload-guide.md">서명 가이드 §2</a>. ⚠️ 아카이브는 main 기준 — 식별자(`com.oddmuffin.devetym`)·수출규정 커밋이 feat에 있어 <b>feat→main 병합 후</b>(push=사람).</div>
+        <div class="meta">Xcode Product → Archive → Distribute App — <a href="m9-signing-upload-guide.md">서명 가이드 §2</a>. <b>1차 업로드 ITMS-90474 거부(2026-07-14, iPad 요건)</b> → 아이폰 전용 전환(<code>TARGETED_DEVICE_FAMILY=1</code>)으로 해소 — ⚠️ 재아카이브는 <b><code>fix/m9-iphone-only</code>→main 병합 후 main 기준</b>(병합·push=사람. 구 feat→main은 PR #11 완료). 빌드 번호는 검증 거부라 재사용 가능(충돌 시 +1).</div>
       </li>
       <li class="item" data-id="b7">
         <input type="checkbox" id="b7"><label class="title" for="b7">TestFlight 설치 + 실 DSN 도달 확인<span class="tag human">사람</span></label>
