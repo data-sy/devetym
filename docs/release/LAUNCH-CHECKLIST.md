@@ -6,9 +6,9 @@
 >
 > **App:** 개발 어원 사전 (DevEtym) · KMP/Compose Multiplatform, single codebase for **Android + iOS**.
 > **IDs:** appId/bundleId `com.oddmuffin.devetym` · Android 8.0+ (API 26) · iOS 16+ · `versionName=0.1.0`, `versionCode=1`.
-> **Last synced to repo state:** 2026-07-13.
+> **Last synced to repo state:** 2026-07-14.
 >
-> **🧭 Launch sequence (decided 2026-07-13).** Critical path **A → (B·C·D parallel) → E·F**: **A** flip repo public (secret sweep first, irreversible; upstream of everything) → **B** deploy Pages (policy URL, WU-1) · **C** real-device smoke + a11y audit (WU-11) · **D** capture screenshots → **E iOS store submit FIRST** (dev account paid, prior launch experience, no cohort gate → review直行) · **F Android LATER** (closed-testing gate: 20 testers × 14 days). **iOS and Android ship as separate todos** (WU-12a / WU-12b) — different store gates. Source of truth: ROADMAP M9 "출시 시퀀스 확정". **Current (2026-07-13 night): A·B·C done → next = D screenshots, then E (iOS submit) / F (Android closed-testing kickoff).**
+> **🧭 Launch sequence (decided 2026-07-13).** Critical path **A → (B·C·D parallel) → E·F**: **A** flip repo public (secret sweep first, irreversible; upstream of everything) → **B** deploy Pages (policy URL, WU-1) · **C** real-device smoke + a11y audit (WU-11) · **D** capture screenshots → **E iOS store submit FIRST** (dev account paid, prior launch experience, no cohort gate → review直行) · **F Android LATER** (closed-testing gate: 20 testers × 14 days). **iOS and Android ship as separate todos** (WU-12a / WU-12b) — different store gates. Source of truth: ROADMAP M9 "출시 시퀀스 확정". **Current (2026-07-14): A·B·C·D done → E (iOS submit) in progress** — ASC app record created + screenshots uploaded, final pre-submit cross-check `[AI]` passed (review-note example fixed: quicksort→debounce, D9 addendum); remaining = review-note paste (s2) → re-archive/re-upload (b6) → submit (s4, human-only). F (Android) trails. Execution canon: [submission handoff](../handoff/26-07-13-ios-submission-handoff.md) §1.
 
 ## Legend
 
@@ -29,8 +29,8 @@ These are the items that can actually stop or misrepresent the launch. Everythin
 1. ✅ **Privacy policy ↔ implementation mismatch — RESOLVED (2026-07-06).** Decision: reconcile to "**does not currently collect**" (Firebase-later). [`site/privacy-policy.md`](../../site/privacy-policy.md) rewritten: no analytics collected; on-device-only data; the only outbound data is the search keyword + a random rate-limit device id sent for the AI-fallback feature (honestly disclosed). Store labels updated to match ([store-metadata §3–4](m9-store-metadata-draft.md)). ⚠️ Still recommend legal review before external release.
 2. ✅ **Privacy policy deployed → live public URL — RESOLVED (2026-07-13).** Repo flipped **public** (secret sweep clean) → PR #10 merged → GitHub Pages enabled (Actions source) → policy/ToS live (all 200): <https://data-sy.github.io/devetym/privacy-policy>, <https://data-sy.github.io/devetym/terms-of-service>, index <https://data-sy.github.io/devetym/>. URL reflected in [store-metadata §1](m9-store-metadata-draft.md). ✅ in-app policy link aligned (2026-07-13 shell-redesign step 1 — `Constants.privacyPolicyUrl`, stale `devetym.app/privacy` literal replaced).
 3. ✅ **Terms of Service — drafted (2026-07-06).** [`site/terms-of-service.md`](../../site/terms-of-service.md), incl. AI-generated-content disclaimer + acceptable-use (rate limits). ⚠️ Legal review recommended before publish.
-4. 🟡 **Store screenshots not produced.** Full capture recipe handed off: [m9-screenshot-capture-handoff](m9-screenshot-capture-handoff.md) (own session — live sim/emu, per-store sizes). Still blocks store listing until executed.
-5. 🟡 **Signing not wired.** `androidApp/build.gradle.kts` release buildType has no `signingConfig`. Guide exists ([signing-upload-guide](m9-signing-upload-guide.md)); keystore creation is `[H]` (secret key).
+4. 🟡 **Store screenshots — iOS DONE (captured 2026-07-13, framed 5-cut × 2 sizes + ASC upload 2026-07-14); Android not captured.** Recipe: [m9-screenshot-capture-handoff](m9-screenshot-capture-handoff.md). Blocks only F (Android listing), not E.
+5. 🟡 **Signing — iOS proven (2026-07-14: automatic signing `DEVELOPMENT_TEAM` in project.yml, Release archive reached ASC validation on 1st upload attempt); Android not wired.** `androidApp/build.gradle.kts` release buildType has no `signingConfig`; keystore creation is `[H]` (secret key). Guide: [signing-upload-guide](m9-signing-upload-guide.md). Blocks only F.
 6. 🟡 **Developer accounts — Apple confirmed (2026-07-13), Google unknown.** Apple Developer Program **enrolled + billed** (user has prior iOS launch experience) → iOS submit unblocked on this axis. Google Play Console enrollment / billing status still unknown in-repo (needed for F/WU-12b).
 7. 🟢 **Crash reporting added & unified (WU-4 → WU-4B, 2026-07-10).** Sentry now wired as a **single commonMain KMP** (`sentry-kotlin-multiplatform` 0.27.0) — the WU-4 platform-split seam was superseded by WU-4B. **Android = real** (via KMP's transitive `sentry-android`, uncaught-handler, CI-green). **iOS = real** — Kotlin `CrashReporter` initializes Sentry (iosMain no-op removed; `doInitKoin` reads Info.plist `SentryDsn`); Sentry Cocoa static xcframework linked into the app (project.yml) with **Xcode simulator build verified SUCCEEDED**. The old WU-11 SPM/Swift activation path is obsolete. Privacy policy §2-2 + store labels updated. Analytics still deferred (Blocker #1 → Firebase-later). **Blocker #7: fully closed (2026-07-14, PR #14)** — real DSN issued (root `.env`, build-time codegen injection replacing the Info.plist/BuildConfig paths), symbol upload wired (Android mapping · iOS dSYM), and **real crash delivery verified on both platforms** via a temporary crash button (removed after verification). Release-build re-check remains at the TestFlight gate (dashboard b7). See [WU-4 ledger §5–6](../handoff/26-07-10-wu4-crash-reporting-ledger.md).
 
@@ -63,8 +63,8 @@ These are the items that can actually stop or misrepresent the launch. Everythin
 - ✅ `[Defer]` **App preview video.** Optional — **D8 decision (2026-07-13): skip for v1**, revisit in v1.x on screenshot conversion data.
 - ✅ `[AI→H]` **Name / subtitle / description (with keywords).** **Confirmed D3~D5 (2026-07-13)**: name 「개발 어원 사전」 + subtitle A · keywords 95자 final · hook-style description + promo text (stale "opt-in collection" copy retired). Canon: [store-metadata](m9-store-metadata-draft.md) §2·부록 A. Remaining `[H]`: paste into console.
 - 🟡 `[AI→H]` **Category.** Drafted (Education / Developer Tools). Confirm in console.
-- ⬜ `[H]` **Release countries / regions.** Not set. Drives Blocker/GDPR decision (§2).
-- ⬜ `[H]` **Developer account + billing** (Apple Developer / Play Console). Not confirmed (Blocker #6).
+- ✅ `[H]` **Release countries / regions.** **D2 decision (2026-07-13): Korea-only** — GDPR/CCPA N/A (§2 closed).
+- 🟡 `[H]` **Developer account + billing.** Apple **confirmed enrolled+billed (2026-07-13)**; Google Play Console still unknown (Blocker #6 — blocks only F).
 - 🟡 `[H]` **Build signing (code signing, keystore safekeeping).** Guide ready; keystore not created; release `signingConfig` not wired (Blocker #5). Guide: [signing-upload-guide](m9-signing-upload-guide.md).
 
 ## 4. Technical Infrastructure
@@ -87,7 +87,7 @@ These are the items that can actually stop or misrepresent the launch. Everythin
 
 ## 6. Immediately Before & After Launch
 
-- ⬜ `[H]` **Store submission + rejection-response readiness.** Awaits accounts, signed build, assets, resolved Blocker #1. No autonomous submission.
+- 🟡 `[H]` **Store submission + rejection-response readiness.** **iOS in progress (2026-07-14)** — app record + screenshots + metadata in console, final cross-check passed; remaining = review-note paste → re-archive/upload → submit. Rejection response = 리안 lead ([handoff](../handoff/26-07-13-ios-submission-handoff.md) §0/§3-5). Android awaits F. No autonomous submission.
 - ⬜ `[H]` **Staged rollout percentage (Android).** Not configured (set at Play Console publish time).
 - ⬜ `[Defer]` **Post-launch monitoring dashboard.** Blocked on §4 (no analytics/crash backend).
 - ✅ `[AI]` **CS / inquiry channel.** Support email `oddmuffinstudio@gmail.com` (policy §8, metadata §1). Confirm it's monitored.
