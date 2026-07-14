@@ -326,10 +326,6 @@
         <input type="checkbox" id="b6" checked><label class="title" for="b6">Release 아카이브 → App Store Connect 업로드<span class="tag human">사람</span></label>
         <div class="meta">Xcode Product → Archive → Distribute App — <a href="m9-signing-upload-guide.md">서명 가이드 §2</a>. <b>1차 업로드 ITMS-90474 거부(2026-07-14, iPad 요건)</b> → 아이폰 전용 전환(<code>TARGETED_DEVICE_FAMILY=1</code>)으로 해소 — ⚠️ 재아카이브는 <b><code>fix/m9-iphone-only</code>→main 병합 후 main 기준</b>(병합·push=사람. 구 feat→main은 PR #11 완료). 빌드 번호는 검증 거부라 재사용 가능(충돌 시 +1). <b>✅ 재아카이브·재업로드 완료(2026-07-14 — 심사 제출에 빌드 첨부됨).</b></div>
       </li>
-      <li class="item" data-id="b7">
-        <input type="checkbox" id="b7"><label class="title" for="b7">TestFlight 설치 + 실 DSN 도달 확인<span class="tag human">사람</span></label>
-        <div class="meta">릴리즈 빌드 실기기 확인 + 크래시 리포팅 실 왕복 — 개발 빌드 실증은 완료(2026-07-14, b4)이므로 릴리즈 아카이브 빌드에서의 도달·dSYM 심볼화 재확인만.</div>
-      </li>
     </ul>
   </section>
 
