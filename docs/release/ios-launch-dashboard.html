@@ -239,27 +239,27 @@
         <div class="meta">✅ 이름·설명·키워드·라벨·대안 카피 — <a href="m9-store-metadata-draft.md">m9-store-metadata-draft</a>. 방침 URL 반영 완료(2026-07-13).</div>
       </li>
       <li class="item" data-id="m2">
-        <input type="checkbox" id="m2"><label class="title" for="m2">이름·부제 콘솔 입력<span class="tag aih">AI→사람</span></label>
+        <input type="checkbox" id="m2" checked><label class="title" for="m2">이름·부제 콘솔 입력<span class="tag aih">AI→사람</span></label>
         <div class="meta">D3 확정 후. 이름 ≤30자·부제 ≤30자.</div>
       </li>
       <li class="item" data-id="m3">
-        <input type="checkbox" id="m3"><label class="title" for="m3">설명·프로모션 텍스트 입력<span class="tag aih">AI→사람</span></label>
+        <input type="checkbox" id="m3" checked><label class="title" for="m3">설명·프로모션 텍스트 입력<span class="tag aih">AI→사람</span></label>
         <div class="meta">D5 확정 후. 프로모션 텍스트 ≤170자(심사 없이 교체 가능). 글자수 제한 재확인.</div>
       </li>
       <li class="item" data-id="m4">
-        <input type="checkbox" id="m4"><label class="title" for="m4">키워드 입력<span class="tag aih">AI→사람</span></label>
+        <input type="checkbox" id="m4" checked><label class="title" for="m4">키워드 입력<span class="tag aih">AI→사람</span></label>
         <div class="meta">D4 확정 후. ≤100자·쉼표 구분·공백 없음·이름/부제 중복 제외.</div>
       </li>
       <li class="item" data-id="m5">
-        <input type="checkbox" id="m5"><label class="title" for="m5">카테고리 입력<span class="tag aih">AI→사람</span></label>
+        <input type="checkbox" id="m5" checked><label class="title" for="m5">카테고리 입력<span class="tag aih">AI→사람</span></label>
         <div class="meta">초안: 교육 / 개발자 도구. ⚠️ Kids Category 등록 금지(AI 생성 응답 — 메타 초안 §4).</div>
       </li>
       <li class="item" data-id="m6">
-        <input type="checkbox" id="m6"><label class="title" for="m6">연령 등급 questionnaire<span class="tag human">사람</span></label>
+        <input type="checkbox" id="m6" checked><label class="title" for="m6">연령 등급 questionnaire<span class="tag human">사람</span></label>
         <div class="meta">D7 방향 확정 후 콘솔에서 응답.</div>
       </li>
       <li class="item" data-id="m7">
-        <input type="checkbox" id="m7"><label class="title" for="m7">App Privacy 라벨 입력<span class="tag aih">AI→사람</span></label>
+        <input type="checkbox" id="m7" checked><label class="title" for="m7">App Privacy 라벨 입력<span class="tag aih">AI→사람</span></label>
         <div class="meta">정본 매핑 = <a href="m9-store-metadata-draft.md">메타 초안 §3-3</a>: User Content(검색어)·Identifiers(X-Device-Id)·<b>Diagnostics/Crash Data 체크 누락 주의</b>. Tracking 없음.</div>
       </li>
       <li class="item" data-id="m8">
@@ -307,11 +307,11 @@
         <div class="meta">✅ 팀 4H79F9W5AQ·와일드카드 프로파일 — devicectl WiFi 설치·기동(2026-07-13).</div>
       </li>
       <li class="item" data-id="b2">
-        <input type="checkbox" id="b2"><label class="title" for="b2">버전·빌드 번호 확정<span class="tag aih">AI→사람</span></label>
-        <div class="meta">`CFBundleShortVersionString=0.1.0`·`CFBundleVersion=1` — 1.0.0으로 올릴지 포함해 확인.</div>
+        <input type="checkbox" id="b2" checked><label class="title" for="b2">버전·빌드 번호 확정<span class="tag aih">AI→사람</span></label>
+        <div class="meta">`CFBundleShortVersionString=0.1.0`·`CFBundleVersion=2`로 제출(2026-07-14 — 구 서술 CFBundleVersion=1은 아카이브 준비 커밋 9f61b32에서 2로 승격).</div>
       </li>
       <li class="item" data-id="b3">
-        <input type="checkbox" id="b3"><label class="title" for="b3">Distribution 서명 설정<span class="tag human">사람</span></label>
+        <input type="checkbox" id="b3" checked><label class="title" for="b3">Distribution 서명 설정<span class="tag human">사람</span></label>
         <div class="meta">Xcode Signing &amp; Capabilities → Team → 자동 서명. 인증서는 비밀키(자율 금지) — <a href="m9-signing-upload-guide.md">서명 가이드 §2</a>.</div>
       </li>
       <li class="item" data-id="b4">
@@ -323,8 +323,8 @@
         <div class="meta">✅ Info.plist `ITSAppUsesNonExemptEncryption=false` 명시(2026-07-13) — HTTPS 표준 암호화만 사용(면제), 업로드 후 문답 생략.</div>
       </li>
       <li class="item" data-id="b6">
-        <input type="checkbox" id="b6"><label class="title" for="b6">Release 아카이브 → App Store Connect 업로드<span class="tag human">사람</span></label>
-        <div class="meta">Xcode Product → Archive → Distribute App — <a href="m9-signing-upload-guide.md">서명 가이드 §2</a>. <b>1차 업로드 ITMS-90474 거부(2026-07-14, iPad 요건)</b> → 아이폰 전용 전환(<code>TARGETED_DEVICE_FAMILY=1</code>)으로 해소 — ⚠️ 재아카이브는 <b><code>fix/m9-iphone-only</code>→main 병합 후 main 기준</b>(병합·push=사람. 구 feat→main은 PR #11 완료). 빌드 번호는 검증 거부라 재사용 가능(충돌 시 +1).</div>
+        <input type="checkbox" id="b6" checked><label class="title" for="b6">Release 아카이브 → App Store Connect 업로드<span class="tag human">사람</span></label>
+        <div class="meta">Xcode Product → Archive → Distribute App — <a href="m9-signing-upload-guide.md">서명 가이드 §2</a>. <b>1차 업로드 ITMS-90474 거부(2026-07-14, iPad 요건)</b> → 아이폰 전용 전환(<code>TARGETED_DEVICE_FAMILY=1</code>)으로 해소 — ⚠️ 재아카이브는 <b><code>fix/m9-iphone-only</code>→main 병합 후 main 기준</b>(병합·push=사람. 구 feat→main은 PR #11 완료). 빌드 번호는 검증 거부라 재사용 가능(충돌 시 +1). <b>✅ 재아카이브·재업로드 완료(2026-07-14 — 심사 제출에 빌드 첨부됨).</b></div>
       </li>
       <li class="item" data-id="b7">
         <input type="checkbox" id="b7"><label class="title" for="b7">TestFlight 설치 + 실 DSN 도달 확인<span class="tag human">사람</span></label>
@@ -343,16 +343,16 @@
         <div class="meta">bundleId `com.oddmuffin.devetym` 등록 + 앱 레코드 생성. ✅ 완료 근거: 2026-07-14 스크린샷 ASC 슬롯 업로드 완료(앱 레코드 없이 불가) + 저작권 값 콘솔 입력(메타 초안 §1).</div>
       </li>
       <li class="item" data-id="s2">
-        <input type="checkbox" id="s2"><label class="title" for="s2">심사 노트 작성·입력<span class="tag aih">AI→사람</span></label>
-        <div class="meta">전문 확정 완료(D9 · 2026-07-13, 07-14 추기: AI 폴백 예시어 quicksort→debounce — quicksort가 번들 수록으로 무효 판정) — 정본 <a href="m9-store-metadata-draft.md">메타 초안 §5</a>(83~112행 코드 블록). 남은 건 [사람] 콘솔 App Review Information란 붙여넣기.</div>
+        <input type="checkbox" id="s2" checked><label class="title" for="s2">심사 노트 작성·입력<span class="tag aih">AI→사람</span></label>
+        <div class="meta">전문 확정 완료(D9 · 2026-07-13, 07-14 추기: AI 폴백 예시어 quicksort→debounce — quicksort가 번들 수록으로 무효 판정) — 정본 <a href="m9-store-metadata-draft.md">메타 초안 §5</a>(83~112행 코드 블록). ✅ 콘솔 붙여넣기 완료(2026-07-14, debounce 반영본).</div>
       </li>
       <li class="item" data-id="s3">
-        <input type="checkbox" id="s3"><label class="title" for="s3">제출 전 최종 점검<span class="tag human">사람</span></label>
+        <input type="checkbox" id="s3" checked><label class="title" for="s3">제출 전 최종 점검<span class="tag human">사람</span></label>
         <div class="meta"><a href="m9-signing-upload-guide.md">서명 가이드 §3</a>: 방침 URL 접근성·버전 정합·인증서 백업·시크릿 미커밋.</div>
       </li>
       <li class="item" data-id="s4">
-        <input type="checkbox" id="s4"><label class="title" for="s4">심사 제출<span class="tag ext">외부</span></label>
-        <div class="meta">⚠️ 사람 지시로만(자율 금지). 제출 후 심사 대기 통상 1~3일.</div>
+        <input type="checkbox" id="s4" checked><label class="title" for="s4">심사 제출<span class="tag ext">외부</span></label>
+        <div class="meta">⚠️ 사람 지시로만(자율 금지). <b>✅ 제출 완료(2026-07-14, 사람)</b> — 심사 대기(통상 1~3일). 가격 ₩0(무료)·한국 단독·수동 게시로 입력(D2·D6 정합).</div>
       </li>
       <li class="item" data-id="s5">
         <input type="checkbox" id="s5"><label class="title" for="s5">리젝 대응 (발생 시)<span class="tag aih">AI→사람</span></label>
@@ -375,8 +375,8 @@
         <div class="meta">✅ <a href="hotfix-runbook.md">hotfix-runbook</a> — 트리아지·릴리즈 태그 분기·롤백.</div>
       </li>
       <li class="item" data-id="p2">
-        <input type="checkbox" id="p2"><label class="title" for="p2">릴리즈 태그·커밋 고정<span class="tag ai">AI</span></label>
-        <div class="meta">게시 시점 커밋에 `v0.1.0` 태그(핫픽스 런북 전제).</div>
+        <input type="checkbox" id="p2" checked><label class="title" for="p2">릴리즈 태그·커밋 고정<span class="tag ai">AI</span></label>
+        <div class="meta">게시 시점 커밋에 `v0.1.0` 태그(핫픽스 런북 전제). ✅ 07-14 사용자 지시로 <b>제출 시점 선행 부여</b>(D6 추기) — 리젝으로 코드 수정 시 재지정.</div>
       </li>
       <li class="item" data-id="p3">
         <input type="checkbox" id="p3"><label class="title" for="p3">Sentry·문의 채널 모니터링 시작<span class="tag human">사람</span></label>

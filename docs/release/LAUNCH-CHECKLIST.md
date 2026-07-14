@@ -8,7 +8,7 @@
 > **IDs:** appId/bundleId `com.oddmuffin.devetym` · Android 8.0+ (API 26) · iOS 16+ · `versionName=0.1.0`, `versionCode=1`.
 > **Last synced to repo state:** 2026-07-14.
 >
-> **🧭 Launch sequence (decided 2026-07-13).** Critical path **A → (B·C·D parallel) → E·F**: **A** flip repo public (secret sweep first, irreversible; upstream of everything) → **B** deploy Pages (policy URL, WU-1) · **C** real-device smoke + a11y audit (WU-11) · **D** capture screenshots → **E iOS store submit FIRST** (dev account paid, prior launch experience, no cohort gate → review直行) · **F Android LATER** (closed-testing gate: 20 testers × 14 days). **iOS and Android ship as separate todos** (WU-12a / WU-12b) — different store gates. Source of truth: ROADMAP M9 "출시 시퀀스 확정". **Current (2026-07-14): A·B·C·D done → E (iOS submit) in progress** — ASC app record created + screenshots uploaded, final pre-submit cross-check `[AI]` passed (review-note example fixed: quicksort→debounce, D9 addendum); remaining = review-note paste (s2) → re-archive/re-upload (b6) → submit (s4, human-only). F (Android) trails. Execution canon: [submission handoff](../handoff/26-07-13-ios-submission-handoff.md) §1.
+> **🧭 Launch sequence (decided 2026-07-13).** Critical path **A → (B·C·D parallel) → E·F**: **A** flip repo public (secret sweep first, irreversible; upstream of everything) → **B** deploy Pages (policy URL, WU-1) · **C** real-device smoke + a11y audit (WU-11) · **D** capture screenshots → **E iOS store submit FIRST** (dev account paid, prior launch experience, no cohort gate → review直行) · **F Android LATER** (closed-testing gate: 20 testers × 14 days). **iOS and Android ship as separate todos** (WU-12a / WU-12b) — different store gates. Source of truth: ROADMAP M9 "출시 시퀀스 확정". **Current (2026-07-14): A·B·C·D done → E SUBMITTED (in review)** — full console metadata + review notes (debounce fix) + build 0.1.0(2) attached; awaiting Apple review (1–3 days typical), then manual release `[H]`. Residue: b7 TestFlight real-DSN recheck skipped pre-submit (dev-build verified; do around release). F (Android) trails. Execution canon: [submission handoff](../handoff/26-07-13-ios-submission-handoff.md) §1.
 
 ## Legend
 
@@ -87,7 +87,7 @@ These are the items that can actually stop or misrepresent the launch. Everythin
 
 ## 6. Immediately Before & After Launch
 
-- 🟡 `[H]` **Store submission + rejection-response readiness.** **iOS in progress (2026-07-14)** — app record + screenshots + metadata in console, final cross-check passed; remaining = review-note paste → re-archive/upload → submit. Rejection response = 리안 lead ([handoff](../handoff/26-07-13-ios-submission-handoff.md) §0/§3-5). Android awaits F. No autonomous submission.
+- ✅(iOS)/⬜(Android) `[H]` **Store submission + rejection-response readiness.** **iOS SUBMITTED 2026-07-14** (full metadata + review notes + build 0.1.0(2), free/Korea-only/manual-release) — now **in review**. Rejection response = 리안 lead ([handoff](../handoff/26-07-13-ios-submission-handoff.md) §0/§3-5). Android awaits F. No autonomous submission.
 - ⬜ `[H]` **Staged rollout percentage (Android).** Not configured (set at Play Console publish time).
 - ⬜ `[Defer]` **Post-launch monitoring dashboard.** Blocked on §4 (no analytics/crash backend).
 - ✅ `[AI]` **CS / inquiry channel.** Support email `oddmuffinstudio@gmail.com` (policy §8, metadata §1). Confirm it's monitored.
