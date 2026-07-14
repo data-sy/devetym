@@ -56,10 +56,10 @@
 
 > **〔2026-07-13 추기 — 대부분 해소〕** 아래 항목 중 메일·클립보드·공유·앱평가·VoiceOver는 같은 날 **셸 재설계
 > 스텝 1~3 + 실기기 라운드 1·2 사인오프**로 종결(공유 no-op·앱평가 죽은 URL은 실구현으로 대체). 정본 =
-> [셸 재설계 체크리스트](m9-shell-redesign-device-checklist.md)·ROADMAP. 잔여 = TalkBack·Dynamic Type·실 DSN(선택/후속).
+> [셸 재설계 체크리스트](m9-shell-redesign-device-checklist.md)·ROADMAP. 잔여 = TalkBack·Dynamic Type(선택/후속) — 실 DSN은 2026-07-14 실증 완료(아래 추기).
 
 - **[사람] Tier 2 실기기**: 메일 실전송·앱간 클립보드 체감·실 DPI 아이콘·햅틱·TalkBack/VoiceOver 실감사([접근성 대본](m9-accessibility-audit-script.md)) — VoiceOver/Accessibility Inspector는 시뮬에서도 사람 상호작용 필요라 미주행
-- **[사람] Sentry 실 DSN 런타임 도달** (WU-4B 잔여 — 실기기 스모크 시)
+- ~~**[사람] Sentry 실 DSN 런타임 도달** (WU-4B 잔여 — 실기기 스모크 시)~~ → ✅ **실증 완료(2026-07-14, PR #14)**: DSN 발급·코드젠 주입 + 임시 크래시 버튼으로 iOS·Android 실 크래시 Sentry 도달 확인([WU-4 원장 §6](../handoff/26-07-10-wu4-crash-reporting-ledger.md))
 - iOS 공유 시트 no-op(알려진 백로그)·메일/앱평가는 시뮬 한계로 Tier 2 귀속
 
 ## 6. M9-후속 UX 3건 구현·재주행 (2026-07-13 오후, iPhone 16 Pro)
