@@ -199,8 +199,10 @@ def main() -> int:
         print("\n── 토큰 사용량 합계 ──")
         for key in sorted(tokens):
             print(f"  {key:32s} {tokens[key]:>12,}")
+        # "uncached_input_tokens" 키에도 "cache"가 부분 문자열로 들어가므로
+        # 제외 조건이 아니라 포함 조건으로 캐시 미적중 입력을 집계한다.
         cached = sum(v for k, v in tokens.items() if "cache_read" in k)
-        uncached = sum(v for k, v in tokens.items() if "input" in k and "cache" not in k)
+        uncached = sum(v for k, v in tokens.items() if "uncached_input" in k or "cache_creation" in k)
         if cached + uncached > 0:
             print(f"  → 입력 캐시 적중 비율: {cached / (cached + uncached) * 100:.0f}% (높을수록 절감 중)")
 

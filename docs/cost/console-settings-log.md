@@ -36,3 +36,26 @@
 3. 이메일 알림 $10 → $20 → $25 (사람 대응 시간)
 4. **월 지출 한도 $30 (Console — 최종 하드캡)** → 도달 시 사용자에겐 402 문구, 매월 1일 자동 해제
 5. 크레딧 자동 리로드($5→$15)는 상한이 아니라 **유동성** — 서비스가 예측 불가능한 시점에 끊기는 것을 방지
+
+---
+
+## 2026-07-14 (저녁) — 잔여 2건 해소: D1 활성화 + Admin 키 발급
+
+> 위 초기 세팅 항목의 "usage D1 기록만 미활성" 주석은 이 항목으로 대체됨.
+
+### 프록시 usage D1 (devetym-proxy)
+
+| 항목 | 값 | 비고 |
+|---|---|---|
+| D1 데이터베이스 | `devetym-usage` (`e76366e6-34e1-4a1a-8ed7-c771bd650580`, APAC) | `wrangler login` 재인증(d1:write 스코프)으로 생성 |
+| 마이그레이션 | `0001_usage_log.sql` 적용 완료 (remote) | usage_log 테이블 |
+| 배포 | 버전 `c5cd809f` — `USAGE_DB` 바인딩 라이브 | devetym-proxy 커밋 `c7218db`(푸시됨) |
+| 검증 | 무과금 스모크 통과: GET→405 · 비JSON→400 · 40KB→413 | usage_log 실적재 눈확인은 실검색 1회(~$0.03) 필요 — 보류 |
+
+### Anthropic Console — Admin 키
+
+| 항목 | 값 | 비고 |
+|---|---|---|
+| Admin API 키 | **발급됨** — 이름 `admin-cost-logging-rot-2026-10`, 만료 90일 | 키 값 기록 금지. 비용 로깅 전용(재사용 금지) |
+| 보관 | repo 루트 `.env` (gitignore 등록·chmod 600) | 로드: `set -a; source .env; set +a` |
+| 첫 리포트 | `Scripts/cost/report.py` 성공 — 7월 합계 $0.20(예산 1%), 캐시 적중 54% | 적중률 uncached 집계 버그 보정 커밋 포함 |

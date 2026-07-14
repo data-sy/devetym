@@ -1,5 +1,7 @@
 # 핸드오프: 비용 관리 트랙 잔여 2건 + 서류 최신화 + D1 재배포 (2026-07-14)
 
+> ✅ **완료(2026-07-14 저녁)** — 작업 1(D1 활성화·재배포·무과금 스모크)·작업 2(Admin 키 → 첫 리포트 $0.20·캐시 54%)·작업 3(서류 최신화) 전부 닫힘. 상세는 [설정 로그 07-14 저녁 항목](../cost/console-settings-log.md). 잔여(선택): usage_log 실적재 눈확인(실검색 1회 ~$0.03, 402 수집 트랙 착수 시 겸사). 키 보관은 핸드오프 상정(`Scripts/cost/.env.local`)과 달리 **루트 `.env`** 로 확정.
+
 > **다음 세션 시작점.** 비용 관리·모니터링 체계는 2026-07-14 구현·머지·배포 완료(ROADMAP Done "비용 관리·모니터링 체계" 항목). 이 문서는 그 **잔여 2건**을 닫는 세션의 정본이다.
 > 배경 정본: [`docs/cost/cost-management-decision.md`](../cost/cost-management-decision.md)(결정·체크리스트) · [`docs/cost/console-settings-log.md`](../cost/console-settings-log.md)(Console 설정 스냅샷)
 
