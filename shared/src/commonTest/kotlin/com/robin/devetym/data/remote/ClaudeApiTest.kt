@@ -90,6 +90,14 @@ class ClaudeApiTest {
     }
 
     @Test
+    fun test_generate_402_ServiceExhausted() = runTest {
+        // 프록시가 Anthropic 결제 계열 에러(크레딧 소진·지출 한도)를 402로 매핑 — 전용 안내 문구 경로.
+        assertFailsWith<ClaudeException.ServiceExhausted> {
+            api(HttpStatusCode.PaymentRequired, """{"error":"service_exhausted"}""").generate("mutex")
+        }
+    }
+
+    @Test
     fun test_generate_5xx_InvalidResponse() = runTest {
         // 529 Overloaded·프록시 앞단 503 HTML 오류페이지 — body 디코드 전 status 매핑(DR-1, 크래시 금지).
         assertFailsWith<ClaudeException.InvalidResponse> {

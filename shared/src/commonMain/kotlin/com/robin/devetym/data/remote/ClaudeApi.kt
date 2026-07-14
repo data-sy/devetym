@@ -25,6 +25,12 @@ sealed class ClaudeException(cause: Throwable? = null) : Exception(cause) {
     /** HTTP 429 — 기기당 일일 한도 초과(프록시). */
     data object DailyLimitExceeded : ClaudeException()
 
+    /**
+     * HTTP 402 — 서비스측 소진(프록시가 Anthropic 결제 계열 에러를 매핑: 크레딧 잔액 0·월 지출
+     * 한도 도달). 429(기기당 한도)와 달리 사용자 잘못이 아닌 운영 상태 — 전용 안내 문구 대상.
+     */
+    data object ServiceExhausted : ClaudeException()
+
     /** 요청/응답 타임아웃. */
     data object Timeout : ClaudeException()
 
@@ -61,6 +67,7 @@ class ClaudeApi(
         // status를 body 디코드 '전에' 검사(DR-1). 429=한도, 그 밖 non-2xx(529 Overloaded·프록시 앞단
         // 502/503/524 HTML 오류페이지)는 ClaudeResponse가 아니므로 디코드에 태우지 않고 매핑한다.
         if (res.status.value == 429) throw ClaudeException.DailyLimitExceeded
+        if (res.status.value == 402) throw ClaudeException.ServiceExhausted
         if (!res.status.isSuccess()) throw ClaudeException.InvalidResponse
 
         return try {
