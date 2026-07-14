@@ -16,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.robin.devetym.db.SearchHistory
 import com.robin.devetym.ui.HistoryViewModel
 import com.robin.devetym.ui.components.EmptyState
@@ -71,8 +73,10 @@ fun HistoryContent(
                             modifier = Modifier.weight(1f))
                         Text(relativeTimeLabel(now, h.searchedAt), style = AppScheme.type.caption,
                             color = AppScheme.colors.textMuted)
+                        // "✕"는 TTS 낭독 이름이 없어 "발음할 수 없음"으로 읽힘(실주행 2026-07-14) → 라벨 부여.
                         Text("✕", style = AppScheme.type.caption, color = AppScheme.colors.textMuted,
-                            modifier = Modifier.clickable { onDelete(h.keyword) }.padding(start = 12.dp))
+                            modifier = Modifier.clickable { onDelete(h.keyword) }.padding(start = 12.dp)
+                                .semantics { contentDescription = "삭제" })
                     }
                     HorizontalDivider(color = AppScheme.colors.border, thickness = dim.strokeBorder)
                 }

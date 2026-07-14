@@ -22,6 +22,12 @@ targets:
         INFOPLIST_FILE: iosApp/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: com.oddmuffin.devetym
         SWIFT_VERSION: "5.0"
+        # M9 — iPhone 전용(iPad 제외). 스토어 계획이 iPhone-first(iPad 스샷 미제출)인데 XcodeGen 기본값
+        # "1,2"(iPad 포함)로 생성돼 세로 전용 앱이 iPad 멀티태스킹 4방향 요건에 걸림(업로드 거부 ITMS-90474).
+        TARGETED_DEVICE_FAMILY: "1"
+        # M9 — 서명 팀(Xcode UI 선택분을 정본으로 승격 — xcodegen 재생성 시 유실 방지). 팀 ID는 비밀 아님.
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 4H79F9W5AQ
         # M9 — 원본(dev-etymology) Assets.xcassets 이관분: AppIcon(라이트/다크 단일 1024)·
         # LaunchLogo·Theme/brand(#2E5D3A, UILaunchScreen 배경). WU-6 원장 §3 NEEDS-MIGRATION 해소.
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

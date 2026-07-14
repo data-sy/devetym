@@ -77,8 +77,8 @@ adb logcat -d | grep -iE "devetym|AndroidRuntime|FATAL"   # 첫 기동 크래시
 - ✅ iOS 공유시트 실동작 — **셸 재설계 스텝 1에서 `UIActivityViewController` 실구현**(구 no-op dead button 해소) + 라운드 2에서 프레젠테이션(iPhone 기본 시트)·전문 페이로드 보정 → 사용자 사인오프(2026-07-13). 정본 = [셸 재설계 체크리스트](m9-shell-redesign-device-checklist.md)
 - ☐ **실 DPI 아이콘 선명도**·홈스크린 실렌더(시뮬은 근사 — 홈스크린 렌더 자체는 사용자 실사용 중 무지적)
 - ☐ 햅틱·실 제스처 뉘앙스(앱에 커스텀 햅틱 없음 — 선택)
-- ✅ VoiceOver **실기기 사용자 사인오프**(2026-07-13 아이폰 13 mini — "보이스오버는 됐다" 판정, Inspector 감사 생략 대체) · ☐ TalkBack(Android)은 실기기 확보 시 잔여
-- ☐ Dynamic Type 실반영(시뮬로도 상당부분 가능)
+- ✅ VoiceOver **대본 기반 정식 주행 종결**(2026-07-14 아이폰 13 mini — [감사 대본 §D](m9-accessibility-audit-script.md): 게이트 위반 0, 결함 3건 수정·재확인, 백로그 3건. 07-13 비공식 사인오프를 대체) · ☐ TalkBack(Android)은 실기기 확보 시 잔여
+- ✅ Dynamic Type 실반영(2026-07-14 최대 크기 주행 — 알약 짜부 1건 FlowRow 수정 후 무손상 확인, 감사 대본 §D #2)
 
 ## Tier 3 · `[사람/외부]` — 환원 불가 (자율 금지, 지시 대기)
 - ☐ **코드 서명**(실 keystore/인증서 — 시뮬 빌드는 서명 불요이나 배포는 필수) — [서명 가이드](m9-signing-upload-guide.md)

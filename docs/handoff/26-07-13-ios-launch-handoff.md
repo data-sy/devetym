@@ -3,6 +3,8 @@
 > **작성**: 2026-07-13 밤 (같은 날 D1~D9 결정·iOS 캡처 완료 반영). **다음 세션 진입점**: [E 제출 핸드오프](26-07-13-ios-submission-handoff.md) — 이 문서는 D 구간 이력 스냅샷으로 보존.
 > **상태 정본**: [ROADMAP M9](../../ROADMAP.md) + [iOS 출시 대시보드](../release/ios-launch-dashboard.html)(체크박스 `checked` 속성이 정본). 이 핸드오프는 진입용 스냅샷 — 충돌 시 정본 우선.
 
+> **⚠️ superseded (2026-07-14)**: 이 핸드오프의 목적(D1~D9 결정 세션 진입)은 완료됐다. 현행 진입점 = [E 제출 핸드오프](26-07-13-ios-submission-handoff.md) — 이하는 당시 스냅샷으로 보존(브랜치·스크린샷 서술은 이후 변경됨).
+
 ## 1. 현재 위치 (2026-07-13 병합 직후)
 
 - **main = M9 검증 구간.** PR #9(merge-commit) 병합 완료 — 셸 재설계 종결·실기기 사인오프·5축 green까지 전부 main에 있음. `feat/m9-release-verification` 브랜치는 보존(삭제 금지 규율).
