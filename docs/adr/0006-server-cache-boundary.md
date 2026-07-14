@@ -19,6 +19,7 @@ ADR-0004는 백엔드를 **얇은 프록시**(키 주입 + 기기당 한도)로 
 4. **버전 태깅 (INV-9)** — 모든 entry가 prompt/schema 버전을 실어 선택적 무효화·재생성이 가능. 클라 `TermEntry.schemaVersion`/`promptVersion` 옵셔널 필드에 왕복 수용(M1 반영 완료).
 5. **local-first pinning (INV-6·INV-11)** — 사용자가 본 항목은 기기에 저장돼 그 사용자에겐 불변. 서버 진화는 명시적 새로고침한 사용자·아직 안 본 사용자에게만. 서버는 SSOT가 아니라 freshness 담당 — 서버가 죽어도 앱은 로컬/번들로 살아있다.
 6. **프롬프트·도구 스키마 위치는 ADR-0004 유지** — `commonMain` 소유, 두 클라이언트가 같은 프록시 공유. 서버 이전은 여전히 유보(향후 재검토).
+7. **오류 계약 확장 (2026-07-14 추가)** — ADR-0004에서 계승한 `429`(기기당 일일 한도) 옆에 **`402` = 서비스측 소진**을 추가한다. 프록시가 Anthropic 결제 계열 에러(크레딧 잔액 0·월 지출 한도 도달)를 402 `service_exhausted`로 매핑하고, 클라이언트는 `ServiceExhausted`로 전용 안내 문구를 띄운다. 사용자 귀책(429)과 운영 상태(402)의 의미 분리. `503`은 Cloudflare 앞단 오류 페이지 몫으로 남긴다. 배경: [`../cost/cost-management-decision.md`](../cost/cost-management-decision.md).
 
 **빌트인 배치(락 지점)**: M2 DB 스키마에 pinning·version 컬럼 / M3 클라를 read-through 계약에 작성 + 서버 캐시 신규 구축 / M4 Repository를 3계층으로 / M8 승격 잡·팩 동기화 메커니즘. 상세는 ROADMAP M2~M8의 🔗 항목.
 
