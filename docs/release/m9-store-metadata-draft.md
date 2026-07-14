@@ -91,7 +91,7 @@ after install.
 [How to demo — offline] 650+ terms are bundled offline. Search "mutex" or "daemon" to
 see a full entry (etymology, naming rationale, category) with no network required.
 
-[How to demo — AI fallback] Searching a term not in the bundle (e.g. "quicksort")
+[How to demo — AI fallback] Searching a term not in the bundle (e.g. "debounce")
 generates an entry via AI. Requests go through our proxy server — no API key is
 embedded in the app. AI generation has a per-device daily limit; the bundled 650 terms
 are unlimited and work offline, so the app remains fully functional if the network or

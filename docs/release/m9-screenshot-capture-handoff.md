@@ -18,7 +18,7 @@ Same order as the smoke script's flow. Aim for 5–8 shots (both stores cap at 8
 | 1 | Onboarding (intro) | Fresh install, first launch | What the app is |
 | 2 | Search results — bundle hit | Search `mutex` (or `daemon`) | Instant offline dictionary |
 | 3 | Term detail | Open a term with a rich etymology (e.g. `daemon`, `kernel`) | The core value: *why* the name |
-| 4 | AI-generated result | Search a term **not** in bundle (e.g. `quicksort`) → AI fills it | AI fallback |
+| 4 | AI-generated result | Search a term **not** in bundle (e.g. `debounce` — ⚠️ 구 예시 `quicksort`는 이후 번들에 수록돼 폐기, 07-14 D9 추기와 동일) → AI fills it | AI fallback |
 | 5 | Bookmarks | A few bookmarked terms | Personal library |
 | 6 | Search history | A few recent searches | Convenience |
 | 7 | Appearance / settings | Settings screen showing light/dark/system | Polish |
