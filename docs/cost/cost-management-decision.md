@@ -104,15 +104,18 @@
 ## 5. 우선순위 로드맵
 
 ### 지금 당장 (~1시간, 대부분 Console 클릭 — 사람 작업)
+- [ ] **Console에서 조직(Organization) 설정** — ⚠️ 구현 중 확인(2026-07-14): Admin API는 "개인 계정"에서 사용 불가. Console → Settings → Organization에서 조직을 만들어야 아래 Admin 키 발급이 열린다
 - [ ] Console에서 워크스페이스 2개 생성 (`dev-scripts`, `proxy-runtime`)
 - [ ] 워크스페이스별 spend limit 설정 (임시: dev $15 / runtime $10) + 사용량 알림 활성화
 - [ ] 새 API 키 2개 발급: 로컬 `ANTHROPIC_API_KEY` 교체(dev-scripts 키), 프록시 Worker secret 교체(runtime 키). 기존 키는 비활성화
-- [ ] Admin API 키 발급 (비용 리포트 스크립트용 — 로컬 보관, repo 커밋 금지)
+- [ ] Admin API 키 발급 (비용 리포트 스크립트용 — `ANTHROPIC_ADMIN_KEY`로 로컬 보관, repo 커밋 금지)
+- [ ] 프록시 하드닝 배포: `cd ~/devetym-proxy && npx wrangler deploy` (+ usage 기록 활성화는 `wrangler.toml` ⑤ 절차 — D1 생성 후 주석 해제)
 
-### 다음 마일스톤에 넣을 것 (Claude Code 구현 작업)
-- [ ] `Scripts/cost/report.py` — Admin API 비용/사용량 리포트 조회 → 표면별 월간 지출 표 출력 (구현 시 Admin API 엔드포인트 최신 스펙 확인 후 작성)
-- [ ] devetym-proxy 하드닝 (CMP M3 서버 캐시 구축과 병합): ① 클라 본문의 `model`·`max_tokens`·`thinking`을 서버 상수로 덮어쓰기 ② 전역 일일 API 호출 캡(초과 시 429) ③ 캐시 히트/미스·usage 토큰 D1 기록
-- [ ] `probe_prompt.py`에 실행 전 예상 비용 확인 프롬프트 1개 추가 (유일한 스크립트 측 변경)
+### 다음 마일스톤에 넣을 것 (Claude Code 구현 작업) — ✅ 2026-07-14 구현 완료
+- [x] `Scripts/cost/report.py` — Admin API 비용/사용량 리포트 (워크스페이스별 비용·일별 추이·캐시 적중률). `devetym` repo `feat/cost-management` 브랜치
+- [x] devetym-proxy 하드닝: ① `model`·`max_tokens`·`thinking` 서버 강제 + 본문 32KB 캡 ② 전역 일일 캡(200회/일) ③ usage 토큰 D1 기록(마이그레이션 포함, 바인딩 선택적). `devetym-proxy` repo `feat/cost-hardening` 브랜치 — **배포는 사람 작업(위 체크리스트)**. 캐시 히트/미스 컬럼은 CMP M3에서 캐시와 함께 추가
+- [x] `probe_prompt.py` 실행 전 예상 비용 확인 게이트 (`--yes`로 스킵)
+- 참고: 컨설팅 프롬프트의 "devetym-proxy는 이 로컬에 없음"은 stale — `/Users/owner/devetym-proxy`에 존재 확인
 
 ### 사용자 늘면 / 트리거 발생 시
 - [ ] 히트율·비용 추이 간이 대시보드 (D1 usage 테이블 → 주간 요약)
