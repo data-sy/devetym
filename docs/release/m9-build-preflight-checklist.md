@@ -16,23 +16,24 @@
 ### A. 다른 세션 착지 — 코드 정본 확정 (아카이브는 main 기준이므로 전부 main에 모여야 함)
 
 - [ ] **[사람]** 다른 세션들 작업 완료 선언 — 어떤 세션이 어떤 파일/브랜치를 만지고 있는지 알려주기. *(정산: 비용 트랙 세션은 완료·전부 커밋(`21ee58f`) — ROADMAP·docs/cost 미커밋분 해소. fresh-eyes 문서·png도 작업트리에서 사라짐(m9 세션이 착지한 듯). 남은 미커밋 = pbxproj 노이즈 + 이 체크리스트 파일뿐. 사람 선언만 잔여)*
-- [ ] **[사람→AI]** `fix/m9-iphone-only` → main 병합 (PR) — **ITMS-90474 해소 커밋이 여기 있음. 이게 안 들어가면 빌드해도 같은 사유로 재거부**
-- [ ] **[AI]** 병합 후 main pbxproj에 `TARGETED_DEVICE_FAMILY = 1` 반영 확인 (현재 main은 `"1,2"`)
+- [x] **[사람→AI]** `fix/m9-iphone-only` → main 병합 (PR) — *(완료 2026-07-14: PR #12 MERGED, 로컬 병합·충돌 2건 해소 — ROADMAP 양쪽 항목 보존·pbxproj는 fix 쪽 서명 TargetAttributes(DevelopmentTeam) 채택)*
+- [x] **[AI]** 병합 후 main pbxproj에 `TARGETED_DEVICE_FAMILY = 1` 반영 확인 *(완료: Debug·Release 2군데 모두 `= 1`)*
 
 ### B. 작업트리 정리·동기화 (아카이브 기준 커밋을 깨끗하게)
 
-- [ ] **[AI]** 미커밋 변경 커밋 또는 정리 — ⚠️ 로컬 pbxproj 변경(Xcode 자동 노이즈: Sentry expectedSignature 등)이 `fix/m9-iphone-only`의 pbxproj 변경과 **충돌 가능** → 병합 전 처리 *(정산: 노이즈 내용 확정 — Sentry.xcframework `expectedSignature` 추가 + 빈 `TargetAttributes` 제거 2군데뿐. fix 브랜치의 pbxproj 변경(TARGETED_DEVICE_FAMILY 라인)과 hunk 겹침 없음 → 텍스트 충돌은 안 날 것. 그래도 병합 전 커밋/정리 필요)*
+- [x] **[AI]** 미커밋 변경 커밋 또는 정리 *(완료: pbxproj 노이즈 `4a78357`로 착지. 병합 시 TargetAttributes 충돌 1건 발생 — fix 쪽(DevelopmentTeam 서명 정보) 채택으로 해소)*
 - [x] **[사람]** docs/ 스크린샷 png 3장 처리 결정 — ~~커밋할 자산인지 임시 파일인지~~ *(정산: 작업트리에 더 이상 없음 — m9 세션이 처리 완료, 항목 해소)*
-- [ ] **[AI]** `git status` clean + main == origin/main 동기화 확인 *(정산: 미푸시 5커밋 — `f610422`·`e1658bb`·`3873b45`·`bf0c6cc`·`21ee58f`, 푸시는 사람 승인 대기)*
-- [ ] **[AI]** 브랜치 보존 규율 확인 — 병합돼도 브랜치 삭제 금지
+- [x] **[AI]** `git status` clean + main == origin/main 동기화 확인 *(완료: 사람 승인 하 푸시 — 병합 커밋 `65dc11e`까지 origin 동기화)*
+- [x] **[AI]** 브랜치 보존 규율 확인 — *(완료: `fix/m9-iphone-only` 로컬·원격 모두 보존, 삭제 안 함)*
 
 ### C. 빌드 입력 검증 (버전·서명·green)
 
-- [ ] **[AI]** `CFBundleVersion` 1 → **2** 증가 — 빌드번호 1은 직전 업로드(거부됨)에 이미 소진, 동일 번호 재업로드 불가
+- [x] **[AI]** `CFBundleVersion` 1 → **2** 증가 *(완료 2026-07-14: Info.plist 직접 편집 — INFOPLIST_FILE 직접 참조 정본 확인)*
 - [x] **[AI]** `CFBundleShortVersionString` = 0.1.0 확인 *(정산 2026-07-14 저녁 재확인 OK)*
-- [ ] **[AI]** 최종 main에서 5축 green 재실행 — unit·native(`iosSimulatorArm64Test`)·link·assemble·guard (병합 후 상태로 1회, 통과까지 반복)
+- [x] **[AI]** 최종 main에서 5축 green 재실행 *(완료 2026-07-14: 병합 커밋 위에서 unit·native·link·assemble·guard 일괄 BUILD SUCCESSFUL)*
 - [x] **[AI]** 릴리즈 런타임 설정 확인 — Info.plist `SentryDsn` 존재 · 프록시 endpoint가 prod인지 (LAUNCH-CHECKLIST §4) *(정산: `SentryDsn` 키 존재 ✓, 값은 `$(SENTRY_DSN)`이고 빌드 설정 기본값 `""` → 크래시 리포팅 no-op. 실 DSN 주입(예: `xcodebuild SENTRY_DSN=…`)은 아카이브 시 사람 결정 — LAUNCH-CHECKLIST Blocker #7 잔여와 동일 항목. 프록시 endpoint ✓ `Constants.kt` = `devetym-proxy.data-sy-2.workers.dev` — 오늘 라이브 스모크 통과한 prod URL과 동일)*
-- [ ] **[사람]** Xcode Signing & Capabilities — Team 선택·자동 서명 동작 확인 (Apple Developer 결제 완료 상태)
+- [ ] **[사람]** Xcode Signing & Capabilities — Team 선택·자동 서명 동작 확인 (Apple Developer 결제 완료 상태) *(참고: 병합으로 pbxproj에 DevelopmentTeam `4H79F9W5AQ`·자동 서명이 이미 박혀 있음 — Xcode에서 열어 확인만)*
+- [ ] **[사람]** **Sentry DSN 발급(신규 결정 2026-07-14 — 주입 출시 확정)**: sentry.io 무료 플랜 계정·프로젝트 생성 → DSN을 루트 `.env`에 `SENTRY_DSN=…`으로 추가 → 아카이브 시 빌드 세팅 주입(절차는 AI가 안내)
 
 ### D. 승인 게이트 (← 사람 결정 지점)
 
