@@ -3,6 +3,7 @@ package com.robin.devetym.di
 import com.robin.devetym.analytics.AnalyticsService
 import com.robin.devetym.analytics.PlaceholderAnalyticsService
 import com.robin.devetym.crash.CrashReporter
+import com.robin.devetym.crash.SENTRY_DSN
 import com.robin.devetym.data.AppJson
 import com.robin.devetym.data.bundle.BundleDbSource
 import com.robin.devetym.data.bundle.loadBundleDbSource
@@ -64,9 +65,10 @@ fun appModule(readyBundle: BundleDbSource): Module = module {
  * **플랫폼 진입점의 `runBlocking`으로 동기 완료**(첫 프레임/`getKoin()` 이전 — async-init 레이스 차단).
  *
  * **크래시 리포팅(WU-4)**: Koin 조립보다 **먼저** `CrashReporter.init`한다(초기화 이후 조기 크래시부터
- * 포착). `crashDsn`은 플랫폼 셸이 주입(Android=BuildConfig, iOS=Info.plist) — null/blank면 no-op.
+ * 포착). `crashDsn` 기본값 = 빌드타임 생성 상수 [SENTRY_DSN](루트 .env → `generateSentryConfig` 코드젠,
+ * 플랫폼 공통 단일 주입) — null/blank면 no-op. 파라미터는 테스트/특수 셸 오버라이드용으로 유지.
  */
-suspend fun initKoin(platformModule: Module, crashDsn: String? = null) {
+suspend fun initKoin(platformModule: Module, crashDsn: String? = SENTRY_DSN) {
     CrashReporter.init(crashDsn)
     val readyBundle = loadBundleDbSource(AppJson)
     startKoin { modules(appModule(readyBundle), platformModule) }
