@@ -20,8 +20,9 @@ object CrashReporter {
 
     /**
      * 앱 진입 시 **1회** 호출(`initKoin` 최상단 — 초기화 이후 조기 크래시부터 포착). `dsn`이 null/blank면
-     * 초기화하지 않는다(멱등: 이미 초기화됐어도 재진입 무시). DSN은 플랫폼 셸이 주입(Android=BuildConfig,
-     * iOS=Info.plist `SentryDsn`). 미주입(빈 DSN)이면 안전한 no-op — 개발/CI 안전.
+     * 초기화하지 않는다(멱등: 이미 초기화됐어도 재진입 무시). DSN은 빌드타임 코드젠 상수 [SENTRY_DSN]
+     * (루트 .env → `generateSentryConfig`)이 `initKoin` 기본값으로 주입 — 플랫폼 공통 단일 경로.
+     * 미주입(빈 DSN)이면 안전한 no-op — 개발/CI 안전.
      */
     fun init(dsn: String?) {
         if (initialized || dsn.isNullOrBlank()) return

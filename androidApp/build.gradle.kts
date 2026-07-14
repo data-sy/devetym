@@ -15,15 +15,7 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "0.1.0"
-
-        // M9 WU-4 — 크래시 DSN 주입(BuildConfig). 시크릿 미커밋: gradle 프로퍼티(-PSENTRY_DSN / local.properties)
-        // 또는 환경변수 SENTRY_DSN로 주입, 없으면 빈 문자열 → CrashReporter no-op(개발·CI 안전).
-        val sentryDsn = (project.findProperty("SENTRY_DSN") as String?) ?: System.getenv("SENTRY_DSN") ?: ""
-        buildConfigField("String", "SENTRY_DSN", "\"$sentryDsn\"")
-    }
-
-    buildFeatures {
-        buildConfig = true   // M9 WU-4 — SENTRY_DSN BuildConfig 필드 생성
+        // (구 SENTRY_DSN BuildConfig 주입은 제거 — DSN은 shared 코드젠 상수로 단일화. 루트 .env → generateSentryConfig.)
     }
 
     buildTypes {

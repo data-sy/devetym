@@ -11,7 +11,6 @@ import com.robin.devetym.ui.platform.OnboardingStore
 import kotlinx.coroutines.runBlocking
 import org.koin.core.module.Module
 import org.koin.dsl.module
-import platform.Foundation.NSBundle
 import platform.Foundation.NSDate
 import platform.Foundation.timeIntervalSince1970
 
@@ -37,10 +36,10 @@ fun iosPlatformModule(): Module = module {
  * ⚠️ Swift 호출부 실컴파일은 Xcode(축 밖) — 검증 천장(실기기).
  *
  * M9 WU-4B — iOS 크래시 리포팅은 이제 **commonMain 단일 KMP 배선**(Sentry Cocoa via `sentry-kotlin-multiplatform`)이
- * 담당한다. Swift `SentrySDK.start` 불요 — 여기서 Info.plist `SentryDsn`을 읽어 `initKoin(crashDsn=…)`으로 넘기면
- * 공통 `CrashReporter.init`이 iOS에서 Sentry를 초기화한다. 빈/누락 DSN이면 no-op(개발/CI 안전).
+ * 담당한다. Swift `SentrySDK.start` 불요 — DSN은 빌드타임 코드젠 상수(`initKoin` 기본값, 루트 .env →
+ * `generateSentryConfig`)로 공통 `CrashReporter.init`에 전달된다(구 Info.plist `SentryDsn` 경로 제거).
+ * 빈/누락 DSN이면 no-op(개발/CI 안전).
  */
 fun doInitKoin() = runBlocking {
-    val crashDsn = NSBundle.mainBundle.objectForInfoDictionaryKey("SentryDsn") as? String
-    initKoin(iosPlatformModule(), crashDsn)
+    initKoin(iosPlatformModule())
 }
