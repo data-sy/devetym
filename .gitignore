@@ -30,3 +30,6 @@ Scripts/**/.env.local
 
 # 비밀 키 (Anthropic Admin 등)
 .env
+
+# App Store 스크린샷 산출물 (구 ~/devetym-shots — 공개 트리에 안 올림, 참조 문서는 ROADMAP Later 백로그 참조)
+shots/
