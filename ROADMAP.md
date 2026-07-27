@@ -85,7 +85,17 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
       - ③ **1단 배포 ✅** — `CACHE_DISABLED = "1"`(캐시 꺼짐) 상태. 버전 `e8def3a2-c2cf-495e-9c86-9b0a907da0d3`. **직전 프로덕션 = `c5cd809f`(2026-07-14) = 롤백 기준점**
       - **무회귀 확인 ✅ (무과금 5경로, Anthropic 미호출)**: `GET /`→405 · 비JSON→400 `invalid_body` · 40KB→413 `body_too_large` · 기기ID 없음/8자 미만→400. 부작용 0(cache `entries` 0행 · `usage_log` 11행 유지 · `cache_hit` 합계 0)
       - ⚠️ **캐시는 아직 꺼져 있다.** 지금 라이브가 된 변경은 두 가지뿐: ⓐ 오류 우선순위(400·413이 429보다 먼저 — 앱 계약 위반 아님) ⓑ `logUsage`가 `cache_hit` 컬럼에 적재 시작
-    - ⏳ **사람 대기 3건**: ③-2단 `CACHE_DISABLED = "0"` 재배포(= 캐시 실제 가동) → ④ S축4 스모크 **1회 $0.03**(캐시 히트가 Anthropic 미호출로 200을 주는지 실측) → 두 repo PR 생성 여부. 롤백은 `CACHE_DISABLED = "1"` 되돌리고 재배포 = 한 줄 + 배포
+    - ✅ **③-2단 배포 + ④ S축4 스모크 완료 (2026-07-28, 사람 승인)** — **캐시 가동 중**
+      - 2단 배포 `b87b77f1` (`CACHE_DISABLED = "0"`). 롤백 = `"1"`로 되돌리고 재배포 = 한 줄 + 배포
+      - **과금 1회 실비 $0.0230** (승인 한도 $0.03 이내). 캐시 항목은 INV-2 write-once라 영구 정본이 되므로, 버릴 문자열 대신 **번들 650개에 없는 실제 개발 용어 `멱등성`**을 골라 한 번의 과금으로 B1 경로까지 같이 실측했다
+      - ✅ **B1 라이브**: 요청 `멱등성`(한글) → `term_key = "idempotency"`(AI 정본 키워드)로 저장. aliases = `멱등성`(요청 키 삽입)·`idempotent`(AI 별칭)
+      - ✅ **INV-9 라이브**: `prompt_version = v2-pathA:956ba44a7c48` — 앱 `ClaudePrompt.kt`의 `SYSTEM_PROMPT`에서 계산한 sha256과 정확히 일치. 프록시가 보는 프롬프트 = 앱 정본임이 실증됐다
+      - ✅ **히트 무과금**: 영문 `Idempotent` · 공백패딩 `  멱등성  ` · 다른 기기 전부 히트(0.08~0.2s, Anthropic 0회). 합성 응답 shape 확인(최상위 `content` 단일 키)
+      - ✅ **B4 라이브**: 기기·전역 한도 소진 상태에서 **캐시 히트 200 / 캐시 미스 429**
+      - 오늘 usage: 미스 6건(6551토큰) / **히트 9건(0토큰)** · `hit_count` 9
+      - ⚠️ B4 실측용으로 KV 카운터를 소진 상태로 썼다가 실제 값으로 복원했다. 복원 1차 시도가 `--expiration-ttl`(이 wrangler 버전에 없는 플래그)로 조용히 실패해 전역 카운터가 200으로 남을 뻔했다 — `--ttl`로 재실행해 해소. **KV 조작 후에는 반드시 `kv key get`으로 되읽어 확인할 것**
+    - ⏳ **사람 대기 1건**: 두 repo PR 생성 여부 (`~/devetym` `feat/s1-normalize-equivalence` 3커밋 · `~/devetym-proxy` `feat/s1-read-through-cache` 4커밋, 둘 다 미푸시)
+    - 📌 **관측 지점**: 지금부터 `usage_log`의 `cache_hit` 비율이 이 슬라이스의 성과 지표다. 부정 분기 재생성 빈도를 보고 `NEGATIVE_TTL_DAYS`(현재 30) 조정 판단(스펙 §9-2)
     - ✅ **스펙 결함 1건 — 발견·보고·승인·정정 완료(2026-07-27)**: 스펙 §3-2의 `WS` 공백 집합이 실측과 달랐다. Kotlin/JVM `Char.isWhitespace()`는 `Character.isWhitespace(ch) || Character.isSpaceChar(ch)`라 **NBSP U+00A0·U+2007·U+202F를 자르는데** 초판은 이를 "자르지 않음"으로 열거했다(`java.lang.Character.isWhitespace()`만 보고 유추). 그대로 복제했다면 서버가 클라보다 덜 잘라 그 절이 막으려던 drift가 그대로 발생했을 것이다. 실측 정본(JVM·`iosSimulatorArm64` 전수, 양축 동일) = `0009-000D 001C-0020 00A0 1680 2000-200A 2028-2029 202F 205F 3000`. **사람 승인 후 스펙 §3-2·§6-3 정정**(정정 박스 + 케이스명 `NBSP패딩_트림하지않음`→`NBSP패딩_트림`), 스펙 코드블록과 구현 `src/index.js`의 `WS` 문자열 일치 확인. 〔비준 C4의 "클라 테스트를 먼저" 순서 뒤집기가 곧바로 값을 낸 사례 — 서버부터 만들었으면 틀린 집합을 양쪽에 복제하고 "동치 green"을 선언했을 것〕
     - ⚠️ **Node 22 필수가 됐다** — `wrangler` 4.114·`miniflare` 4가 Node ≥22를 강제한다(이전 4.86은 20에서 동작). `devetym-proxy`에 `.nvmrc`·`engines` 추가. 이 머신은 nvm으로 22.23.1 설치됨.
     - 비준이 잡은 Blocker 4건(전부 반영 완료): ①`term_key`를 요청 문자열로 잡아 INV-3 중복·목표 미달성 → AI 정본 키워드 기준으로 교체 ②write 전 shape 게이트 부재로 영구 독성 항목 → 최소 검사 추가 ③마이그레이션이 두 DB에 걸쳐 배포 실패 → `migrations_dir` 분리 ④캐시 조회가 한도 검사 뒤라 한도 소진 사용자에게 무과금 응답 미전달 → 순서 재배열
