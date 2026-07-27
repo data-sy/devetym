@@ -40,7 +40,7 @@
 
 **WU-1 · GitHub Pages 실배포 `[AI→사람]` — ✅ 완료(2026-07-13)** — M9 blocker 닫힘
 - 목표: devetym `site/`(방침·약관)를 실제 배포해 **공개 방침 URL** 확보. → **달성.**
-- 스코프: `pages.yml`은 이미 이관·커밋됨(`315ea55`). ① pages.yml + site/를 main에 커밋·push(스택 규율상 별도 브랜치→PR) ② repo Settings→Pages Source=GitHub Actions 활성 ③ Actions 배포 성공 확인 ④ 방침 URL을 [스토어 라벨](../release/m9-store-metadata-draft.md)·site 링크에 반영.
+- 스코프: `pages.yml`은 이미 이관·커밋됨(`315ea55`). ① pages.yml + site/를 main에 커밋·push(스택 규율상 별도 브랜치→PR) ② repo Settings→Pages Source=GitHub Actions 활성 ③ Actions 배포 성공 확인 ④ 방침 URL을 [스토어 라벨](../release/README.md)·site 링크에 반영.
 - **✅ Phase A(2026-07-10)**: `origin/main`(M8, `d8a7aaa`) 위 별도 브랜치 `chore/pages-deploy`에 `pages.yml` + `site/` 4파일만 얹어 **[PR #10](https://github.com/data-sy/devetym/pull/10)** 오픈(diff=인프라 5파일뿐·M9 스택 독립). site/ 시크릿 스윕 clean(방침·약관은 발행 의도 콘텐츠, 지원 이메일 `oddmuffinstudio@gmail.com` 정합).
 - 〔이력: Phase B 블로커(2026-07-10) — `gh api ... pages` → `422 current plan does not support GitHub Pages`. 원인 = repo **private** + **GitHub 무료 플랜**(무료는 public repo만 Pages 허용). 활성화 = ① public 전환 또는 ② GitHub Pro 의존 → 사용자 결정 보류였음.〕
 - **✅ Phase B 완료(2026-07-13)**: 항목 A **public 전환**(노출 스윕 clean)으로 블로커 해소 → **PR #10 병합**(merge-commit·`chore/pages-deploy` 브랜치 보존) → `gh api -X POST .../pages -f build_type=workflow`로 **Pages Actions 소스 활성화** → 워크플로 success → **방침 URL 라이브(전부 200)**. 스토어 라벨 §1·블로커 #2 반영 완료.

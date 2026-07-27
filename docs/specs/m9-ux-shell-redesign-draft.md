@@ -141,7 +141,7 @@ mutex
 ./gradlew :shared:testDebugUnitTest :shared:iosSimulatorArm64Test \
   :shared:linkDebugFrameworkIosSimulatorArm64 :androidApp:assembleDebug :androidApp:testDebugUnitTest
 ```
-- **시뮬 재현 절차**: [스모크 대본](../release/m9-device-smoke-script.md) Tier 1 iOS 블록(빌드→boot→install→launch→screenshot). ⚠️ xcodebuild에 `set -o pipefail` + `-destination "id=…"` (stale 바이너리 함정 선례 — ROADMAP 2026-07-13 로어). 탭/스와이프 주입은 CGEvent 자작 도구 선례([시뮬 스모크 리포트](../release/m9-ios-sim-smoke-report.md) 참조).
+- **시뮬 재현 절차**: [스모크 대본](../release/README.md) Tier 1 iOS 블록(빌드→boot→install→launch→screenshot). ⚠️ xcodebuild에 `set -o pipefail` + `-destination "id=…"` (stale 바이너리 함정 선례 — ROADMAP 2026-07-13 로어). 탭/스와이프 주입은 CGEvent 자작 도구 선례([시뮬 스모크 리포트](../release/README.md) 참조).
 
 ### 파일 좌표 (전부 `shared/src/` 기준, 셸 2곳 제외)
 

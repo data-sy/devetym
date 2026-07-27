@@ -11,10 +11,10 @@
 > ---
 >
 > **성격: 다음 세션이 읽고 바로 착수하는 forward 실행 계획.** 진행 상태 정본 = [ROADMAP](../../ROADMAP.md)(M9),
-> 게이트 지도 = [티어형 스모크 대본](../release/m9-device-smoke-script.md). 이 핸드오프는 **Android 에뮬 셋업+주행**
+> 게이트 지도 = [티어형 스모크 대본](../../release/README.md). 이 핸드오프는 **Android 에뮬 셋업+주행**
 > 한 청크만 담는다(iOS 시뮬 첫 기동·Tier 1 iOS는 이전 세션서 진행).
 >
-> **착수법**: 새 세션에서 이 파일 + [스모크 대본](../release/m9-device-smoke-script.md) 주고 **"Android 에뮬 스모크 진행"**.
+> **착수법**: 새 세션에서 이 파일 + [스모크 대본](../../release/README.md) 주고 **"Android 에뮬 스모크 진행"**.
 > 브랜치 `feat/m9-release-verification`. **푸시·게시 금지(지시 대기).**
 
 ## 0. 왜 새 세션인가 (이전 세션 맥락)
@@ -66,8 +66,8 @@ $ADB logcat -d | grep -iE "devetym|AndroidRuntime|FATAL|NoDefinitionFound" | tai
 - ☐ 히스토리 누적·삭제.
 - ☐ **Android seam actual 실동작**(§3-3 Robolectric은 Intent 구성만 — 실 열림은 여기): 메일 `ACTION_SENDTO` 실 열림·공유 chooser 표시·클립보드 붙여넣기·평가 스토어 URL.
 - ☐ 외관 3모드 실전환(재구성이 색 바꾸는가) · 라이선스 OFL 실스크롤 · 스플래시.
-- ☐ 아이콘: 에뮬 런처(홈스크린) 실렌더 — [아이콘 시트](../release/m9-icon-render-sheet.html) 대조(17엔트리 adaptive).
-- ☐ (선택) TalkBack: 에뮬 설정서 켜고 [접근성 대본](../release/m9-accessibility-audit-script.md) B 훑기.
+- ☐ 아이콘: 에뮬 런처(홈스크린) 실렌더 — [아이콘 시트](../../release/README.md) 대조(17엔트리 adaptive).
+- ☐ (선택) TalkBack: 에뮬 설정서 켜고 [접근성 대본](../../release/README.md) B 훑기.
 
 ## 5. 입력 자동화 (탭 주행)
 - `adb`로 **자동 주행 가능**: `adb shell input tap X Y`·`adb shell input text "mutex"`·`adb shell input keyevent`. iOS 시뮬(idb 부재로 수동)과 달리 **Android는 탭·타이핑까지 AI 자동화 가능** → 스크린샷 대조로 플로우 전체를 자율 주행할 수 있다(좌표는 `screencap` 스크린샷서 산출).

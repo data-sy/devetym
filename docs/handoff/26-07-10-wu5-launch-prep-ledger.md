@@ -16,8 +16,8 @@
 | 3 | `appstore-metadata-prompt.md` | NOT | **폐기(선택 보류)** | 메타데이터 생성 라운드테이블 프롬프트. 재사용하려면 KMP·양 스토어·미수집으로 각색 필요. devetym은 이미 신규 초안 보유 → 현재 불필요 |
 | 4 | `appstore-metadata-review-prompt.md` | NOT | **폐기(선택 보류)** | #3의 리뷰 짝. 동일 사유 |
 | 5 | `appstore-metadata-review-result.md` | PARTIAL | **폐기** | 순수 신규 없음. 블로커(B1/B2)는 devetym 정합·자체 블로커 목록으로 이미 대체 |
-| 6 | `launch-consult-prompt.md` | NOT | **폐기** | 출력물(done/blocker/human-gate 분류)이 이미 [`LAUNCH-CHECKLIST.md`](../release/LAUNCH-CHECKLIST.md)로 실체화됨 |
-| 7 | `e2e-checklist.md` | PARTIAL | **폐기(선택 fold)** | [`m9-device-smoke-script.md`](../release/m9-device-smoke-script.md)+[`m9-accessibility-audit-script.md`](../release/m9-accessibility-audit-script.md)가 더 엄밀히 대체. 잔여 4개 미세 단언(300ms 디바운스·공유 문자열 포맷·상대시간·빈상태 카피)은 필요 시 스모크에 fold |
+| 6 | `launch-consult-prompt.md` | NOT | **폐기** | 출력물(done/blocker/human-gate 분류)이 이미 [`LAUNCH-CHECKLIST.md`](../release/README.md)로 실체화됨 |
+| 7 | `e2e-checklist.md` | PARTIAL | **폐기(선택 fold)** | [`m9-device-smoke-script.md`](../release/README.md)+[`m9-accessibility-audit-script.md`](../release/README.md)가 더 엄밀히 대체. 잔여 4개 미세 단언(300ms 디바운스·공유 문자열 포맷·상대시간·빈상태 카피)은 필요 시 스모크에 fold |
 
 ## 실이관 (미승계분)
 1. **스크린샷 캡션 5종** → `m9-screenshot-capture-handoff.md` §1b(신규). 기존 shot list에 캡션 카피가 없던 갭.
