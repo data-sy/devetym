@@ -5,6 +5,8 @@
 
 **Android · iOS 단일 코드베이스** — Kotlin Multiplatform 위에서 UI까지 Compose Multiplatform으로 공유한다.
 
+> 🎉 **iOS 출시 — [App Store에서 보기](https://apps.apple.com/kr/app/id6790429958)** (2026-07-27 게시). Android는 후행 트랙.
+
 - 앱 표시 이름: **개발 어원 사전**
 - 애플리케이션 ID / 번들 ID: `com.oddmuffin.devetym` (코드 네임스페이스·Kotlin 패키지는 `com.robin.devetym` 유지)
 - 타깃: Android 8.0+ (API 26), iOS 16+
@@ -58,19 +60,22 @@ Repository            # 소스 조율 · 캐시 정책
 Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expect/actual)
 ```
 
-핵심 데이터 흐름: **번들 DB(즉답) → 로컬 캐시 → AI 폴백(온라인)**. 자세한 건 [아키텍처 설계서](docs/architecture.md) 참고.
+핵심 데이터 흐름: **번들 DB(즉답) → 로컬 캐시 → 서버 D1 캐시 → AI 폴백(온라인)**.
+서버 캐시 층은 별도 repo [`devetym-proxy`](https://github.com/data-sy/devetym-proxy)가 담당하며
+**클라에는 투명**하다(앱 코드 무변경 — INV-1). 자세한 건 [아키텍처 설계서](docs/architecture.md) 참고.
 
 ---
 
 ## 문서
 
-이 repo는 **문서 → 구현** 순서로 채워 나간다. **M0~M8 구현 완료**(코드 레벨), 현재 **M9(검증·출시)** 단계다.
+이 repo는 **문서 → 구현** 순서로 채워 나간다. **M0~M8 구현 완료**(코드 레벨) → **M9(검증·출시)** — iOS 게시로 DoD 폐쇄, 잔여는 Android 트랙.
 
 | 위치 | 내용 | 상태 |
 |---|---|---|
 | [`docs/product/prd.md`](docs/product/prd.md) | 제품 기획 — 문제·타겟·유저 스토리·콘텐츠 (*왜*의 정본) | ✅ |
 | [`docs/architecture.md`](docs/architecture.md) | 아키텍처 설계 — 레이어링·Ktor·로컬 저장·Koin (기술 *어떻게*) | ✅ |
-| [`docs/adr/`](docs/adr/) | 돌이킬 수 없는 결정 기록 (0001~0006: CMP·관용구 원칙·로컬 DB·프록시 경계·SKIE interop·서버 캐시 경계) | ✅ |
+| [`docs/adr/`](docs/adr/) | 돌이킬 수 없는 결정 기록 (0001~0008: CMP·관용구 원칙·로컬 DB·프록시 경계·SKIE interop·서버 캐시 경계·AI 프롬프트 품질·이슈 트래킹) | ✅ |
+| [`docs/cache-delivery-milestones.md`](docs/cache-delivery-milestones.md) | 캐시·딜리버리 불변식(INV-1~13)·마일스톤 정본 — 서버 트랙의 제약 | ✅ |
 | [`docs/specs/spec.md`](docs/specs/spec.md) | 화면·동작 구현 명세 (Phase 1~4, Claude Code 전용) | ✅ |
 | [`ROADMAP.md`](ROADMAP.md) | 이행 순서(코어 먼저, UI 나중) + **진행 상태 정본** | ✅ |
 | [`docs/cost/`](docs/cost/) | API 비용 관리 — 결정 문서·Console 설정 스냅샷 로그 (`Scripts/cost/report.py`가 리포트 도구) | ✅ |
@@ -108,7 +113,17 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 이후 완주(2026-07-13): **iOS 시뮬 입력 주입 스모크 완주**(CGEvent 탭·타이핑) · **실기기 사인오프**(아이폰 13 mini — 셸 재설계 라운드 1·2 + VoiceOver) ·
 **출시 시퀀스 A~D 완료**(A public 전환·B Pages 방침 URL 라이브·C 실기기 스모크·D iOS 스토어 스크린샷 캡처+캡션 프레이밍) ·
 **출시 결정 D1~D9 전건 확정**(이름·키워드·카피·지역·등급·심사 노트 — [결정 로그](docs/release/README.md)).
-남은 것 = **[외부]** E iOS **심사 제출 완료(2026-07-14) — 심사 대기 중**(승인 시 수동 게시만 잔여) · F Android 배포(후행·폐쇄테스트 20명×14일 게이트 + 스크린샷 캡처 잔여).
+**🎉 E iOS 배포 완료 — 2026-07-27 App Store 게시·라이브**([개발 어원 사전](https://apps.apple.com/kr/app/id6790429958), Apple ID `6790429958`). M9 DoD "스토어 게시" 폐쇄·iOS 트랙 종결.
+남은 것 = **[외부]** F Android 배포(후행 — 폐쇄테스트 20명×14일 게이트 + 스크린샷 캡처 잔여) · 씨딩·리뷰 확보(📆 일정).
 진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md)(M9), 출시 지그·게이트는 [`docs/release/`](docs/release/README.md).
 
+**서버 캐시 트랙 S1 — 가동 중 (2026-07-28).** 앱 배포와 **독립**으로 완결되는 트랙이라 심사와 무관하게
+먼저 나갔다. `devetym-proxy`에 D1 read-through 캐시를 붙여 **한 사용자가 생성시킨 항목을 다른 사용자가
+재사용**한다 — 비용이 *사용자 수*가 아니라 *새 용어 수*에 비례한다. 라이브 실측으로 확인:
+같은 용어 10회 접근에 Anthropic 호출 1회($0.0230), 한글 요청이 영문 정본 키로 접히고, 한도 소진
+상태에서도 캐시 히트는 200을 준다. 클라 측 변경은 `normalizeKeyword` 동치 테스트 1건뿐(출하 동작 무변경).
+상세는 [ROADMAP 백로그 항목 I](ROADMAP.md).
+
 **병행 트랙 (2026-07-10 착수).** 원격 `data-sy/devetym`(2026-07-13 **public 전환**) → `m1`~`m8` 스택 PR(#1~8) 병합 + **PR #9 병합(2026-07-13, main=M9 검증 구간)** + **PR #11 병합(2026-07-14, main=제출 준비분)** + **PR #12 병합(제출 수정분: 아이폰 전용·VoiceOver)** + **PR #14 병합(Sentry 실 DSN 배선·실증)** + 원본 repo `~/dev-etymology` **이관·자기완결화** + 코드 갭 정리. **완료**: 이관 WU-1(**Pages 배포·방침 URL 라이브 2026-07-13**, [PR #10](https://github.com/data-sy/devetym/pull/10) 병합·<https://data-sy.github.io/devetym/>)·WU-2(Scripts·db-expand 검증)·WU-3(ai-quality→ADR-0007)·WU-4(크래시 리포팅 Sentry — 방침 사인오프 + **WU-4B 단일 KMP 통합**까지 완료, iOS도 실배선)·WU-5(launch-prep 대조)·WU-6(네이티브 iOS 전수 스윕·자기완결성 확증) + 코드 갭 WU-8(클립보드)·WU-9(스플래시)·WU-10(셸 회귀가드). **잔여**: WU-7(원본 repo 폐기·사람). **독립 작업단위 WU-1~12 + 확정 결정(크래시 SDK=Sentry KMP 등)의 정본 = [`docs/handoff/26-07-10-selfcontained-migration-plan.md`](docs/handoff/26-07-10-selfcontained-migration-plan.md)** — 미래 세션이 WU 단위로 실행.
+
+**열린 PR (2026-07-28)**: [#17](https://github.com/data-sy/devetym/pull/17) 서버 캐시 S1 스펙 → `main` · [#18](https://github.com/data-sy/devetym/pull/18) 클라 동치 테스트 → **#17에 스택**(#17 병합 시 자동 리타깃, 역순 병합 불가) · [devetym-proxy#3](https://github.com/data-sy/devetym-proxy/pull/3) 캐시 구현 → `main`(독립).

@@ -27,5 +27,12 @@ val AppJson: Json = Json {
  * ⚠️ **키잉 전용이다 — AI에 보여줄 질의 content에는 적용하지 않는다**(§3-2): lowercase가 대소문자
  * 유의미 용어(`NaN`/`Go`/`REST`/`C`)의 의미를 뭉개 어원 오답을 유발하므로, `buildClaudeRequest`는
  * 원본 keyword를 대소문자 보존해 싣는다(iOS 검증본 계승). 키잉과 프롬프트 입력은 다른 요구다.
+ *
+ * ⚠️ **서버 동기화 지점 — 이 함수를 바꾸면 `devetym-proxy`도 같이 바꿔야 한다.**
+ * `devetym-proxy` `src/index.js`의 `normalizeTermKey`가 이 정규화를 복제해 D1 캐시 `term_key`를
+ * 만든다(서버 슬라이스 S1 §3-2). 어긋나면 캐시 미스로는 드러나지 않고 — 서버는 자기 일관적이다 —
+ * INV-12 번들 승격 잡이 흘린 키를 클라가 영영 조회 못 하는 형태로 조용히 샌다.
+ * 특히 `trim()`의 공백 집합이 JS와 다르다는 점이 함정이며, 양쪽 경계는
+ * [NormalizeKeywordTest][com.robin.devetym.data.NormalizeKeywordTest]가 정본으로 고정한다.
  */
 fun normalizeKeyword(s: String): String = s.trim().lowercase()
