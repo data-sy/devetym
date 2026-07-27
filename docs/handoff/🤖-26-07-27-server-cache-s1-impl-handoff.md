@@ -1,5 +1,27 @@
 # 🤖 서버 캐시 S1 — 구현 착수 핸드오프
 
+> # ⛔ 역할 종료 — 이 문서로 세션을 시작하지 마시오
+>
+> **2026-07-28 구현·배포 완료.** 이 문서가 지시한 작업(§4 Phase 1~5)은 전부 끝났고 **캐시는 가동 중**이다.
+> 아래 §1(환경 정합)·§4(구현 순서)·§6(완료 조건)은 **stale**이다 — 브랜치는 이미 만들어져 커밋·푸시·PR까지 됐고,
+> 선행 조건 3건과 green 오라클 S축1~4가 모두 닫혔다.
+>
+> **§3(확정된 결정)의 10개 항목만 여전히 유효**하며, 그 정본은 이제 스펙과 구현 코드 자체다.
+>
+> **현재 상태를 알려면 → [`../../ROADMAP.md`](../../ROADMAP.md) 백로그 항목 I** (진행 상태 정본)
+> **설계 근거를 보려면 → [`../specs/server-m0-m1-cache-read-through-draft.md`](../specs/server-m0-m1-cache-read-through-draft.md)**
+> **서버 운영·검증 절차 → [`devetym-proxy`의 README](https://github.com/data-sy/devetym-proxy)**
+>
+> 〔이 문서가 남긴 결과: 프록시 커밋 4건(PR #3) · 클라 커밋 3건(PR #18) · 스펙 §3-2 정정 1건 ·
+> 무과금 3축 green + 라이브 스모크 $0.0230. 세션 중 발견된 스펙 결함 1건은 보고·승인·정정 완료.〕
+>
+> 〔선행 핸드오프 [`🤖-26-07-27-server-cache-s1-handoff.md`](🤖-26-07-27-server-cache-s1-handoff.md)도 역할 종료 — 둘 다 이력 보존용.〕
+
+---
+
+<details>
+<summary>이하 원문 보존 (2026-07-27 작성 시점 · 실행 완료)</summary>
+
 > **성격: 콜드 세션 착수용 실행 문서.** 이 문서를 읽는 세션은 **이전 대화 맥락이 없다고 가정**한다.
 > 이 문서를 링크로 받았다면 **§1을 그대로 실행하고 §4 순서대로 구현하면 된다.** 설계를 다시 논의하지 않는다.
 >
@@ -113,7 +135,8 @@ ls ~/devetym/docs/specs/server-m0-m1-cache-read-through-draft.md   # 존재해�
 
 스펙 §6-3 경고대로, `shared/src/commonTest`에 `normalizeKeyword` 전용 테스트가 **없다**. 서버가 복제할 정본 집합이 존재하지 않으므로 **클라 쪽을 먼저 세운다.**
 
-1. `commonTest`에 `normalizeKeyword` 케이스 테이블 테스트 신설 — 스펙 §6-3의 6개 케이스를 Kotlin 쪽에서 먼저 고정한다. 특히 **NBSP·BOM은 "자르지 않음"이 정답**이다(Kotlin `Char.isWhitespace()`가 제외).
+1. `commonTest`에 `normalizeKeyword` 케이스 테이블 테스트 신설 — 스펙 §6-3의 6개 케이스를 Kotlin 쪽에서 먼저 고정한다. ~~특히 **NBSP·BOM은 "자르지 않음"이 정답**이다(Kotlin `Char.isWhitespace()`가 제외).~~
+   > ❌ **이 문장은 틀렸다(2026-07-28 실측 반증).** NBSP U+00A0은 **잘린다** — Kotlin/JVM `Char.isWhitespace()`는 `Character.isWhitespace(ch) || Character.isSpaceChar(ch)`라 NBSP·U+2007·U+202F를 포함한다. BOM U+FEFF만 "자르지 않음"이 맞다. 정본 집합은 스펙 §3-2 정정 박스와 `NormalizeKeywordTest`.
 2. `AppJson.kt`에 서버 동기화 지점 주석 1줄 추가.
 3. `./gradlew :shared:test` green 확인.
 4. 커밋. **푸시하지 않는다.**
@@ -196,3 +219,5 @@ ls ~/devetym/docs/specs/server-m0-m1-cache-read-through-draft.md   # 존재해�
 - [ ] `src/index.js` 204줄 통독 — 어디에 무엇을 끼워 넣는지 파악
 - [ ] 클라 `ClaudeDto.kt`·`TermEntry.kt` 확인 — shape 게이트가 방어할 대상
 - [ ] §5 안전 규율 숙지 — 특히 push·`--remote`·실호출 3종
+
+</details>
