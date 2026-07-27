@@ -96,10 +96,16 @@ ls ~/devetym/docs/specs/server-m0-m1-cache-read-through-draft.md   # 존재해�
 
 ## 4. 구현 순서
 
-### Phase 1 · 선행 조건 2건 (§8-1 잔여)
+### Phase 1 · 선행 조건 1건 (§8-1 잔여)
 
-1. **무료 플랜 D1 개수 한도 확인** — `npx wrangler d1 list`. 계정 인증 프롬프트가 뜨면 사용자에게 `! npx wrangler d1 list` 실행을 요청한다. 한도에 걸리면 §7-3 분리 판정을 **사람에게 재확인**받는다(임의로 통합으로 바꾸지 않는다).
-2. **`@cloudflare/vitest-pool-workers` 호환성** — 현재 `compatibility_date = "2025-06-01"`에서 동작하는지, `nodejs_compat` 플래그가 필요한지. 필요하면 `wrangler.toml`에 추가하고 이유를 커밋 메시지에 남긴다.
+1. ~~무료 플랜 D1 개수 한도 확인~~ → **✅ 완료(2026-07-27)**. 한도 10개 · 현재 1개(`devetym-usage`) · DB당 500MB. `devetym-cache` 추가에 제약 없음.
+2. **`@cloudflare/vitest-pool-workers` 호환성** ⏳ — 현재 `compatibility_date = "2025-06-01"`에서 동작하는지, `nodejs_compat` 플래그가 필요한지. 필요하면 `wrangler.toml`에 추가하고 이유를 커밋 메시지에 남긴다.
+
+**원격 `devetym-usage` 실측 상태(2026-07-27)** — 3a·3c 착수 전 알아둘 것:
+- `0001_usage_log.sql`은 **원격에 이미 적용됨**(`d1_migrations` id=1). `migrations/usage/`로 옮길 때 **파일명·번호를 절대 바꾸지 말 것** — 바꾸면 원격에서 재적용을 시도한다
+- `usage_log`에 `cache_hit` 컬럼 없음 = `0002_cache_hit.sql`의 `ALTER TABLE` 대상이 맞음
+- 11행 적재 중(2026-07-15~) — 텔레메트리 정상 동작
+- ⚠️ `wrangler d1 list`의 `num_tables`는 **0으로 나오지만 실제와 다르다**(지연 캐시 통계). 이걸로 마이그레이션 적용 여부를 판단하지 말 것
 
 ### Phase 2 · 클라 동치 테스트 ★ 서버보다 먼저
 
