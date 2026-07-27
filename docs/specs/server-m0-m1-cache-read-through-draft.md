@@ -154,23 +154,36 @@ INV-3 "중복 항목이 생기면 안 된다"를 직접 위반하고, **§1 목�
 fun normalizeKeyword(s: String): String = s.trim().lowercase()
 ```
 
-⚠️ **`String.prototype.trim()`을 그대로 쓰면 동치가 깨진다**(비준 C3). Kotlin `trim()`은 `Char.isWhitespace()` 기준(U+001C–U+001F 포함, **NBSP U+00A0 제외**)이고, JS `trim()`은 ECMAScript WhiteSpace+LineTerminator 기준(**NBSP·U+FEFF 포함**, U+001C–U+001F 제외)이다.
+⚠️ **`String.prototype.trim()`도 `\s`도 그대로 쓰면 동치가 깨진다**(비준 C3). Kotlin `trim()`은 `Char.isWhitespace()` 기준이고, 이는 JS 두 규격 어느 쪽과도 집합이 다르다.
 
 - 증상: 서버는 자기 일관적이라 캐시 미스는 나지 않는다. 그러나 **INV-12 승격 잡이 서버 `term_key`를 `terms.json`으로 흘리면** 클라 `normalizeKeyword`가 만든 키와 어긋나 승격분이 영영 조회되지 않는다.
 - 대응: 서버가 **Kotlin `Char.isWhitespace()` 집합을 정확히 복제**한다.
 
-⚠️ **합집합을 쓰면 안 된다.** 두 규격의 합집합을 trim하면 서버가 클라보다 **더 많이** 자른다(NBSP 등). 클라는 `s.trim()` 그대로이고 §8-4가 클라 동작을 바꾸지 않으므로, 합집합은 동치를 만들기는커녕 반대 방향으로 깬다. 기준은 언제나 **클라 쪽 집합**이다.
+⚠️ **합집합을 쓰면 안 된다.** JS 규격과의 합집합을 trim하면 서버가 클라보다 **더 많이** 자른다(U+FEFF BOM 등). 클라는 `s.trim()` 그대로이고 §8-4가 클라 동작을 바꾸지 않으므로, 합집합은 동치를 만들기는커녕 반대 방향으로 깬다. 기준은 언제나 **클라 쪽 집합**이다.
+
+> ⚠️ **정정 (2026-07-27 구현 세션 실측 — 초판 오류)**: 초판은 Kotlin `trim()`의 기준을 `java.lang.Character.isWhitespace()`로 보고 **NBSP U+00A0 · U+2007 FIGURE SPACE · U+202F NNBSP를 "자르지 않음"으로 열거**했으나 **틀렸다**. Kotlin/JVM의 `Char.isWhitespace()`는
+> ```kotlin
+> Character.isWhitespace(ch) || Character.isSpaceChar(ch)
+> ```
+> 이고, `isSpaceChar`(범주 Zs/Zl/Zp)가 그 셋을 **포함**한다. Kotlin/Native `isWhitespaceImpl`도 JVM과 맞추려 같은 합집합으로 정의돼 있다.
+>
+> 초판 집합을 그대로 복제했다면 서버가 클라보다 **덜** 잘라, 이 절이 막으려던 drift가 그대로 발생했을 것이다(NBSP 패딩 입력에서 서버 키 ≠ 클라 키).
+>
+> 아래 집합은 devetym `shared/src/commonTest/.../NormalizeKeywordTest.kt`가 **U+0000~U+FFFF 전수 실측**한 결과이며(JVM · `iosSimulatorArm64` 양축 동일), 그 테스트가 이 집합의 정본이다. 자바 문서에서 유추하지 말고 **거기서 가져온다**.
 
 ```js
-// Kotlin Char.isWhitespace() == java.lang.Character.isWhitespace() 의 정확한 복제.
-// 포함: U+0009-U+000D, U+001C-U+001F, U+0020, U+1680,
-//       U+2000-U+2006, U+2008-U+200A, U+2028, U+2029, U+205F, U+3000
-// 제외(의도적): U+00A0 NBSP / U+2007 FIGURE SPACE / U+202F NNBSP / U+FEFF BOM / U+0085 NEL
-//   위 5개는 JS trim() 또는 \s 에는 포함되지만 Kotlin trim() 은 자르지 않는다.
-//   따라서 \s 를 쓰면 안 되고, 아래 집합을 이스케이프로 명시해야 한다.
+// Kotlin Char.isWhitespace() 의 정확한 복제.
+// ⚠️ java.lang.Character.isWhitespace() 가 아니다 —
+//    Kotlin/JVM은 Character.isWhitespace(ch) || Character.isSpaceChar(ch) 이다.
+// 포함: U+0009-U+000D, U+001C-U+0020, U+00A0, U+1680,
+//       U+2000-U+200A, U+2028, U+2029, U+202F, U+205F, U+3000
+// 제외(의도적): U+FEFF BOM / U+0085 NEL / U+180E / U+200B ZWSP
+//   U+FEFF는 JS trim() 이 자르므로 trim() 을 그대로 쓰면 과트림이 된다.
+//   U+001C-U+001F는 반대로 JS \s 로는 안 잘리므로 \s 도 쓸 수 없다.
+//   따라서 아래 집합을 이스케이프로 명시해야 한다.
 const WS =
-  "\\u0009-\\u000D\\u001C-\\u001F\\u0020\\u1680" +
-  "\\u2000-\\u2006\\u2008-\\u200A\\u2028\\u2029\\u205F\\u3000";
+  "\\u0009-\\u000D\\u001C-\\u0020\\u00A0\\u1680" +
+  "\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000";
 const TRIM_CHARS = new RegExp(`^[${WS}]+|[${WS}]+$`, "g");
 
 function normalizeTermKey(s) {
@@ -420,13 +433,16 @@ migrations_dir = "migrations/cache"     # ← 신규
 ### 6-3. term key 동치 ★ 클라-서버 drift 방어
 - `test_termKey_대문자입력_소문자키` (`React` → `react`)
 - `test_termKey_공백패딩_트림`
-- `test_termKey_NBSP패딩_트림하지않음` ★ **C3** — Kotlin trim() 이 안 자르므로 서버도 자르면 안 된다
-- `test_termKey_BOM패딩_트림하지않음` ★ **C3** — U+FEFF 동일
+- `test_termKey_NBSP패딩_트림` ★ **C3** — Kotlin은 `isSpaceChar`와의 합집합이라 **자른다**. `Character.isWhitespace()`만 보고 복제하면 여기서 갈라진다 〔2026-07-27 정정 — 초판은 "트림하지않음"이었다, §3-2 정정 박스〕
+- `test_termKey_BOM패딩_트림하지않음` ★ **C3** — U+FEFF는 JS `trim()`이 자르므로 그대로 쓰면 과트림
 - `test_termKey_U001F패딩_트림` ★ **C3** — JS `\s` 로는 안 잘리는 구간
 - `test_termKey_U3000패딩_트림` ★ **C3** — 전각 공백(한글 입력에서 실제로 발생)
+- `test_termKey_유니코드공백류_전수트림` / `test_termKey_비공백류_전수트림하지않음` — 경계 문자를 개별 케이스로만 두면 집합의 한 구간이 통째로 빠져도 통과한다. 양쪽 집합을 전수로 돈다
 - `test_termKey_비문자열content_null` → 캐시 우회
 
 ⚠️ **입력 집합의 정본 순서(비준 C4)**: 원안은 "devetym `commonTest` 케이스를 복제"였으나, **`shared/src/commonTest`에 `normalizeKeyword` 전용 테스트가 존재하지 않는다**(유일 언급은 `TermRepositoryTest.kt:342` 주석). 복제할 대상이 없으므로 순서를 뒤집는다: **클라 쪽에 정규화 케이스 테이블 테스트를 먼저 세우고**(§8-4 승인 대상), 서버가 같은 집합을 복제한다. 클라 테스트가 없는 상태에서 서버만 만들면 동치 방어가 무근거해진다.
+
+> ✅ **이행됨(2026-07-27)**: `shared/src/commonTest/.../NormalizeKeywordTest.kt` 신설(JVM·`iosSimulatorArm64` 양축 실행). **이 순서 뒤집기가 곧바로 값을 냈다** — 클라를 먼저 세우자 그 테스트가 §3-2 초판의 공백 집합을 반증했다(위 정정 박스). 서버부터 만들었다면 스펙의 틀린 집합을 서버·테스트 양쪽에 복제해 놓고 "동치 green"을 선언했을 것이다.
 
 ### 6-4. 부정 분기 TTL
 - `test_TTL_not_dev_term_29일_히트`
