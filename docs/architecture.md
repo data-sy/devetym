@@ -139,7 +139,7 @@ CREATE TABLE term (
 - 요청 헤더에 익명 **`X-Device-Id`**를 실어 보낸다 — 프록시의 기기당 한도 카운터 키.
 - 프록시가 한도 초과를 **`429`**로 알리면 `DailyLimitExceeded`로 분기한다.
 
-> **시스템 프롬프트·도구 스키마는 `commonMain`에 산다.** 프롬프트 엔지니어링이 클라이언트 책임이라는 현재 계약을 그대로 옮긴다(→ 향후 서버로 옮길지는 [ADR 후보](adr/)). 프롬프트 버전 형상(v1 5변경+v2 Path A)·3분기·품질 게이트·미채택(closing/selfcheck v3 보류) 정본 = [ADR-0007](adr/0007-ai-prompt-quality.md), 근거 문서 = [`docs/ai-quality/`](ai-quality/).
+> **시스템 프롬프트·도구 스키마는 `commonMain`에 산다.** 프롬프트 엔지니어링이 클라이언트 책임이라는 현재 계약을 그대로 옮긴다. **→ 서버 이전이 [ADR-0011](adr/0011-prompt-ownership-transfer.md)로 실체화됐다**(웹 표면 추가가 ADR-0004의 유보 항목을 트리거 — 프롬프트 정본이 2벌이 되는 것을 막는다). ADR-0011은 아직 `Proposed`이므로 **현행 계약은 여기 서술대로 `commonMain` 소유가 유효**하다. 프롬프트 버전 형상(v1 5변경+v2 Path A)·3분기·품질 게이트·미채택(closing/selfcheck v3 보류) 정본 = [ADR-0007](adr/0007-ai-prompt-quality.md), 근거 문서 = [`docs/ai-quality/`](ai-quality/).
 
 **응답 파싱 — tool_use 3분기 (설계 불변식)**
 모델은 반드시 세 도구 중 하나를 호출한다. `content`에서 `tool_use` 블록을 찾아 이름으로 분기한다:
@@ -298,6 +298,9 @@ CI(GitHub Actions 등)로 양쪽 빌드를 자동화하면 "한 소스, 두 배�
 | AI 프롬프트·품질 정본 | ✅ [ADR-0007](adr/0007-ai-prompt-quality.md) | 시스템 프롬프트 버전(v1+v2 Path A)·3분기·품질 게이트·미채택 근거 락, iOS 검증본 commonMain 계승 |
 | iOS interop: SKIE vs Swift Export | ✅ [ADR-0005](adr/0005-ios-interop.md) | SKIE 확정(버전 민감) |
 | AI 스트리밍 도입 여부 | ⏳ 검토 | 현재 단발 응답, `Flow` 스트리밍은 이후 |
+| 웹 프레임워크·렌더링 경계 | 🟡 [ADR-0009](adr/0009-web-framework-rendering.md) (제안) | Astro + React 아일랜드·650개 SSG·Cloudflare Workers. Kotlin/Wasm 기각(캔버스라 DOM 없음) |
+| 웹 AI 폴백 남용 방지 경계 | 🟡 [ADR-0010](adr/0010-web-abuse-prevention.md) (제안) | 표면 분리 캡 + Turnstile + 3층 한도 + CORS allowlist. 전부 서버 측 — `INV-1`(앱 코드 무변경) 유지 |
+| 프롬프트 소유권 위치 | 🟡 [ADR-0011](adr/0011-prompt-ownership-transfer.md) (제안) | `commonMain` → Worker 이전. ADR-0004의 유보 항목을 웹 표면 추가가 트리거. 착수 시점은 열린 질문(설계서 Q5) |
 
 ---
 
