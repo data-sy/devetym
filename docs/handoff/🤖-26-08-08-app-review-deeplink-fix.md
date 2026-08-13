@@ -1,8 +1,16 @@
 # 🤖 설정 「앱 평가하기」 무반응 수정 — App Store 리뷰 딥링크 이행
 
+> ## ✅ 실행 완료 (2026-08-08) — **이 문서를 프롬프트로 다시 먹이지 말 것**
+>
+> 코드 수정은 끝났고 커밋됐다(`fix/settings-review-deeplink` `361e988`). **§0~§6은 이제 실행 지시가 아니라 경위 기록이다** — 특히 **§0을 다시 따르면 안 된다**(그 미커밋분은 이미 `aafa52d`로 닫혔고, fix 브랜치도 이미 있다).
+>
+> **지금 이 문서에서 볼 곳은 [§9 실행 결과](#9-실행-결과--무엇이-닫혔고-무엇이-남았나)** — 무엇이 닫혔고 무엇이 남았는지가 거기 있다. 진행 상태 정본은 [ROADMAP](../../ROADMAP.md) Now 항목.
+>
+> **남은 것은 사람 게이트 하나: 실기기 검증.** 그 뒤에야 버전 상향·제출을 판단한다.
+
 **발단**: 2026-08-08 외부 유저 제보 — *"설정에서 앱 평가하기를 눌렀는데 작동을 안 해"*
 **성격**: 코드 수정(iOS 라이브 앱). 웹 트랙 W와 **무관** — 별도 브랜치·별도 흐름.
-**읽는 주체**: 콜드 세션 AI. 이 문서 하나로 §0 정리 → §5 검증까지 관통한다.
+**읽는 주체**: ~~콜드 세션 AI. 이 문서 하나로 §0 정리 → §5 검증까지 관통한다.~~ → **실행 종료. 아래는 경위 기록 + §9 결과.**
 
 ---
 
@@ -182,8 +190,45 @@ Apple 가이드라인은 이 API를 **유저의 명시적 액션(버튼 탭)에 
 
 | 무엇 | 어디 |
 |---|---|
-| 버그·개선 트래커 | GitHub Issues (ADR-0008) |
+| 버그·개선 트래커 | GitHub Issues (ADR-0008) — 이 건 = [#19](https://github.com/data-sy/devetym/issues/19) |
 | 진행 상태 | `ROADMAP.md` |
-| 피드백 원문 | `docs/feedback/` |
+| 피드백 원문 | `docs/feedback/` — ⚠️ **이 브랜치엔 없다**(창구가 `docs/web-track-autonomy-prep`에만 존재). 이 건 원문 = 거기 `26-08-08-외부-제보.md` |
 | 플랫폼 seam 계약 | `shared/src/commonMain/.../ui/platform/AppDeps.kt` |
 | 셸 재설계 경위 | `docs/specs/m9-ux-shell-redesign-draft.md` |
+
+---
+
+## 9. 실행 결과 — 무엇이 닫혔고 무엇이 남았나
+
+**실행일 2026-08-08** · 커밋 `361e988` (`fix/settings-review-deeplink`, main 위) · **미푸시**
+
+### 9-1. 닫힌 것
+
+| 절 | 결과 |
+|---|---|
+| §0 작업대 | 웹 감사 미커밋분을 `aafa52d`로 닫고 main에서 fix 브랜치 분기 — 지시대로 |
+| §6 Issue | **#19** 생성 (제보 원문·진단·수정 방향·오라클 기재) |
+| §2 코드 | `Constants.appStoreReviewUrl` 신설 · `IosSeams.requestReview()` → `openUrl(딥링크)` · `iosReviewPresenter` 훅과 `SKStoreReviewController` import 제거 · `iOSApp.swift` 주입 블록·`StoreKit` import 제거. **채택안 그대로**(seam 유지, iOS actual만 교체) — 대안은 쓰지 않았다 |
+| §4 테스트 | `shared/src/commonTest/.../AppStoreReviewUrlTest.kt` — 호스트·Apple ID·`write-review` 3단언 |
+| §4 green | 4축 전부 통과 (`testDebugUnitTest` · `iosSimulatorArm64Test` · `linkDebugFrameworkIosSimulatorArm64` · `androidApp:assembleDebug`) |
+| §6 피드백 원문 | 웹 브랜치에 `cdcfe52` (사유 = §8 표 각주) |
+| §6 ROADMAP | Now에 유지보수 항목 + 백로그 2건 |
+
+### 9-2. 계획과 달라진 것 3건
+
+**① §4 Xcode 빌드 → `swiftc -typecheck`로 대체.** 환경 블로커다 — 설치된 시뮬 런타임이 iOS 18.5뿐인데 SDK는 26.5라 Xcode가 destination을 아예 못 찾는다(`Supported platforms for the buildables in the current scheme is empty`). 프레임워크 실물 대상 타입체크로 대체하고, **형식 통과가 아님을 음성대조로 확증**했다 — 제거된 `IosSeamsKt.iosReviewPresenter`를 참조하는 프로브는 실제로 컴파일 실패한다(`cannot find 'IosSeamsKt' in scope`).
+
+**② §5 iOS 시뮬 실주행 → 포기(2026-08-12 사람 결정).** 위 블로커인데다 **시뮬엔 App Store 앱이 없어 어차피 Safari까지만** 증명한다. 런타임 다운로드(수 GB) 값이 실기기 1회보다 크지 않다.
+
+**③ §6에 없던 stale 1건 발견·수정.** ROADMAP 백로그 「[Feature] 앱 내 평점 요청 배선」이 *"`iosReviewPresenter` 훅이 이미 배선돼 있어 호출 지점만 추가"* 라고 적고 있었다 — **이번 수정이 그 훅을 지웠으므로 좌표가 죽었다.** 갱신했다: 그 기능은 `iOSApp.swift` StoreKit 2 주입을 되살리고 **딥링크와 구분되는 새 seam**(예: `promptReview()`)으로 붙어야 한다. **기존 seam 재사용은 설정 버튼을 프롬프트로 되돌려 #19를 회귀시킨다.**
+
+### 9-3. 남은 것
+
+| # | 무엇 | 주체 |
+|---|---|---|
+| 1 | **실기기 검증 — App Store 앱이 열리고 리뷰 작성 시트가 뜨는가.** 유일·최종 오라클, 제보 종결 근거 | 사람 |
+| 2 | §7-1 버전 상향 — **보류**(심사 투입 미확정, 2026-08-12). 현행 `0.1.0`/`CFBundleVersion 2` 유지 | 사람 판단 → AI 편집 |
+| 3 | push·PR(`Fixes #19`) — **보류**(2026-08-12) | 사람 |
+| 4 | 아카이브 → ASC 업로드 → 심사 → 게시 | 사람·외부 |
+| 5 | 제보자 회신 | 사람 |
+| 6 | §3 곁가지 `AndroidSeams.openUrl` `ActivityNotFoundException` — **이번에 손대지 않음**(권고대로). ROADMAP 백로그에 남김, F 트랙 재개 때 | 이월 |

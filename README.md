@@ -98,6 +98,11 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 iOS 앱 **시뮬레이터 실 구동**(Apple Silicon)은 M9서 실증 — `xcodebuild -scheme iosApp -sdk iphonesimulator … build` + `simctl boot/install/launch`
 (⚠️ 앱 링크에 `-lsqlite3` 필요 — SQLiter cinterop). 상세는 [실기기/시뮬 스모크 대본](docs/release/README.md).
 
+> 🚧 **현재 이 시뮬 경로는 막혀 있다 (2026-08-12 실측).** 설치된 시뮬 런타임이 **iOS 18.5뿐**인데 Xcode는 **SDK 26.5**라 destination 해석이 실패한다
+> (`Supported platforms for the buildables in the current scheme is empty` · 애셋 카탈로그도 `No simulator runtime version from ["22F77"] available to use with iphonesimulator SDK version 23F81a`).
+> 위 **gradle 4축은 정상**이고 이 블로커와 무관하다. 복구하려면 `xcodebuild -downloadPlatform iOS`로 iOS 26.x 시뮬 런타임을 받아야 한다(수 GB).
+> 그 전까지 Swift 컴파일 확인은 `swiftc -typecheck`(`Shared.framework` 대상, `-F shared/build/xcode-frameworks/Debug/iphonesimulator26.5`)로 대신할 수 있다 — #19에서 쓴 방법.
+
 - iOS interop은 **SKIE**로 `Shared.framework`의 Swift API를 개선한다(suspend→async/await, Flow→AsyncSequence 등).
 - ⚠️ **SKIE 0.10.12는 Kotlin 최대 2.3.21까지만** 지원 — Kotlin을 앞질러 올리지 말 것.
 
@@ -127,4 +132,11 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 
 **병행 트랙 (2026-07-10 착수).** 원격 `data-sy/devetym`(2026-07-13 **public 전환**) → `m1`~`m8` 스택 PR(#1~8) 병합 + **PR #9 병합(2026-07-13, main=M9 검증 구간)** + **PR #11 병합(2026-07-14, main=제출 준비분)** + **PR #12 병합(제출 수정분: 아이폰 전용·VoiceOver)** + **PR #14 병합(Sentry 실 DSN 배선·실증)** + 원본 repo `~/dev-etymology` **이관·자기완결화** + 코드 갭 정리. **완료**: 이관 WU-1(**Pages 배포·방침 URL 라이브 2026-07-13**, [PR #10](https://github.com/data-sy/devetym/pull/10) 병합·<https://data-sy.github.io/devetym/>)·WU-2(Scripts·db-expand 검증)·WU-3(ai-quality→ADR-0007)·WU-4(크래시 리포팅 Sentry — 방침 사인오프 + **WU-4B 단일 KMP 통합**까지 완료, iOS도 실배선)·WU-5(launch-prep 대조)·WU-6(네이티브 iOS 전수 스윕·자기완결성 확증) + 코드 갭 WU-8(클립보드)·WU-9(스플래시)·WU-10(셸 회귀가드). **잔여**: WU-7(원본 repo 폐기·사람). **독립 작업단위 WU-1~12 + 확정 결정(크래시 SDK=Sentry KMP 등)의 정본 = [`docs/handoff/26-07-10-selfcontained-migration-plan.md`](docs/handoff/26-07-10-selfcontained-migration-plan.md)** — 미래 세션이 WU 단위로 실행.
 
-**열린 PR (2026-07-28)**: [#17](https://github.com/data-sy/devetym/pull/17) 서버 캐시 S1 스펙 → `main` · [#18](https://github.com/data-sy/devetym/pull/18) 클라 동치 테스트 → **#17에 스택**(#17 병합 시 자동 리타깃, 역순 병합 불가) · [devetym-proxy#3](https://github.com/data-sy/devetym-proxy/pull/3) 캐시 구현 → `main`(독립).
+**열린 PR: 없음 (2026-08-12 확인).** 종전 3건은 **전부 병합됨(2026-07-27)** — [#17](https://github.com/data-sy/devetym/pull/17) 서버 캐시 S1 스펙 · [#18](https://github.com/data-sy/devetym/pull/18) 클라 동치 테스트 · [devetym-proxy#3](https://github.com/data-sy/devetym-proxy/pull/3) 캐시 구현.
+
+**열린 이슈 3건 (2026-08-12)** — 버그·개선 정본은 GitHub Issues([ADR-0008](docs/adr/0008-issue-tracking.md)):
+[#19](https://github.com/data-sy/devetym/issues/19) 설정 「앱 평가하기」 무반응 → App Store 딥링크 이행 (**코드 수정 완료·브랜치 `fix/settings-review-deeplink` 미푸시 · 실기기 검증 대기**) ·
+[#16](https://github.com/data-sy/devetym/issues/16) '오픈ai' 검색 분기 · [#15](https://github.com/data-sy/devetym/issues/15) 북마크 토글 미반영.
+
+**로컬 미푸시 브랜치 2개 (2026-08-12)** — 원격에 없으니 여기 적어 둔다(잊으면 사라지는 종류다):
+`fix/settings-review-deeplink`(#19 수정) · `docs/web-track-autonomy-prep`(웹 트랙 W 설계 감사 준비 + 피드백 원문 아카이브).
