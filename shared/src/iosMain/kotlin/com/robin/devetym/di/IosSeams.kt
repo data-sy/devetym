@@ -1,5 +1,6 @@
 package com.robin.devetym.di
 
+import com.robin.devetym.Constants
 import com.robin.devetym.ui.platform.AppActions
 import com.robin.devetym.ui.platform.AppearanceStore
 import com.robin.devetym.ui.platform.ConsentStore
@@ -17,7 +18,6 @@ import platform.Foundation.NSURLComponents
 import platform.Foundation.NSURLQueryItem
 import platform.Foundation.NSUUID
 import platform.Foundation.NSUserDefaults
-import platform.StoreKit.SKStoreReviewController
 import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIAlertAction
 import platform.UIKit.UIAlertController
@@ -38,14 +38,6 @@ import platform.UIKit.popoverPresentationController
  * percent-encoding을 담당해 **한글 제목도 nil이 안 된다** — 종전 공백·개행만 치환하던 수동 encode는
  * "DevEtym 문의" 같은 한글 subject에서 `NSURL.URLWithString` nil → 조용한 no-op였다(실기기 3-5 전멸의 확정 결함).
  */
-/**
- * 앱 평가 프롬프트 presenter 주입 (실기기 라운드 2) — iOS 26 실기기에서 `SKStoreReviewController.
- * requestReviewInScene`이 무프롬프트 no-op 관측(iOS 18.5 시뮬은 표시, iOS 18에서 deprecated된 API).
- * StoreKit 2 `AppStore.requestReview(in:)`는 Swift 전용이라 Kotlin에서 직접 호출 불가 —
- * iOS 셸(`iOSApp.swift`)이 앱 시작 시 이 훅에 StoreKit 2 호출을 주입한다(의존 역전).
- */
-var iosReviewPresenter: (() -> Unit)? = null
-
 internal fun mailtoUrl(to: String, subject: String, body: String): NSURL? {
     val components = NSURLComponents()
     components.scheme = "mailto"
@@ -60,8 +52,8 @@ internal fun mailtoUrl(to: String, subject: String, body: String): NSURL? {
 /**
  * iOS seam actual (M8 §3-1 → M9-후속 셸 재설계 §2-D 전면 재작성). 스텁·deprecated API를 실구현으로 교체:
  * 비동기 `openURL:options:completionHandler:`(동기 `openURL:`은 iOS 26 실기기에서 https 포함 전멸 관찰)·
- * `UIActivityViewController` 공유·씬 기반 StoreKit 리뷰·메일 폴백(클립보드+알럿).
- * ⚠️ 메일 실전송·공유시트 실동작·리뷰 프롬프트는 실기기 게이트 이월(§3).
+ * `UIActivityViewController` 공유·App Store 리뷰 딥링크(#19, 종전 StoreKit 프롬프트 대체)·메일 폴백(클립보드+알럿).
+ * ⚠️ 메일 실전송·공유시트 실동작·리뷰 딥링크 실도착은 실기기 게이트 이월(§3).
  */
 class IosAppActions : AppActions {
     override fun sendMail(to: String, subject: String, body: String) {
@@ -79,11 +71,12 @@ class IosAppActions : AppActions {
         presenter.presentViewController(activityVc, animated = true, completion = null)
     }
 
-    override fun requestReview() {
-        // 셸 주입 StoreKit 2 우선(iOS 26 대응) → 미주입 시 씬 기반 SKStoreReviewController 폴백.
-        iosReviewPresenter?.let { it(); return }
-        foregroundWindowScene()?.let { SKStoreReviewController.requestReviewInScene(it) }
-    }
+    /**
+     * App Store 리뷰 작성 딥링크 (#19). 프롬프트 API 범주에서 이탈 — `SKStoreReviewController`도 StoreKit 2
+     * `AppStore.requestReview(in:)`도 표시 여부를 시스템이 결정하고 앱은 결과를 알 수 없어(스로틀·유저 설정),
+     * 유저가 명시적으로 누른 버튼의 구현으로는 원리상 부적합했다. Android(스토어 URL)와 대칭이 된다.
+     */
+    override fun requestReview() = openUrl(Constants.appStoreReviewUrl)
 
     override fun copyToClipboard(text: String) {
         UIPasteboard.generalPasteboard.string = text   // ⚠️ 세터(쓰기) — 게터 읽기 no-op 금지(M8 §3-1)

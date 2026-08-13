@@ -33,4 +33,13 @@ object Constants {
      * 종전 `SettingsScreen` 하드코딩(`devetym.app/privacy` — 미보유 도메인 플레이스홀더) stale을 중앙화로 대체.
      */
     const val privacyPolicyUrl = "https://data-sy.github.io/devetym/privacy-policy"
+
+    /**
+     * App Store 리뷰 작성 딥링크 (#19). Apple ID `6790429958`은 2026-07-27 게시 실측값(ROADMAP §M9),
+     * `?action=write-review`가 App Store 앱의 리뷰 작성 시트를 바로 연다.
+     * 프롬프트 API(`SKStoreReviewController`·StoreKit 2 `AppStore.requestReview`)를 대체한 이유는
+     * **결정성**이다 — 그쪽은 365일 3회 스로틀·유저 설정에 따라 시스템이 조용히 삼키고 앱은 알 방법이 없어,
+     * 유저가 직접 「평가하기」를 누른 자리에는 원리상 맞지 않는다(같은 자리 3회차 결함).
+     */
+    const val appStoreReviewUrl = "https://apps.apple.com/app/id6790429958?action=write-review"
 }
