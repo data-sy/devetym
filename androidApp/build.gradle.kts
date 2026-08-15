@@ -15,7 +15,7 @@ android {
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "0.1.0"
+        versionName = "0.1.1"
         // (구 SENTRY_DSN BuildConfig 주입은 제거 — DSN은 shared 코드젠 상수로 단일화. 루트 .env → generateSentryConfig.)
     }
 
