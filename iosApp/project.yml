@@ -60,6 +60,16 @@ targets:
         basedOnDependencyAnalysis: false
         script: |
           cd "$SRCROOT/.."
+          # Xcode 스크립트 페이즈는 로그인 셸 환경을 상속하지 않는다 — JAVA_HOME이 비어 있고 PATH에
+          # homebrew도 없어 `/usr/bin/java`가 **시스템 기본 JDK**로 해석된다(Sentry 페이즈의 PATH 폴백과 동류 문제).
+          # 실측(2026-08-16, v0.1.1 아카이브): 기본이 OpenJDK 25로 잡혀 Gradle 8.13이 미지원 →
+          # `* What went wrong: 25.0.1`로 아카이브 실패. 터미널은 PATH에 openjdk@17이 앞서 통과하므로
+          # **Xcode에서만 재현되는 갈래**였다. → 여기서 지원 JDK를 명시 해석한다.
+          if JH=$(/usr/libexec/java_home -v 17 2>/dev/null); then
+            export JAVA_HOME="$JH"
+          elif JH=$(/usr/libexec/java_home -v 21 2>/dev/null); then
+            export JAVA_HOME="$JH"
+          fi
           ./gradlew :shared:embedAndSignAppleFrameworkForXcode
     # ── Sentry dSYM 업로드(심볼리케이션) — Release 전용·no-op 가드 ──────────────────────────────────
     # auth token은 DSN과 달리 **진짜 시크릿** — 루트 .env SENTRY_AUTH_TOKEN(gitignore)로만 공급.
