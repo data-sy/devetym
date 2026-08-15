@@ -65,7 +65,11 @@ xcodebuild -downloadPlatform iOS      # 수 GB·수십 분. 백그라운드 실�
 
 > 💡 이걸 풀면 **실기기 검증과 아카이브가 동시에** 열린다. 하나의 블로커가 §3·§5를 같이 막고 있다.
 
-**📍 2026-08-15 갱신 — 다운로드 착수함.** `xcodebuild -downloadPlatform iOS` 실행(iOS 26.5 시뮬 런타임 **8.52 GB**). ⚠️ 로그가 **Simulator 런타임만** 명시했으므로 **디바이스 플랫폼까지 설치됐는지는 완료 후 재실측할 것** — `xcodebuild … -destination 'generic/platform=iOS' -showBuildSettings`가 통과해야 아카이브가 열린다. 자동 가정 금지.
+**📍 2026-08-15 — ✅ 이 블로커는 해소됐다. §2는 이력이다.** `xcodebuild -downloadPlatform iOS`(8.52 GB) 완료 후 재실측:
+- `-destination 'generic/platform=iOS' -showBuildSettings` **통과**, `SDKROOT=iPhoneOS26.5.sdk` → **아카이브 열림**(§5 진행 가능)
+- 시뮬 런타임 iOS 26.5(23F77) Ready — 시뮬 기기 `kmp-test-26` 생성됨
+- **시뮬 빌드·기동 성공**: `-sdk iphonesimulator`로 `BUILD SUCCEEDED` → install → launch → **온보딩 정상 표출·크래시 0**
+- ⚠️ 위 기동 확인은 **셸이 산다**는 증명일 뿐 **#19의 오라클이 아니다**(시뮬에 App Store 앱 없음). §3은 그대로 유효하다.
 
 ⚠️ **시뮬 차단 원인 정정(2026-08-15 실측).** 이전 기록의 *"Xcode가 destination을 아예 못 찾음"* 은 오진단이었다. 실제로는 둘이다: ① destination 해석 실패 — 스킴 `SDKROOT=iphoneos` + 디바이스 플랫폼 미설치 → **`-sdk iphonesimulator` 명시로 우회됨**. ② 진짜 벽 — `actool`이 SDK와 맞는 시뮬 런타임을 요구(`No simulator runtime version from ["22F77"] … SDK version 23F81a`). **즉 시뮬도 같은 플랫폼 미설치가 뿌리다.**
 그래도 **시뮬은 이 건의 오라클이 못 된다** — App Store 앱이 없어 Safari가 열리는 것까지만 증명한다(2026-08-12 사람 결정으로 포기). 런타임을 받는 값은 시뮬이 아니라 **§5 아카이브가 열리는 것**에 있다.
