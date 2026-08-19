@@ -5,7 +5,7 @@
 
 **Android · iOS 단일 코드베이스** — Kotlin Multiplatform 위에서 UI까지 Compose Multiplatform으로 공유한다.
 
-> 🎉 **iOS 출시 — [App Store에서 보기](https://apps.apple.com/kr/app/id6790429958)** (2026-07-27 게시). Android는 후행 트랙.
+> 🎉 **iOS 출시 — [App Store에서 보기](https://apps.apple.com/kr/app/id6790429958)** (2026-07-27 최초 게시 · **현재 라이브 v0.1.1**, 2026-08-18). Android는 후행 트랙.
 
 - 앱 표시 이름: **개발 어원 사전**
 - 애플리케이션 ID / 번들 ID: `com.oddmuffin.devetym` (코드 네임스페이스·Kotlin 패키지는 `com.robin.devetym` 유지)
@@ -98,10 +98,12 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 iOS 앱 **시뮬레이터 실 구동**(Apple Silicon)은 M9서 실증 — `xcodebuild -scheme iosApp -sdk iphonesimulator … build` + `simctl boot/install/launch`
 (⚠️ 앱 링크에 `-lsqlite3` 필요 — SQLiter cinterop). 상세는 [실기기/시뮬 스모크 대본](docs/release/README.md).
 
-> 🚧 **현재 이 시뮬 경로는 막혀 있다 (2026-08-12 실측).** 설치된 시뮬 런타임이 **iOS 18.5뿐**인데 Xcode는 **SDK 26.5**라 destination 해석이 실패한다
-> (`Supported platforms for the buildables in the current scheme is empty` · 애셋 카탈로그도 `No simulator runtime version from ["22F77"] available to use with iphonesimulator SDK version 23F81a`).
-> 위 **gradle 4축은 정상**이고 이 블로커와 무관하다. 복구하려면 `xcodebuild -downloadPlatform iOS`로 iOS 26.x 시뮬 런타임을 받아야 한다(수 GB).
-> 그 전까지 Swift 컴파일 확인은 `swiftc -typecheck`(`Shared.framework` 대상, `-F shared/build/xcode-frameworks/Debug/iphonesimulator26.5`)로 대신할 수 있다 — #19에서 쓴 방법.
+> ✅ **이 경로는 열려 있다 (2026-08-16 실측).** 2026-08-12~15에 막혀 있었으나 `xcodebuild -downloadPlatform iOS`(8.52 GB)로 해소됐다.
+> 현재 시뮬 런타임 **iOS 18.5 + 26.5** 둘 다 설치, 디바이스 플랫폼도 함께 설치돼 **아카이브까지 가능**하다.
+>
+> 당시 원인 서술(`destination 해석 실패`)은 **오진단이었다.** 실제로는 둘이다 — ① 스킴 `SDKROOT=iphoneos`인데 디바이스 플랫폼이 없어 시뮬 destination까지 무너지던 것(**`-sdk iphonesimulator` 명시로 우회 가능**) ② 진짜 벽은 애셋 카탈로그: `actool`이 SDK와 맞는 시뮬 런타임을 요구(`No simulator runtime version from ["22F77"] … SDK version 23F81a`). 둘 다 뿌리는 **플랫폼 미설치** 하나였다.
+>
+> ⚠️ **Xcode GUI 빌드는 별개 함정이 있다** — 스크립트 페이즈가 로그인 셸 환경을 상속하지 않아 `JAVA_HOME`이 비고 시스템 기본 JDK(OpenJDK 25)가 잡혀 Gradle 8.13이 죽는다(`* What went wrong: 25.0.1`). CLI는 통과하는데 Xcode만 실패하는 갈래라 헷갈린다. **`eaf7055`에서 preBuildScript가 JDK 17/21을 명시 해석하도록 해소됨.**
 
 - iOS interop은 **SKIE**로 `Shared.framework`의 Swift API를 개선한다(suspend→async/await, Flow→AsyncSequence 등).
 - ⚠️ **SKIE 0.10.12는 Kotlin 최대 2.3.21까지만** 지원 — Kotlin을 앞질러 올리지 말 것.
@@ -120,8 +122,13 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 **출시 시퀀스 A~D 완료**(A public 전환·B Pages 방침 URL 라이브·C 실기기 스모크·D iOS 스토어 스크린샷 캡처+캡션 프레이밍) ·
 **출시 결정 D1~D9 전건 확정**(이름·키워드·카피·지역·등급·심사 노트 — [결정 로그](docs/release/README.md)).
 **🎉 E iOS 배포 완료 — 2026-07-27 App Store 게시·라이브**([개발 어원 사전](https://apps.apple.com/kr/app/id6790429958), Apple ID `6790429958`). M9 DoD "스토어 게시" 폐쇄·iOS 트랙 종결.
-남은 것 = **[외부]** F Android 배포(후행 — 폐쇄테스트 20명×14일 게이트 + 스크린샷 캡처 잔여) · 씨딩·리뷰 확보(📆 일정).
-진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md)(M9), 출시 지그·게이트는 [`docs/release/`](docs/release/README.md).
+
+**✅ v0.1.1 게시 완료 — 2026-08-18 라이브** (App Store 실측 2026-08-19: 현재 버전 `0.1.1`). 출시 후 첫 유지보수 릴리스 — 외부 제보([#19](https://github.com/data-sy/devetym/issues/19)) 수정 1건 단독.
+설정 「앱 평가하기」가 무반응이던 것을 App Store 리뷰 딥링크로 교체했고, **실기기 검증 PASS**(iPhone 13 mini · iOS 26.5.2)로 종결 근거를 확보했다.
+빌드 `0.1.1(3)` 제출 → 심사 통과 → 수동 게시 → **게시본에서 재확인 완료**(업데이트 받은 App Store 판으로 「앱 평가하기」 동작 확인). **수정이 실사용자에게 도달했다.** 잔여 = 제보자 회신(사람).
+
+남은 것 = **[외부]** 제보자 회신(사람) · F Android 배포(후행 — 폐쇄테스트 20명×14일 게이트 + 스크린샷 캡처 잔여) · 씨딩·리뷰 확보(📆 일정) · 웹 트랙 W(설계 완료·구현 미착수).
+진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md), 출시 지그·게이트는 [`docs/release/`](docs/release/README.md).
 
 **서버 캐시 트랙 S1 — 가동 중 (2026-07-28).** 앱 배포와 **독립**으로 완결되는 트랙이라 심사와 무관하게
 먼저 나갔다. `devetym-proxy`에 D1 read-through 캐시를 붙여 **한 사용자가 생성시킨 항목을 다른 사용자가
@@ -134,9 +141,11 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 
 **열린 PR: 없음 (2026-08-12 확인).** 종전 3건은 **전부 병합됨(2026-07-27)** — [#17](https://github.com/data-sy/devetym/pull/17) 서버 캐시 S1 스펙 · [#18](https://github.com/data-sy/devetym/pull/18) 클라 동치 테스트 · [devetym-proxy#3](https://github.com/data-sy/devetym-proxy/pull/3) 캐시 구현.
 
-**열린 이슈 3건 (2026-08-12)** — 버그·개선 정본은 GitHub Issues([ADR-0008](docs/adr/0008-issue-tracking.md)):
-[#19](https://github.com/data-sy/devetym/issues/19) 설정 「앱 평가하기」 무반응 → App Store 딥링크 이행 (**코드 수정 완료·브랜치 `fix/settings-review-deeplink` 미푸시 · 실기기 검증 대기**) ·
-[#16](https://github.com/data-sy/devetym/issues/16) '오픈ai' 검색 분기 · [#15](https://github.com/data-sy/devetym/issues/15) 북마크 토글 미반영.
+**열린 이슈 2건 (2026-08-16)** — 버그·개선 정본은 GitHub Issues([ADR-0008](docs/adr/0008-issue-tracking.md)):
+[#16](https://github.com/data-sy/devetym/issues/16) '오픈ai' 검색 분기(enhancement) · [#15](https://github.com/data-sy/devetym/issues/15) 북마크 토글 미반영(bug).
+둘 다 **v0.1.1에 태우지 않기로 확정**(2026-08-16) — #15는 수용 기준이 self-healing 구조라 검증 표면이 늘고 제보자 대기가 밀린다. 다음 판 대상.
+〔[#19](https://github.com/data-sy/devetym/issues/19)는 CLOSED — 실기기 PASS 후 v0.1.1로 제출 완료. 검증 결과는 이슈 코멘트에 기록.〕
 
-**로컬 미푸시 브랜치 2개 (2026-08-12)** — 원격에 없으니 여기 적어 둔다(잊으면 사라지는 종류다):
-`fix/settings-review-deeplink`(#19 수정) · `docs/web-track-autonomy-prep`(웹 트랙 W 설계 감사 준비 + 피드백 원문 아카이브).
+**브랜치 — 전부 원격에 있다 (2026-08-16 `git ls-remote` 실측).** 종전 "로컬 미푸시 2건" 서술은 stale이었다.
+`fix/settings-review-deeplink`(#19, 병합됨·보존) · `docs/web-track-autonomy-prep`(웹 트랙 W 감사 준비 + 피드백 원문) · `chore/doc-pruning` — 로컬·원격 tip 일치.
+⚠️ 다만 **제보 원문은 여전히 main에 없다** — `docs/feedback/`가 `docs/web-track-autonomy-prep`에만 있고, 그 브랜치 병합 시점은 웹 트랙 감사(0/26)와 묶인 별개 판단이다.

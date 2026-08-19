@@ -295,7 +295,7 @@ sealed interface DetailUiState {
   - **앱 정보**: 버전·빌드 번호(`expect`/`actual`로 플랫폼 값 조회).
   - **지원**: 문의·앱 평가·오류 제보.
   - **법적 고지**: 오픈소스 라이선스(폰트 OFL) · AI 생성 고지 · 개인정보 처리방침(외부 URL).
-- 앱 평가: Android=In-App Review, iOS=StoreKit `requestReview`(플랫폼별 `expect`/`actual`).
+- 앱 평가: Android=Play 스토어 URL, iOS=**App Store 리뷰 딥링크**(`?action=write-review`) — 플랫폼별 `expect`/`actual`. 〔2026-08-19 정정: 종전 *iOS=StoreKit `requestReview`* 는 [#19](https://github.com/data-sy/devetym/issues/19)에서 이탈했다 — 프롬프트 API는 스로틀·유저 설정에 따라 **시스템이 조용히 삼키는 게 정상 동작**이라 사용자가 직접 누른 버튼의 구현으로는 결정적일 수 없다. v0.1.1(2026-08-18 게시)에 반영·실기기 검증 완료.〕
 
 ✅ **Phase 3 완료 조건**: 양 플랫폼에서 모든 탭 렌더링, 검색→결과 플로우 동작, 오류 상태 분기(한도 초과 포함), 제보 mailto 동작, 외관 전환 동작. **수동 재조회 코드 없음**(반응형으로 갱신 확인).
 
