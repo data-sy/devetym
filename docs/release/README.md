@@ -7,7 +7,17 @@
 - 이 폴더를 가리키던 문서의 링크는 전부 이 README로 접었다. 실제 파일은 위 로컬 경로에서 열 것.
 - **과거 이력은 이 repo에 남아 있다**: `git show HEAD:docs/release/<파일명>` (예: `git log -- docs/release/`).
 
-## 옮긴 파일 (이름도 정리함)
+## ⚠️ 구조가 바뀌었다 (2026-08-19 실측 대조)
+
+아래 표는 **2026-07-26 이관 시점의 평면 목록**이라 지금 실제 배치와 어긋난다. 실측 결과:
+
+- **11건이 `보류-android/` 하위로 이동**했다(Android 트랙 보류 시 관련 자료를 모은 것): `signing-upload-guide.md` · `device-smoke-script.md` · `accessibility-audit-script.md` · `build-preflight-checklist.md` · `screenshot-capture.md` · `screenshot-caption-jig.html` · `icon-render-sheet.html` · `🤖-screenshot-fresh-eyes-prompt.md` · `🤖-store-metadata-prompt.md` · `🤖-store-metadata-review-prompt.md` · `README.md`. **아래 표에서 이 파일들을 최상위로 찾으면 없다.**
+- **표에 없는 파일 8건이 최상위에 새로 생겼다**: `hotfix-runbook.md` · `OKKY-과정하이브리드-복붙본.md` · `긱뉴스-Show-GN-복붙본.md` · `웹전환-결정브리프-2026-08-05.html` · `🤖-긱뉴스-톤-교정-프롬프트.md` · `🤖-릴리즈-갭-정합-인터뷰.md` · `🤖-릴리즈-재작성-핸드오프.md` · PDF 2건.
+- ⚠️ **이 폴더는 git 밖이다.** 이관 후 생성분은 git에 없어 **삭제 시 복구 불가** — 정돈 착수 전 스냅샷 필수(ROADMAP 백로그 `[Ops]`).
+
+**정돈 트랙이 이 어긋남까지 정리한다** — 그전까지는 아래 표를 *이관 이력*으로만 읽을 것.
+
+## 옮긴 파일 (2026-07-26 이관 시점 목록 — 현행 배치 아님)
 
 | 이관 후 이름 | 옛 이름 | 역할 |
 |---|---|---|
