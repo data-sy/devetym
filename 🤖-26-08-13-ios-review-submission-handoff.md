@@ -155,7 +155,7 @@ v0.1.0(최초 출시)엔 없던 필드라 그동안 어느 문서에도 문안�
 
 ## 7. 이월된 것 (이번 세션 범위 밖 — 주울지는 판단)
 
-- **`docs/specs/spec.md:298` stale** — `iOS=StoreKit requestReview`라 적혀 있으나 이제 딥링크다. **데이터면이라 승인 필요**. 앞 세션에서 제안만 하고 안 고쳤다.
+- **`docs/specs/spec.md:298` stale** — `iOS=StoreKit requestReview`라 적혀 있으나 이제 딥링크다. **규범 문서라 승인 필요**. 앞 세션에서 제안만 하고 안 고쳤다.
 - **웹 브랜치 `docs/web-track-autonomy-prep`** — 〔2026-08-16 정정: **원격에 있다**(로컬·원격 tip `cdcfe52` 일치). 종전 "로컬 전용·미푸시" 서술은 stale이었다.〕 거기에 **제보 원문 아카이브**(`docs/feedback/26-08-08-외부-제보.md`)가 들어 있어, 병합 전까지 원문이 main에 없다(이건 여전히 유효). 병합 시점은 웹 트랙 감사(0/26 판정 대기)와 묶인 별개 판단.
 - **`AndroidSeams.openUrl`의 `ActivityNotFoundException` 미처리**(크래시 경로) — Android 미출시라 보류, ROADMAP 백로그. F 트랙 재개 때.
 - **번들 DB 추가 확장 = D1 캐시 승격 (2026-08-15 조사·백로그 확정)** — 디스크에 대기 중인 큐레이션 데이터는 **없다**(db-expand round-001~004 150건 **전부 이미 번들에 반영**, 650/650 종결). 실재하는 축적분은 **AI 폴백이 D1에 write-back한 항목**이고, 이를 `terms.json`으로 올리는 게 **INV-12 승격 잡**인데 **미구현**이다(S1 = 캐시 M0+M1까지만, 승격 잡 = 캐시 M5 후속 슬라이스). 지금 하려면 수동 대행: wrangler로 D1 export → **`normalizeKeyword` 키 공간 정합 확인**(스펙이 명시 경고하는 드리프트 지점 — 어긋나면 승격분이 영영 조회 안 됨) → validator·critic 게이트 → `Scripts/db-expand/merge.py`. ⚠️ 로컬에 **wrangler 미설치**(프록시 repo = `~/devetym-proxy`). **이번 릴리스와 분리**(§4c).

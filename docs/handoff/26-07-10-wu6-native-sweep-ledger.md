@@ -34,7 +34,7 @@
 
 ## 2. 파일별 대조 판정 (원장)
 
-판정: **MIGRATED**(로직/값 devetym에 존재) · **PARTIAL**(일부 미이관·명시) · **NEEDS-MIGRATION**(부재·이관 권고) · **DISCARD**(폐기·사유) · **PROPOSE-GATED**(거버넌스/데이터면 — 개별 승인 필요).
+판정: **MIGRATED**(로직/값 devetym에 존재) · **PARTIAL**(일부 미이관·명시) · **NEEDS-MIGRATION**(부재·이관 권고) · **DISCARD**(폐기·사유) · **PROPOSE-GATED**(거버넌스/규범 문서 — 개별 승인 필요).
 
 ### 2.1 Models
 | 원본 | 판정 | 근거 |

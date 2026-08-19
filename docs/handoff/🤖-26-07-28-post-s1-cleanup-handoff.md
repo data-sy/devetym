@@ -4,7 +4,7 @@
 >
 > | 항목 | 상태 |
 > |---|---|
-> | **A. 데이터면 문서 2건 정정** | ❌ **미해소** — `docs/architecture.md:250`은 여전히 *"서버 신규 구축은 `devetym-proxy`"*(미래형)이고, `cache-delivery-milestones.md` §M0·§M1에도 완료 마커가 없다. **데이터면이라 승인 게이트** — ROADMAP 백로그 `[Docs]` 항목으로도 등재했다. |
+> | **A. 규범 문서 2건 정정** | ❌ **미해소** — `docs/architecture.md:250`은 여전히 *"서버 신규 구축은 `devetym-proxy`"*(미래형)이고, `cache-delivery-milestones.md` §M0·§M1에도 완료 마커가 없다. **규범 문서라 승인 게이트** — ROADMAP 백로그 `[Docs]` 항목으로도 등재했다. |
 > | **B. Node 기본값 전환** | ✅ **완료** — 실측: `node -v` = v20.19.5, `nvm default` = 20. |
 > | **C. 서류 정돈 트랙 착수** | ⬜ **미착수** — ROADMAP 백로그 `[Ops]`(`~/Downloads/devetym-release` 정돈)로 이월. 순서·안전선은 그 항목에 있다. |
 >
@@ -38,9 +38,9 @@ gh -R data-sy/devetym-proxy pr list --state merged --limit 2 # #3 병합 확인
 
 ---
 
-## A. 데이터면 문서 2건 정정 `[사람 승인 → AI]`
+## A. 규범 문서 2건 정정 `[사람 승인 → AI]`
 
-`/refresh-ops-docs`가 stale을 발견했으나 **데이터면은 승인 게이트**라 손대지 않고 남긴 것이다.
+`/refresh-ops-docs`가 stale을 발견했으나 **규범 문서는 승인 게이트**라 손대지 않고 남긴 것이다.
 사람 승인을 받은 뒤 고친다. 승인 없이 고치지 말 것.
 
 ### A-1. `docs/architecture.md:250`
@@ -121,7 +121,7 @@ nvm ls                     # 22.23.1 설치돼 있는지
 ## 안전 규율 (이 세션이 하지 않을 것)
 
 - **거버넌스 자동 수정 금지** — 페르소나·design-prompt·검수 기준·`CLAUDE.md`. 발견해도 제안만
-- **데이터면(specs·ADR·architecture·cache-delivery-milestones) 임의 수정 금지** — A는 **승인받은 뒤에만**
+- **규범 문서(specs·ADR·architecture·cache-delivery-milestones) 임의 수정 금지** — A는 **승인받은 뒤에만**
 - **INV-1~13 수정 금지** — 제약은 소비 대상이지 생성 대상이 아니다
 - **브랜치 삭제 금지** — 병합 후에도 보존
 - **push·머지는 사람 지시로만**

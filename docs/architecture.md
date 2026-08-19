@@ -247,7 +247,7 @@ val appModule = module {
 1. **KMP 골격** — `shared + androidApp + iosApp` 생성, 빈 앱이 양쪽에서 뜨는지 확인.
 2. **모델·직렬화** — 어원 항목을 `@Serializable data class`로(버전 태깅 포함, INV-9).
 3. **로컬 DB** — 스키마·마이그레이션 정리(SQLDelight/Room 확정 후). local-first pinning 컬럼 빌트인(ADR-0006).
-4. **네트워킹** — Ktor 클라이언트 + Claude 요청/응답(tool_use 파싱). **프록시 = read-through 캐시**(서버 D1→API·write-back, 클라엔 투명; ADR-0006). 서버 신규 구축은 `devetym-proxy`.
+4. **네트워킹** — Ktor 클라이언트 + Claude 요청/응답(tool_use 파싱). **프록시 = read-through 캐시**(서버 D1→API·write-back, 클라엔 투명; ADR-0006). 서버 구현은 `devetym-proxy`(**S1 슬라이스로 2026-07-28 가동** — D1 `entries`/`aliases`, 정본 키 = `normalizeTermKey(AI keyword)`, 부정 분기 30일 TTL).
 5. **Repository** — `fetch` 3계층 read-through + local-first pinning/새로고침 + 북마크/히스토리.
 6. **ViewModel + StateFlow** — 화면 상태를 sealed로.
 7. **Compose UI** — 화면 이식(가장 기계적).

@@ -128,7 +128,7 @@ S1은 **Cloudflare Worker/JS/D1** 슬라이스고 오라클도 gradle이 아니�
 - **push·머지·`-draft` 제거 금지** — 전부 사람 게이트 (`agent-harnesses/README.md` 계승)
 - **`devetym-proxy` 코드 작성 금지** — 이번 세션은 비준까지. 구현은 비준 통과 후 별도 세션
 - **D1 `--remote` 마이그레이션 금지** — 되돌리기 어렵다. 사람 승인 후에만
-- **하네스 수정 금지** — `agent-harnesses/` 변경은 격리 세션 + `personas/harness-engineer.md` (제어면/데이터면 분리)
+- **하네스 수정 금지** — `agent-harnesses/` 변경은 격리 세션 + `personas/harness-engineer.md` (제어면/규범 문서 분리)
 - **ADR·INV 수정 금지** — 이 슬라이스는 제약을 **소비**하지 생성하지 않는다. 비준에서 INV 자체에 결함이 발견되면 **수정하지 말고 사람에게 보고**
 - **Anthropic 실호출 금지** — 이번 세션 비용 0. (구현 세션의 스모크 1회 $0.03만 승인됨)
 - 시스템 프롬프트·도구 스키마·한도 상수는 손대지 않는다

@@ -26,11 +26,11 @@
 | 대시보드(ios-launch-dashboard.html) | [압축] | 게시(s6) 완료 후 정산 — 미완(l5·l7·s5·s6·p3·p4·F 트랙)만 남기거나 ROADMAP으로 흡수 후 폐기 |
 | LAUNCH-CHECKLIST | [압축] | 6카테고리 근거 문서 — iOS 완료분 정리, F(Android) 게이트만 실효 |
 | `android-studio-cmp-runbook.md`, `Scripts/`, `docs/cost/` | [유지] | 반복 사용 절차·운영 정본 |
-| `docs/specs/`·`docs/adr/`·`architecture.md`·`docs/product/`·`docs/design/` | [유지]+⚠️ | 데이터면·거버넌스 — 이 트랙에서 손대지 않음(발견 시 제안+승인) |
+| `docs/specs/`·`docs/adr/`·`architecture.md`·`docs/product/`·`docs/design/` | [유지]+⚠️ | 규범 문서·거버넌스 — 이 트랙에서 손대지 않음(발견 시 제안+승인) |
 
 ## 2. 안전선
 
-- **거버넌스·데이터면(specs·ADR·architecture·페르소나·prd·design)은 삭제/수정 금지** — stale 발견 시 제안+승인.
+- **거버넌스·규범 문서(specs·ADR·architecture·페르소나·prd·design)은 삭제/수정 금지** — stale 발견 시 제안+승인.
 - 삭제는 반드시 **git 커밋으로**(이력 복구 가능성이 이 트랙의 전제). 브랜치 삭제 금지 규율 유지.
 - **push·main 병합 = 사람 지시로만.** 작업은 `chore/doc-pruning` 브랜치에서.
 - 미완 작업은 조용히 지우지 않는다 — 삭제 문서에 미완 항목이 박혀 있으면 ROADMAP/이 백로그로 **추출 후** 삭제.

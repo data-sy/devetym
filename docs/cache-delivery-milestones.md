@@ -48,21 +48,23 @@
 
 각 마일스톤은 **1개의 응집된 스펙 단위**. Claude Code는 마일스톤당 구현 스펙 1건을 산출한다.
 
-### M0 — 데이터 기반: term key 정규화 + D1 스키마
+### ✅ M0 — 데이터 기반: term key 정규화 + D1 스키마 (S1로 구현 완료, 2026-07-28)
+- **상태**: ✅ **구현·배포 완료.** 근거 정본 = [`specs/server-m0-m1-cache-read-through-draft.md`](specs/server-m0-m1-cache-read-through-draft.md).
 - **목표**: 모든 것이 올라앉을 저장 substrate 확정.
 - **스코프**: canonical term key 규칙, D1 스키마(entries / versions / aliases, term-key unique 인덱스, prompt·schema 버전 컬럼), 클라이언트에 반환되는 **entry 데이터 계약(shape)** 정의.
 - **지켜야 할 불변식**: INV-3, INV-9.
 - **스펙 산출물**: 스키마 DDL + 키 정규화 규칙 + 버전 컬럼 설계 + entry 응답 스키마.
 - **의존성**: 없음(기반).
-- **코드베이스 확인 필요**: 현재 D1 사용 여부/기존 스키마? 기존 alias 처리 로직 위치? 클라이언트가 이미 기대하는 entry shape?
+- **착수 전 질문 → 해소됨(2026-07-28)**: D1 사용 여부 = **사용 중**(`entries`/`aliases`, `term_key` unique) · alias 처리 = 서버가 정규화해 접고 **이미 `entries`에 있는 키는 alias로 등록하지 않는다**(비준 C9) · 클라 entry shape = `TermEntry`가 `schemaVersion`/`promptVersion`을 옵셔널로 왕복 수용(CMP M1 반영).
 
-### M1 — Worker read-through 캐시 경로
+### ✅ M1 — Worker read-through 캐시 경로 (S1로 구현 완료, 2026-07-28)
+- **상태**: ✅ **구현·배포 완료.** 라이브 실측: 같은 용어 10회 접근에 Anthropic 호출 **1회**($0.0230), 한글 요청이 영문 정본 키로 접힘, 한도 소진 상태에서도 캐시 히트는 200.
 - **목표**: 핵심 비용 절감 루프.
 - **스코프**: Worker 조회 순서(D1 → API), 미스 시 write-back, first-write-wins unique 제약 기반 멱등 write.
 - **지켜야 할 불변식**: INV-1, INV-2, INV-4(저장 측), INV-8, **INV-13(write-back 전 category 정규화 — 원응답 캐시 금지)**.
 - **스펙 산출물**: Worker 요청 흐름 스펙 + 멱등 write 처리 + **정규화-후-write-back 순서(INV-13)**.
 - **의존성**: M0.
-- **코드베이스 확인 필요**: 현재 Worker 프록시 구조/라우팅? API 호출 래핑 위치?
+- **착수 전 질문 → 해소됨(2026-07-28)**: Worker 구조 = 기존 `devetym-proxy`를 read-through로 **확장**(신규 repo 아님, ADR-0006) · API 호출 래핑 = 조회 순서 `D1 → API`, 미스 시 write-back을 `INSERT … ON CONFLICT DO NOTHING`으로 멱등 처리(first-write-wins, INV-2·INV-4).
 
 ### M2 — 동시성 하드닝 (single-flight)
 - **목표**: 캐시 빈 상태 동시 요청 레이스 제거.
