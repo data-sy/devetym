@@ -1,0 +1,396 @@
+<title>얼마나 큰 웹을 만드나</title>
+<style>
+  :root {
+    --paper:    #eef1f5;
+    --surface:  #fbfcfd;
+    --surface-2:#e3e8ef;
+    --ink:      #101725;
+    --ink-2:    #47536a;
+    --ink-3:    #74809a;
+    --line:     #d2dae5;
+    --line-2:   #b6c1d1;
+    --accent:   #2b4f8f;
+    --accent-sub:#dde5f3;
+    --go:       #2c6f52;  --go-bg:   #dceae2;
+    --hold:     #96600f;  --hold-bg: #f5e7cd;
+    --stop:     #8f3f38;  --stop-bg: #f3dedb;
+    --shadow:   0 1px 2px rgba(16,23,37,.05), 0 10px 26px -14px rgba(16,23,37,.22);
+    --sans: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard",
+            "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, "Cascadia Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:    #0d1219;
+      --surface:  #151c27;
+      --surface-2:#1d2634;
+      --ink:      #e6ebf2;
+      --ink-2:    #a7b2c4;
+      --ink-3:    #7c8799;
+      --line:     #27313f;
+      --line-2:   #3a4657;
+      --accent:   #7ba5e8;
+      --accent-sub:#1a2740;
+      --go:       #6fc196;  --go-bg:   #16301f;
+      --hold:     #dda657;  --hold-bg: #32240c;
+      --stop:     #d98b82;  --stop-bg: #331b18;
+      --shadow:   0 1px 2px rgba(0,0,0,.35), 0 12px 30px -16px rgba(0,0,0,.75);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:    #0d1219;
+    --surface:  #151c27;
+    --surface-2:#1d2634;
+    --ink:      #e6ebf2;
+    --ink-2:    #a7b2c4;
+    --ink-3:    #7c8799;
+    --line:     #27313f;
+    --line-2:   #3a4657;
+    --accent:   #7ba5e8;
+    --accent-sub:#1a2740;
+    --go:       #6fc196;  --go-bg:   #16301f;
+    --hold:     #dda657;  --hold-bg: #32240c;
+    --stop:     #d98b82;  --stop-bg: #331b18;
+    --shadow:   0 1px 2px rgba(0,0,0,.35), 0 12px 30px -16px rgba(0,0,0,.75);
+  }
+  :root[data-theme="light"] {
+    --paper:    #eef1f5;
+    --surface:  #fbfcfd;
+    --surface-2:#e3e8ef;
+    --ink:      #101725;
+    --ink-2:    #47536a;
+    --ink-3:    #74809a;
+    --line:     #d2dae5;
+    --line-2:   #b6c1d1;
+    --accent:   #2b4f8f;
+    --accent-sub:#dde5f3;
+    --go:       #2c6f52;  --go-bg:   #dceae2;
+    --hold:     #96600f;  --hold-bg: #f5e7cd;
+    --stop:     #8f3f38;  --stop-bg: #f3dedb;
+    --shadow:   0 1px 2px rgba(16,23,37,.05), 0 10px 26px -14px rgba(16,23,37,.22);
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    word-break: keep-all;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 44px 22px 100px;
+          display: flex; flex-direction: column; }
+
+  /* 머리 */
+  .top { display: flex; flex-direction: column; gap: 16px; padding-bottom: 30px;
+         border-bottom: 3px solid var(--ink); }
+  .kicker { font-family: var(--mono); font-size: 11.5px; letter-spacing: .14em;
+            text-transform: uppercase; color: var(--ink-3); }
+  h1 { margin: 0; font-size: clamp(28px, 5vw, 44px); line-height: 1.2;
+       letter-spacing: -.025em; font-weight: 700; text-wrap: balance; }
+  .lede { margin: 0; font-size: 17.5px; color: var(--ink-2); max-width: 60ch; }
+  .lede b { color: var(--ink); font-weight: 600; }
+
+  section { margin-top: 52px; display: flex; flex-direction: column; gap: 16px; }
+  h2 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -.018em; }
+  h2 .num { font-family: var(--mono); font-size: 13px; color: var(--accent);
+            font-weight: 700; margin-right: 10px; letter-spacing: .06em; }
+  p { margin: 0; color: var(--ink-2); max-width: 66ch; }
+  p b, li b { color: var(--ink); font-weight: 600; }
+
+  /* 현황 */
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px;
+           background: var(--line); border: 1px solid var(--line); border-radius: 4px;
+           overflow: hidden; }
+  .fact { background: var(--surface); padding: 15px 16px; display: flex;
+          flex-direction: column; gap: 2px; }
+  .fact .v { font-family: var(--mono); font-size: 21px; font-weight: 700;
+             font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .fact .v.zero { color: var(--stop); }
+  .fact .k { font-size: 13px; color: var(--ink-3); line-height: 1.5; }
+
+  /* 두 경로 */
+  .paths { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .path { background: var(--surface); border: 1px solid var(--line-2); border-radius: 5px;
+          padding: 20px; display: flex; flex-direction: column; gap: 9px; box-shadow: var(--shadow); }
+  .path .lab { font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+               color: var(--ink-3); font-weight: 700; text-transform: uppercase; }
+  .path .h { font-size: 17.5px; font-weight: 700; letter-spacing: -.015em; }
+  .path p { font-size: 15px; }
+  .path .now { margin-top: 4px; padding-top: 11px; border-top: 1px solid var(--line);
+               font-size: 14px; color: var(--ink-2); }
+  .path .now b { color: var(--stop); }
+
+  /* 세 크기 */
+  .sizes { display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr)); gap: 14px; }
+  .size { background: var(--surface); border: 1px solid var(--line-2); border-radius: 5px;
+          overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow); }
+  .size-top { padding: 16px 18px 14px; border-bottom: 1px solid var(--line);
+              display: flex; flex-direction: column; gap: 3px; }
+  .size .tag { font-family: var(--mono); font-size: 11px; font-weight: 700;
+               letter-spacing: .1em; color: var(--ink-3); }
+  .size .nm { font-size: 18px; font-weight: 700; letter-spacing: -.015em; line-height: 1.35; }
+  .size .sz { font-size: 13.5px; color: var(--ink-2); }
+  .size-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+  .rowlab { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em;
+            text-transform: uppercase; color: var(--ink-3); font-weight: 700;
+            display: block; margin-bottom: 3px; }
+  .size ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px;
+             font-size: 14.5px; color: var(--ink-2); }
+  .size li::marker { color: var(--ink-3); }
+  .size .give ul li::marker { color: var(--hold); }
+  .size .when { margin-top: auto; padding-top: 13px; border-top: 1px solid var(--line);
+                display: flex; align-items: baseline; gap: 8px; }
+  .size .when .t { font-family: var(--mono); font-size: 16px; font-weight: 700; }
+  .size .when .u { font-size: 13px; color: var(--ink-3); }
+  .size.mid { border-color: var(--accent); border-top: 4px solid var(--accent); }
+  .size.mid .tag { color: var(--accent); }
+
+  /* 비교표 */
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px;
+               background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14.5px; }
+  th, td { text-align: left; padding: 12px 15px; border-bottom: 1px solid var(--line);
+           vertical-align: top; }
+  thead th { font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
+             text-transform: uppercase; color: var(--ink-3); font-weight: 700;
+             background: var(--surface-2); border-bottom: 1px solid var(--line-2); }
+  tbody th { font-weight: 600; color: var(--ink); white-space: nowrap; }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: none; }
+  td { color: var(--ink-2); }
+  .mark { font-weight: 700; }
+  .mark.y { color: var(--go); }
+  .mark.n { color: var(--ink-3); }
+  .mark.w { color: var(--hold); }
+
+  /* 콜아웃 */
+  .call { border: 1px solid var(--hold); border-left-width: 5px; border-radius: 5px;
+          background: var(--hold-bg); padding: 20px 22px; display: flex;
+          flex-direction: column; gap: 12px; }
+  .call .h { font-size: 18px; font-weight: 700; line-height: 1.5; color: var(--ink);
+             text-wrap: balance; }
+  .call p { color: var(--ink-2); font-size: 15px; max-width: none; }
+  .call p b { color: var(--ink); }
+
+  /* 돈 */
+  .money { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px;
+           background: var(--line); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+  .m { background: var(--surface); padding: 15px 16px; display: flex; flex-direction: column; gap: 3px; }
+  .m .v { font-family: var(--mono); font-size: 19px; font-weight: 700; letter-spacing: -.02em; }
+  .m .k { font-size: 13px; color: var(--ink-3); line-height: 1.5; }
+
+  /* 추천 */
+  .rec { border: 1px solid var(--accent); border-radius: 5px; background: var(--accent-sub);
+         padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+  .rec .h { font-size: 19px; font-weight: 700; letter-spacing: -.015em; color: var(--ink); }
+  .rec p { color: var(--ink-2); max-width: none; }
+  .rec ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 7px;
+            color: var(--ink-2); }
+  .rec ol li b { color: var(--ink); }
+
+  .ask { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  .a-card { border: 1px solid var(--line-2); border-radius: 4px; background: var(--surface);
+            padding: 16px 17px; display: flex; flex-direction: column; gap: 6px; }
+  .a-card .q { font-weight: 700; font-size: 15.5px; }
+  .a-card p { font-size: 13.5px; max-width: none; }
+
+  .foot { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line);
+          font-size: 12.5px; color: var(--ink-3); }
+  code { font-family: var(--mono); font-size: .87em; background: var(--surface-2);
+         padding: 1px 5px; border-radius: 3px; }
+
+  @media (max-width: 640px) {
+    .wrap { padding-top: 32px; }
+    body { font-size: 15.5px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="kicker">DevEtym · 결정 브리핑 · 2026-08-21</div>
+    <h1>얼마나 큰 웹을 만드나</h1>
+    <p class="lede">
+      앱은 이미 나와 있고 잘 돌아갑니다. 문제는 <b>아무도 앱의 존재를 모른다</b>는 것입니다.
+      웹사이트가 그 문을 열어주는데, <b>문을 얼마나 크게 낼지</b>가 지금 정할 일입니다.
+      크게 낼수록 오래 걸리고, 돈이 새어 나갈 구멍도 함께 생깁니다.
+    </p>
+  </header>
+
+  <section>
+    <h2><span class="num">01</span>지금 서 있는 자리</h2>
+    <p>DevEtym은 개발자 용어의 <b>유래를 설명하는 앱</b>입니다. 왜 하필 “뮤텍스”인지, “쿠키”라는 이름은 어디서 왔는지를 알려줍니다.</p>
+    <div class="facts">
+      <div class="fact"><span class="v">650</span><span class="k">앱에 들어 있는 용어 수</span></div>
+      <div class="fact"><span class="v">1,097</span><span class="k">그 용어들의 한국어 이름 — 지금은 앱 안에서만 존재</span></div>
+      <div class="fact"><span class="v">7월 27일</span><span class="k">App Store 출시일 (2026년)</span></div>
+      <div class="fact"><span class="v zero">0</span><span class="k">사람이 앱을 발견할 수 있는 경로</span></div>
+    </div>
+    <p>마지막 줄이 핵심입니다. 앱은 <b>앱스토어 안에서만</b> 존재합니다. 구글에서 검색되지 않고, 링크로 내용을 보여줄 수도 없습니다. 만들어 둔 650개의 설명이 <b>바깥세상에는 한 글자도 노출되지 않은 상태</b>입니다.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">02</span>웹사이트가 여는 문은 두 개다</h2>
+    <div class="paths">
+      <div class="path">
+        <span class="lab">문 1</span>
+        <span class="h">구글 검색</span>
+        <p>누군가 “뮤텍스 어원”을 검색했을 때 우리 페이지가 뜹니다. <b>웹페이지만 가능합니다</b> — 앱 안의 내용은 구글이 읽지 못합니다.</p>
+        <p>한 번 만들어 두면 광고비 없이 계속 사람을 데려오는 자산이 됩니다.</p>
+        <span class="now">지금: <b>닫혀 있음</b> · 이 문이 열리는지는 아래 04에 달려 있습니다</span>
+      </div>
+      <div class="path">
+        <span class="lab">문 2</span>
+        <span class="h">커뮤니티에 글 올리기</span>
+        <p>개발자 커뮤니티에 글을 쓰고 링크를 겁니다. 지금은 그 링크가 앱스토어로 가는데, <b>내용을 보려면 먼저 앱을 받아야 합니다.</b> 대부분은 거기서 이탈합니다.</p>
+        <p>웹페이지로 보내면 클릭 즉시 읽힙니다. 재미있으면 그때 앱을 받습니다.</p>
+        <span class="now">지금: <b>글은 써 뒀지만 보내지 못함</b> — 착지할 곳이 없어서 대기 중</span>
+      </div>
+    </div>
+    <p>두 문의 성격이 다릅니다. <b>문 2는 확실합니다</b> — 링크를 타고 오는 것이니 우리가 글을 올리면 작동합니다. <b>문 1은 가정입니다</b> — 사람들이 실제로 그런 검색을 해야만 열립니다.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">03</span>선택지는 세 가지 크기</h2>
+    <div class="sizes">
+
+      <div class="size">
+        <div class="size-top">
+          <span class="tag">작게</span>
+          <span class="nm">소개 페이지 몇 장</span>
+          <span class="sz">앱을 소개하는 웹페이지 3~5장</span>
+        </div>
+        <div class="size-body">
+          <div><span class="rowlab">사는 것</span>
+            <ul><li>커뮤니티에 글을 <b>이번 주에</b> 올릴 수 있음</li><li>거의 공짜, 거의 위험 없음</li></ul></div>
+          <div class="give"><span class="rowlab">포기하는 것</span>
+            <ul><li>구글 검색 자산 <b>전무</b></li><li>650개 설명은 여전히 바깥에 없음</li></ul></div>
+          <div class="when"><span class="t">며칠</span><span class="u">어림</span></div>
+        </div>
+      </div>
+
+      <div class="size mid">
+        <div class="size-top">
+          <span class="tag">중간</span>
+          <span class="nm">650개를 전부 웹페이지로</span>
+          <span class="sz">읽기 전용. AI 답변은 앱에서만.</span>
+        </div>
+        <div class="size-body">
+          <div><span class="rowlab">사는 것</span>
+            <ul><li>커뮤니티 착지면 <b>+</b> 구글 검색 자산 650장</li><li>돈이 새어 나갈 구멍이 <b>구조적으로 없음</b></li><li>“더 알고 싶으면 앱으로” 유도 동선</li></ul></div>
+          <div class="give"><span class="rowlab">포기하는 것</span>
+            <ul><li>웹에서 새 단어를 물어보는 경험 — 앱을 받아야 함</li></ul></div>
+          <div class="when"><span class="t">1~2주</span><span class="u">어림</span></div>
+        </div>
+      </div>
+
+      <div class="size">
+        <div class="size-top">
+          <span class="tag">크게</span>
+          <span class="nm">650장 + 웹에서도 AI 답변</span>
+          <span class="sz">앱 없이도 제품을 다 써볼 수 있음</span>
+        </div>
+        <div class="size-body">
+          <div><span class="rowlab">사는 것</span>
+            <ul><li>위의 모든 것 <b>+</b> 다운로드 없이 제품 전체 체험</li><li>“없는 단어도 물어보면 답한다”는 <b>핵심 가치를 처음 온 사람이 즉시 경험</b></li></ul></div>
+          <div class="give"><span class="rowlab">포기하는 것</span>
+            <ul><li>가장 오래 걸림</li><li><b>지출 방어 장치를 먼저 지어야 함</b> — 인터넷 아무나 우리 AI 버튼을 누를 수 있게 되므로</li></ul></div>
+          <div class="when"><span class="t">3~4주+</span><span class="u">어림</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th scope="col">비교 항목</th><th scope="col">작게</th><th scope="col">중간</th><th scope="col">크게</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">커뮤니티 글 발사</th>
+            <td><span class="mark y">즉시</span></td><td><span class="mark w">1~2주 뒤</span></td><td><span class="mark w">3~4주 뒤</span></td></tr>
+          <tr><th scope="row">구글 검색 자산</th>
+            <td><span class="mark n">없음</span></td><td><span class="mark y">650장</span></td><td><span class="mark y">650장</span></td></tr>
+          <tr><th scope="row">앱 없이 제품 체험</th>
+            <td><span class="mark n">불가</span></td><td><span class="mark w">읽기만</span></td><td><span class="mark y">전체</span></td></tr>
+          <tr><th scope="row">지출이 샐 위험</th>
+            <td><span class="mark y">없음</span></td><td><span class="mark y">없음</span></td><td><span class="mark w">있음 — 상한으로 막음</span></td></tr>
+          <tr><th scope="row">나중에 키울 수 있나</th>
+            <td><span class="mark w">사실상 다시 만듦</span></td><td><span class="mark y">그대로 「크게」로 승급</span></td><td>—</td></tr>
+          <tr><th scope="row">틀렸을 때 손실</th>
+            <td>며칠</td><td>1~2주</td><td>3~4주 + 방어 장치</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><b>표에서 가장 중요한 줄은 「나중에 키울 수 있나」입니다.</b> 「중간」은 버려지는 작업이 아닙니다 — 그대로 두고 위에 얹으면 「크게」가 됩니다. 반면 「작게」에서 출발하면 650장은 결국 처음부터 다시 만들어야 합니다.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">04</span>불확실한 건 딱 하나다</h2>
+    <div class="call">
+      <div class="h">한국 개발자들이 정말 구글에 “뮤텍스 어원”이라고 검색할까?</div>
+      <p>우리가 가진 650개 용어의 제목은 <b>전부 영어</b>입니다(mutex, cookie, daemon…). 한국어 이름 1,097개는 앱 안에만 들어 있고요.
+         웹사이트를 만든다는 건 사실상 <b>“한국어로 유래를 검색하는 사람이 있다”에 베팅하는 것</b>입니다.</p>
+      <p><b>이 베팅을 한 번도 확인해 본 적이 없습니다.</b> 그럴듯해 보이지만 근거는 직관뿐입니다.
+         그리고 만들고 나서 확인하면 <b>답이 나오기까지 두 달</b>이 걸립니다 — 구글이 새 사이트를 신뢰하는 데 그만큼 걸리기 때문입니다.</p>
+      <p><b>먼저 확인할 방법이 있습니다.</b> 검색 광고 도구(구글·네이버 모두 무료)로 “뮤텍스 어원” 같은 표현이 한 달에 몇 번 검색되는지 조회할 수 있습니다.
+         용어 20~30개만 표본으로 돌리면 <b>반나절이면 답이 나옵니다.</b></p>
+      <p>결과가 「검색된다」면 → <b>「중간」이나 「크게」</b>가 정당해집니다.
+         결과가 「거의 안 된다」면 → 문 1이 닫힌 것이므로 <b>「작게」로 충분</b>하고, 그럼 3~4주를 아낍니다.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">05</span>돈 이야기</h2>
+    <p>웹사이트를 띄우는 것 자체는 거의 공짜입니다(월 몇 달러 수준). 유일한 변수는 <b>AI가 새 단어를 설명할 때 드는 비용</b>인데, 이건 「크게」를 골랐을 때만 생깁니다.</p>
+    <div class="money">
+      <div class="m"><span class="v">월 $30</span><span class="k">전체 예산 상한 — 사람이 정해 둔 선</span></div>
+      <div class="m"><span class="v">약 $0.03</span><span class="k">새 단어 하나 설명하는 데 드는 비용 (추정)</span></div>
+      <div class="m"><span class="v">하루 200건</span><span class="k">서버에 이미 걸려 있는 전체 상한 — 최악의 날에도 여기서 멈춤</span></div>
+      <div class="m"><span class="v">1인 3건</span><span class="k">웹 방문자 1명당 하루 한도 계획 · 넘으면 앱으로 안내</span></div>
+    </div>
+    <p>즉 <b>「크게」의 지출 위험은 이론적으로 무한하지만 실제로는 이미 상한이 걸려 있습니다.</b> 누가 악의적으로 두들겨도 하루 손실은 한 자릿수 달러에서 멈춥니다.
+       다만 그 상한이 <b>웹 방문자와 기존 앱 사용자에게 공유</b>되기 때문에, 방어 장치 없이 웹을 열면 <b>웹의 폭주가 앱 사용자의 서비스를 막을 수 있습니다.</b> 「크게」가 오래 걸리는 이유가 이것입니다.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">06</span>추천</h2>
+    <div class="rec">
+      <div class="h">반나절짜리 검색 수요 확인을 먼저 하고, 그 결과로 「중간」과 「크게」 사이를 정한다.</div>
+      <p>이유는 간단합니다. 이 결정에서 <b>가장 비싼 실수는 두 달 뒤에야 발견되는 실수</b>이고, 그 실수를 반나절로 예방할 수 있습니다. 미루는 비용은 반나절, 얻는 것은 3~4주짜리 결정의 근거입니다.</p>
+      <ol>
+        <li><b>이번 주</b> — 검색량 표본 조사 (반나절)</li>
+        <li><b>결과가 긍정이면</b> → 「중간」 착수. 650장을 먼저 세우고 커뮤니티 글을 발사. AI 개방은 그 위에 얹음</li>
+        <li><b>결과가 부정이면</b> → 「작게」로 커뮤니티만 열고, 웹에 더 투자하지 않음</li>
+      </ol>
+      <p><b>「중간」을 기본값으로 두는 이유</b>: 버려지는 작업이 없고, 두 문 중 확실한 쪽(커뮤니티)을 몇 주 안에 열며, 불확실한 쪽(검색)에는 돈이 아니라 시간만 겁니다.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">07</span>정해 주셔야 하는 것</h2>
+    <div class="ask">
+      <div class="a-card">
+        <span class="q">반나절 조사를 할까요?</span>
+        <p>하면 근거를 갖고 정합니다. 안 하면 직관으로 정합니다 — 그것도 가능한 선택입니다.</p>
+      </div>
+      <div class="a-card">
+        <span class="q">커뮤니티 글을 기다릴까요?</span>
+        <p>지금은 웹 완성까지 대기 중입니다. 「작게」를 먼저 내보내면 몇 주 먼저 나갈 수 있습니다.</p>
+      </div>
+      <div class="a-card">
+        <span class="q">웹에서도 AI를 열까요?</span>
+        <p>제품 체험은 강해지지만 방어 장치를 먼저 지어야 합니다. 나중으로 미뤄도 손해가 없는 유일한 항목입니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">
+    650 · 1,097 · 하루 200건 상한은 코드에서 직접 확인한 숫자입니다 ·
+    단가 $0.03, 소요 기간, 커뮤니티 이탈률은 추정치입니다 ·
+    검색 수요는 아직 아무도 확인하지 않았습니다
+  </p>
+
+</div>
