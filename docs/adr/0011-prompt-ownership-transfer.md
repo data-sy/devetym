@@ -1,7 +1,7 @@
 # ADR 0011: 프롬프트 소유권 이전 — `commonMain` → Worker
 
 ## Status
-**Proposed** (2026-08-05) — 설계 위원회 산출. **사람 비준 대기.**
+**Accepted** (2026-08-25) — 설계 위원회 산출(2026-08-05 `Proposed`), 2026-08-25 사람 비준 — 착수 시점(설계서 Q5)은 **W1a**로 확정: 프록시를 어차피 여는 단계이므로 웹이 프롬프트를 복제하는 창을 아예 만들지 않는다.
 
 근거 정본: [`../design/web-transition-design.md`](../design/web-transition-design.md) 결정 D8 · 충돌 C3.
 

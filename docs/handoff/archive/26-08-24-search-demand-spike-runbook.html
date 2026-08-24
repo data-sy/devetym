@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>검색 수요 확인 런북 — 반나절</title>
+<style>
+  :root {
+    --paper:#eef1f5; --surface:#fbfcfd; --surface-2:#e3e8ef;
+    --ink:#101725; --ink-2:#47536a; --ink-3:#74809a;
+    --line:#d2dae5; --line-2:#b6c1d1;
+    --accent:#2b4f8f; --accent-sub:#dde5f3;
+    --go:#2c6f52; --go-bg:#dceae2;
+    --hold:#96600f; --hold-bg:#f5e7cd;
+    --stop:#8f3f38; --stop-bg:#f3dedb;
+    --shadow:0 1px 2px rgba(16,23,37,.05), 0 10px 26px -14px rgba(16,23,37,.22);
+    --sans:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+    --mono:ui-monospace,"SF Mono","SFMono-Regular",Menlo,"Cascadia Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#0d1219; --surface:#151c27; --surface-2:#1d2634;
+      --ink:#e6ebf2; --ink-2:#a7b2c4; --ink-3:#7c8799;
+      --line:#27313f; --line-2:#3a4657;
+      --accent:#7ba5e8; --accent-sub:#1a2740;
+      --go:#6fc196; --go-bg:#16301f;
+      --hold:#dda657; --hold-bg:#32240c;
+      --stop:#d98b82; --stop-bg:#331b18;
+      --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 30px -16px rgba(0,0,0,.75);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#0d1219; --surface:#151c27; --surface-2:#1d2634;
+    --ink:#e6ebf2; --ink-2:#a7b2c4; --ink-3:#7c8799;
+    --line:#27313f; --line-2:#3a4657;
+    --accent:#7ba5e8; --accent-sub:#1a2740;
+    --go:#6fc196; --go-bg:#16301f;
+    --hold:#dda657; --hold-bg:#32240c;
+    --stop:#d98b82; --stop-bg:#331b18;
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 30px -16px rgba(0,0,0,.75);
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
+         font-size:16px; line-height:1.75; -webkit-font-smoothing:antialiased; word-break:keep-all; }
+  .wrap { max-width:920px; margin:0 auto; padding:44px 22px 120px; display:flex; flex-direction:column; }
+
+  .top { display:flex; flex-direction:column; gap:14px; padding-bottom:26px; border-bottom:3px solid var(--ink); }
+  .kicker { font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); }
+  h1 { margin:0; font-size:clamp(27px,5vw,42px); line-height:1.2; letter-spacing:-.025em; font-weight:700; text-wrap:balance; }
+  .lede { margin:0; font-size:17px; color:var(--ink-2); max-width:62ch; }
+  .lede b { color:var(--ink); font-weight:600; }
+  p { margin:0; color:var(--ink-2); max-width:68ch; }
+  p b, li b { color:var(--ink); font-weight:600; }
+  code { font-family:var(--mono); font-size:.87em; background:var(--surface-2); padding:1px 5px; border-radius:3px; }
+  a { color:var(--accent); }
+
+  /* 진행 바 */
+  .bar-wrap { position:sticky; top:0; z-index:10; background:var(--paper);
+              padding:10px 0 12px; border-bottom:1px solid var(--line); margin-bottom:6px; }
+  .bar-head { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+  .bar-head .n { font-family:var(--mono); font-size:15px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .bar-head .lab { font-size:13px; color:var(--ink-3); }
+  .bar-head .spacer { flex:1; }
+  .bar { height:7px; border-radius:99px; background:var(--surface-2); overflow:hidden; margin-top:8px; }
+  .bar > i { display:block; height:100%; width:0%; background:var(--accent); transition:width .25s ease; }
+  button { font-family:var(--sans); font-size:12.5px; cursor:pointer; background:var(--surface);
+           color:var(--ink-2); border:1px solid var(--line-2); border-radius:99px; padding:5px 13px; }
+  button:hover { border-color:var(--accent); color:var(--accent); }
+
+  section { margin-top:46px; display:flex; flex-direction:column; gap:16px; }
+  h2 { margin:0; font-size:21px; font-weight:700; letter-spacing:-.018em; display:flex; align-items:baseline; gap:11px; flex-wrap:wrap; }
+  h2 .num { font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:700; letter-spacing:.06em; }
+  h2 .time { font-family:var(--mono); font-size:11.5px; color:var(--ink-3); font-weight:500;
+             border:1px solid var(--line-2); border-radius:99px; padding:2px 9px; }
+  h2 .doneflag { font-size:12px; color:var(--go); font-weight:600; opacity:0; transition:opacity .2s; }
+  h2.all-done .doneflag { opacity:1; }
+
+  /* 흐름 */
+  .flow { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1px;
+          background:var(--line); border:1px solid var(--line); border-radius:4px; overflow:hidden; }
+  .fl { background:var(--surface); padding:14px 15px; display:flex; flex-direction:column; gap:3px; }
+  .fl .s { font-family:var(--mono); font-size:11px; color:var(--accent); font-weight:700; letter-spacing:.08em; }
+  .fl .t { font-size:14.5px; font-weight:600; color:var(--ink); line-height:1.45; }
+  .fl .m { font-family:var(--mono); font-size:12px; color:var(--ink-3); }
+
+  /* 체크 항목 */
+  .tasks { display:flex; flex-direction:column; gap:1px; background:var(--line);
+           border:1px solid var(--line); border-radius:5px; overflow:hidden; }
+  .task { background:var(--surface); padding:14px 16px; display:grid;
+          grid-template-columns:26px 1fr; gap:12px; align-items:start; }
+  .task input[type=checkbox] { width:19px; height:19px; margin:3px 0 0; accent-color:var(--accent); cursor:pointer; }
+  .task .body { display:flex; flex-direction:column; gap:5px; min-width:0; }
+  .task .t { font-size:15.5px; font-weight:600; color:var(--ink); line-height:1.55; cursor:pointer; }
+  .task .why { font-size:13.5px; color:var(--ink-3); }
+  .task .why b { color:var(--ink-2); font-weight:600; }
+  .task.done { background:var(--surface-2); }
+  .task.done .t { color:var(--ink-3); text-decoration:line-through; text-decoration-thickness:1px; }
+  .task.done .why { opacity:.6; }
+  .task .sub { font-size:13.5px; color:var(--ink-2); margin:2px 0 0; padding-left:14px;
+               border-left:2px solid var(--line-2); display:flex; flex-direction:column; gap:3px; }
+
+  /* 콜아웃 */
+  .call { border:1px solid var(--hold); border-left-width:5px; border-radius:5px; background:var(--hold-bg);
+          padding:17px 19px; display:flex; flex-direction:column; gap:9px; }
+  .call.stop { border-color:var(--stop); background:var(--stop-bg); }
+  .call.accent { border-color:var(--accent); background:var(--accent-sub); }
+  .call .h { font-size:16.5px; font-weight:700; line-height:1.5; color:var(--ink); text-wrap:balance; }
+  .call p { color:var(--ink-2); font-size:14.5px; max-width:none; }
+
+  /* 복사 블록 */
+  .copy { border:1px solid var(--line-2); border-radius:5px; background:var(--surface); overflow:hidden; }
+  .copy-top { display:flex; align-items:center; gap:10px; padding:11px 14px;
+              border-bottom:1px solid var(--line); background:var(--surface-2); flex-wrap:wrap; }
+  .copy-top .n { font-size:14px; font-weight:600; }
+  .copy-top .c { font-family:var(--mono); font-size:11.5px; color:var(--ink-3); }
+  .copy-top .spacer { flex:1; }
+  .copy pre { margin:0; padding:13px 15px; max-height:190px; overflow:auto; font-family:var(--mono);
+              font-size:12.5px; line-height:1.7; color:var(--ink-2); white-space:pre; }
+
+  /* 판정기 */
+  .verd { border:1px solid var(--line-2); border-radius:5px; background:var(--surface);
+          padding:19px 20px; display:flex; flex-direction:column; gap:14px; box-shadow:var(--shadow); }
+  .verd-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .verd label { font-size:14.5px; color:var(--ink-2); }
+  .verd input[type=number] { font-family:var(--mono); font-size:19px; font-weight:700; width:88px;
+        padding:7px 10px; border:1px solid var(--line-2); border-radius:4px;
+        background:var(--paper); color:var(--ink); text-align:center; }
+  .verd-out { font-family:var(--mono); font-size:15px; font-weight:700; padding:9px 15px;
+              border-radius:4px; border:1px solid var(--line-2); color:var(--ink-3); background:var(--surface-2); }
+  .verd-out.go { color:var(--go); background:var(--go-bg); border-color:var(--go); }
+  .verd-out.kill { color:var(--stop); background:var(--stop-bg); border-color:var(--stop); }
+  .verd-out.inc { color:var(--hold); background:var(--hold-bg); border-color:var(--hold); }
+  .verd .note { font-size:13.5px; color:var(--ink-3); }
+
+  .tablewrap { overflow-x:auto; border:1px solid var(--line); border-radius:4px; background:var(--surface); }
+  table { border-collapse:collapse; width:100%; min-width:520px; font-size:14.5px; }
+  th, td { text-align:left; padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top; }
+  thead th { font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+             color:var(--ink-3); font-weight:700; background:var(--surface-2); border-bottom:1px solid var(--line-2); }
+  tbody th { font-weight:600; color:var(--ink); white-space:nowrap; }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom:none; }
+  td { color:var(--ink-2); }
+
+  .foot { margin-top:56px; padding-top:18px; border-top:1px solid var(--line); font-size:12.5px; color:var(--ink-3); }
+  .foot b { color:var(--ink-2); }
+
+  @media (max-width:640px) { .wrap { padding-top:30px; } body { font-size:15.5px; } }
+  @media print {
+    .bar-wrap, button { display:none; }
+    body { background:#fff; color:#111; }
+    .copy pre { max-height:none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="kicker">DevEtym · 실행 런북 · 2026-08-24 · 사람이 하는 작업</div>
+    <h1>검색 수요, 반나절에 확인하기</h1>
+    <p class="lede">
+      "한국 개발자가 <b>한국어로 어원을 검색하는가</b>" — 이 하나를 확인하면 웹을
+      <b>작게 / 중간 / 크게</b> 중 어느 크기로 만들지가 정해집니다.
+      만들고 확인하면 두 달, 여기 적힌 순서대로 하면 <b>반나절</b>입니다.
+      아래 체크박스는 <b>브라우저에 저장</b>되니 중간에 닫아도 됩니다.
+    </p>
+  </header>
+
+  <div class="bar-wrap">
+    <div class="bar-head">
+      <span class="n" id="cnt">0 / 0</span>
+      <span class="lab" id="cntlab">아직 시작 전</span>
+      <span class="spacer"></span>
+      <button id="reset">체크 전체 지우기</button>
+    </div>
+    <div class="bar"><i id="fill"></i></div>
+  </div>
+
+  <section>
+    <h2><span class="num">흐름</span>다섯 구간, 총 2시간 30분</h2>
+    <div class="flow">
+      <div class="fl"><span class="s">A</span><span class="t">합격선 못 박기</span><span class="m">10분</span></div>
+      <div class="fl"><span class="s">B</span><span class="t">계정 준비</span><span class="m">20분</span></div>
+      <div class="fl"><span class="s">C</span><span class="t">검색량 조회</span><span class="m">60분</span></div>
+      <div class="fl"><span class="s">D</span><span class="t">검색 결과 직접 보기</span><span class="m">20분</span></div>
+      <div class="fl"><span class="s">E</span><span class="t">판정하고 넘기기</span><span class="m">20분</span></div>
+    </div>
+    <div class="call accent">
+      <div class="h">이 런북에 없는 것은 하지 않습니다</div>
+      <p>도메인 구매·코드 작성·스캐폴드는 <b>판정이 나온 뒤</b>의 일입니다. 지금은 숫자만 모읍니다.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">A</span>합격선 못 박기 <span class="time">10분</span><span class="doneflag">✓ 완료</span></h2>
+    <p>가장 중요한 구간입니다. <b>숫자를 본 뒤에 기준을 정하면</b> 어떤 결과가 나와도 원하는 결론으로 읽히기 때문에, 조회를 시작하기 전에 여기서 선을 긋습니다.</p>
+    <div class="tasks">
+      <label class="task"><input type="checkbox" data-k="a1">
+        <span class="body"><span class="t">합격선을 승인한다 — GO는 8개 이상, KILL은 3개 이하</span>
+        <span class="why">표본 24개 중 「어원·유래·이름」 검색량이 <b>하한(월 10회)을 넘긴 용어의 개수</b>로 판정합니다. 숫자를 바꾸고 싶으면 <b>지금</b> 바꾸고, 이후에는 바꾸지 않습니다.</span></span></label>
+      <label class="task"><input type="checkbox" data-k="a2">
+        <span class="body"><span class="t">개수로 세는 이유를 확인한다</span>
+        <span class="why">광고 도구는 작은 검색량을 <code>&lt; 10</code>이나 <code>100~1천</code> 같은 <b>구간값으로 뭉개서</b> 보여줍니다. 그래서 합계·평균은 못 믿고, "하한을 넘겼는가"만 믿습니다.</span></span></label>
+      <label class="task"><input type="checkbox" data-k="a3">
+        <span class="body"><span class="t">「뜻」 검색량은 판정에서 뺀다는 데 동의한다</span>
+        <span class="why">"뮤텍스 뜻"은 검색량이 크게 나오겠지만 <b>원하는 게 정의</b>라서 나무위키가 답입니다. 이 숫자를 근거로 쓰면 스스로를 속이는 것이라 <b>참고 기록만</b> 합니다.</span></span></label>
+      <label class="task"><input type="checkbox" data-k="a4">
+        <span class="body"><span class="t">애매하면 어떻게 할지 미리 정한다</span>
+        <span class="why">4~7개가 나오면 표본을 24 → 60으로 <b>딱 한 번만</b> 늘려 재조회하고, 그래도 애매하면 <b>KILL로 처리</b>합니다(불확실한 값에 3~4주를 걸지 않습니다).</span></span></label>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">B</span>계정 준비 <span class="time">20분</span><span class="doneflag">✓ 완료</span></h2>
+    <p>둘 다 <b>무료</b>이고 광고를 집행하지 않아도 조회됩니다. 개발자 기술 검색은 사실상 구글에서 일어나므로 <b>구글이 주 소스</b>, 네이버는 교차 확인용입니다.</p>
+    <div class="tasks">
+      <label class="task"><input type="checkbox" data-k="b1">
+        <span class="body"><span class="t">구글 Ads 계정 만들기 — <a href="https://ads.google.com" target="_blank" rel="noreferrer">ads.google.com</a></span>
+        <span class="why">계정 생성 화면에서 반드시 <b>"전문가 모드로 전환"</b>을 누릅니다. 그러면 캠페인을 만들지 않고, 결제 정보 없이 계정이 생깁니다.</span>
+        <span class="sub"><span>안내에 끌려 캠페인 만들기까지 가면 결제 정보를 요구합니다 — 그때는 뒤로 나와 "전문가 모드"부터 다시.</span></span></span></label>
+      <label class="task"><input type="checkbox" data-k="b2">
+        <span class="body"><span class="t">키워드 플래너 열기</span>
+        <span class="why">상단 <b>도구 &gt; 계획 &gt; 키워드 플래너 &gt; 검색량 및 예상 실적 조회</b>. "새 키워드 찾기"가 아닌 <b>조회</b> 쪽입니다.</span></span></label>
+      <label class="task"><input type="checkbox" data-k="b3">
+        <span class="body"><span class="t">지역 = 대한민국, 언어 = 한국어로 맞추기</span>
+        <span class="why">이걸 안 맞추면 영어권 검색까지 섞여 <b>숫자가 통째로 다른 시장 것</b>이 됩니다. 조회 화면 상단에서 바꿉니다.</span></span></label>
+      <label class="task"><input type="checkbox" data-k="b4">
+        <span class="body"><span class="t">(교차 확인용) 네이버 검색광고 가입 — <a href="https://searchad.naver.com" target="_blank" rel="noreferrer">searchad.naver.com</a></span>
+        <span class="why">사업자가 아니어도 <b>개인</b>으로 가입됩니다. 상단 <b>도구 &gt; 키워드 도구</b>. 시간이 없으면 이 항목은 건너뛰어도 판정은 가능합니다.</span></span></label>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">C</span>검색량 조회 <span class="time">60분</span><span class="doneflag">✓ 완료</span></h2>
+    <p>아래 목록을 그대로 복사해 붙여넣으면 됩니다. 표제어 24개(카테고리 6종 × 4개) × 질문 5형 = <b>120개</b>입니다. 음차 별칭(에이시드·엠브이브이엠)은 아무도 그렇게 검색하지 않아 <b>실사용 표기</b>(ACID·MVVM)로 교정해 두었습니다.</p>
+
+    <div class="copy">
+      <div class="copy-top"><span class="n">구글 키워드 플래너에 붙여넣을 120개</span><span class="c">24 표제어 × 5형</span><span class="spacer"></span><button data-copy="q120">복사</button></div>
+      <pre id="q120">ACID 어원
+힌티드 핸드오프 어원
+read uncommitted 어원
+쓰기 스큐 어원
+추상화 어원
+엔디언 어원
+null 어원
+yield 어원
+ALPN 어원
+IMAP 어원
+라우터 어원
+XSS 어원
+ABA 문제 어원
+파이버 어원
+선점형 멀티태스킹 어원
+워커 어원
+AA 트리 어원
+핑거 트리 어원
+포인터 어원
+지퍼 어원
+추상 팩토리 어원
+DRY 어원
+MVVM 어원
+YAGNI 어원
+ACID 유래
+힌티드 핸드오프 유래
+read uncommitted 유래
+쓰기 스큐 유래
+추상화 유래
+엔디언 유래
+null 유래
+yield 유래
+ALPN 유래
+IMAP 유래
+라우터 유래
+XSS 유래
+ABA 문제 유래
+파이버 유래
+선점형 멀티태스킹 유래
+워커 유래
+AA 트리 유래
+핑거 트리 유래
+포인터 유래
+지퍼 유래
+추상 팩토리 유래
+DRY 유래
+MVVM 유래
+YAGNI 유래
+ACID 이름
+힌티드 핸드오프 이름
+read uncommitted 이름
+쓰기 스큐 이름
+추상화 이름
+엔디언 이름
+null 이름
+yield 이름
+ALPN 이름
+IMAP 이름
+라우터 이름
+XSS 이름
+ABA 문제 이름
+파이버 이름
+선점형 멀티태스킹 이름
+워커 이름
+AA 트리 이름
+핑거 트리 이름
+포인터 이름
+지퍼 이름
+추상 팩토리 이름
+DRY 이름
+MVVM 이름
+YAGNI 이름
+ACID 뜻
+힌티드 핸드오프 뜻
+read uncommitted 뜻
+쓰기 스큐 뜻
+추상화 뜻
+엔디언 뜻
+null 뜻
+yield 뜻
+ALPN 뜻
+IMAP 뜻
+라우터 뜻
+XSS 뜻
+ABA 문제 뜻
+파이버 뜻
+선점형 멀티태스킹 뜻
+워커 뜻
+AA 트리 뜻
+핑거 트리 뜻
+포인터 뜻
+지퍼 뜻
+추상 팩토리 뜻
+DRY 뜻
+MVVM 뜻
+YAGNI 뜻
+ACID 왜
+힌티드 핸드오프 왜
+read uncommitted 왜
+쓰기 스큐 왜
+추상화 왜
+엔디언 왜
+null 왜
+yield 왜
+ALPN 왜
+IMAP 왜
+라우터 왜
+XSS 왜
+ABA 문제 왜
+파이버 왜
+선점형 멀티태스킹 왜
+워커 왜
+AA 트리 왜
+핑거 트리 왜
+포인터 왜
+지퍼 왜
+추상 팩토리 왜
+DRY 왜
+MVVM 왜
+YAGNI 왜</pre>
+    </div>
+
+    <div class="tasks">
+      <label class="task"><input type="checkbox" data-k="c1">
+        <span class="body"><span class="t">120개를 플래너에 붙여넣고 조회한다</span>
+        <span class="why">"검색량 및 예상 실적 조회" 입력창에 한 번에 붙여넣습니다. 지역·언어 설정이 <b>대한민국·한국어</b>인지 다시 확인.</span></span></label>
+      <label class="task"><input type="checkbox" data-k="c2">
+        <span class="body"><span class="t">결과를 CSV로 내려받아 보관한다</span>
+        <span class="why">화면 캡처보다 CSV가 낫습니다 — 나중에 집계·재확인이 가능합니다. <b>12개월 추세</b> 열도 함께 저장하세요(계절성 확인용).</span>
+        <span class="sub"><span>파일은 <code>~/Downloads</code>에 그대로 두면 됩니다. 다음 세션에서 제가 읽어 집계합니다.</span></span></span></label>
+      <label class="task"><input type="checkbox" data-k="c3">
+        <span class="body"><span class="t">「어원·유래·이름」과 「뜻·왜」를 눈으로 갈라 본다</span>
+        <span class="why">앞 셋만 판정에 들어갑니다. 「뜻」이 압도적으로 크게 나오는 건 <b>예상된 결과</b>이고 GO 근거가 아닙니다.</span></span></label>
+    </div>
+
+    <div class="copy">
+      <div class="copy-top"><span class="n">네이버 교차 확인용 16개</span><span class="c">유명 4 + 무명 4 × 어원·유래</span><span class="spacer"></span><button data-copy="q16">복사</button></div>
+      <pre id="q16">null 어원
+null 유래
+포인터 어원
+포인터 유래
+라우터 어원
+라우터 유래
+MVVM 어원
+MVVM 유래
+핑거 트리 어원
+핑거 트리 유래
+힌티드 핸드오프 어원
+힌티드 핸드오프 유래
+쓰기 스큐 어원
+쓰기 스큐 유래
+ABA 문제 어원
+ABA 문제 유래</pre>
+    </div>
+
+    <div class="tasks">
+      <label class="task"><input type="checkbox" data-k="c4">
+        <span class="body"><span class="t">(선택) 네이버 키워드도구에 5개씩 넣어 16개를 확인한다</span>
+        <span class="why">네이버는 <b>실수치</b>를 주므로, 구글의 구간값이 어느 쪽 끝인지 가늠하는 데 씁니다. 한 번에 5개까지 입력 → 우측 <b>다운로드</b>로 CSV 저장.</span></span></label>
+      <label class="task"><input type="checkbox" data-k="c5">
+        <span class="body"><span class="t">두 도구가 엇갈리면 어떻게 읽는지 확인한다</span>
+        <span class="why"><b>구글만 있다</b> = 정상이며 GO를 막지 않습니다(기술 질의의 구글 편중). <b>네이버만 크다</b> = 「지퍼」·「파이버」처럼 <b>생활어와 겹친 것</b>을 의심하고, 검색 결과를 직접 열어 확인한 뒤 그 용어는 판정에서 제외합니다.</span></span></label>
+      <label class="task"><input type="checkbox" data-k="c6">
+        <span class="body"><span class="t">(선택) 구글 트렌드에서 연관 검색어를 훑는다 — <a href="https://trends.google.co.kr" target="_blank" rel="noreferrer">trends.google.co.kr</a></span>
+        <span class="why">계정이 필요 없습니다. <code>어원</code>·<code>프로그래밍 어원</code>으로 <b>추세와 관련 검색어</b>만 봅니다. 우리가 못 떠올린 표현이 보이면 적어 두세요 — 추가는 되지만 <b>합격선은 바꾸지 않습니다</b>.</span></span></label>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">D</span>검색 결과 직접 보기 <span class="time">20분</span><span class="doneflag">✓ 완료</span></h2>
+    <p>검색량이 있어도 <b>1페이지가 이미 꽉 차 있으면</b> 우리가 들어갈 자리가 없습니다. 반대로 검색량이 아슬아슬해도 <b>답하는 결과가 없으면</b> 그 자리는 비어 있는 것입니다. 이 20분이 숫자만으로는 안 보이는 것을 보여줍니다.</p>
+    <div class="tasks">
+      <label class="task"><input type="checkbox" data-k="d1">
+        <span class="body"><span class="t">검색량 상위 5개 용어를 고른다</span>
+        <span class="why">C에서 나온 결과 중 「어원·유래·이름」 합이 큰 순으로 5개.</span></span></label>
+      <label class="task"><input type="checkbox" data-k="d2">
+        <span class="body"><span class="t">시크릿 창에서 <code>{용어} 어원</code>을 직접 검색한다</span>
+        <span class="why">평소 창은 <b>내 검색 이력이 결과를 바꿉니다</b>. 반드시 시크릿(새 시크릿 창: ⌘⇧N)으로.</span></span></label>
+      <label class="task"><input type="checkbox" data-k="d3">
+        <span class="body"><span class="t">1페이지 10개 중 나무위키·위키백과·블로그가 몇 개인지 센다</span>
+        <span class="why">숫자만 적으면 됩니다. 예: "10개 중 나무위키 1, 위키백과 1, 티스토리 4, 나머지 무관".</span></span></label>
+      <label class="task"><input type="checkbox" data-k="d4">
+        <span class="body"><span class="t">「질문에 실제로 답하는 결과가 있나」를 한 줄로 적는다</span>
+        <span class="why">가장 값진 관찰입니다. 정의만 나열돼 있고 <b>왜 그 이름인지 답하는 페이지가 없다면</b> 그게 우리 자리입니다.</span></span></label>
+    </div>
+    <div class="call">
+      <div class="h">검색량은 GO인데 1페이지가 완전히 점유돼 있다면</div>
+      <p>실질적으로는 KILL에 가깝습니다. 이때는 판정을 미루지 말고 <b>관찰한 그대로</b> 적어 주세요 — 제가 그 조건을 반영해 「중간」의 승산을 다시 계산합니다.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">E</span>판정하고 넘기기 <span class="time">20분</span><span class="doneflag">✓ 완료</span></h2>
+    <p>A에서 못 박은 선에 대조만 하면 됩니다. 아래 칸에 개수를 넣으면 판정이 바로 나옵니다.</p>
+
+    <div class="verd">
+      <div class="verd-row">
+        <label for="nq">「어원·유래·이름」 검색량이 <b>하한을 넘긴 용어</b>는 24개 중 몇 개?</label>
+      </div>
+      <div class="verd-row">
+        <input type="number" id="nq" min="0" max="24" step="1" placeholder="0">
+        <span class="verd-out" id="verdout">개수를 넣으면 판정이 나옵니다</span>
+      </div>
+      <p class="note">기준(A에서 승인): GO ≥ 8 · KILL ≤ 3 · 그 사이는 표본 60개로 한 번만 확대. 기준을 A에서 바꿨다면 그 숫자로 읽으세요.</p>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>판정</th><th>뜻</th><th>다음에 일어나는 일</th></tr></thead>
+        <tbody>
+          <tr><th>GO</th><td>검색 수요가 있다</td><td>「중간」 착수 — 650장 읽기 전용 웹. 1~2주. 나중에 그대로 「크게」로 승급 가능. 한글 별칭을 제목에 1급으로 올림</td></tr>
+          <tr><th>KILL</th><td>검색으로는 안 온다</td><td>「작게」 확정 — 소개 3~5장 만들고 <b>커뮤니티 씨딩 즉시 발사</b>. 3~4주를 아낌</td></tr>
+          <tr><th>INCONCLUSIVE</th><td>애매하다</td><td>표본 60개로 한 번만 재조회 → 그래도 애매하면 KILL 처리</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tasks">
+      <label class="task"><input type="checkbox" data-k="e1">
+        <span class="body"><span class="t">판정 한 줄을 정한다</span>
+        <span class="why">"GO / KILL / INCONCLUSIVE" 중 하나 + 개수. 예: <code>KILL — 24개 중 2개만 하한 초과</code>.</span></span></label>
+      <label class="task"><input type="checkbox" data-k="e2">
+        <span class="body"><span class="t">CSV 파일 위치와 SERP 관찰을 함께 남긴다</span>
+        <span class="why">CSV는 <code>~/Downloads</code>에 두고, D에서 적은 관찰 몇 줄을 그대로 붙여 주면 됩니다.</span></span></label>
+      <label class="task"><input type="checkbox" data-k="e3">
+        <span class="body"><span class="t">저에게 넘긴다 — 아래 한 줄을 복사해 붙여넣기</span>
+        <span class="why">그러면 제가 집계표·판정 문서를 쓰고, ROADMAP의 재개 지점을 갱신한 뒤 판정에 맞는 다음 작업으로 들어갑니다.</span></span></label>
+    </div>
+
+    <div class="copy">
+      <div class="copy-top"><span class="n">다음 세션에 붙여넣을 한 줄</span><span class="spacer"></span><button data-copy="handoff">복사</button></div>
+      <pre id="handoff">검색 수요 스파이크 결과다. 판정=[GO/KILL/INCONCLUSIVE], 하한 초과 [N]/24개.
+CSV는 ~/Downloads 에 있다. SERP 관찰: [상위 5개에서 본 것].
+집계표와 판정 문서를 만들고 ROADMAP 재개 지점을 갱신한 뒤, 판정에 맞는 다음 작업으로 들어가라.</pre>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">주의</span>이 셋은 하지 않습니다</h2>
+    <div class="call stop">
+      <div class="h">숫자를 본 뒤 합격선을 바꾸지 않습니다</div>
+      <p>바꿔야 할 진짜 이유가 생기면 바꾸지 말고 <b>바꾸고 싶은 이유를 적어</b> 주세요. 그것까지 기록에 남으면 다음 판단에 쓸 수 있지만, 조용히 바꾸면 이 반나절이 무효가 됩니다.</p>
+    </div>
+    <div class="call stop">
+      <div class="h">「뜻」 검색량을 GO 근거로 쓰지 않습니다</div>
+      <p>의도가 다르고 이미 점유돼 있습니다. 참고 기록으로만 남깁니다.</p>
+    </div>
+    <div class="call stop">
+      <div class="h">도메인을 사더라도 앱의 방침 URL은 마지막에 바꿉니다</div>
+      <p>① 구매 → ② <code>devetym.com</code>에 정책 페이지 실제 게시·응답 확인 → ③ 앱 상수 교체 → ④ 스토어 라벨 갱신. 순서를 어기면 <b>게시된 앱이 죽은 주소를 가리킵니다</b>.</p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <b>정본 포인터</b> — 절차 상세: <code>~/Downloads/🤖-검색수요-검증-스파이크-프롬프트.md</code> ·
+    맥락: <code>🤖-26-08-21-web-scale-handoff.md</code> ·
+    상태: <code>ROADMAP.md</code> Now 「▶ 재개 지점」 ·
+    용어: <code>study-sources/6-dev-literacy/demand-validation-glossary.html</code><br>
+    체크 상태는 이 브라우저에만 저장됩니다(다른 기기·시크릿 창에는 안 넘어감).
+  </footer>
+</div>
+
+<script>
+(function () {
+  var KEY = 'devetym-spike-runbook-v1';
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.task input[type=checkbox]'));
+  var cnt = document.getElementById('cnt'), lab = document.getElementById('cntlab'), fill = document.getElementById('fill');
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; }
+  }
+  function save(state) {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  function paint() {
+    var done = 0;
+    boxes.forEach(function (b) {
+      b.closest('.task').classList.toggle('done', b.checked);
+      if (b.checked) done++;
+    });
+    cnt.textContent = done + ' / ' + boxes.length;
+    fill.style.width = (boxes.length ? (done / boxes.length * 100) : 0) + '%';
+    lab.textContent = done === 0 ? '아직 시작 전'
+      : done === boxes.length ? '전부 완료 — 판정을 넘기세요'
+      : '진행 중';
+    document.querySelectorAll('section').forEach(function (s) {
+      var h = s.querySelector('h2'), bs = s.querySelectorAll('.task input[type=checkbox]');
+      if (!h || !bs.length) return;
+      var all = Array.prototype.every.call(bs, function (b) { return b.checked; });
+      h.classList.toggle('all-done', all);
+    });
+  }
+
+  var state = load();
+  boxes.forEach(function (b) {
+    var k = b.getAttribute('data-k');
+    if (state[k]) b.checked = true;
+    b.addEventListener('change', function () {
+      state[k] = b.checked;
+      save(state);
+      paint();
+    });
+  });
+  paint();
+
+  document.getElementById('reset').addEventListener('click', function () {
+    boxes.forEach(function (b) { b.checked = false; });
+    state = {};
+    save(state);
+    paint();
+  });
+
+  // 복사
+  document.querySelectorAll('button[data-copy]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var el = document.getElementById(btn.getAttribute('data-copy'));
+      if (!el) return;
+      var text = el.textContent;
+      var ok = function () {
+        var old = btn.textContent;
+        btn.textContent = '복사됨 ✓';
+        setTimeout(function () { btn.textContent = old; }, 1400);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(ok, fallback);
+      } else { fallback(); }
+      function fallback() {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); ok(); } catch (e) { btn.textContent = '복사 실패 — 직접 선택'; }
+        document.body.removeChild(ta);
+      }
+    });
+  });
+
+  // 판정기
+  var nq = document.getElementById('nq'), out = document.getElementById('verdout');
+  nq.addEventListener('input', function () {
+    var v = parseInt(nq.value, 10);
+    out.className = 'verd-out';
+    if (isNaN(v)) { out.textContent = '개수를 넣으면 판정이 나옵니다'; return; }
+    if (v >= 8) { out.classList.add('go'); out.textContent = 'GO — 「중간」 착수 (650장 읽기 전용)'; }
+    else if (v <= 3) { out.classList.add('kill'); out.textContent = 'KILL — 「작게」 확정 (소개 3~5장 + 씨딩)'; }
+    else { out.classList.add('inc'); out.textContent = 'INCONCLUSIVE — 표본 60개로 한 번만 재조회'; }
+  });
+})();
+</script>
+</body>
+</html>

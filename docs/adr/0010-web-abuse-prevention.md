@@ -1,7 +1,7 @@
 # ADR 0010: 웹 AI 폴백 남용 방지 경계 — 표면 분리 + Turnstile + 3층 한도
 
 ## Status
-**Proposed** (2026-08-05) — 설계 위원회 산출. **사람 비준 대기.**
+**Accepted** (2026-08-25) — 설계 위원회 산출(2026-08-05 `Proposed`), 2026-08-25 사람 비준 — 웹 AI 폴백을 여는 「크게」 확정으로 이 경계가 W1a 임계경로가 됨.
 
 근거 정본: [`../design/web-transition-design.md`](../design/web-transition-design.md) §4 (결정 D5·D6) — 특히 §4-3(INV-1 저촉 검토)·§4-5(캡 설정값)·§4-6(전환 경로와 대가).
 

@@ -1,7 +1,7 @@
 # ADR 0009: 웹 프레임워크·렌더링 경계 — Astro + React 아일랜드, 650개 SSG
 
 ## Status
-**Proposed** (2026-08-05) — 설계 위원회 산출. **사람 비준 대기.**
+**Accepted** (2026-08-25) — 설계 위원회 산출(2026-08-05 `Proposed`), 2026-08-25 사람 비준 — 웹 규모 판정 「크게」와 함께 승인.
 
 근거 정본: [`../design/web-transition-design.md`](../design/web-transition-design.md) 결정 D1·D2·D3·D4·D9.
 
