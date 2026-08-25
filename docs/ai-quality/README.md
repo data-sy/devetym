@@ -9,16 +9,14 @@ DevEtym AI 어원 생성의 **시스템 프롬프트·도구 스키마·품질 �
 ## 버전 사슬
 
 ```
-prompt-review-brief(v1) → handoff-v1 → prompt-review-brief-v2 → claude-ai-opening-prompt-v2
+v1 리뷰 브리프 → handoff-v1 → v2 브리프 → v2 대화 오프닝
    → [probe 측정: 8 cell × 15 keyword = 120 호출] → probe-analysis-v2 → handoff-v2(Path A 최종)
+   〔브리프·오프닝 3건은 2026-08-25 서류 정돈에서 삭제 — 1회용 입력이고 결론은 아래 두 지시서와 ADR-0007에 흡수됐다〕
 ```
 
 | 파일 | 무엇 | 관계 |
 |---|---|---|
-| [prompt-review-brief.md](prompt-review-brief.md) | v1 리뷰 브리핑(원본 프롬프트 전문·도구정의). namingReason 아직 300자. | 최초 브리프 |
 | [handoff-v1.md](handoff-v1.md) | v1 리뷰 결과 5변경 지시서(few-shot bug·300→270·alias 스코프·sanity·drift). | brief(v1) 산출 |
-| [prompt-review-brief-v2.md](prompt-review-brief-v2.md) | v2 브리핑(v1 적용 후 상태·실측 5샘플·가설 7.x). | brief(v1) **대체** |
-| [claude-ai-opening-prompt-v2.md](claude-ai-opening-prompt-v2.md) | v2 대화 오프닝(페르소나·대화 규칙). brief-v2를 첨부로 참조. | brief-v2 **짝** |
 | [probe-analysis-v2.md](probe-analysis-v2.md) | 직교성 factorial 측정 분석(§8 = Path A 최종 결정). | handoff-v2 **근거** |
 | [handoff-v2.md](handoff-v2.md) | v2 채택 3변경 지시서(alias_strict·null guard·metrics fix). closing/selfcheck는 v3 보류. | probe §8 실행 지시 |
 

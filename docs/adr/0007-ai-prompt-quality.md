@@ -1,7 +1,7 @@
 # ADR 0007: AI 프롬프트·품질 정본 — 시스템 프롬프트·도구 스키마·품질 게이트
 
 ## Status
-Accepted (2026-07-10) — **[`26-07-10 자기완결화 계획`](../handoff/26-07-10-selfcontained-migration-plan.md) D3 승인**(WU-3). `dev-etymology`(iOS) 시기 프롬프트 문서를 [`docs/ai-quality/`](../ai-quality/)로 이관하고, 그 문서들이 정본으로 지목하던 `ClaudeAPIService.swift`를 **commonMain 계승본**([`ClaudePrompt.kt`](../../shared/src/commonMain/kotlin/com/robin/devetym/data/remote/ClaudePrompt.kt)·[`ClaudeDto.kt`](../../shared/src/commonMain/kotlin/com/robin/devetym/data/remote/ClaudeDto.kt))으로 대체·정본화한다. 프롬프트·도구 위치 결정은 [ADR-0004](0004-backend-proxy-boundary.md)·[ADR-0006](0006-server-cache-boundary.md) §6을 계승(재론 아님).
+Accepted (2026-07-10) — **26-07-10 자기완결화 계획 D3 승인**(WU-3 — 계획 원장은 2026-08-25 서류 정돈에서 삭제, `git show 0d4c57e:docs/handoff/26-07-10-selfcontained-migration-plan.md`). `dev-etymology`(iOS) 시기 프롬프트 문서를 [`docs/ai-quality/`](../ai-quality/)로 이관하고, 그 문서들이 정본으로 지목하던 `ClaudeAPIService.swift`를 **commonMain 계승본**([`ClaudePrompt.kt`](../../shared/src/commonMain/kotlin/com/robin/devetym/data/remote/ClaudePrompt.kt)·[`ClaudeDto.kt`](../../shared/src/commonMain/kotlin/com/robin/devetym/data/remote/ClaudeDto.kt))으로 대체·정본화한다. 프롬프트·도구 위치 결정은 [ADR-0004](0004-backend-proxy-boundary.md)·[ADR-0006](0006-server-cache-boundary.md) §6을 계승(재론 아님).
 
 ## Context
 
@@ -92,4 +92,4 @@ probe factorial(closing × selfcheck × alias_strict, [probe-analysis-v2](../ai-
 - 정본 코드: `shared/src/commonMain/kotlin/com/robin/devetym/data/remote/ClaudePrompt.kt`·`ClaudeDto.kt`
 - 근거 문서: [`docs/ai-quality/`](../ai-quality/)(README = 버전 사슬·경로 매핑)
 - 품질 파이프라인: [`docs/db-expand/`](../db-expand/), [`Scripts/prompt-probe/`](../../Scripts/prompt-probe/)
-- 계획 원장: [`docs/handoff/26-07-10-selfcontained-migration-plan.md`](../handoff/26-07-10-selfcontained-migration-plan.md) WU-3·D3
+- 계획 원장 WU-3·D3 — 문서는 2026-08-25 서류 정돈에서 삭제됨(git 이력에 보존: `git show 0d4c57e:docs/handoff/26-07-10-selfcontained-migration-plan.md`)

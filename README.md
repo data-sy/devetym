@@ -97,7 +97,7 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 ```
 
 iOS 앱 **시뮬레이터 실 구동**(Apple Silicon)은 M9서 실증 — `xcodebuild -scheme iosApp -sdk iphonesimulator … build` + `simctl boot/install/launch`
-(⚠️ 앱 링크에 `-lsqlite3` 필요 — SQLiter cinterop). 상세는 [실기기/시뮬 스모크 대본](docs/release/README.md).
+(⚠️ 앱 링크에 `-lsqlite3` 필요 — SQLiter cinterop). 상세는 [ROADMAP](ROADMAP.md) Done의 M9 항목.
 
 > ✅ **이 경로는 열려 있다 (2026-08-16 실측).** 2026-08-12~15에 막혀 있었으나 `xcodebuild -downloadPlatform iOS`(8.52 GB)로 해소됐다.
 > 현재 시뮬 런타임 **iOS 18.5 + 26.5** 둘 다 설치, 디바이스 플랫폼도 함께 설치돼 **아카이브까지 가능**하다.
@@ -121,7 +121,7 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 `-lsqlite3` 누락 + **Android manifest 클래스 경로 오류**(`.DevEtymApp`→`.android.DevEtymApp`, `ClassNotFoundException` 즉사).
 이후 완주(2026-07-13): **iOS 시뮬 입력 주입 스모크 완주**(CGEvent 탭·타이핑) · **실기기 사인오프**(아이폰 13 mini — 셸 재설계 라운드 1·2 + VoiceOver) ·
 **출시 시퀀스 A~D 완료**(A public 전환·B Pages 방침 URL 라이브·C 실기기 스모크·D iOS 스토어 스크린샷 캡처+캡션 프레이밍) ·
-**출시 결정 D1~D9 전건 확정**(이름·키워드·카피·지역·등급·심사 노트 — [결정 로그](docs/release/README.md)).
+**출시 결정 D1~D9 전건 확정**(이름·키워드·카피·지역·등급·심사 노트). 결정 로그는 2026-08-25 서류 정돈에서 삭제 — 확정값은 App Store Connect와 `~/Downloads/devetym-release/store-metadata.md`에 산다.
 **🎉 E iOS 배포 완료 — 2026-07-27 App Store 게시·라이브**([개발 어원 사전](https://apps.apple.com/kr/app/id6790429958), Apple ID `6790429958`). M9 DoD "스토어 게시" 폐쇄·iOS 트랙 종결.
 
 **✅ v0.1.1 게시 완료 — 2026-08-18 라이브** (App Store 실측 2026-08-19: 현재 버전 `0.1.1`). 출시 후 첫 유지보수 릴리스 — 외부 제보([#19](https://github.com/data-sy/devetym/issues/19)) 수정 1건 단독.
@@ -129,7 +129,7 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 빌드 `0.1.1(3)` 제출 → 심사 통과 → 수동 게시 → **게시본에서 재확인 완료**(업데이트 받은 App Store 판으로 「앱 평가하기」 동작 확인). **수정이 실사용자에게 도달했고 제보자 회신까지 완료**(2026-08-19). 제보→회신 전 구간이 닫힌 첫 사이클 — 잔여 없음.
 
 남은 것 = **[외부]** F Android 배포(후행 — 폐쇄테스트 20명×14일 게이트 + 스크린샷 캡처 잔여) · **웹 트랙 W(기반 완료·본체 미착수 — 아래)** · **씨딩·리뷰 확보 — W에 종속**(2026-08-19 결정: App Store 착지는 다운로드 마찰로 커뮤니티 참여도가 낮아, 씨딩은 웹 완성 후 웹과 함께 나간다).
-진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md), 출시 지그·게이트는 [`docs/release/`](docs/release/README.md).
+진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md), 출시 실무 자료의 위치는 [`docs/release/README.md`](docs/release/README.md).
 
 **🌐 웹 트랙 W — 기반 라이브 (2026-08-25).** <https://devetym.com> 이 200 응답한다(Astro + Cloudflare Workers,
 [ADR-0009](docs/adr/0009-web-framework-rendering.md)). 앱을 대체하는 게 아니라 **채널 확장**이다 — 웹 = 검색·씨딩 착지면, 앱 = 무제한 표면.
@@ -145,7 +145,7 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 상태에서도 캐시 히트는 200을 준다. 클라 측 변경은 `normalizeKeyword` 동치 테스트 1건뿐(출하 동작 무변경).
 상세는 [ROADMAP 백로그 항목 I](ROADMAP.md).
 
-**병행 트랙 (2026-07-10 착수).** 원격 `data-sy/devetym`(2026-07-13 **public 전환**) → `m1`~`m8` 스택 PR(#1~8) 병합 + **PR #9 병합(2026-07-13, main=M9 검증 구간)** + **PR #11 병합(2026-07-14, main=제출 준비분)** + **PR #12 병합(제출 수정분: 아이폰 전용·VoiceOver)** + **PR #14 병합(Sentry 실 DSN 배선·실증)** + 원본 repo `~/dev-etymology` **이관·자기완결화** + 코드 갭 정리. **완료**: 이관 WU-1(**Pages 배포·방침 URL 라이브 2026-07-13**, [PR #10](https://github.com/data-sy/devetym/pull/10) 병합·<https://data-sy.github.io/devetym/>)·WU-2(Scripts·db-expand 검증)·WU-3(ai-quality→ADR-0007)·WU-4(크래시 리포팅 Sentry — 방침 사인오프 + **WU-4B 단일 KMP 통합**까지 완료, iOS도 실배선)·WU-5(launch-prep 대조)·WU-6(네이티브 iOS 전수 스윕·자기완결성 확증) + 코드 갭 WU-8(클립보드)·WU-9(스플래시)·WU-10(셸 회귀가드). **잔여**: WU-7(원본 repo 폐기·사람). **독립 작업단위 WU-1~12 + 확정 결정(크래시 SDK=Sentry KMP 등)의 정본 = [`docs/handoff/26-07-10-selfcontained-migration-plan.md`](docs/handoff/26-07-10-selfcontained-migration-plan.md)** — 미래 세션이 WU 단위로 실행.
+**병행 트랙 (2026-07-10 착수).** 원격 `data-sy/devetym`(2026-07-13 **public 전환**) → `m1`~`m8` 스택 PR(#1~8) 병합 + **PR #9 병합(2026-07-13, main=M9 검증 구간)** + **PR #11 병합(2026-07-14, main=제출 준비분)** + **PR #12 병합(제출 수정분: 아이폰 전용·VoiceOver)** + **PR #14 병합(Sentry 실 DSN 배선·실증)** + 원본 repo `~/dev-etymology` **이관·자기완결화** + 코드 갭 정리. **완료**: 이관 WU-1(**Pages 배포·방침 URL 라이브 2026-07-13**, [PR #10](https://github.com/data-sy/devetym/pull/10) 병합·<https://data-sy.github.io/devetym/>)·WU-2(Scripts·db-expand 검증)·WU-3(ai-quality→ADR-0007)·WU-4(크래시 리포팅 Sentry — 방침 사인오프 + **WU-4B 단일 KMP 통합**까지 완료, iOS도 실배선)·WU-5(launch-prep 대조)·WU-6(네이티브 iOS 전수 스윕·자기완결성 확증) + 코드 갭 WU-8(클립보드)·WU-9(스플래시)·WU-10(셸 회귀가드). **잔여**: WU-7(원본 repo 폐기·사람). **WU 계획·결정 원장은 2026-08-25 서류 정돈에서 삭제**(전건 소진). 잔여 WU-7의 절차·선행 게이트는 [ROADMAP](ROADMAP.md) Now에 자기완결적으로 옮겨 적었다.
 
 **열린 PR: 없음 (2026-08-12 확인).** 종전 3건은 **전부 병합됨(2026-07-27)** — [#17](https://github.com/data-sy/devetym/pull/17) 서버 캐시 S1 스펙 · [#18](https://github.com/data-sy/devetym/pull/18) 클라 동치 테스트 · [devetym-proxy#3](https://github.com/data-sy/devetym-proxy/pull/3) 캐시 구현.
 
