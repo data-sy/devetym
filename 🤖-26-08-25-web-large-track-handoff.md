@@ -1,10 +1,10 @@
-# 🤖 웹 트랙 W — 기반 완료, 본체는 ADR 비준 대기
+# 🤖 웹 트랙 W — 기반 완료 · ADR 비준 완료, 다음은 W0c(650 D1 시딩)
 
 > **콜드 세션 시작점.** 사람이 *"뭐 하고 있었어? 이어서 하자"* 라고 물으면 **이 문서로 답한다.**
 > 상태 정본은 [`ROADMAP.md`](ROADMAP.md) Now의 「▶ 재개 지점」 — 충돌하면 ROADMAP이 이긴다.
-> **최종 갱신 2026-08-25 (W0a·W0b 완료 반영).** 선행 문서 [`🤖-26-08-21-web-scale-handoff.md`](🤖-26-08-21-web-scale-handoff.md)는 역할 종료.
+> **최종 갱신 2026-08-25 (ADR-0012·0013 비준 반영).** 선행 문서 [`🤖-26-08-21-web-scale-handoff.md`](🤖-26-08-21-web-scale-handoff.md)는 역할 종료.
 
-**한 줄**: <https://devetym.com> 이 라이브다. **기반(W0a·W0b)은 끝났고 본체(650장·검색·AI)는 한 줄도 없다.** 다음 한 걸음은 코딩이 아니라 **ADR 2건 비준**(사람)이다 — 그게 열려야 콘텐츠를 어디에 둘지가 정해지고 W0c·W1b가 움직인다.
+**한 줄**: <https://devetym.com> 이 라이브다. **기반(W0a·W0b)은 끝났고 본체(650장·검색·AI)는 한 줄도 없다.** **ADR-0012·0013은 2026-08-25 비준됐다 — 웹 트랙에 사람 게이트는 더 없다.** 다음 한 걸음은 **W0c · 650 D1 시딩**(`~/devetym-proxy` 측)이다.
 
 ---
 
@@ -15,11 +15,11 @@ curl -sI https://devetym.com | head -1        # 200이면 기반 정상
 ls ~/devetym/web/src/pages                     # index.astro·robots.txt.ts 뿐 = 본체 미착수
 ```
 
-**막혀 있는 것은 사람 결정 하나다.** [ADR-0012](docs/adr/0012-content-canon-d1.md)·[ADR-0013](docs/adr/0013-web-route-contract.md)이 `Proposed`인 채로 W0c(650 D1 시딩)와 W1b(웹 본체)를 둘 다 막고 있다.
+**막는 것은 없다. 바로 W0c를 착수한다.** [ADR-0012](docs/adr/0012-content-canon-d1.md)·[ADR-0013](docs/adr/0013-web-route-contract.md) 둘 다 `Accepted`(2026-08-25 사람 비준).
 
-- **비준되면** → `Status: Proposed → Accepted`로 바꾸고 **W0c 착수**(650행 D1 시딩 · `origin` 컬럼 · authored 우선 충돌 규칙).
-- **아직이면** → 사람에게 두 ADR의 **결정과 대가**를 요약해 판정을 받는다. 과정 어휘 금지, 참고 자료는 한 탭만.
-- **비준을 기다리는 동안 할 수 있는 것은 없다.** W1a(프록시 하드닝)는 ADR과 독립이지만 웹 AI를 여는 작업이라 본체보다 먼저 갈 이유가 없다 — 순서상 W0c 다음이다.
+- **W0c 착수 내용** = `~/devetym-proxy` D1 `devetym-cache`에 **`origin` 컬럼 신설** · authored 650 시딩 · **authored > generated 충돌 규칙**(authoring path 한정, 구본은 `entry_versions` 보존) · `prompt_version` 센티널(`authored:db-expand-v<N>`) · 익스포트 잡(스냅샷 커밋 의무의 실행 수단).
+- **순서는 W0c → W1a → W1b → W1c**다. 앞당기지 않는다.
+- **`normalizeTermKey` 정의를 파이프라인과 Worker에서 하나로 못 박고 시작한다** — 정의가 어긋나면 페이지 수와 충돌 수가 조용히 달라진다(§4 ⚠️).
 
 ---
 
@@ -31,7 +31,7 @@ ls ~/devetym/web/src/pages                     # index.astro·robots.txt.ts 뿐 
 | **ADR-0009·0010·0011** | ✅ 비준 | 스택 · 남용 방지 · 프롬프트 소유권 |
 | **W0a 기반** | ✅ | Astro 5.18 + `@astrojs/cloudflare` 12.6 · `SITE_URL` 단일 지점 · 토큰 자동 추출 · 폰트 woff2 · **클라이언트 JS 0바이트** |
 | **W0b 도메인 결선** | ✅ | `devetym.com` 200 · `noindex` 해제 · 사이트맵 200 · 미리보기 서브도메인 차단 |
-| **ADR-0012·0013 작성** | ✅ 작성만 | `Proposed` — **비준 대기** |
+| **ADR-0012·0013 비준** | ✅ 사람 비준 (2026-08-25) | 둘 다 `Accepted`. INV-11 전단·ADR-0006 D5 갱신 완료. 함께 정해진 것 = **승격 잡을 W1c로 W 트랙 안에서 닫는다**(선택지 (b)) |
 
 **도메인**: Amazon Registrar 등록($16/yr·자동 갱신 ✅), **네임서버만 Cloudflare 위임**(소유·결제는 Amazon 유지 — 이전은 하지 않기로 결정). Route 53 호스팅 영역 삭제로 $0.50/월 회피.
 
@@ -39,14 +39,16 @@ ls ~/devetym/web/src/pages                     # index.astro·robots.txt.ts 뿐 
 
 ## 2. 다음 순서 — 위에서 아래로
 
-### 🚧 게이트 · ADR-0012·0013 비준 〔사람 · 유일한 차단 요인〕
+### ✅ 게이트 해소 · ADR-0012·0013 비준 완료 (2026-08-25 사람)
 
-| ADR | 결정 | 무엇이 걸려 있나 |
+| ADR | 결정 | 눈 뜨고 수용한 대가 |
 |---|---|---|
-| [0012](docs/adr/0012-content-canon-d1.md) | **D1을 콘텐츠 정본으로 승격.** 앱 번들 = 스냅샷, 웹은 D1에서 빌드 | INV-11 전단을 대체한다. 오프라인 보장·앱 코드는 무변경 |
-| [0013](docs/adr/0013-web-route-contract.md) | **SSG + 조회 전용 SSR 폴백.** 색인 자격은 품질 게이트가 연다 | ADR-0009 Decision 1의 공백(누가 서버 렌더를 유발하나)을 메운다 |
+| [0012](docs/adr/0012-content-canon-d1.md) `Accepted` | **D1을 콘텐츠 정본으로 승격.** 앱 번들 = 스냅샷 | 콘텐츠 변경이 코드 리뷰를 빠져나갈 수 있다(완화 = 익스포트·커밋 **규율**) · D1이 콘텐츠 단일 장애점 |
+| [0013](docs/adr/0013-web-route-contract.md) `Accepted` | **SSG + 조회 전용 SSR 폴백.** 색인 자격은 품질 게이트가 연다 | 라우트 둘의 캐시 헤더·404 정합 · 승격~색인 사이에 빌드 1회 지연 |
 
-### W0c · 650 D1 시딩 〔ADR-0012 비준 후 · 프록시 측〕
+**함께 정해진 것**: 승격 잡(캐시 M5)을 **W1c로 W 트랙 안에서 닫는다**. 안 지으면 생성분은 영원히 `noindex`이고 ADR-0013의 최대 이점이 잠긴다.
+
+### W0c · 650 D1 시딩 〔지금 여기 · 프록시 측〕
 `origin` 컬럼 신설 · authored 650 시딩 · **authored > generated 충돌 규칙**(현행 `ON CONFLICT DO NOTHING`이면 검수 안 된 AI판이 이긴다) · `prompt_version` 센티널 · 익스포트 잡. **W1b보다 반드시 먼저.**
 
 ### W1a · 프록시 하드닝 〔⚠️ W1b보다 반드시 먼저〕
@@ -58,6 +60,9 @@ ls ~/devetym/web/src/pages                     # index.astro·robots.txt.ts 뿐 
 정적 650장 + 검색 + 상세 + AI 폴백. **한글 별칭 1,097개를 title·h1·구조화 데이터에 1급으로 올린다** — 안 하면 650장은 한국어 검색에 존재하지 않는다.
 완료 오라클: **배포된 실 URL 650개 전수 200 응답** + AI 생성 왕복 성공. **로컬 빌드 성공은 오라클이 아니다.**
 
+### W1c · 승격 잡 (= 캐시 M5) 〔2026-08-25 사람 선택 (b)〕
+`critic` 게이트(INV-7)를 통과한 `origin='generated'` 행을 `authored`로 승급 → 다음 빌드에서 SSG 집합·사이트맵에 편입되며 그때 색인된다. **이게 없으면 웹 AI로 자란 콘텐츠는 영원히 `noindex`**다. 완료 오라클: 승격된 용어가 **배포 후 실 URL에서 `noindex` 없이 200** + 사이트맵에 등장.
+
 ### W2 · W3
 W2 = 카테고리 허브·관련 용어·구조화 데이터·얇은 콘텐츠 대응(317개가 300자 미만). W3 = 8주 실측 리뷰(**검색 수요 가정이 여기서 사후 판정된다**).
 
@@ -66,7 +71,7 @@ W2 = 카테고리 허브·관련 용어·구조화 데이터·얇은 콘텐츠 �
 ## 3. 하지 말 것
 
 - **설계를 다시 하지 않는다.** 정본 = [`docs/design/web-transition-design.md`](docs/design/web-transition-design.md). 규모 재론 금지.
-- **W1b를 W0c·W1a보다 먼저 열지 않는다.** 콘텐츠 정본이 안 정해진 채 650장을 구우면 두 번 짓는다. 방어 없이 웹 AI를 열면 웹 폭주가 앱 사용자를 429로 막는다.
+- **W1b를 W0c·W1a보다 먼저 열지 않는다.** D1 시딩 전에 650장을 구우면 정본이 아닌 것을 구워 두 번 짓는다. 방어 없이 웹 AI를 열면 웹 폭주가 앱 사용자를 429로 막는다.
 - **`web/src/styles/tokens.css`를 손으로 고치지 않는다.** 생성물이다 — 앱 `ui/theme/*.kt`를 고쳐야 한다.
 - **`SITE_URL`을 wrangler `[vars]`에 넣지 않는다.** 페이지가 prerender라 도메인은 빌드 시점에 구워진다 — 런타임 주입은 어긋난 값을 두 벌 만든다.
 - **ADR·specs·architecture·INV를 승인 없이 고치지 않는다.** 뒤집으려면 새 ADR.
@@ -106,7 +111,7 @@ W2 = 카테고리 허브·관련 용어·구조화 데이터·얇은 콘텐츠 �
 | 무엇 | 어디 |
 |---|---|
 | 상태 정본 | [`ROADMAP.md`](ROADMAP.md) Now 「▶ 재개 지점」 |
-| **사람이 할 일 (구체 절차)** | 같은 곳 「🙋 사람이 해야 하는 것」 — Search Console·Apple 갱신일·www 301·ADR 비준 |
+| **사람이 할 일 (구체 절차)** | 같은 곳 「🙋 사람이 해야 하는 것」 — **남은 것 = Search Console 소유권 · `www`→apex 301 · Apple 리마인더 등록(2027-06-08)**. ADR 비준·Apple 갱신일 확인은 ✅완료 |
 | 설계 정본 | [`docs/design/web-transition-design.md`](docs/design/web-transition-design.md) |
 | 웹 코드 | `~/devetym/web/` ([README](web/README.md) — 손대면 안 되는 것·앱과 의도적으로 다른 곳) |
 | 서버 코드 | `~/devetym-proxy` (별도 repo) · 계약 = [ADR-0006](docs/adr/0006-server-cache-boundary.md) |

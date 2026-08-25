@@ -1,7 +1,7 @@
 # ADR 0012: 콘텐츠 정본을 D1로 승격 — 앱 번들은 스냅샷, 파일은 생성물
 
 ## Status
-**Proposed** (2026-08-25, 사람 발의) — 비준 시 [`../cache-delivery-milestones.md`](../cache-delivery-milestones.md) §1 **INV-11의 전단(SSOT 귀속) 조항을 대체**하고, [ADR-0006](0006-server-cache-boundary.md) Decision 5의 *"서버는 SSOT가 아니라 freshness 담당"* 문장을 갱신한다. **후단(오프라인 우선·서버 온리 금지)은 그대로 살아 있다.**
+**Accepted** (2026-08-25 발의 · **2026-08-25 사람 비준**) — 비준에 따라 [`../cache-delivery-milestones.md`](../cache-delivery-milestones.md) §1 **INV-11의 전단(SSOT 귀속) 조항을 대체했고**, [ADR-0006](0006-server-cache-boundary.md) Decision 5의 *"서버는 SSOT가 아니라 freshness 담당"* 문장을 갱신했다. **후단(오프라인 우선·서버 온리 금지)은 그대로 살아 있다.** 배치 = ROADMAP W 트랙 **W0c**(650 D1 시딩), W1b보다 선행.
 
 ## Context
 

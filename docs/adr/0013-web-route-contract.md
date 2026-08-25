@@ -1,7 +1,9 @@
 # ADR 0013: 웹 라우트 계약 — SSG + 생성 금지 SSR 폴백, 색인은 품질 게이트가 연다
 
 ## Status
-**Proposed** (2026-08-25, 사람 질문 파생) — [ADR-0009](0009-web-framework-rendering.md) Decision 1의 렌더링 문장을 **구체화**한다(뒤집지 않는다). [ADR-0012](0012-content-canon-d1.md)(콘텐츠 정본 D1 승격)를 전제로 한다.
+**Accepted** (2026-08-25 발의 · **2026-08-25 사람 비준**) — [ADR-0009](0009-web-framework-rendering.md) Decision 1의 렌더링 문장을 **구체화**한다(뒤집지 않는다). [ADR-0012](0012-content-canon-d1.md)(콘텐츠 정본 D1 승격)를 전제로 한다.
+
+**함께 정해진 것 (2026-08-25 사람)**: 이 ADR의 Negative가 지적한 「승격 잡이 없으면 생성분은 영원히 `noindex`」를 **W1b 다음 W1c로 W 트랙 안에서 닫는다**(선택지 (b)). 승격 잡 없이 웹을 종결하지 않는다.
 
 ## Context
 

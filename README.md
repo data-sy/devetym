@@ -74,7 +74,7 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 |---|---|---|
 | [`docs/product/prd.md`](docs/product/prd.md) | 제품 기획 — 문제·타겟·유저 스토리·콘텐츠 (*왜*의 정본) | ✅ |
 | [`docs/architecture.md`](docs/architecture.md) | 아키텍처 설계 — 레이어링·Ktor·로컬 저장·Koin (기술 *어떻게*) | ✅ |
-| [`docs/adr/`](docs/adr/) | 돌이킬 수 없는 결정 기록 (0001~0008: CMP·관용구 원칙·로컬 DB·프록시 경계·SKIE interop·서버 캐시 경계·AI 프롬프트 품질·이슈 트래킹 / **0009~0011: 웹 프레임워크·웹 남용 방지·프롬프트 소유권 — ✅ 비준 2026-08-25** / **0012~0013: 콘텐츠 정본 D1 승격·웹 라우트 계약 — `Proposed`, 비준 대기**) | ✅ |
+| [`docs/adr/`](docs/adr/) | 돌이킬 수 없는 결정 기록 (0001~0008: CMP·관용구 원칙·로컬 DB·프록시 경계·SKIE interop·서버 캐시 경계·AI 프롬프트 품질·이슈 트래킹 / **0009~0011: 웹 프레임워크·웹 남용 방지·프롬프트 소유권 — ✅ 비준 2026-08-25** / **0012~0013: 콘텐츠 정본 D1 승격·웹 라우트 계약 — ✅ 비준 2026-08-25**) | ✅ |
 | [`docs/design/web-transition-design.md`](docs/design/web-transition-design.md) | **웹 이행 설계 정본** — 렌더링·이식 판정·남용 위협 모델·범위·실패 모드 (진행 상태는 ROADMAP W 트랙) | 🚧 구현 중 |
 | [`web/`](web/README.md) | **웹 표면 구현** — Astro + Cloudflare Workers. 기반(W0a·W0b) 완료, 용어 페이지·검색·AI는 미착수 | 🚧 |
 | [`docs/cache-delivery-milestones.md`](docs/cache-delivery-milestones.md) | 캐시·딜리버리 불변식(INV-1~13)·마일스톤 정본 — 서버 트랙의 제약 | ✅ |
@@ -135,8 +135,8 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 [ADR-0009](docs/adr/0009-web-framework-rendering.md)). 앱을 대체하는 게 아니라 **채널 확장**이다 — 웹 = 검색·씨딩 착지면, 앱 = 무제한 표면.
 지금 있는 것은 **기반뿐**이다: 디자인 토큰을 앱 Kotlin 정본에서 **빌드마다 자동 추출**(손으로 안 베낀다 — 개수를 단언해 드리프트 시 빌드가 깨진다) ·
 도메인 참조 `SITE_URL` 단일 지점 · 폰트 woff2 · 사이트맵 · 클라이언트 JS 0바이트.
-**아직 없는 것**: 용어 페이지 650장·검색·AI 폴백. 그 착수는 **[ADR-0012](docs/adr/0012-content-canon-d1.md)·[ADR-0013](docs/adr/0013-web-route-contract.md) 비준**에 걸려 있다
-(콘텐츠 정본을 D1로 올릴 것인가 · 웹 라우트를 어떻게 가를 것인가). 상세 = [`web/README.md`](web/README.md), 상태 = [ROADMAP](ROADMAP.md) W 트랙.
+**아직 없는 것**: 용어 페이지 650장·검색·AI 폴백. **[ADR-0012](docs/adr/0012-content-canon-d1.md)·[ADR-0013](docs/adr/0013-web-route-contract.md) 비준 완료(2026-08-25)로 게이트는 해소됐고, 다음은 W0c(650 D1 시딩)다**
+— 정본은 D1로 올라가고, 웹은 SSG 650 + 조회 전용 SSR 폴백(색인 자격은 품질 게이트가 연다)으로 간다. 상세 = [`web/README.md`](web/README.md), 상태 = [ROADMAP](ROADMAP.md) W 트랙.
 
 **서버 캐시 트랙 S1 — 가동 중 (2026-07-28).** 앱 배포와 **독립**으로 완결되는 트랙이라 심사와 무관하게
 먼저 나갔다. `devetym-proxy`에 D1 read-through 캐시를 붙여 **한 사용자가 생성시킨 항목을 다른 사용자가

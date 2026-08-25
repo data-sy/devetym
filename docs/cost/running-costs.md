@@ -16,7 +16,7 @@
 | 항목 | 금액 | 주기 | 다음 갱신 | 결제처 | 끊기면 무슨 일이 나는가 |
 |---|---|---|---|---|---|
 | **`devetym.com` 도메인** | **$16** | 연 | **2027-08-25** · 자동 갱신 ✅ | Amazon Registrar (소유·결제) · DNS는 Cloudflare 위임 | 웹 사이트 접근 불가 + **게시된 iOS 앱의 개인정보 방침 URL이 죽는다**. 도메인 만료는 복구가 비싸고 느리다 |
-| **Apple Developer Program** | **$99** | 연 | ⚠️ **미확인** | Apple | **App Store에서 앱이 내려간다.** 현재 유일한 실사용자 채널(iOS 단독 라이브) |
+| **Apple Developer Program** | **$99** | 연 | **2027-07-08** (2026-08-25 사람 확인) · 자동 갱신 여부 ⚠️미확인 | Apple | **App Store에서 앱이 내려간다.** 현재 유일한 실사용자 채널(iOS 단독 라이브) |
 | **Anthropic API** | **$30 상한** | 월 | 상시 | Anthropic (조직 spend limit) | 402 `service_exhausted` → AI 생성만 정지. 번들 650개·D1 캐시는 계속 동작 |
 
 **Anthropic $30은 청구액이 아니라 상한이다.** 실제 지출은 아래 §3.
@@ -51,7 +51,8 @@
 
 ## 5. 확인이 필요한 것
 
-- [ ] **Apple Developer Program 갱신일** — 이 원장에서 가장 중요한 빈칸이다. 놓치면 앱이 스토어에서 내려간다. 확인처: [Apple Developer 계정 > Membership](https://developer.apple.com/account)
+- [x] ~~**Apple Developer Program 갱신일**~~ — **2027-07-08 확인 (2026-08-25 사람).** §1에 기입됨.
+  - [ ] **남은 것 (사람)**: ① 만료 한 달 전(**2027-06-08**) 캘린더 리마인더 등록 ② 자동 갱신이 켜져 있는지 [Membership details](https://developer.apple.com/account)에서 확인 — 꺼져 있으면 리마인더가 유일한 방어선이다
 - [ ] **Sentry 플랜** — 무료 티어인지, 이벤트 한도가 얼마인지
 - [x] ~~도메인 자동 갱신~~ — **켜져 있음 확인 (2026-08-25 사람).** 등록·갱신·결제 주체는 계속 **Amazon Registrar**다. W0b에서 네임서버를 Cloudflare로 위임해도 이건 바뀌지 않는다(§6).
 
