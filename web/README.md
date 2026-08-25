@@ -3,7 +3,7 @@
 유입(acquisition)용 웹 표면. **앱을 대체하지 않는다** — 채널 확장이다(웹 = 검색·씨딩 착지면, 앱 = 무제한 표면).
 
 - 설계 정본: [`../docs/design/web-transition-design.md`](../docs/design/web-transition-design.md)
-- 결정: [ADR-0009](../docs/adr/0009-web-framework-rendering.md)(스택) · [ADR-0010](../docs/adr/0010-web-abuse-prevention.md)(남용 방지) · [ADR-0011](../docs/adr/0011-prompt-ownership-transfer.md)(프롬프트) · [ADR-0012](../docs/adr/0012-content-canon-d1.md)·[ADR-0013](../docs/adr/0013-web-route-contract.md) *(제안 · 비준 대기)*
+- 결정: [ADR-0009](../docs/adr/0009-web-framework-rendering.md)(스택) · [ADR-0010](../docs/adr/0010-web-abuse-prevention.md)(남용 방지) · [ADR-0011](../docs/adr/0011-prompt-ownership-transfer.md)(프롬프트) · [ADR-0012](../docs/adr/0012-content-canon-d1.md)(D1 = 콘텐츠 정본) · [ADR-0013](../docs/adr/0013-web-route-contract.md)(SSG + 조회 전용 SSR 폴백) — **5건 모두 `Accepted`**
 - 진행 상태 정본: [`../ROADMAP.md`](../ROADMAP.md) W 트랙
 
 ## 지금 상태 — W0a·W0b 완료 (기반만)

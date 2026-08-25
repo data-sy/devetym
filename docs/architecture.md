@@ -139,7 +139,7 @@ CREATE TABLE term (
 - 요청 헤더에 익명 **`X-Device-Id`**를 실어 보낸다 — 프록시의 기기당 한도 카운터 키.
 - 프록시가 한도 초과를 **`429`**로 알리면 `DailyLimitExceeded`로 분기한다.
 
-> **시스템 프롬프트·도구 스키마는 `commonMain`에 산다.** 프롬프트 엔지니어링이 클라이언트 책임이라는 현재 계약을 그대로 옮긴다. **→ 서버 이전이 [ADR-0011](adr/0011-prompt-ownership-transfer.md)로 실체화됐다**(웹 표면 추가가 ADR-0004의 유보 항목을 트리거 — 프롬프트 정본이 2벌이 되는 것을 막는다). ADR-0011은 아직 `Proposed`이므로 **현행 계약은 여기 서술대로 `commonMain` 소유가 유효**하다. 프롬프트 버전 형상(v1 5변경+v2 Path A)·3분기·품질 게이트·미채택(closing/selfcheck v3 보류) 정본 = [ADR-0007](adr/0007-ai-prompt-quality.md), 근거 문서 = [`docs/ai-quality/`](ai-quality/).
+> **시스템 프롬프트·도구 스키마는 `commonMain`에 산다.** 프롬프트 엔지니어링이 클라이언트 책임이라는 현재 계약을 그대로 옮긴다. **→ 서버 이전이 [ADR-0011](adr/0011-prompt-ownership-transfer.md)로 실체화됐다**(웹 표면 추가가 ADR-0004의 유보 항목을 트리거 — 프롬프트 정본이 2벌이 되는 것을 막는다). ADR-0011은 **`Accepted`(2026-08-25 비준)**이며 **이전 착수 시점은 웹 트랙 W1a**다 — 그때까지는 여기 서술대로 `commonMain` 소유가 현행 계약이고, **W1a 완료 시점에 소유권이 프록시로 넘어간다**(이 문단은 그때 갱신한다). 프롬프트 버전 형상(v1 5변경+v2 Path A)·3분기·품질 게이트·미채택(closing/selfcheck v3 보류) 정본 = [ADR-0007](adr/0007-ai-prompt-quality.md), 근거 문서 = [`docs/ai-quality/`](ai-quality/).
 
 **응답 파싱 — tool_use 3분기 (설계 불변식)**
 모델은 반드시 세 도구 중 하나를 호출한다. `content`에서 `tool_use` 블록을 찾아 이름으로 분기한다:
