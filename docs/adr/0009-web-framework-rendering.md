@@ -54,5 +54,6 @@
 
 ## References
 - 설계 정본: [`../design/web-transition-design.md`](../design/web-transition-design.md)
+- **구체화**: [ADR-0013](0013-web-route-contract.md)이 위 Decision 1의 렌더링 문장을 구체화한다 — *"AI가 새로 생성한 용어는 on-demand 서버 렌더"* 가 **누구에 의해 유발되는지**를 이 ADR은 정하지 않았다. 0013의 답: **SSR 폴백은 D1 조회 전용이며 생성을 트리거하지 않는다**(크롤러 과금 차단), 색인 자격은 품질 게이트가 연다. 라우트를 짓기 전에 0013을 함께 읽을 것.
 - 관련 ADR: [ADR-0010](0010-web-abuse-prevention.md)(웹 남용 방지) · [ADR-0011](0011-prompt-ownership-transfer.md)(프롬프트 소유권) · [ADR-0006](0006-server-cache-boundary.md)(서버 캐시 경계) · [ADR-0001](0001-cross-platform-framework.md)(앱 프레임워크 선택)
 - 진행 상태: [`../../ROADMAP.md`](../../ROADMAP.md) W 트랙
