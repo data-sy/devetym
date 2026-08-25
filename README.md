@@ -74,12 +74,13 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 |---|---|---|
 | [`docs/product/prd.md`](docs/product/prd.md) | 제품 기획 — 문제·타겟·유저 스토리·콘텐츠 (*왜*의 정본) | ✅ |
 | [`docs/architecture.md`](docs/architecture.md) | 아키텍처 설계 — 레이어링·Ktor·로컬 저장·Koin (기술 *어떻게*) | ✅ |
-| [`docs/adr/`](docs/adr/) | 돌이킬 수 없는 결정 기록 (0001~0008: CMP·관용구 원칙·로컬 DB·프록시 경계·SKIE interop·서버 캐시 경계·AI 프롬프트 품질·이슈 트래킹 / **0009~0011: 웹 프레임워크·웹 남용 방지·프롬프트 소유권 — `Proposed`, 비준 대기**) | ✅ |
-| [`docs/design/web-transition-design.md`](docs/design/web-transition-design.md) | **웹(React) 이행 설계 정본** — 렌더링·이식 판정·남용 위협 모델·범위·실패 모드 (진행 상태는 ROADMAP W 트랙) | 🟡 구현 대기 |
+| [`docs/adr/`](docs/adr/) | 돌이킬 수 없는 결정 기록 (0001~0008: CMP·관용구 원칙·로컬 DB·프록시 경계·SKIE interop·서버 캐시 경계·AI 프롬프트 품질·이슈 트래킹 / **0009~0011: 웹 프레임워크·웹 남용 방지·프롬프트 소유권 — ✅ 비준 2026-08-25** / **0012~0013: 콘텐츠 정본 D1 승격·웹 라우트 계약 — `Proposed`, 비준 대기**) | ✅ |
+| [`docs/design/web-transition-design.md`](docs/design/web-transition-design.md) | **웹 이행 설계 정본** — 렌더링·이식 판정·남용 위협 모델·범위·실패 모드 (진행 상태는 ROADMAP W 트랙) | 🚧 구현 중 |
+| [`web/`](web/README.md) | **웹 표면 구현** — Astro + Cloudflare Workers. 기반(W0a·W0b) 완료, 용어 페이지·검색·AI는 미착수 | 🚧 |
 | [`docs/cache-delivery-milestones.md`](docs/cache-delivery-milestones.md) | 캐시·딜리버리 불변식(INV-1~13)·마일스톤 정본 — 서버 트랙의 제약 | ✅ |
 | [`docs/specs/spec.md`](docs/specs/spec.md) | 화면·동작 구현 명세 (Phase 1~4, Claude Code 전용) | ✅ |
 | [`ROADMAP.md`](ROADMAP.md) | 이행 순서(코어 먼저, UI 나중) + **진행 상태 정본** | ✅ |
-| [`docs/cost/`](docs/cost/) | API 비용 관리 — 결정 문서·Console 설정 스냅샷 로그 (`Scripts/cost/report.py`가 리포트 도구) | ✅ |
+| [`docs/cost/`](docs/cost/) | 비용 — **[운영 비용 원장](docs/cost/running-costs.md)**(실제 나가는 돈·갱신일) · API 비용 결정 문서 · Console 설정 스냅샷 로그 (`Scripts/cost/report.py`가 리포트 도구) | ✅ |
 
 ---
 
@@ -127,8 +128,15 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 설정 「앱 평가하기」가 무반응이던 것을 App Store 리뷰 딥링크로 교체했고, **실기기 검증 PASS**(iPhone 13 mini · iOS 26.5.2)로 종결 근거를 확보했다.
 빌드 `0.1.1(3)` 제출 → 심사 통과 → 수동 게시 → **게시본에서 재확인 완료**(업데이트 받은 App Store 판으로 「앱 평가하기」 동작 확인). **수정이 실사용자에게 도달했고 제보자 회신까지 완료**(2026-08-19). 제보→회신 전 구간이 닫힌 첫 사이클 — 잔여 없음.
 
-남은 것 = **[외부]** F Android 배포(후행 — 폐쇄테스트 20명×14일 게이트 + 스크린샷 캡처 잔여) · **웹 트랙 W(설계 완료·구현 미착수)** · **씨딩·리뷰 확보 — W에 종속**(2026-08-19 결정: App Store 착지는 다운로드 마찰로 커뮤니티 참여도가 낮아, 씨딩은 웹 완성 후 웹과 함께 나간다).
+남은 것 = **[외부]** F Android 배포(후행 — 폐쇄테스트 20명×14일 게이트 + 스크린샷 캡처 잔여) · **웹 트랙 W(기반 완료·본체 미착수 — 아래)** · **씨딩·리뷰 확보 — W에 종속**(2026-08-19 결정: App Store 착지는 다운로드 마찰로 커뮤니티 참여도가 낮아, 씨딩은 웹 완성 후 웹과 함께 나간다).
 진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md), 출시 지그·게이트는 [`docs/release/`](docs/release/README.md).
+
+**🌐 웹 트랙 W — 기반 라이브 (2026-08-25).** <https://devetym.com> 이 200 응답한다(Astro + Cloudflare Workers,
+[ADR-0009](docs/adr/0009-web-framework-rendering.md)). 앱을 대체하는 게 아니라 **채널 확장**이다 — 웹 = 검색·씨딩 착지면, 앱 = 무제한 표면.
+지금 있는 것은 **기반뿐**이다: 디자인 토큰을 앱 Kotlin 정본에서 **빌드마다 자동 추출**(손으로 안 베낀다 — 개수를 단언해 드리프트 시 빌드가 깨진다) ·
+도메인 참조 `SITE_URL` 단일 지점 · 폰트 woff2 · 사이트맵 · 클라이언트 JS 0바이트.
+**아직 없는 것**: 용어 페이지 650장·검색·AI 폴백. 그 착수는 **[ADR-0012](docs/adr/0012-content-canon-d1.md)·[ADR-0013](docs/adr/0013-web-route-contract.md) 비준**에 걸려 있다
+(콘텐츠 정본을 D1로 올릴 것인가 · 웹 라우트를 어떻게 가를 것인가). 상세 = [`web/README.md`](web/README.md), 상태 = [ROADMAP](ROADMAP.md) W 트랙.
 
 **서버 캐시 트랙 S1 — 가동 중 (2026-07-28).** 앱 배포와 **독립**으로 완결되는 트랙이라 심사와 무관하게
 먼저 나갔다. `devetym-proxy`에 D1 read-through 캐시를 붙여 **한 사용자가 생성시킨 항목을 다른 사용자가
