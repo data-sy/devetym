@@ -1,0 +1,102 @@
+---
+/**
+ * W0a 착지 페이지. 여기서 확인하는 것은 콘텐츠가 아니라 **기반**이다:
+ * 배포가 되는가 · 토큰이 앱과 같은 값인가 · 폰트가 뜨는가 · SITE_URL이 한 지점인가.
+ * 실제 홈(검색)은 W1b에서 이 자리를 대체한다.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE_NAME, SITE_URL, IS_CANONICAL_HOST } from "../config/site";
+
+export const prerender = true;
+---
+<BaseLayout title={SITE_NAME} path="/">
+  <main>
+    <p class="eyebrow">DEVETYM</p>
+    <h1>개발 용어의 <em>어원</em></h1>
+    <p class="lede">
+      650개 큐레이션 용어와 AI 어원 설명. 웹 표면을 짓는 중입니다.
+    </p>
+
+    <section class="status" aria-labelledby="s">
+      <h2 id="s">W0a · 기반</h2>
+      <dl>
+        <dt>SITE_URL</dt>
+        <dd><code>{SITE_URL}</code>{!IS_CANONICAL_HOST && <span class="badge">임시 · noindex</span>}</dd>
+        <dt>토큰</dt>
+        <dd><code>AppColors · AppDimens · AppTypography</code>에서 빌드마다 추출</dd>
+        <dt>폰트</dt>
+        <dd><span class="serif">DM Serif Display</span> · <code>DM Mono</code> · 본문 시스템 폰트</dd>
+      </dl>
+    </section>
+
+    <p class="app">
+      지금 바로 쓰려면 <a href="https://apps.apple.com/app/id6748814301">iOS 앱</a>에서.
+    </p>
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: calc(var(--d-section-gap) * 2) var(--d-screen-padding);
+  }
+  .eyebrow {
+    font-family: var(--font-code);
+    font-size: var(--t-badge-size);
+    font-weight: var(--t-badge-weight);
+    letter-spacing: var(--t-badge-tracking);
+    color: var(--c-accent);
+    margin: 0 0 var(--d-label-gap);
+  }
+  h1 {
+    font-family: var(--font-serif);
+    font-size: var(--t-title-hero-size);
+    font-weight: var(--t-title-hero-weight);
+    letter-spacing: var(--t-title-hero-tracking);
+    line-height: 1.25;
+    margin: 0 0 var(--d-label-gap);
+  }
+  h1 em { color: var(--c-accent); font-style: italic; }
+  .lede {
+    font-size: var(--t-body-large-size);
+    letter-spacing: var(--t-body-large-tracking);
+    color: var(--c-text-dim);
+    margin: 0 0 var(--d-section-gap);
+  }
+  .status {
+    background: var(--c-surface);
+    border: var(--d-stroke-border) solid var(--c-border);
+    border-radius: var(--d-radius-card);
+    padding: var(--d-card-padding);
+  }
+  .status h2 {
+    font-size: var(--t-section-header-size);
+    font-weight: var(--t-section-header-weight);
+    letter-spacing: var(--t-section-header-tracking);
+    color: var(--c-text-muted);
+    margin: 0 0 var(--d-label-gap);
+    text-transform: uppercase;
+  }
+  dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: var(--d-label-gap) var(--d-card-padding); }
+  dt { font-size: var(--t-label-size); color: var(--c-text-muted); }
+  dd { margin: 0; font-size: var(--t-label-size); color: var(--c-text-dim); }
+  code {
+    font-family: var(--font-code);
+    font-size: var(--t-code-value-size);
+    letter-spacing: var(--t-code-value-tracking);
+    color: var(--c-accent-2);
+    background: var(--c-surface-2);
+    border-radius: var(--d-radius-badge);
+    padding: 0.1em 0.4em;
+  }
+  .serif { font-family: var(--font-serif); color: var(--c-text); }
+  .badge {
+    font-family: var(--font-code);
+    font-size: var(--t-badge-size);
+    letter-spacing: var(--t-badge-tracking);
+    color: var(--c-accent-ai);
+    margin-left: 0.5em;
+  }
+  .app { margin: var(--d-section-gap) 0 0; font-size: var(--t-label-size); color: var(--c-text-muted); }
+</style>

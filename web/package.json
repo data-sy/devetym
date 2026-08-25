@@ -1,0 +1,28 @@
+{
+  "name": "devetym-web",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "tokens": "node scripts/extract-tokens.mjs",
+    "fonts": "node scripts/build-fonts.mjs",
+    "prebuild": "npm run tokens",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "wrangler dev",
+    "deploy": "astro build && wrangler deploy",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^5.16.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/cloudflare": "^12.6.0",
+    "@types/node": "^26.3.0",
+    "typescript": "^5.9.0",
+    "wawoff2": "^2.0.1",
+    "wrangler": "^4.86.0"
+  }
+}
