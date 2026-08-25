@@ -32,14 +32,10 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 > **② ~~Apple Developer Program 갱신일 확인~~ ✅ 완료 — 만료 `2027-07-08` (2026-08-25 사람).** [`docs/cost/running-costs.md`](docs/cost/running-costs.md) §1에 기입됨.
 > **잔여(사람)**: ① **2027-06-08**(만료 한 달 전) 캘린더 리마인더 등록 ② 자동 갱신 켜져 있는지 Membership details에서 확인 — 꺼져 있으면 리마인더가 유일한 방어선이다.
 >
-> **③ Search Console 소유권 확인** — *색인률(K1) 측정의 시작점. 이걸 안 하면 W3 실측에 쓸 데이터가 아예 안 쌓인다.*
-> 1. <https://search.google.com/search-console> → **속성 추가** → **도메인** 유형 선택(URL 접두어 아님) → `devetym.com` 입력.
->    - **도메인 유형을 고르는 이유**: `www`·`http`·서브도메인을 전부 한 속성으로 덮는다. 아래 ④의 www 문제와 무관하게 데이터가 온전히 모인다.
-> 2. Google이 `google-site-verification=...` TXT 값을 준다 → 복사.
-> 3. Cloudflare 대시보드 → `devetym.com` → **DNS** → **레코드 추가**: 유형 `TXT` · 이름 `@` · 내용 = 붙여넣기 → 저장. (NS가 Cloudflare라 전파는 거의 즉시)
-> 4. Search Console로 돌아가 **확인** 클릭.
-> 5. 확인되면 **Sitemaps** → `sitemap-index.xml` 제출. (실재 확인됨 — 2026-08-25 200)
-> - 덤: **네이버 서치어드바이저**(<https://searchadvisor.naver.com>)도 같은 방식으로 등록할 값이 있다. 한글 별칭 1,097개가 이 트랙의 핵심 자산이라 네이버 색인이 구글만큼 중요하다.
+> **③ ~~Search Console 소유권 확인~~ ✅ 완료 (2026-08-25 사람)** — 도메인 유형 속성 `devetym.com` 등록·확인 완료. **오늘부로 계측이 시작됐다** — W3의 「지금부터 쌓여야」 조건이 충족됐다("데이터를 처리하는 중"은 신규 등록의 정상 표시다).
+> **W3에서 보게 될 곳**: **실적**(유입 키워드 노출·클릭 — 8주 판정의 핵심 지표) · **색인생성 > 페이지**(650장 중 몇 장이 색인됐나 = 색인률 K1) · **URL 검사**(개별 페이지 확인).
+> **⏳ 사이트맵 제출은 W1b 배포 후로 미룬다** — 페이지가 없는데 사이트맵부터 내는 건 의미가 없다. → 아래 ⑥.
+> - 덤(선택): **네이버 서치어드바이저**(<https://searchadvisor.naver.com>)도 같은 방식으로 등록할 값이 있다. 한글 별칭 1,097개가 이 트랙의 핵심 자산이라 네이버 색인이 구글만큼 중요하다.
 >
 > **④ `www` → apex 301 Redirect Rule** — *지금 www가 200으로 같은 내용을 서빙해 중복 콘텐츠다(canonical로만 완화 중).*
 > Cloudflare 대시보드 → `devetym.com` → **Rules** → **Redirect Rules** → **Create rule**
@@ -51,6 +47,9 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 > ⚠️ **Astro 미들웨어로는 못 고친다**(실측 — `_routes.json`이 prerender 경로를 Worker에서 제외). 무료 플랜 Redirect Rule 10개 중 1개를 쓴다.
 >
 > **⑤ (선택) 앱 방침 URL 이전** — 순서를 지켜야 한다. ① `devetym.com`에 정책 페이지 **실게시·200 확인** → ② `Constants.kt`의 `privacyPolicyUrl` 교체 → ③ App Store 라벨 갱신. **역순이면 게시된 iOS 앱이 죽은 URL을 가리킨다.** 현행 라이브(`data-sy.github.io/devetym/privacy-policy`)는 살아 있으므로 급하지 않다. ①은 Claude가 할 수 있다 — 지시하면 된다.
+>
+> **⑥ ⏳ Search Console 사이트맵 제출 — 조건부 대기 〔트리거 = W1b 배포 완료〕**
+> 650장이 실 URL로 올라간 **뒤에** Search Console → 왼쪽 메뉴 **Sitemaps** → `sitemap-index.xml` 제출. 이걸로 색인률 측정 배선이 완결되고 **W3가 완전히 닫힌다**. 지금 하면 빈 사이트맵을 내는 셈이라 의미가 없다(2026-08-25 판단).
 >
 > **판단이 필요했으나 해소된 것**: ~~AI 크롤러 허용 여부~~ → Cloudflare 기본값이 이미 「학습 수집기는 차단, 인용·유입형 봇과 검색 크롤러는 허용」로 정확히 갈라져 있다. **손댈 것 없음**(근거는 아래 웹 트랙 W0b 항목).
 >
@@ -84,7 +83,7 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
   - **⚠️ 실측이 뒤집은 전제 2건**(설계서 §0): (1) **전역 일일 캡은 이미 있다** — `devetym-proxy`의 `GLOBAL_DAILY_LIMIT=200`. `X-Device-Id` 위조 구멍의 방벽은 이미 서 있고, 남은 문제는 위조가 아니라 **표면 간 전이**(웹 폭주 → 앱 사용자 429/402). (2) **디자인 토큰은 `docs/design`에 없다** — 정본은 코드(`ui/theme/AppColors.kt`·`AppTypography.kt`·`AppDimens.kt`). 아래 M6의 "작성 예정" 서술은 무효(메모리 [ios-design-assets-inheritable]와 동일 결론).
   - **⚠️ 유입 자산의 실체(설계서 §1)**: 표제어 650개는 **전부 영어이고 한글 keyword는 0개**다. 한국어 이름은 `aliases`에 있고 **한글 별칭이 1,097개**. 한국인은 `뮤텍스 어원`으로 검색하므로, 한글 별칭을 title·h1·구조화 데이터에 1급으로 올리지 않으면 650페이지는 한국어 검색에 사실상 존재하지 않는다. 반대 방향 리스크도 실측됨 — **본문 중앙값 303자, 317개(48.8%)가 300자 미만**(thin content).
   - **⚙️ W0 분할 (2026-08-25) — ✅ 둘 다 완료**: **W0a**(Astro 스캐폴드·`SITE_URL` 단일 지점·토큰 추출·배포) / **W0b**(DNS·`SITE_URL` 교체·사이트맵). 아래 마일스톤 서술의 "W0"는 이 둘의 합이다. **W0b의 Search Console 소유권 확인만 사람 몫으로 남았다.** 〔2026-08-25 추가: **W0c**(650 D1 시딩)가 W1a 앞에 새로 끼어든다 — ADR-0012 **✅비준 완료**, 조건 해소. 같은 날 **W1c**(승격 잡)가 W1b 뒤에 추가됐다 — ADR-0013의 「승격 잡 없으면 영원히 noindex」를 W 트랙 안에서 닫는 사람 선택 (b)〕
-  - **마일스톤**: ~~**W0** 도메인·Astro 스캐폴드·**토큰 추출**~~ ✅완료(Search Console만 잔여) → **W0c** 650 D1 시딩〔ADR-0012 ✅비준 — 착수 가능〕 → **W1a** 프록시 하드닝(CORS allowlist·Turnstile·표면 분리 캡·워크스페이스 분리) → **W1b** 정적 650 + 검색 + AI 폴백 + 사이트맵 → **W1c** 승격 잡(= 캐시 M5 · `critic` 게이트 통과분 `origin` 승급 → 다음 빌드에서 SSG·색인 편입) → **W2** 카테고리 허브·구조화 데이터·thin content 대응 → **W3** 측정 리뷰. **⚠️ W1a가 W1b보다 반드시 먼저다** — A안은 방어와 개방을 동시에 공개하는 결정이지 방어 없이 먼저 여는 결정이 아니다.
+  - **마일스톤**: ~~**W0** 도메인·Astro 스캐폴드·**토큰 추출**~~ ✅완료(Search Console만 잔여) → **W0c** 650 D1 시딩〔ADR-0012 ✅비준 — 착수 가능〕 → **W1a** 프록시 하드닝(CORS allowlist·Turnstile·표면 분리 캡·워크스페이스 분리) → **W1b** 정적 650 + 검색 + AI 폴백 + 사이트맵〔배포 직후 **사람**: Search Console에 `sitemap-index.xml` 제출 — 「🙋 사람이 해야 하는 것」 ⑥〕 → **W1c** 승격 잡(= 캐시 M5 · `critic` 게이트 통과분 `origin` 승급 → 다음 빌드에서 SSG·색인 편입) → **W2** 카테고리 허브·구조화 데이터·thin content 대응 → **W3** 측정 리뷰. **⚠️ W1a가 W1b보다 반드시 먼저다** — A안은 방어와 개방을 동시에 공개하는 결정이지 방어 없이 먼저 여는 결정이 아니다.
   - **도메인 `devetym.com` — ✅ 등록·라이브 (2026-08-25)**. Amazon Registrar 등록($16/yr·자동 갱신·만료 2027-08-25), **네임서버만 Cloudflare 위임**(소유·결제는 Amazon 유지 — 등록기관 이전은 안 하기로 결정). Route 53 호스팅 영역 삭제로 $0.50/월 회피. 원장 = [`docs/cost/running-costs.md`](docs/cost/running-costs.md). 〔지나간 이력: 2026-08-05 가용성 실측 당시 미등록이었고 `.io`/`.app`/`.dev`는 채택하지 않았다〕 **⚠️ 다운스트림 3곳은 아직 바꾸지 않았다 — 순서 게이트가 있다**: `Constants.kt`의 `privacyPolicyUrl`은 현재 라이브인 `https://data-sy.github.io/devetym/privacy-policy`를 가리키고 **App Store 스토어 메타 라벨과 일치해야 하므로**, ① 도메인 구매 → ② `devetym.com`에 정책 페이지 실제 게시·응답 확인 → ③ `Constants.kt` 교체 → ④ 스토어 라벨 갱신 순으로만 옮긴다. 먼저 상수를 바꾸면 게시된 앱이 죽은 URL을 가리킨다.
   - **⚠️ 오라클 규율(설계서 F6)**: 이 프로젝트가 마일스톤마다 겪은 *"빌드는 되는데 실기동은 깨진다"*의 웹 대응물은 **"빌드는 되는데 색인은 안 된다"**이다. **로컬 빌드 성공은 오라클이 아니다** — 배포된 실 URL 650개 전수 확인 + Search Console 실측이 오라클.
   - **✅ ADR 3건 비준 완료 (2026-08-25 사람)**: [ADR-0009 웹 프레임워크·렌더링 경계](docs/adr/0009-web-framework-rendering.md) · [ADR-0010 웹 AI 폴백 남용 방지 경계](docs/adr/0010-web-abuse-prevention.md) · [ADR-0011 프롬프트 소유권 이전](docs/adr/0011-prompt-ownership-transfer.md) — 셋 다 `Proposed` → **`Accepted`**. ADR-0011은 ADR-0004가 유보해 둔 항목을 해소하며, **착수 시점 = W1a**로 함께 확정(설계서 Q5 종결).

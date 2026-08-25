@@ -59,6 +59,7 @@ ls ~/devetym/web/src/pages                     # index.astro·robots.txt.ts 뿐 
 ### W1b · 웹 본체
 정적 650장 + 검색 + 상세 + AI 폴백. **한글 별칭 1,097개를 title·h1·구조화 데이터에 1급으로 올린다** — 안 하면 650장은 한국어 검색에 존재하지 않는다.
 완료 오라클: **배포된 실 URL 650개 전수 200 응답** + AI 생성 왕복 성공. **로컬 빌드 성공은 오라클이 아니다.**
+**배포 직후 사람 1건**: Search Console → Sitemaps → `sitemap-index.xml` 제출(소유권은 2026-08-25 확인 완료, 계측 가동 중). 이걸로 색인률 배선이 닫힌다.
 
 ### W1c · 승격 잡 (= 캐시 M5) 〔2026-08-25 사람 선택 (b)〕
 `critic` 게이트(INV-7)를 통과한 `origin='generated'` 행을 `authored`로 승급 → 다음 빌드에서 SSG 집합·사이트맵에 편입되며 그때 색인된다. **이게 없으면 웹 AI로 자란 콘텐츠는 영원히 `noindex`**다. 완료 오라클: 승격된 용어가 **배포 후 실 URL에서 `noindex` 없이 200** + 사이트맵에 등장.
@@ -111,7 +112,7 @@ W2 = 카테고리 허브·관련 용어·구조화 데이터·얇은 콘텐츠 �
 | 무엇 | 어디 |
 |---|---|
 | 상태 정본 | [`ROADMAP.md`](ROADMAP.md) Now 「▶ 재개 지점」 |
-| **사람이 할 일 (구체 절차)** | 같은 곳 「🙋 사람이 해야 하는 것」 — **남은 것 = Search Console 소유권 · `www`→apex 301 · Apple 리마인더 등록(2027-06-08)**. ADR 비준·Apple 갱신일 확인은 ✅완료 |
+| **사람이 할 일 (구체 절차)** | 같은 곳 「🙋 사람이 해야 하는 것」 — **남은 것 = `www`→apex 301 · Apple 리마인더 등록(2027-06-08) · ⏳사이트맵 제출(W1b 배포 후)**. ADR 비준·Apple 갱신일·**Search Console 소유권**은 ✅완료 |
 | 설계 정본 | [`docs/design/web-transition-design.md`](docs/design/web-transition-design.md) |
 | 웹 코드 | `~/devetym/web/` ([README](web/README.md) — 손대면 안 되는 것·앱과 의도적으로 다른 곳) |
 | 서버 코드 | `~/devetym-proxy` (별도 repo) · 계약 = [ADR-0006](docs/adr/0006-server-cache-boundary.md) |
