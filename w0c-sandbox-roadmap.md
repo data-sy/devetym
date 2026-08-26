@@ -1,7 +1,7 @@
 # W0c 샌드박스 로드맵 — `sandbox/w0c-d1-seeding`
 
 > **이 브랜치 작업의 SSOT.** 진행 상태·발견·백로그·오류·실측값을 전부 여기 모은다.
-> **최종 갱신 2026-08-26.** 수명은 브랜치와 같다 — 흡수되면 §8 절차로 접고 이 파일을 지운다.
+> **최종 갱신 2026-08-26 (좌표 반전 + CI 반영).** 수명은 브랜치와 같다 — 흡수되면 §8 절차로 접고 이 파일을 지운다.
 
 ---
 
@@ -27,8 +27,37 @@
 [ADR-0012](docs/adr/0012-content-canon-d1.md)로 D1이 콘텐츠 **정본**이 됐다. 승격 전이라면 시딩 실수는 캐시 오염이었지만,
 승격 후에는 **정본 손상**이다. 그래서 W0c는 로컬 D1에서 짓고 실 D1은 읽기만 한다.
 
-**⚠️ 샌드박스 브랜치는 D1을 격리하지 않는다.** 원격 `devetym-cache`는 브랜치와 무관하게 하나뿐이라
-`--remote` DML 한 줄이 정본을 바로 바꾼다. 격리선은 브랜치가 아니라 실행 경로(`scripts/d1.mjs`)에 박혀 있다.
+**⚠️ 샌드박스 브랜치는 그 자체로 D1을 격리하지 않는다.** 원격 `devetym-cache`는 브랜치와 무관하게
+하나뿐이다. 그래서 격리를 **명령 가드가 아니라 좌표 반전**으로 얻는다(2026-08-26 전환) — 이 브랜치의
+`wrangler.toml`이 프로덕션 이름·ID를 아예 모른다. 가드는 `npx wrangler`를 직접 치면 우회되지만,
+주소가 없으면 우회할 대상이 줄어든다.
+
+### 격리 3층 — W0c는 1~2층에서 끝난다
+
+| 층 | 무엇 | 계정 접촉 | 상태 |
+|---|---|---|---|
+| **L1** | `npm test` — 실 DDL + 실 워커 코드 · fetch 스텁 | 없음 | ✅ 69개 |
+| **L2** | `npm run dev` (`wrangler dev --local`) — 앱과 동일한 요청으로 실제 왕복 | 없음 | ✅ 실증 |
+| **L3** | 원격 샌드박스(별도 Worker·D1) | 있음(프로덕션 아님) | ⬜ **§3-1~6엔 불필요** |
+
+**L2 실증 (08-26)**: 앱과 동일한 본문으로 `bash`→200·14ms, `idempotency`→200·2ms, `개발`→`not_dev_term`.
+로컬 D1 `hit_count`가 올라가 응답원이 로컬임을 확인. 캐시 히트는 Anthropic 호출·한도 검사 **앞에서** 리턴한다.
+
+⚠️ **L2의 유일한 누수**: 캐시 **미스**는 진짜 Anthropic API로 나간다(자리표시자 키라 401로 거절되지만
+요청 자체는 나간다). W0c는 시딩 작업이라 미스를 유발할 일이 거의 없다. 완전 격리가 필요해지면 로컬 스텁.
+
+### 좌표 반전이 막는 것 / 못 막는 것 (전부 08-26 실측)
+
+| 명령 | 결과 |
+|---|---|
+| `wrangler deploy` | ✅ `devetym-proxy-sandbox`로 감. **iOS 실사용자 경로 무영향** |
+| 바인딩 경유 D1(`CACHE_DB`) 원격 | ✅ 실재하지 않는 UUID라 실패 |
+| `d1 migrations apply --remote devetym-cache` | ✅ 설정에서 못 찾아 거부. **되돌리기 가장 어려운 것이 막힘** |
+| `d1 execute devetym-cache --remote "…"` | ❌ **통과한다** — 이름을 설정이 아니라 **계정 전체**에서 해석 |
+
+마지막 줄이 남은 구멍이다. 완전 차단은 **계정 분리 또는 DB 스코프 API 토큰**이 필요하고,
+W0c 규모엔 과하다고 판정했다(§4-D). 실수로 밟히는 경로는 아니다 —
+스크립트·문서·설정 어디에도 `devetym-cache` 문자열이 남아 있지 않다.
 
 ---
 
@@ -37,22 +66,31 @@
 ```
 브랜치  sandbox/w0c-d1-seeding
 ├── ~/devetym         (feat/web-w0-foundation 기반)
-└── ~/devetym-proxy   (main 기반 · 커밋 512df30)
+└── ~/devetym-proxy   (main 기반 · 512df30 환경 · b3d9d09 좌표 반전+CI)
+
+좌표 (이 브랜치에서만)
+├── Worker    devetym-proxy-sandbox
+├── CACHE_DB  devetym-cache-sandbox   id=…0001 (실재하지 않음)
+├── USAGE_DB  devetym-usage-sandbox   id=…0000 (실재하지 않음)
+└── RATE_LIMIT id=0×32                          (실재하지 않음)
+   🔁 흡수 시 PROD 값 복원 — 원본은 wrangler.toml 머리말에 있다
+
+명령
+├── npm test              L1 · 69개 · 계정 무관
+├── npm run dev           L2 · wrangler dev --local · localhost:8787
+├── npm run db:local "<sql>"   로컬 D1 조회
+└── npm run db:reset:local     마이그레이션 + 픽스처로 초기화
 
 데이터
-├── 로컬 D1   .wrangler/state/v3/d1 · 실 DDL 적용 · tail 18행 미러
+├── 로컬 D1   .wrangler/state/v3/d1 · 실 DDL · tail 18행
 ├── 픽스처    ~/devetym-proxy/test/fixtures/prod-generated-tail.json (실 D1 읽기 전용 익스포트)
-└── 원격      devetym-cache — 읽기만. rows_written 0 실측
+└── 원격      devetym-cache — 08-26 익스포트 1회 외 무접촉. rows_written 0 실측
 
-가드
-├── npm run db:local       무엇이든 허용 (로컬 miniflare)
-├── npm run db:read        원격. SELECT/PRAGMA/EXPLAIN/WITH만, 세미콜론 우회 차단
-└── npm run db:seed:local  픽스처로 로컬 초기화
+CI  .github/workflows/test.yml — push·PR에서 npm test.
+    Cloudflare 계정에 접속하지 않는다(miniflare가 로컬 D1·KV를 세움 → 시크릿 불요).
 ```
 
-베이스라인: `npm test` 69/69 통과. 스키마·소스 무변경.
-
----
+베이스라인: 좌표 반전 후 재구성한 로컬 D1 위에서 `npm test` 69/69 통과.
 
 ## 3. W0c 작업 — 순서와 완료 오라클
 
@@ -62,12 +100,12 @@
 | # | 작업 | 완료 오라클 | 상태 |
 |---|---|---|---|
 | **1** | **`normalizeTermKey` 정의 확정** — 파이프라인(`Scripts/`)·Worker(`src/index.js`)·웹이 한 함수를 공유 | 세 지점이 같은 입력에 같은 키를 낸다는 테스트 + **별칭 수·충돌 수를 하나의 값으로 확정** | ⬜ |
-| **2** | `origin` 컬럼 마이그레이션 (`'authored' \| 'generated'`) | 로컬에 적용 후 기존 69 테스트 무회귀 · 기존 18행이 `generated`로 백필됨 | ⬜ |
+| **2** | `origin` 컬럼 마이그레이션 (`'authored' \| 'generated'`) — **`DEFAULT 'generated'` 필수** | 로컬 적용 후 69 테스트 무회귀 · 기존 18행이 `generated`로 백필 · **`src/index.js:450`의 7컬럼 INSERT가 수정 없이 계속 성공** | ⬜ |
 | **3** | `prompt_version` 센티널 확정 (`authored:db-expand-v<N>`) | authored 행이 `NOT NULL` 제약을 통과하고, INV-9 버전 태깅이 두 갈래를 구분해 읽힌다 | ⬜ |
 | **4** | authored 650 시딩 (로컬) | 로컬 entries = 650 + generated tail · 별칭 = §7 확정값 · **충돌 0건이 우연이 아님을 로그로 증명** | ⬜ |
 | **5** | authored > generated 충돌 규칙 (authoring path 한정) | **충돌을 일부러 심은 뒤** authored가 이기고 구본이 `entry_versions`에 남는다 · read path 무변경(INV-2·INV-4) | ⬜ |
 | **6** | 익스포트 잡 (스냅샷 커밋 의무의 실행 수단) | D1 → `terms.json` 왕복 후 **현행 파일과 의미적 동일** · 상단에 「generated — 직접 편집 금지」 마커 | ⬜ |
-| **7** | 원격 적용 〔**사람 판정 필요**〕 | 로컬 1~6 전부 녹색인 뒤에만 연다. §4-A 참조 | ⬜ |
+| **7** | 원격 적용 〔**사람 판정 필요**〕 | 로컬 1~6 전부 녹색 + **좌표를 PROD로 복원**한 뒤에만 연다. §4-A 참조 | ⬜ |
 
 ---
 
@@ -76,7 +114,7 @@
 **A. 원격 적용을 누가 어떻게 치나** 〔사람〕
 로컬이 다 녹색이어도 실 D1에 붓는 순간은 되돌리기 어렵다. 선택지: (a) 사람이 직접 wrangler 실행 ·
 (b) 별도 DB `devetym-cache-dev`에 먼저 붓고 확인 후 본DB (무료 플랜 10개 중 2개 사용) · (c) Claude가 가드 해제 후 실행.
-→ **미정.** 1~6이 끝나기 전에는 열지 않는다.
+→ **미정.** 1~6이 끝나기 전에는 열지 않는다. 좌표가 반전돼 있어 **복원 없이는 시도 자체가 실패**한다(§1 표).
 
 **B. 승격 잡의 입력 필터에 `branch`가 필요하다** 〔ADR-0013 관련 · 개정 필요 가능성〕
 ADR-0013은 "생성분도 페이지가 될 자격이 있다"를 전제하는데, **현 tail 18행 중 12행은 페이지가 되면 안 된다**
@@ -90,9 +128,18 @@ authored는 슬러그(`aa-tree`, `aba-problem`), generated는 입력 정규화�
 
 ---
 
+**D. 계정 분리까지 갈 것인가** 〔사람 · 08-26 시점 "가지 않음"으로 잠정 판정〕
+`d1 execute`가 계정 전체에서 이름을 해석하는 구멍(§1 표 마지막 줄)은 계정 분리 또는
+DB 스코프 API 토큰으로만 닫힌다. 블라스트 반경이 큰 둘(배포·스키마 변경)은 이미 막혔고,
+남은 것은 손으로 프로덕션 이름을 타이핑해야 밟히는 경로다.
+→ **W0c 동안은 가지 않는다.** W1a(프록시 하드닝)에서 재검토.
+
+---
+
 ## 5. 브랜치 내부 백로그
 
-- (없음)
+- **[P2] Anthropic 로컬 스텁** — L2의 캐시 미스가 진짜 API로 나간다(§1 ⚠️). W0c엔 실해가 없으나
+  W1a에서 웹 경로를 실측할 땐 필요해진다.
 
 ---
 
@@ -103,6 +150,9 @@ authored는 슬러그(`aa-tree`, `aba-problem`), generated는 입력 정규화�
 | 날짜 | 무엇 | 어떻게 됐나 |
 |---|---|---|
 | 08-26 | `~/devetym-proxy`는 Node 22 요구(`.nvmrc`), 시스템 기본은 v20.19.5 | 세션마다 `source ~/.nvm/nvm.sh && nvm use 22`. 안 하면 wrangler가 경고만 뱉고 버전 출력이 깨진다 |
+| 08-26 | `wrangler dev --local`이 캐시 히트에도 500 `server_misconfigured` | 키 검사(`src/index.js:95`)가 캐시 조회보다 **앞**에 있다. `.dev.vars`에 자리표시자 키를 넣으면 해소 — 히트 경로는 그 값을 쓰지 않는다 |
+| 08-26 | **명령 가드는 벽이 아니었다** | `scripts/d1.mjs`로 `--remote` DML을 막았으나 `npx wrangler`를 직접 치면 우회된다. **좌표 반전으로 교체**(b3d9d09). 가드는 로컬 헬퍼로 축소 |
+| 08-26 | **좌표 반전도 완전하지 않다** | `d1 execute`는 DB 이름을 wrangler.toml이 아니라 계정 전체에서 해석한다 — 프로덕션 이름을 손으로 주면 통과한다. `migrations`는 설정에서 찾아 거부한다. **둘의 해석 규칙이 다르다** |
 
 ---
 
@@ -116,7 +166,10 @@ authored는 슬러그(`aa-tree`, `aba-problem`), generated는 입력 정규화�
 | **authored 650 × generated 18 충돌** | **0건** (naive lowercase 정규화 기준) | 08-26 |
 | generated `term_entry` 6개가 650에 없음 | `bash` `protocol` `squash` `production` `idempotency` `shedlock` | 08-26 |
 | authored `keyword` 형식 | 슬러그 — `aa-tree` · `aba-problem` · `abstract-factory` | 08-26 |
-| 베이스라인 테스트 | 69/69 통과 | 08-26 |
+| 베이스라인 테스트 | 69/69 통과 (좌표 반전 후 재확인) | 08-26 |
+| L2 로컬 왕복 지연 | `bash` 14ms · `idempotency` 2ms · `개발` 3ms (전부 200) | 08-26 |
+| 캐시 히트의 위치 | Anthropic 호출·일일 한도 검사 **앞**에서 리턴 (`src/index.js:143`) | 08-26 |
+| write-back 실패 시 거동 | `waitUntil` + `catch` 삼킴 — 앱은 안 죽고 **캐시만 조용히 멈춘다** (`src/index.js:519`) | 08-26 |
 
 ⚠️ 「충돌 0건」은 **naive 정규화 기준**이다. §3-1이 정의를 바꾸면 이 값이 바뀔 수 있다 — 확정 후 재측정해 이 표를 갱신한다.
 
