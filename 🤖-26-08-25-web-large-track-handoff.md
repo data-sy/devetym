@@ -1,27 +1,31 @@
-# 🤖 웹 트랙 W — 기반 완료 · ADR 비준 완료, 다음은 W0c(650 D1 시딩)
+# 🤖 웹 트랙 W — 기반·ADR 완료 · **W0c 착수(환경 완료, 본체 0/7)**
 
 > **콜드 세션 시작점.** 사람이 *"뭐 하고 있었어? 이어서 하자"* 라고 물으면 **이 문서로 답한다.**
 > 상태 정본은 [`ROADMAP.md`](ROADMAP.md) Now의 「▶ 재개 지점」 — 충돌하면 ROADMAP이 이긴다.
-> **최종 갱신 2026-08-25 (ADR-0012·0013 비준 반영).** 선행 핸드오프·규모 판정 브리프는 2026-08-25 서류 정돈에서 삭제했다(판정 결과는 §1·§2에 흡수).
+> **최종 갱신 2026-08-26 (W0c 샌드박스 환경 완료 반영).** 선행 핸드오프·규모 판정 브리프는 2026-08-25 서류 정돈에서 삭제했다(판정 결과는 §1·§2에 흡수).
 
-**한 줄**: <https://devetym.com> 이 라이브다. **기반(W0a·W0b)은 끝났고 본체(650장·검색·AI)는 한 줄도 없다.** **ADR-0012·0013은 2026-08-25 비준됐다 — 웹 트랙에 사람 게이트는 더 없다.** 다음 한 걸음은 **W0c · 650 D1 시딩**(`~/devetym-proxy` 측)이다.
+**한 줄**: <https://devetym.com> 이 라이브다. **기반(W0a·W0b)은 끝났고 본체(650장·검색·AI)는 한 줄도 없다.** **ADR-0012·0013은 2026-08-25 비준됐다 — 웹 트랙에 사람 게이트는 더 없다.** **W0c는 2026-08-26 착수했다 — 격리 환경(로컬 D1·좌표 반전·CI)은 완료, 본체 7단계는 0/7.** 다음 한 걸음은 **`normalizeTermKey` 정의 확정**이고, 트리·제안은 [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md) 「▶ 이어서 하자」에 있다.
 
 ---
 
 ## 0. 새 세션이 *"이어서 하자"* 를 들었을 때
 
+**→ [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md)의 「▶ 이어서 하자」 절을 읽고 그대로 보여준다.**
+거기에 진행 트리·완료분·다음 한 걸음·착수 제안이 다 있다. 이 문서는 **W 트랙 전체 순서**의 정본으로 남는다.
+
 ```bash
-curl -sI https://devetym.com | head -1        # 200이면 기반 정상
-ls ~/devetym/web/src/pages                     # index.astro·robots.txt.ts 뿐 = 본체 미착수
+# 환경이 살아 있는지 (2줄)
+cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22 && npm test   # 69/69
+npm run db:local "SELECT COUNT(*) n FROM entries"                       # 18
 ```
 
-**⚠️ 2026-08-26부터 W0c는 `sandbox/w0c-d1-seeding` 브랜치에서 진행 중이다** — 로컬 D1 샌드박스(실 정본 무접촉) 위에서 짓는다. 그 브랜치 안의 상태·발견·백로그는 [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md)에서 읽는다. **이 핸드오프와 ROADMAP은 W 트랙 순서의 정본으로 계속 유효하다.**
+**한 줄 요약**: W0c는 **환경 구축이 끝났고 본체 7단계는 0/7**이다. 다음 = **§3-1 `normalizeTermKey` 정의 확정**.
+[ADR-0012](docs/adr/0012-content-canon-d1.md)·[ADR-0013](docs/adr/0013-web-route-contract.md) 둘 다 `Accepted` — 사람 게이트는 없다.
 
-**막는 것은 없다. 바로 W0c를 착수한다.** [ADR-0012](docs/adr/0012-content-canon-d1.md)·[ADR-0013](docs/adr/0013-web-route-contract.md) 둘 다 `Accepted`(2026-08-25 사람 비준).
-
-- **W0c 착수 내용** = `~/devetym-proxy` D1 `devetym-cache`에 **`origin` 컬럼 신설** · authored 650 시딩 · **authored > generated 충돌 규칙**(authoring path 한정, 구본은 `entry_versions` 보존) · `prompt_version` 센티널(`authored:db-expand-v<N>`) · 익스포트 잡(스냅샷 커밋 의무의 실행 수단).
+- **W0c 착수 내용** = `~/devetym-proxy` D1에 **`origin` 컬럼 신설** · authored 650 시딩 ·
+  **authored > generated 충돌 규칙** · `prompt_version` 센티널 · 익스포트 잡.
 - **순서는 W0c → W1a → W1b → W1c**다. 앞당기지 않는다.
-- **`normalizeTermKey` 정의를 파이프라인과 Worker에서 하나로 못 박고 시작한다** — 정의가 어긋나면 페이지 수와 충돌 수가 조용히 달라진다(§4 ⚠️).
+- **작업은 로컬 D1 샌드박스에서 한다** — 실 정본 무접촉. 좌표가 반전돼 있어 배포·원격 스키마 변경이 막혀 있다.
 
 ---
 

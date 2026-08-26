@@ -135,7 +135,7 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 [ADR-0009](docs/adr/0009-web-framework-rendering.md)). 앱을 대체하는 게 아니라 **채널 확장**이다 — 웹 = 검색·씨딩 착지면, 앱 = 무제한 표면.
 지금 있는 것은 **기반뿐**이다: 디자인 토큰을 앱 Kotlin 정본에서 **빌드마다 자동 추출**(손으로 안 베낀다 — 개수를 단언해 드리프트 시 빌드가 깨진다) ·
 도메인 참조 `SITE_URL` 단일 지점 · 폰트 woff2 · 사이트맵 · 클라이언트 JS 0바이트.
-**아직 없는 것**: 용어 페이지 650장·검색·AI 폴백. **[ADR-0012](docs/adr/0012-content-canon-d1.md)·[ADR-0013](docs/adr/0013-web-route-contract.md) 비준 완료(2026-08-25)로 게이트는 해소됐고, 다음은 W0c(650 D1 시딩)다**
+**아직 없는 것**: 용어 페이지 650장·검색·AI 폴백. **[ADR-0012](docs/adr/0012-content-canon-d1.md)·[ADR-0013](docs/adr/0013-web-route-contract.md) 비준 완료(2026-08-25)로 게이트는 해소됐고, W0c(650 D1 시딩)는 2026-08-26 착수해 격리 환경까지 끝났다**([`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md) — 브랜치 `sandbox/w0c-d1-seeding`)
 — 정본은 D1로 올라가고, 웹은 SSG 650 + 조회 전용 SSR 폴백(색인 자격은 품질 게이트가 연다)으로 간다. 상세 = [`web/README.md`](web/README.md), 상태 = [ROADMAP](ROADMAP.md) W 트랙.
 
 **서버 캐시 트랙 S1 — 가동 중 (2026-07-28).** 앱 배포와 **독립**으로 완결되는 트랙이라 심사와 무관하게
