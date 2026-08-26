@@ -15,6 +15,8 @@ curl -sI https://devetym.com | head -1        # 200이면 기반 정상
 ls ~/devetym/web/src/pages                     # index.astro·robots.txt.ts 뿐 = 본체 미착수
 ```
 
+**⚠️ 2026-08-26부터 W0c는 `sandbox/w0c-d1-seeding` 브랜치에서 진행 중이다** — 로컬 D1 샌드박스(실 정본 무접촉) 위에서 짓는다. 그 브랜치 안의 상태·발견·백로그는 [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md)에서 읽는다. **이 핸드오프와 ROADMAP은 W 트랙 순서의 정본으로 계속 유효하다.**
+
 **막는 것은 없다. 바로 W0c를 착수한다.** [ADR-0012](docs/adr/0012-content-canon-d1.md)·[ADR-0013](docs/adr/0013-web-route-contract.md) 둘 다 `Accepted`(2026-08-25 사람 비준).
 
 - **W0c 착수 내용** = `~/devetym-proxy` D1 `devetym-cache`에 **`origin` 컬럼 신설** · authored 650 시딩 · **authored > generated 충돌 규칙**(authoring path 한정, 구본은 `entry_versions` 보존) · `prompt_version` 센티널(`authored:db-expand-v<N>`) · 익스포트 잡(스냅샷 커밋 의무의 실행 수단).
