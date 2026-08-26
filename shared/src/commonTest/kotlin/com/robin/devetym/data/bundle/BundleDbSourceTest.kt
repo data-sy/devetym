@@ -70,6 +70,37 @@ class BundleDbSourceTest {
         assertEquals("branch", collide.search("분기")?.keyword) // last-wins면 "fork"가 나와 실패
     }
 
+    /**
+     * W0c §3-1 — keyword가 alias를 이긴다(2패스 인덱스). 실 번들 재현:
+     * `cache-aside`의 별칭 `"lazy loading"`과 엔트리 `lazy-loading`이 같은 키 `"lazyloading"`으로
+     * 접힌다. 1패스면 앞선 `cache-aside`가 선점해 `lazy-loading`이 **자기 keyword로 도달 불가**해진다.
+     */
+    @Test
+    fun test_search_키워드가별칭을이김_2패스() {
+        val shadow = InMemoryBundleDbSource(
+            listOf(
+                te("cache-aside", listOf("캐시 어사이드", "lazy loading"), "패턴"),
+                te("lazy-loading", listOf("지연 로딩"), "패턴"),
+            ),
+        )
+        // 뒤에 있어도 자기 keyword로는 자기가 나온다 — 1패스면 "cache-aside"가 나와 실패한다.
+        assertEquals("lazy-loading", shadow.search("lazy-loading")?.keyword)
+        assertEquals("lazy-loading", shadow.search("lazy loading")?.keyword)
+        // 선점당한 쪽도 자기 keyword·자기 고유 별칭으로는 멀쩡하다.
+        assertEquals("cache-aside", shadow.search("cache aside")?.keyword)
+        assertEquals("cache-aside", shadow.search("캐시어사이드")?.keyword)
+    }
+
+    /** 슬러그 keyword가 사용자 표기(공백형·무공백형)로 도달한다 — 이 정규화의 존재 이유. */
+    @Test
+    fun test_search_슬러그키워드_표기변이도달() {
+        val slug = InMemoryBundleDbSource(listOf(te("aa-tree", listOf("AA 트리"), "자료구조")))
+        for (q in listOf("aa-tree", "AA tree", "aatree", "AA-Tree", "  aa  tree  ")) {
+            assertEquals("aa-tree", slug.search(q)?.keyword, "\"$q\" 미도달")
+        }
+        assertEquals("aa-tree", slug.search("AA트리")?.keyword) // 한글 별칭의 무공백 표기
+    }
+
     @Test
     fun test_search_빈입력_null() {
         assertNull(source.search(""))

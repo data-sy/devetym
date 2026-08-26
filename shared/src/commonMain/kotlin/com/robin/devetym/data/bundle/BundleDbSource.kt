@@ -33,10 +33,19 @@ class InMemoryBundleDbSource(entries: List<TermEntry>) : BundleDbSource {
     /**
      * 정규화 키 → 엔트리. `keyword`와 모든 `aliases`를 정규화 키로 접어 매칭 집합에 넣는다.
      *
-     * 정규화 키 충돌(서로 다른 두 엔트리가 같은 정규화 키를 공유 — 실 번들 3건: `집계`→{aggregate,
-     * aggregation}·`분기`→{branch, fork}·`샤딩`→{shard, sharding}) 시 **번들(리스트) 순서 first-wins**
-     * (`if (key !in this) put`; common stdlib엔 `putIfAbsent` 없음). §3-1 결정적 반환 계약과 일치 —
-     * last-wins 덮어쓰기 금지. 뒤로 밀린 매칭 발견성 회복은 Open Questions로 이월(M3는 결정적 반환만 보증).
+     * **2패스다 — keyword 전량을 먼저 넣고, 그다음 alias를 넣는다.** 즉 *keyword가 alias를 이긴다.*
+     * 서버 `lookupCache`가 entries를 먼저 조회하고 없을 때만 aliases로 가는 것과 같은 규칙이라,
+     * 클라·서버가 같은 엔트리로 수렴한다.
+     *
+     * ⚠️ 1패스(엔트리마다 keyword+alias를 함께 넣기)로 되돌리지 말 것. W0c §3-1 정규화(구분자 삭제)
+     * 아래에서는 `cache-aside`의 별칭 `"lazy loading"`이 엔트리 `lazy-loading`의 **자기 keyword 키를
+     * 선점**해, `search("lazy-loading")`이 엉뚱하게 `cache-aside`를 준다(실측 1건). 2패스면 0건이다.
+     *
+     * 같은 급끼리의 충돌(키워드↔키워드, 별칭↔별칭)은 여전히 **번들(리스트) 순서 first-wins**
+     * (`if (key !in this) put`; common stdlib엔 `putIfAbsent` 없음). 실 번들 별칭 충돌 3건:
+     * `집계`→{aggregate, aggregation}·`분기`→{branch, fork}·`샤딩`→{shard, sharding}.
+     * §3-1 결정적 반환 계약과 일치 — last-wins 덮어쓰기 금지. 뒤로 밀린 매칭 발견성 회복은
+     * Open Questions로 이월(M3는 결정적 반환만 보증).
      *
      * ⚠️ INV-A: `aliases`를 인덱스에서 누락하면 `search(alias)`가 조용히 miss한다(§6-B의 sharp 오라클).
      */
@@ -44,6 +53,8 @@ class InMemoryBundleDbSource(entries: List<TermEntry>) : BundleDbSource {
         for (entry in allEntries) {
             val keywordKey = normalizeKeyword(entry.keyword)
             if (keywordKey !in this) put(keywordKey, entry)
+        }
+        for (entry in allEntries) {
             for (alias in entry.aliases) {
                 val aliasKey = normalizeKeyword(alias)
                 if (aliasKey !in this) put(aliasKey, entry)

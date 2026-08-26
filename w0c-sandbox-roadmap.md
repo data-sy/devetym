@@ -1,7 +1,7 @@
 # W0c 샌드박스 로드맵 — `sandbox/w0c-d1-seeding`
 
 > **이 브랜치 작업의 SSOT.** 진행 상태·발견·백로그·오류·실측값을 전부 여기 모은다.
-> **최종 갱신 2026-08-26 (좌표 반전 + CI 반영).** 수명은 브랜치와 같다 — 흡수되면 §8 절차로 접고 이 파일을 지운다.
+> **최종 갱신 2026-08-26 (§3-1 normalizeTermKey 확정 반영).** 수명은 브랜치와 같다 — 흡수되면 §8 절차로 접고 이 파일을 지운다.
 
 ---
 
@@ -22,9 +22,15 @@ W0c · 650 D1 시딩  ─ sandbox/w0c-d1-seeding
 │   ├── CI                push·PR에서 npm test                 ✅ b3d9d09
 │   └── 문서              SSOT + ROADMAP·핸드오프·README 배너   ✅ 9385d54·d189d89
 │
-├── 본체 ─────────────────────────────────── ⬜ 미착수 (0/7)
-│   ├── 1. normalizeTermKey 정의 확정      ⬜ ← 다음 차례
-│   ├── 2. origin 컬럼 (DEFAULT 'generated' 필수)  ⬜
+├── 본체 ─────────────────────────────────── 🚧 1/7
+│   ├── 1. normalizeTermKey 정의 확정      ✅ N1(구분자 삭제) · 세 지점 동치 실측
+│   │   ├── Worker  normalizeTermKey       ✅ vitest 74/74 (69→+5)
+│   │   ├── 앱      normalizeKeyword       ✅ JVM 140 · 네이티브 130 · 0 fail
+│   │   │   └── + BundleDbSource 2패스 (keyword가 alias를 이김)
+│   │   ├── 파이프라인 term_key.py          ✅ 케이스표 + JS 교차실행 3,398건 불일치 0
+│   │   └── ✗ 앱 로컬 DB 재정규화는 남김 — 릴리스 블로커, §5-P0
+│   ├── 2. origin 컬럼 (DEFAULT 'generated' 필수)  ⬜ ← 다음 차례
+│   │   └── 이제 키가 확정돼 시딩 수(668)가 고정됐다
 │   ├── 3. prompt_version 센티널           ⬜
 │   ├── 4. authored 650 로컬 시딩          ⬜
 │   ├── 5. authored > generated 충돌 규칙  ⬜
@@ -34,25 +40,23 @@ W0c · 650 D1 시딩  ─ sandbox/w0c-d1-seeding
 └── 흡수 ─────────────────────────────────── ⬜ §8 절차
 ```
 
-### 다음 한 걸음 = §3-1 `normalizeTermKey` 정의 확정
+### 다음 한 걸음 = §3-2 `origin` 컬럼 마이그레이션
 
-**왜 이것부터인가**: authored `keyword`는 슬러그(`aa-tree`)고 generated `term_key`는 입력
-정규화형(`bash`·`개발`)이다(§4-C). 정의를 안 박고 시딩하면 **페이지 수와 충돌 수가 조용히 달라지고**
-(별칭 1,316 vs 1,286 · 충돌 3 vs 4), 뒤 6단계가 전부 잘못된 수 위에서 검증된다.
+§3-1이 끝나 **시딩 수가 668로 고정**됐다(§7). 이제 스키마를 얹는다.
 
-**착수 제안 (이대로 제안하면 된다)**:
-1. 현행 3지점의 정의를 실측 비교 — `~/devetym-proxy/src/index.js`의 `normalizeTermKey` ·
-   `~/devetym/Scripts/`의 파이프라인 측 · 앱 `normalizeKeyword`
-2. 650 + tail 18을 **양쪽 정의로 각각 돌려** 별칭 수·충돌 수를 실제로 갈라 보인다
-3. 사람에게 **결정 브리핑 1건** — 구분자를 지울 것인가(`b트리` 충돌 발생) 살릴 것인가.
-   트레이드오프는 「검색 유입 가능한 별칭 수」 대 「충돌로 잃는 페이지」
-4. 확정 정의를 **한 함수로** 못 박고 세 지점이 같은 키를 낸다는 테스트 추가
+**착수 제안**:
+1. `migrations/cache/`에 `origin TEXT NOT NULL DEFAULT 'generated'` 추가 —
+   **DEFAULT가 없으면 `src/index.js:450`의 7컬럼 INSERT가 NOT NULL로 깨진다**(§3 표의 오라클)
+2. 로컬 적용 → 기존 18행이 `generated`로 백필되는지 확인
+3. `npm test` 무회귀(74) + `npm run db:local`로 백필 실측
+4. write-back 경로는 **건드리지 않는다** — DEFAULT가 흡수하는지가 이 단계의 요점
 
 ### 이어서 하기 전 확인 (2줄)
 
 ```bash
-cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22 && npm test   # 69/69 = 환경 정상
+cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22 && npm test   # 74/74 = 환경 정상
 npm run db:local "SELECT COUNT(*) n FROM entries"                       # 18 = 픽스처 살아있음
+cd ~/devetym && python3 Scripts/db-expand/test_term_key.py              # PASS = 세 지점 동치
 ```
 
 ⚠️ **`nvm use 22`를 빠뜨리면** wrangler가 조용히 이상하게 군다(§6).
@@ -90,7 +94,7 @@ npm run db:local "SELECT COUNT(*) n FROM entries"                       # 18 = �
 
 | 층 | 무엇 | 계정 접촉 | 상태 |
 |---|---|---|---|
-| **L1** | `npm test` — 실 DDL + 실 워커 코드 · fetch 스텁 | 없음 | ✅ 69개 |
+| **L1** | `npm test` — 실 DDL + 실 워커 코드 · fetch 스텁 | 없음 | ✅ 74개 |
 | **L2** | `npm run dev` (`wrangler dev --local`) — 앱과 동일한 요청으로 실제 왕복 | 없음 | ✅ 실증 |
 | **L3** | 원격 샌드박스(별도 Worker·D1) | 있음(프로덕션 아님) | ⬜ **§3-1~6엔 불필요** |
 
@@ -130,7 +134,7 @@ W0c 규모엔 과하다고 판정했다(§4-D). 실수로 밟히는 경로는 �
    🔁 흡수 시 PROD 값 복원 — 원본은 wrangler.toml 머리말에 있다
 
 명령
-├── npm test              L1 · 69개 · 계정 무관
+├── npm test              L1 · 74개 · 계정 무관
 ├── npm run dev           L2 · wrangler dev --local · localhost:8787
 ├── npm run db:local "<sql>"   로컬 D1 조회
 └── npm run db:reset:local     마이그레이션 + 픽스처로 초기화
@@ -144,19 +148,20 @@ CI  .github/workflows/test.yml — push·PR에서 npm test.
     Cloudflare 계정에 접속하지 않는다(miniflare가 로컬 D1·KV를 세움 → 시크릿 불요).
 ```
 
-베이스라인: 좌표 반전 후 재구성한 로컬 D1 위에서 `npm test` 69/69 통과.
+베이스라인: 좌표 반전 후 재구성한 로컬 D1 위에서 `npm test` 74/74 통과(§3-1 +5).
 
 ## 3. W0c 작업 — 순서와 완료 오라클
 
 `normalizeTermKey`부터인 이유: 정의가 어긋나면 **페이지 수와 충돌 수가 조용히 달라진다.**
 이걸 안 박고 시딩하면 뒤 단계가 전부 잘못된 수 위에서 검증된다.
+→ **08-26 확정: N1(구분자 삭제).** 시딩 수 668 · 별칭 1,301로 고정됐다(§7).
 
 | # | 작업 | 완료 오라클 | 상태 |
 |---|---|---|---|
-| **1** | **`normalizeTermKey` 정의 확정** — 파이프라인(`Scripts/`)·Worker(`src/index.js`)·웹이 한 함수를 공유 | 세 지점이 같은 입력에 같은 키를 낸다는 테스트 + **별칭 수·충돌 수를 하나의 값으로 확정** | ⬜ |
-| **2** | `origin` 컬럼 마이그레이션 (`'authored' \| 'generated'`) — **`DEFAULT 'generated'` 필수** | 로컬 적용 후 69 테스트 무회귀 · 기존 18행이 `generated`로 백필 · **`src/index.js:450`의 7컬럼 INSERT가 수정 없이 계속 성공** | ⬜ |
+| **1** | **`normalizeTermKey` 정의 확정** — 파이프라인(`Scripts/`)·Worker(`src/index.js`)·앱이 한 정의를 공유 | 세 지점이 같은 입력에 같은 키를 낸다는 테스트 + **별칭 수·충돌 수를 하나의 값으로 확정** | ✅ **N1** · §7 |
+| **2** | `origin` 컬럼 마이그레이션 (`'authored' \| 'generated'`) — **`DEFAULT 'generated'` 필수** | 로컬 적용 후 74 테스트 무회귀 · 기존 18행이 `generated`로 백필 · **`src/index.js:450`의 7컬럼 INSERT가 수정 없이 계속 성공** | ⬜ |
 | **3** | `prompt_version` 센티널 확정 (`authored:db-expand-v<N>`) | authored 행이 `NOT NULL` 제약을 통과하고, INV-9 버전 태깅이 두 갈래를 구분해 읽힌다 | ⬜ |
-| **4** | authored 650 시딩 (로컬) | 로컬 entries = 650 + generated tail · 별칭 = §7 확정값 · **충돌 0건이 우연이 아님을 로그로 증명** | ⬜ |
+| **4** | authored 650 시딩 (로컬) | 로컬 entries = **668** · aliases = **1,301** (§7 확정값) · **충돌 0건이 우연이 아님을 로그로 증명** | ⬜ |
 | **5** | authored > generated 충돌 규칙 (authoring path 한정) | **충돌을 일부러 심은 뒤** authored가 이기고 구본이 `entry_versions`에 남는다 · read path 무변경(INV-2·INV-4) | ⬜ |
 | **6** | 익스포트 잡 (스냅샷 커밋 의무의 실행 수단) | D1 → `terms.json` 왕복 후 **현행 파일과 의미적 동일** · 상단에 「generated — 직접 편집 금지」 마커 | ⬜ |
 | **7** | 원격 적용 〔**사람 판정 필요**〕 | 로컬 1~6 전부 녹색 + **좌표를 PROD로 복원**한 뒤에만 연다. §4-A 참조 | ⬜ |
@@ -175,10 +180,16 @@ ADR-0013은 "생성분도 페이지가 될 자격이 있다"를 전제하는데,
 (`not_dev_term` 11 · `possible_typo` 1). `origin='authored'`만으로 색인 자격을 가르면 이 12행이 승격 대상에 섞인다.
 → W1c 착수 전에 판정. 규범 변경이면 새 ADR.
 
-**C. authored `keyword`와 generated `term_key`의 형식이 다르다**
-authored는 슬러그(`aa-tree`, `aba-problem`), generated는 입력 정규화형(`bash`, `symantec's`, `개발`).
-§3-1이 이걸 하나로 접을지, 두 형식을 공존시킬지를 정해야 시딩 키가 정해진다.
-→ **§3-1의 산출물.** 여기서 갈린다.
+**C. authored `keyword`와 generated `term_key`의 형식이 다르다** 〔**해소 2026-08-26**〕
+authored는 슬러그(`aa-tree`), generated는 입력 정규화형(`bash`·`개발`)이었다.
+→ **하나로 접었다.** 정규화를 트림에서 **구분자 삭제(N1)** 로 바꿔 `aa-tree`·`AA tree`·`aatree`가
+한 키 `aatree`로 수렴한다. 두 형식 공존은 채택하지 않았다 — 실측상 접어서 **잃는 페이지가 0건**이라
+공존시킬 이유가 없었다(§7).
+
+⚠️ 착수 전 서술은 트레이드오프를 「별칭 수 대 **충돌로 잃는 페이지**」로 잡았고 `b트리` 충돌을
+예상했는데, **둘 다 틀렸다.** 실측하니 entries PK 충돌은 어느 후보에서도 0건이고, 늘어난다던
+별칭 충돌도 entries-우선 규칙이 흡수해 3건 그대로다. 예측한 `b트리` 충돌은 존재하지 않았다 —
+`b-tree`의 별칭 `B 트리`가 그 키를 내는 유일한 출처였다.
 
 ---
 
@@ -192,6 +203,10 @@ DB 스코프 API 토큰으로만 닫힌다. 블라스트 반경이 큰 둘(배�
 
 ## 5. 브랜치 내부 백로그
 
+- **[P0 · 앱 릴리스 블로커] 로컬 DB 재정규화 → [#21](https://github.com/data-sy/devetym/issues/21)**
+  §3-1이 `normalizeKeyword`를 바꿔 기존 사용자 기기의 `term.keyword`·`searchHistory.keyword`가
+  옛 키로 남는다(북마크가 해제된 것처럼 보이고 중복 행이 생긴다).
+  **W0c는 막지 않는다** — 코드·테스트까지만 하고 릴리스를 열지 않았다. 상세는 이슈.
 - **[P2] Anthropic 로컬 스텁** — L2의 캐시 미스가 진짜 API로 나간다(§1 ⚠️). W0c엔 실해가 없으나
   W1a에서 웹 경로를 실측할 땐 필요해진다.
 
@@ -206,6 +221,8 @@ DB 스코프 API 토큰으로만 닫힌다. 블라스트 반경이 큰 둘(배�
 | 08-26 | `~/devetym-proxy`는 Node 22 요구(`.nvmrc`), 시스템 기본은 v20.19.5 | 세션마다 `source ~/.nvm/nvm.sh && nvm use 22`. 안 하면 wrangler가 경고만 뱉고 버전 출력이 깨진다 |
 | 08-26 | `wrangler dev --local`이 캐시 히트에도 500 `server_misconfigured` | 키 검사(`src/index.js:95`)가 캐시 조회보다 **앞**에 있다. `.dev.vars`에 자리표시자 키를 넣으면 해소 — 히트 경로는 그 값을 쓰지 않는다 |
 | 08-26 | **명령 가드는 벽이 아니었다** | `scripts/d1.mjs`로 `--remote` DML을 막았으나 `npx wrangler`를 직접 치면 우회된다. **좌표 반전으로 교체**(b3d9d09). 가드는 로컬 헬퍼로 축소 |
+| 08-26 | **`\s`·`str.isspace()`·`trim()`은 셋 다 Kotlin `isWhitespace()`와 집합이 다르다** | 세 지점 어디서든 언어 기본 공백 판정을 쓰면 조용히 갈라진다(파이썬은 U+0085를 공백으로 보고 Kotlin은 아니다 · JS `trim()`은 BOM을 자르고 Kotlin은 아니다). 세 구현 모두 **코드포인트 집합을 명시**하고 `test_term_key.py`가 실제로 교차 실행해 고정 |
+| 08-26 | **측정 없이 세운 트레이드오프가 둘 다 틀렸다** | 착수 전 서술은 「구분자를 지우면 페이지를 잃는다 · `b트리`가 충돌한다」였는데 실측하니 페이지 소실 0건 · `b트리` 충돌 없음(§4-C). **후보 정의를 실 데이터에 돌려보기 전에는 판정 브리핑을 쓰지 않는다** |
 | 08-26 | **좌표 반전도 완전하지 않다** | `d1 execute`는 DB 이름을 wrangler.toml이 아니라 계정 전체에서 해석한다 — 프로덕션 이름을 손으로 주면 통과한다. `migrations`는 설정에서 찾아 거부한다. **둘의 해석 규칙이 다르다** |
 
 ---
@@ -217,15 +234,59 @@ DB 스코프 API 토큰으로만 닫힌다. 블라스트 반경이 큰 둘(배�
 | 원격 `devetym-cache` entries / aliases / entry_versions | **18 / 9 / 0** | 08-26 |
 | generated branch 분포 | `not_dev_term` 11 · `term_entry` 6 · `possible_typo` 1 | 08-26 |
 | generated `prompt_version` 종류 | 1종 — `v2-pathA:956ba44a7c48` | 08-26 |
-| **authored 650 × generated 18 충돌** | **0건** (naive lowercase 정규화 기준) | 08-26 |
+| **authored 650 × generated 18 충돌** | **0건** (N1 확정 정의 기준 · 재측정) | 08-26 |
 | generated `term_entry` 6개가 650에 없음 | `bash` `protocol` `squash` `production` `idempotency` `shedlock` | 08-26 |
 | authored `keyword` 형식 | 슬러그 — `aa-tree` · `aba-problem` · `abstract-factory` | 08-26 |
-| 베이스라인 테스트 | 69/69 통과 (좌표 반전 후 재확인) | 08-26 |
+| 베이스라인 테스트 | 74/74 통과 (§3-1 +5) | 08-26 |
 | L2 로컬 왕복 지연 | `bash` 14ms · `idempotency` 2ms · `개발` 3ms (전부 200) | 08-26 |
 | 캐시 히트의 위치 | Anthropic 호출·일일 한도 검사 **앞**에서 리턴 (`src/index.js:143`) | 08-26 |
 | write-back 실패 시 거동 | `waitUntil` + `catch` 삼킴 — 앱은 안 죽고 **캐시만 조용히 멈춘다** (`src/index.js:519`) | 08-26 |
 
-⚠️ 「충돌 0건」은 **naive 정규화 기준**이다. §3-1이 정의를 바꾸면 이 값이 바뀔 수 있다 — 확정 후 재측정해 이 표를 갱신한다.
+### §3-1 확정값 — 시딩 수의 근거 (실제 구현으로 측정, 08-26)
+
+정의 **N1**: 구분자(공백류 ∪ {`-`, `_`})를 **내부까지 전부 삭제**한 뒤 lowercase.
+`aa-tree` · `AA tree` · `aatree` → `aatree`.
+
+| 항목 | 값 | 비고 |
+|---|---|---|
+| **entries 행** | **668** | authored 650 + generated 18 |
+| entries PK 충돌 | **0** | 0이 아니면 행이 사라진다 — 이 정의가 안전한 이유 |
+| **aliases 행** | **1,301** | entries에 이미 있는 키는 별칭으로 안 넣는다(`insertAliases`) |
+| 엔트리간 별칭 충돌 | **3** | `집계`{aggregate,aggregation} · `분기`{branch,fork} · `샤딩`{shard,sharding} — 전부 authored 내부, first-write-wins가 흡수 |
+| 그중 authored×generated | **0** | |
+| 자기접힘 | 1 | `blue-green-deployment`의 별칭 2개가 `블루그린배포` 한 키로 — 같은 엔트리라 무해 |
+| 실 번들 650 정규화 keyword 고유성 | **650/650** | 구분자 변이 중복 없음 |
+
+**왜 N1인가 — 세 후보 실측 비교**
+
+| | N0 `trim+lower` | **N1 삭제** | N2 `구분자→공백` |
+|---|---|---|---|
+| 표기변이 도달 (858개) | 306 | **858** | 577 |
+| 무공백 한글 별칭 도달 | 0/609 | **609/609** | 0/609 |
+| entries PK 충돌 | 0 | **0** | 0 |
+| 기존 generated 18행 키 이동 | — | **0** | 0 |
+
+N0에서는 authored 650 중 **272건이 자기 자신의 공백 표기로 도달 불가**였다(`aa tree` → miss).
+N1은 그 272건을 전부 회수하면서 **아무 페이지도 잃지 않는다.**
+
+**세 지점 동치 오라클**
+
+| 지점 | 파일 | 실행 결과 |
+|---|---|---|
+| Worker | `~/devetym-proxy/src/index.js` `normalizeTermKey` | vitest 74/74 (69→+5) |
+| 앱 | `shared/.../data/AppJson.kt` `normalizeKeyword` | JVM 140 · **네이티브(iosSimulatorArm64) 130** · 0 fail |
+| 파이프라인 | `Scripts/db-expand/term_key.py` `normalize_term_key` | 케이스표 + **JS 교차 실행 3,398건 · 불일치 0** |
+
+`test_term_key.py`는 미러링한 표만 비교하는 게 아니라 실 번들 650의 keyword·aliases·표기변이와
+유니코드 경계 문자를 **파이썬과 JS 구현에 실제로 통과시켜** 키를 바이트 비교한다.
+Kotlin 축은 같은 케이스표를 JVM·네이티브 양쪽에서 실행한다(`isWhitespace`·`lowercase`가 엔진 의존이라 필요).
+
+**함께 바뀐 것**
+- `BundleDbSource` 인덱스가 **2패스**가 됐다 — keyword 전량 먼저, 그다음 alias.
+  서버 `lookupCache`의 entries-우선 규칙과 같아졌다. 1패스면 `cache-aside`의 별칭 `lazy loading`이
+  엔트리 `lazy-loading`의 자기 keyword 키를 선점한다(실측 1건 → 2패스로 0건).
+- `validator.check_keyword_unique`·`merge.py` 충돌 검사가 **정규화 키 기준**이 됐다.
+  원문 비교면 `aa-tree`와 `aa_tree`가 둘 다 통과해 D1 PK에서 조용히 하나가 버려진다.
 
 ---
 

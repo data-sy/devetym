@@ -23,6 +23,9 @@ import sys
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).parent))
+from term_key import normalize_term_key
+
 HANGUL_RE = re.compile(r"[가-힣]")
 KEYWORD_RE = re.compile(r"^[a-z0-9][a-z0-9_-]*$")
 ALLOWED_CATEGORIES = {"동시성", "자료구조", "네트워크", "DB", "패턴", "기타"}
@@ -86,14 +89,26 @@ def check_aliases(entry: dict, failed: list) -> None:
 
 
 def check_keyword_unique(entries: list, failed: list) -> None:
-    counts: dict[str, int] = {}
+    """batch 내 keyword 중복 — **정규화 키 기준**(W0c §3-1).
+
+    ⚠️ 원문 비교로 되돌리지 말 것. `aa-tree` · `aa_tree` · `aatree`는 원문이 다르지만
+    `normalize_term_key`로는 같은 키라, 원문 비교로 통과시키면 D1 `entries.term_key`
+    PRIMARY KEY에서 충돌해 **뒤에 온 항목이 조용히 버려진다**(ON CONFLICT DO NOTHING).
+    """
+    by_key: dict[str, list[str]] = {}
     for e in entries:
         kw = e.get("keyword", "")
         if isinstance(kw, str):
-            counts[kw] = counts.get(kw, 0) + 1
-    for kw, n in counts.items():
-        if n > 1:
-            _add(failed, kw, "KEYWORD_UNIQUE", f"keyword '{kw}' batch 내 {n}회 중복")
+            by_key.setdefault(normalize_term_key(kw), []).append(kw)
+    for key, kws in by_key.items():
+        if len(kws) > 1:
+            # 원문이 같든(단순 중복) 다르든(구분자 변이) 둘 다 여기서 걸린다.
+            detail = f"'{key}'" if len(set(kws)) == 1 else f"'{key}' ← {sorted(set(kws))}"
+            for kw in sorted(set(kws)):
+                _add(
+                    failed, kw, "KEYWORD_UNIQUE",
+                    f"정규화 keyword {detail} batch 내 {len(kws)}회 중복",
+                )
 
 
 def validate(entries: list[dict[str, Any]]) -> dict[str, Any]:
