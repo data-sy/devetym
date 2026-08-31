@@ -17,7 +17,7 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 > | 순서 | 할 일 | 상태 | 다음 한 걸음 |
 > |---|---|---|---|
 > | **1** | ~~**서류 정돈**~~ | **✅ 종결 (2026-08-25)** — repo·`~/Downloads/devetym-release` 양쪽 완료 | 없음. 살아 있는 트랙은 아래 2번뿐이다 |
-> | **2** | **웹 트랙 W — 「크게」** | **✅ W0a·W0b 완료 · ADR-0012·0013 ✅비준(2026-08-25) — 사람 게이트 없음** | **W0c 진행 중 (2026-08-26~)** — 격리 환경(로컬 D1 샌드박스·좌표 반전·CI) **완료**, 본체 7단계 **6/7 — 로컬에서 할 수 있는 것은 전부 끝났다** (§3-1 `normalizeTermKey` · §3-2 `entries.origin` · §3-3 authored 센티널 · §3-4 **로컬 D1 650 시딩 — entries 668 · aliases 1,301** · §3-5 **충돌 규칙 + INV-5 보존** · §3-6 **익스포트 왕복 바이트 동일**). **§3-7 원격 적용 진행 중** — 사람이 (b)+1번(배포→개명→시딩)을 선택했고 `devetym-cache-dev` 리허설이 9지표 전부 통과했다(프로덕션 백업 완료). **다음 한 걸음 = 🙋 사람이 `~/devetym-proxy/wrangler.toml` 좌표 4개 복원** — Claude의 편집이 자동 모드 안전 분류기에 차단됐다. 복원되면 ②~⑥(스키마·배포·시딩·개명·검증)은 Claude가 이어간다. 절차·합격 기준 = [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md) §3-7c → **W1a 프록시 하드닝** → **W1b** 650장+검색+AI → **W1c 승격 잡**(2026-08-25 사람 선택 (b) — W 트랙 안에서 닫는다). 정본 = [`🤖-26-08-25-web-large-track-handoff.md`](🤖-26-08-25-web-large-track-handoff.md) |
+> | **2** | **웹 트랙 W — 「크게」** | **✅ W0a·W0b 완료 · ADR-0012·0013 ✅비준(2026-08-25) — 사람 게이트 없음** | **✅ W0c 완료 (2026-08-26 ~ 09-01)** — 본체 **7/7 · 프로덕션 적용까지 끝났다.** §3-1 `normalizeTermKey`(N1) · §3-2 `entries.origin` · §3-3 authored 센티널(번들 내용 해시) · §3-4 시딩 · §3-5 충돌 규칙 + INV-5 · §3-6 익스포트 왕복 바이트 동일 · §3-7 **원격 적용**. **프로덕션 실측: entries 671 · authored 650 · aliases 1,304 · 키 1,975개 전부 N1.** 실 앱 경로에서 `AA 트리`·`추상 팩토리`·`aatree`가 전부 정본 행에 도달한다. 워커 `c9ccd526` 배포. 백업 `~/devetym-d1-backup-20260901-020554.sql`. **잔여 = 🙋 브랜치 2개 병합·푸시(§8 흡수)** → **다음 한 걸음 = W1a 프록시 하드닝** → **W1b** 650장+검색+AI → **W1c 승격 잡**(2026-08-25 사람 선택 (b) — W 트랙 안에서 닫는다). 정본 = [`🤖-26-08-25-web-large-track-handoff.md`](🤖-26-08-25-web-large-track-handoff.md) |
 >
 > **⚠️ W0c는 2026-08-26부터 `sandbox/w0c-d1-seeding` 브랜치에서 진행 중이다.** 그 브랜치의 진행 상태·발견·내부 백로그·오류 정본은 [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md)이고, **W 트랙 순서(W0c→W1a→W1b→W1c)는 계속 이 ROADMAP이 이긴다.** 흡수 시 그 파일은 삭제된다.
 >
@@ -29,19 +29,11 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 >
 > **AI가 대신 못 하는 것만 남겼다.** 순서는 위가 급한 순.
 >
-> **⓪ 🔴 지금 최우선 — `~/devetym-proxy/wrangler.toml` 좌표 4개 복원 (2026-09-01)**
-> W0c 로컬 6/7과 (b) 리허설이 전부 통과했고 프로덕션 적용만 남았는데, **Claude의 이 편집이
-> 자동 모드 안전 분류기에 차단됐다**(Bash·Edit 양쪽). 우회하지 않고 정지했다.
-> 되돌릴 값 — `main`과의 설정 차이는 이게 전부다:
-> ```
-> name          = "devetym-proxy"                                    # -sandbox 제거
-> RATE_LIMIT id = "513c44bf6df942eab2262397bbec04de"
-> USAGE_DB      = "devetym-usage"  / "e76366e6-34e1-4a1a-8ed7-c771bd650580"
-> CACHE_DB      = "devetym-cache"  / "a42d4408-ff64-40d4-8a6a-c71672fd71c2"
-> ```
-> 복원 후 `npm test`(83) 확인 → **나머지 ②~⑥(스키마·배포·시딩·개명·검증)은 Claude가 이어간다.**
-> 대안: `/config`로 권한 모드를 바꾸거나 settings에 규칙을 추가하면 Claude가 이것도 한다.
-> 절차·SQL·합격 기준·롤백 = [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md) §3-7c.
+> **⓪ ~~`wrangler.toml` 좌표 복원~~ ✅ 완료 (2026-09-01)** — `accept edits` 모드로 전환하니
+> 통과했다(차단은 auto mode 전용 분류기였다). 이어서 **W0c 원격 적용 ①~⑥ 전부 완료** —
+> 프로덕션 D1에 650이 들어갔고 실 앱 경로에서 한글 별칭까지 도달한다.
+> **잔여(사람)**: `sandbox/w0c-d1-seeding` 브랜치 2개(`devetym`·`devetym-proxy`) 병합·푸시.
+> 절차 = [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md) §8.
 >
 > **① ~~ADR-0012·0013 비준~~ ✅ 완료 (2026-08-25 사람)** — 둘 다 `Accepted`. 함께 정해진 것: **승격 잡(캐시 M5)을 W 트랙 안에서 닫는다 — W1b 다음 `W1c`**(선택지 (b)). 근거 = 승격 잡이 없으면 생성분은 영원히 `noindex`이고 ADR-0013의 최대 이점이 잠긴 채 남는다. **비준에 따라 규범 문서 2곳이 갱신됐다**: `docs/cache-delivery-milestones.md` §1 **INV-11 전단 대체** · [ADR-0006](docs/adr/0006-server-cache-boundary.md) Decision 5. → **웹 트랙에 사람 게이트는 더 없다.**
 >
