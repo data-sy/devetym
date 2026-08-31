@@ -1,7 +1,7 @@
 # W0c 샌드박스 로드맵 — `sandbox/w0c-d1-seeding`
 
 > **이 브랜치 작업의 SSOT.** 진행 상태·발견·백로그·오류·실측값을 전부 여기 모은다.
-> **최종 갱신 2026-09-01 (§3-4 650 시딩 반영).** 수명은 브랜치와 같다 — 흡수되면 §8 절차로 접고 이 파일을 지운다.
+> **최종 갱신 2026-09-01 (§3-5 충돌 규칙 반영).** 수명은 브랜치와 같다 — 흡수되면 §8 절차로 접고 이 파일을 지운다.
 
 ---
 
@@ -22,7 +22,7 @@ W0c · 650 D1 시딩  ─ sandbox/w0c-d1-seeding
 │   ├── CI                push·PR에서 npm test                 ✅ b3d9d09
 │   └── 문서              SSOT + ROADMAP·핸드오프·README 배너   ✅ 9385d54·d189d89
 │
-├── 본체 ─────────────────────────────────── 🚧 4/7
+├── 본체 ─────────────────────────────────── 🚧 5/7
 │   ├── 1. normalizeTermKey 정의 확정      ✅ N1(구분자 삭제) · 세 지점 동치 실측
 │   │   ├── Worker  normalizeTermKey       ✅ vitest 74/74 (69→+5)
 │   │   ├── 앱      normalizeKeyword       ✅ JVM 140 · 네이티브 130 · 0 fail
@@ -46,30 +46,35 @@ W0c · 650 D1 시딩  ─ sandbox/w0c-d1-seeding
 │   │   ├── FK 0 · 축 드리프트 0 · payload 부적합 0        ✅
 │   │   ├── 멱등(2회차 불변) · 0에서 재현 1942문장         ✅
 │   │   └── L2 왕복: aa-tree·AA 트리·aatree·집계 전부 히트  ✅ 2~6ms
-│   ├── 5. authored > generated 충돌 규칙  ⬜ ← 다음 차례
-│   ├── 6. 익스포트 잡                     ⬜
+│   ├── 5. authored > generated 충돌 규칙  ✅ b92dd1e
+│   │   ├── 고치기 전 패배를 먼저 관측                     ✅ not_dev_term 생존
+│   │   ├── DO UPDATE · 조건 2개(generated · 스냅샷 변경)  ✅
+│   │   ├── hit_count 보존 · entry_versions 보존(INV-5)    ✅ 첫 write
+│   │   ├── read path·write-back 무변경                    ✅ INV-2·INV-4
+│   │   └── 실 SQLite 엔진 테스트 + 음성 대조 7속성        ✅
+│   ├── 6. 익스포트 잡                     ⬜ ← 다음 차례
 │   └── 7. 원격 적용 〔사람 판정〕          ⬜  ※ 좌표 복원 없이는 시도 자체가 실패
 │
 └── 흡수 ─────────────────────────────────── ⬜ §8 절차
 ```
 
-### 다음 한 걸음 = §3-5 authored > generated 충돌 규칙
+### 다음 한 걸음 = §3-6 익스포트 잡 (D1 → terms.json)
 
-650이 로컬에 들어갔다. 지금 규칙은 `ON CONFLICT DO NOTHING`이라 **먼저 있던 쪽이 이긴다** —
-실측상 충돌이 0건이라 이번엔 아무것도 안 밀렸지만, 규칙 자체는 아직 "검수 안 된 AI판이 이긴다"다.
+ADR-0012가 D1을 정본으로 올리면서 생긴 **부채를 갚는 단계**다. 콘텐츠 변경이 코드 리뷰를
+빠져나갈 수 있다는 대가의 완화책이 "익스포트·커밋 규율"인데, 규율에는 실행 수단이 필요하다.
 
 **착수 제안**:
-1. **충돌을 일부러 심는다** — 650 중 한 용어를 generated로 먼저 넣고 시딩을 돌린다.
-   현 규칙에서 authored가 지는 것을 **먼저 실패로 관측**한다(안 그러면 무엇을 고쳤는지 모른다)
-2. authoring path에만 `DO UPDATE`를 건다. **read path·write-back은 손대지 않는다**(INV-2·INV-4) —
-   `src/index.js`의 `ON CONFLICT DO NOTHING`은 그대로다. 바뀌는 건 시딩 SQL뿐
-3. 밀려난 generated 본을 `entry_versions`에 남긴다 (INV-5 — 지금 0행이고 여기가 첫 write 계기)
-4. 오라클: 심은 충돌에서 authored가 이기고 구본이 `entry_versions`에 있다 ·
-   `npm test` 83 무회귀 · 충돌 없는 649건은 그대로
+1. `origin='authored'` 행을 번들 형식(6필드)으로 되뽑는다 — `schemaVersion`·`promptVersion`은
+   **뺀다**(번들에 없던 필드다). payload에서 6필드만 투영하면 된다
+2. 오라클 = **현행 `terms.json`과 의미적 동일**. 바이트 동일이 아니라 정규화 JSON 해시 동일 —
+   즉 되뽑은 것의 센티널이 `authored:efa8f264dc67`로 다시 나와야 한다. **이게 왕복 증명이다**
+3. 상단에 「generated — 직접 편집 금지」 마커. 단 번들은 JSON 배열이라 주석을 못 단다 →
+   마커를 어디 둘지 정해야 한다(별도 `.meta` 파일 · 배열 첫 원소 · 파일명 규약 중 택1)
+4. 정렬 순서를 고정한다 — D1은 순서를 보장하지 않는다. `ORDER BY term_key`로 뽑으면
+   현행 파일 순서(keyword 사전순으로 보임)와 다를 수 있다. 다르면 diff가 매번 650줄이 된다
 
-⚠️ `origin='generated'` 행에는 `not_dev_term` 11 · `possible_typo` 1이 섞여 있다(§7).
-   이들은 term_key가 650과 겹칠 수 있고 **페이지가 되면 안 되는 행**이다(§4-B). 승격 자격 판정은
-   W1c 소관이지만, 충돌 규칙이 이 12행을 어떻게 다루는지는 여기서 정해진다.
+⚠️ **`entry_versions`를 누가 치우는지 아직 아무도 안 정했다**(§5 P2 참조). 번들 개정 1회당
+   650행씩 쌓인다. W0c 범위는 아니나 §3-6에서 익스포트 왕복이 돌기 시작하면 눈에 띈다.
 
 ### 이어서 하기 전 확인 (2줄)
 
@@ -78,7 +83,7 @@ cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22 && npm test   # 83/83 =
 npm run db:local "SELECT COUNT(*) n FROM entries"                       # 668 = 650 시딩 완료
 cd ~/devetym && python3 Scripts/db-expand/test_term_key.py              # PASS = 세 지점 동치
 python3 Scripts/db-expand/test_authored_version.py                      # PASS = 센티널·payload 대칭
-python3 Scripts/db-expand/test_seed_d1.py                               # PASS = 시딩 회계 §7 일치
+python3 Scripts/db-expand/test_seed_d1.py                               # PASS = 시딩 회계 + 충돌 규칙(실 SQLite)
 ```
 
 ⚠️ **`nvm use 22`를 빠뜨리면** wrangler가 조용히 이상하게 군다(§6).
@@ -184,7 +189,7 @@ CI  .github/workflows/test.yml — push·PR에서 npm test.
 | **2** | `origin` 컬럼 마이그레이션 (`'authored' \| 'generated'`) — **`DEFAULT 'generated'` 필수** | 로컬 적용 후 74 테스트 무회귀 · 기존 18행이 `generated`로 백필 · **`src/index.js:450`의 7컬럼 INSERT가 수정 없이 계속 성공** | ✅ **d635c3d** · 79/79 · §7 |
 | **3** | `prompt_version` 센티널 확정 — **`authored:<번들 해시>`** (손 번호 기각) | authored 행이 `NOT NULL` 제약을 통과하고, INV-9 버전 태깅이 두 갈래를 구분해 읽힌다 | ✅ **56ea002·0371064** · 83/83 |
 | **4** | authored 650 시딩 (로컬) | 로컬 entries = **668** · aliases = **1,301** (§7 확정값) · **충돌 0건이 우연이 아님을 로그로 증명** | ✅ **a710c51** · §7 |
-| **5** | authored > generated 충돌 규칙 (authoring path 한정) | **충돌을 일부러 심은 뒤** authored가 이기고 구본이 `entry_versions`에 남는다 · read path 무변경(INV-2·INV-4) | ⬜ |
+| **5** | authored > generated 충돌 규칙 (authoring path 한정) | **충돌을 일부러 심은 뒤** authored가 이기고 구본이 `entry_versions`에 남는다 · read path 무변경(INV-2·INV-4) | ✅ **b92dd1e** · §7 |
 | **6** | 익스포트 잡 (스냅샷 커밋 의무의 실행 수단) | D1 → `terms.json` 왕복 후 **현행 파일과 의미적 동일** · 상단에 「generated — 직접 편집 금지」 마커 | ⬜ |
 | **7** | 원격 적용 〔**사람 판정 필요**〕 | 로컬 1~6 전부 녹색 + **좌표를 PROD로 복원**한 뒤에만 연다. §4-A 참조 | ⬜ |
 
@@ -247,6 +252,9 @@ DB 스코프 API 토큰으로만 닫힌다. 블라스트 반경이 큰 둘(배�
 - **[P3 · 관찰] 번들 경로와 캐시 경로가 같은 용어에 다른 `promptVersion`을 준다** —
   번들에서 읽으면 `null`, 캐시에서 받으면 `authored:efa8f264dc67`. 앱은 이 값으로 분기하지
   않고 저장만 하므로(실측) 지금은 무해하다. "버전 다르면 갱신" 류 로직을 넣는 날 첫 지뢰가 된다.
+- **[P2] `entry_versions`를 아무도 안 치운다** — §3-5가 이 테이블의 첫 write를 만들었다.
+  번들 개정 1회당 650행이 쌓이고 프루닝 주체가 없다. 스냅샷 단위 태깅의 알려진 대가다
+  (엔트리별 해시로 가면 줄지만 "스냅샷 X 전체 무효화"를 잃는다 — §4-E에서 그래서 안 갔다).
 - **[P2] Anthropic 로컬 스텁** — L2의 캐시 미스가 진짜 API로 나간다(§1 ⚠️). W0c엔 실해가 없으나
   W1a에서 웹 경로를 실측할 땐 필요해진다.
 
@@ -308,6 +316,24 @@ DB 스코프 API 토큰으로만 닫힌다. 블라스트 반경이 큰 둘(배�
 | 0에서 재현 | `db:reset:local` → `db:seed:local` = **1,942 문장**(650+1,292) → 668/1,301 |
 | L2 왕복 (실 워커) | `aa-tree` `AA 트리` `aatree` → 전부 `aa-tree` · `집계` → `aggregate` · `blue green deployment` → `blue-green-deployment` · 전부 200 · **2~6ms** |
 | 무영향 확인 | `bash`(generated)는 자기 태그 `v2-pathA:` 그대로 200 |
+
+### §3-5 충돌 규칙 실측 (09-01) — 650과 겹치는 generated 3종을 일부러 심고
+
+| 심은 것 | 고치기 전 (`DO NOTHING`) | 고친 뒤 (`DO UPDATE`) |
+|---|---|---|
+| `aatree` term_entry (AI 오본·hits 42) | generated 생존 — **검수본이 짐** | authored · term_entry · **hits 42 보존** |
+| `abaproblem` not_dev_term (hits 7) | 생존 → 실 워커가 `return_not_dev_term` 응답 | authored · term_entry · hits 7 |
+| `abstractfactory` possible_typo (hits 3) | 생존 → `return_possible_typo` | authored · term_entry · hits 3 |
+
+- `entry_versions` **3행**에 구본 보존 — 원래 태그 `v2-pathA:956ba44a7c48` 그대로. **이 테이블의 첫 write**
+- 총계 불변: entries 668 · aliases 1,301 · generated 18 (심은 3건이 650에 흡수됨)
+- **멱등**: 2회차 적용에도 `entry_versions` 3 유지 (조건이 틀리면 실행마다 650씩 자란다)
+- **스냅샷 교체**: 번들 한 글자 수정 → 태그 `efa8f264dc67`→`3570679b6083`, 650행 전부 갱신 ·
+  구본 650 보존 · 편집 내용 실제 반영. **센티널의 존재 이유가 여기서 확인됐다**
+- 실 워커: `aba-problem`·`ABA 문제`→검수 요약 · `abstract-factory`→정상 엔트리 · `bash`(generated) 무영향
+
+⚠️ **고치기 전 상태를 먼저 관측한 것이 요점이다.** 실측상 실제 충돌은 0건이라 "고쳤다"를
+증명할 자연 사례가 없었다 — 심지 않으면 `DO NOTHING`과 `DO UPDATE`가 같은 결과를 낸다.
 
 **N1 정의의 값이 여기서 실물로 확인됐다** — `aatree`(구분자 없는 표기)와 `AA 트리`(한글 별칭)가
 같은 행에 도달한다. N0였다면 앞의 것은 미스였다(§7 세 후보 비교의 272건).

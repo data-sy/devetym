@@ -17,7 +17,7 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 > | 순서 | 할 일 | 상태 | 다음 한 걸음 |
 > |---|---|---|---|
 > | **1** | ~~**서류 정돈**~~ | **✅ 종결 (2026-08-25)** — repo·`~/Downloads/devetym-release` 양쪽 완료 | 없음. 살아 있는 트랙은 아래 2번뿐이다 |
-> | **2** | **웹 트랙 W — 「크게」** | **✅ W0a·W0b 완료 · ADR-0012·0013 ✅비준(2026-08-25) — 사람 게이트 없음** | **W0c 진행 중 (2026-08-26~)** — 격리 환경(로컬 D1 샌드박스·좌표 반전·CI) **완료**, 본체 7단계 **4/7** (§3-1 `normalizeTermKey` = 구분자 삭제·세 지점 동치 · §3-2 `entries.origin` DEFAULT `'generated'` · §3-3 authored 센티널 = 번들 내용 해시 · §3-4 **로컬 D1에 650 시딩 완료 — entries 668 · aliases 1,301**). **다음 한 걸음 = authored > generated 충돌 규칙** → 이후 익스포트 잡 → **W1a 프록시 하드닝** → **W1b** 650장+검색+AI → **W1c 승격 잡**(2026-08-25 사람 선택 (b) — W 트랙 안에서 닫는다). 정본 = [`🤖-26-08-25-web-large-track-handoff.md`](🤖-26-08-25-web-large-track-handoff.md) |
+> | **2** | **웹 트랙 W — 「크게」** | **✅ W0a·W0b 완료 · ADR-0012·0013 ✅비준(2026-08-25) — 사람 게이트 없음** | **W0c 진행 중 (2026-08-26~)** — 격리 환경(로컬 D1 샌드박스·좌표 반전·CI) **완료**, 본체 7단계 **5/7** (§3-1 `normalizeTermKey` · §3-2 `entries.origin` · §3-3 authored 센티널 = 번들 내용 해시 · §3-4 **로컬 D1 650 시딩 — entries 668 · aliases 1,301** · §3-5 **authored > generated 충돌 규칙 + INV-5 보존**). **다음 한 걸음 = 익스포트 잡(D1 → terms.json)** → 그다음 원격 적용〔사람 판정〕 → **W1a 프록시 하드닝** → **W1b** 650장+검색+AI → **W1c 승격 잡**(2026-08-25 사람 선택 (b) — W 트랙 안에서 닫는다). 정본 = [`🤖-26-08-25-web-large-track-handoff.md`](🤖-26-08-25-web-large-track-handoff.md) |
 >
 > **⚠️ W0c는 2026-08-26부터 `sandbox/w0c-d1-seeding` 브랜치에서 진행 중이다.** 그 브랜치의 진행 상태·발견·내부 백로그·오류 정본은 [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md)이고, **W 트랙 순서(W0c→W1a→W1b→W1c)는 계속 이 ROADMAP이 이긴다.** 흡수 시 그 파일은 삭제된다.
 >
