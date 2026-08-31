@@ -1,31 +1,72 @@
-# 🤖 웹 트랙 W — 기반·ADR 완료 · **W0c 진행 중(환경 완료, 본체 6/7 — 로컬분 종료·사람 판정 대기)**
+# 🤖 웹 트랙 W — 기반·ADR 완료 · **W0c 진행 중(로컬 6/7 + 리허설 완료 · 프로덕션 적용 1줄 남음)**
 
 > **콜드 세션 시작점.** 사람이 *"뭐 하고 있었어? 이어서 하자"* 라고 물으면 **이 문서로 답한다.**
 > 상태 정본은 [`ROADMAP.md`](ROADMAP.md) Now의 「▶ 재개 지점」 — 충돌하면 ROADMAP이 이긴다.
-> **최종 갱신 2026-09-01 (W0c §3-6 익스포트 완료 — 로컬 작업 종료).** 선행 핸드오프·규모 판정 브리프는 2026-08-25 서류 정돈에서 삭제했다(판정 결과는 §1·§2에 흡수).
+> **최종 갱신 2026-09-01 (W0c §3-7 (b) 리허설 통과 · 프로덕션 ①에서 권한 차단).** 선행 핸드오프·규모 판정 브리프는 2026-08-25 서류 정돈에서 삭제했다(판정 결과는 §1·§2에 흡수).
 
-**한 줄**: <https://devetym.com> 이 라이브다. **기반(W0a·W0b)은 끝났고 본체(650장·검색·AI)는 한 줄도 없다.** **ADR-0012·0013은 2026-08-25 비준됐다 — 웹 트랙에 사람 게이트는 더 없다.** **W0c는 2026-08-26 착수했다 — 격리 환경(로컬 D1·좌표 반전·CI) 완료, 본체 7단계 중 §3-1 `normalizeTermKey` · §3-2 `origin` 컬럼 · §3-3 authored 센티널 · §3-4 로컬 D1 650 시딩 · §3-5 충돌 규칙 · **§3-6 익스포트(바이트 동일 왕복)** 완료(6/7) — **로컬에서 할 수 있는 것은 다 끝났다.** 다음 한 걸음은 **🙋 사람 판정: 원격 적용을 어떻게 칠 것인가**이고, 트리·제안은 [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md) 「▶ 이어서 하자」에 있다.
+**한 줄**: <https://devetym.com> 이 라이브다. **기반(W0a·W0b)은 끝났고 본체(650장·검색·AI)는 한 줄도 없다.** **ADR-0012·0013은 2026-08-25 비준됐다 — 웹 트랙에 사람 게이트는 더 없다.** **W0c는 2026-08-26 착수했다 — 격리 환경(로컬 D1·좌표 반전·CI) 완료, 본체 7단계 중 §3-1 `normalizeTermKey` · §3-2 `origin` 컬럼 · §3-3 authored 센티널 · §3-4 로컬 D1 650 시딩 · §3-5 충돌 규칙 · **§3-6 익스포트(바이트 동일 왕복)** 완료(6/7) — **로컬은 다 끝났고 (b) 리허설도 통과했다.** 남은 것은 프로덕션 적용뿐인데, 그 첫 걸음(`wrangler.toml` 좌표 복원)이 **Claude 권한 밖**이다. **사람이 네 줄만 되돌리면 나머지는 Claude가 이어서 한다** — 절차는 아래 §0, 세부는 [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md) §3-7c.
 
 ---
 
-## 0. 새 세션이 *"이어서 하자"* 를 들었을 때
+## 0. 새 세션이 *"이어서 하자"* 를 들었을 때 — **읽고 바로 이 말을 하면 된다**
 
-**→ [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md)의 「▶ 이어서 하자」 절을 읽고 그대로 보여준다.**
-거기에 진행 트리·완료분·다음 한 걸음·착수 제안이 다 있다. 이 문서는 **W 트랙 전체 순서**의 정본으로 남는다.
+> **W0c는 로컬이 전부 끝났고 프로덕션 적용만 남았다. 그런데 첫 걸음이 Claude 권한 밖이다.**
+> 사람이 `~/devetym-proxy/wrangler.toml`의 **좌표 4개를 프로덕션 값으로 되돌려 주면**,
+> 나머지(스키마·배포·시딩·개명·검증)는 Claude가 이어서 한다.
 
-```bash
-# 환경이 살아 있는지 (2줄)
-cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22 && npm test   # 83/83
-npm run db:local "SELECT COUNT(*) n FROM entries"                       # 668
+### 지금 상태 한 눈
+
+| | |
+|---|---|
+| 로컬 작업 | **6/7 전부 녹색** — 키·origin·센티널·시딩·충돌규칙·익스포트 |
+| (b) 리허설 | **통과.** `devetym-cache-dev`에 프로덕션을 클론해 9지표 전부 예측과 일치 |
+| 프로덕션 | **아직 미적용.** entries 21 · aliases 12 (08-26의 18/9는 stale) |
+| 백업 | `~/devetym-d1-backup-20260901-020554.sql` (09-01 02:05) |
+| 막힌 지점 | ① 좌표 복원 — 자동 모드 안전 분류기가 편집 차단. 우회 안 함 |
+
+### 사람이 할 것 — 딱 이 네 줄
+
+`~/devetym-proxy/wrangler.toml`:
+
+```
+name          = "devetym-proxy"                                    # -sandbox 제거
+RATE_LIMIT id = "513c44bf6df942eab2262397bbec04de"
+USAGE_DB      = "devetym-usage"  / "e76366e6-34e1-4a1a-8ed7-c771bd650580"
+CACHE_DB      = "devetym-cache"  / "a42d4408-ff64-40d4-8a6a-c71672fd71c2"
 ```
 
-**한 줄 요약**: W0c는 **로컬 6/7이 전부 녹색**이고 남은 하나는 코드가 아니라 **사람 결정**이다(원격 적용 방식). 선택지 3개는 SSOT 「▶ 이어서 하자」.
-[ADR-0012](docs/adr/0012-content-canon-d1.md)·[ADR-0013](docs/adr/0013-web-route-contract.md) 둘 다 `Accepted` — 사람 게이트는 없다.
+`main`과의 설정 차이는 이게 전부다(diff 확인 완료). 또는 `/config`로 권한 모드를 바꾸면
+Claude가 ①까지 한다.
 
-- **W0c 착수 내용** = `~/devetym-proxy` D1에 **`origin` 컬럼 신설**(✅ 08-26) · authored 650 시딩 ·
-  **authored > generated 충돌 규칙** · `prompt_version` 센티널(✅) · 익스포트 잡.
-- **순서는 W0c → W1a → W1b → W1c**다. 앞당기지 않는다.
-- **작업은 로컬 D1 샌드박스에서 한다** — 실 정본 무접촉. 좌표가 반전돼 있어 배포·원격 스키마 변경이 막혀 있다.
+### 그다음 Claude가 할 것 — 순서를 바꾸지 말 것
+
+```
+② npx wrangler d1 migrations apply devetym-cache --remote     # origin 컬럼 · 21행 백필
+③ npm run deploy                                              # N1 워커 (변경 = 함수 1개)
+④ npx wrangler d1 execute devetym-cache --remote --file=seed.sql
+⑤ npx wrangler d1 execute devetym-cache --remote --file=renormalize.sql
+⑥ 검증 + 실 앱 왕복
+```
+
+**③이 ④보다 먼저인 이유**: 배포된 워커가 아직 옛 정규화(N0)를 쓴다. 시딩을 먼저 하면
+keyword 286개·별칭 784개가 현 워커가 조회하지 않는 키로 앉아 **중복 행이 쌓인다.**
+반대로 배포~시딩 사이 창에서 생기는 generated 행은 §3-5 충돌 규칙이 흡수한다.
+
+**⑥ 합격 기준**: entries **671** · authored **650** · generated **21** · aliases **1,304** ·
+entry_versions **0** · FK dangling **0** · 축 드리프트 **0** · 비-N1 키 **0**.
+그다음 실 앱 경로로 `AA 트리` → `aa-tree`가 오면 닫힌 것이다.
+
+**세부 절차·SQL·롤백 = [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md) §3-7c.**
+이 문서는 **W 트랙 전체 순서**의 정본으로 남는다.
+
+```bash
+# 환경 확인 (3줄)
+cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22 && npm test   # 83/83
+cd ~/devetym && python3 Scripts/db-expand/test_seed_d1.py             # PASS
+python3 Scripts/db-expand/test_export_bundle.py                       # PASS
+```
+
+⚠️ **`nvm use 22`를 빠뜨리면** wrangler가 조용히 이상하게 군다.
 
 ---
 
