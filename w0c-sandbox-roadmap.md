@@ -206,6 +206,154 @@ CI  .github/workflows/test.yml — push·PR에서 npm test.
 
 ---
 
+## 3-7. 원격 적용 런북 〔선택지 (a) — 사람이 직접 실행〕
+
+> **비용**: (a)도 (b)도 **무료다.** D1 무료 티어는 5GB·읽기 500만행/일이고 이번 쓰기는
+> **1,942행 · 약 1.5MB**다. (b)가 DB를 하나 더 쓰지만 무료 10개 중 3개가 될 뿐이다.
+> **돈이 선택지를 가르지 않는다 — 위험과 손품이 가른다.**
+
+### ⚠️ 먼저 알아야 할 것 둘
+
+1. **원격 generated 행은 08-26 이후 늘어났을 수 있다.** 앱이 라이브라 write-back이 계속 돈다.
+   §7의 18/9/0은 **08-26 스냅샷**이고 지금 값이 아니다. 늘어난 행이 650과 겹치면
+   §3-5 충돌 규칙이 작동해 authored가 이기고 구본이 `entry_versions`로 간다 — 설계대로다.
+   다만 **적용 후 기대 행 수가 668이 아니다.** 668이 아니라 `현재 generated 수 + 650 - 겹친 수`다.
+   그래서 0단계에서 현재 값을 먼저 재고 기대값을 계산한다.
+
+2. **좌표 복원 순서.** §8 흡수 절차가 좌표 복원을 담당하는데 §3-7이 그 앞에 있다.
+   → **병합을 먼저 하기를 권한다.** 이유: `wrangler.toml` 머리말이 스스로 적어 둔 대로
+   "이 diff가 PR에 뜨므로 **좌표 복원이 리뷰 항목**이 된다 — 규율이 아니라 코드 리뷰가 받친다."
+   샌드박스 브랜치에서 임시로 되돌렸다 다시 뒤집는 방법은 이 안전장치를 **우회**하고,
+   중간에 실패하면 좌표가 살아 있는 작업 트리가 남는다.
+   → 대신 `w0c-sandbox-roadmap.md` 삭제는 7단계가 끝난 **뒤로** 미룬다.
+
+### 0. 현재 원격 상태 측정 (읽기 전용)
+
+```bash
+cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22
+npx wrangler d1 execute devetym-cache --remote --json --command \
+  "SELECT (SELECT COUNT(*) FROM entries) e, (SELECT COUNT(*) FROM aliases) a,
+          (SELECT COUNT(*) FROM entry_versions) v,
+          (SELECT COUNT(*) FROM entries WHERE branch='term_entry') te"
+```
+
+이 값을 적어 둔다. **기대 행 수 계산의 기준이다.**
+
+### 1. 백업 — 되돌릴 수단을 먼저 만든다
+
+```bash
+npx wrangler d1 export devetym-cache --remote \
+  --output ~/devetym-d1-backup-$(date +%Y%m%d).sql
+```
+
+repo 밖에 둔다(정본 내용이라 커밋하면 리뷰 없이 콘텐츠가 들어간다).
+
+### 2. 병합 — 좌표 복원 포함
+
+`wrangler.toml`을 머리말의 PROD 값으로 되돌린다:
+
+```
+name          = "devetym-proxy"
+RATE_LIMIT id = "513c44bf6df942eab2262397bbec04de"
+USAGE_DB      = "devetym-usage"  / "e76366e6-34e1-4a1a-8ed7-c771bd650580"
+CACHE_DB      = "devetym-cache"  / "a42d4408-ff64-40d4-8a6a-c71672fd71c2"
+```
+
+**PR 리뷰 항목 = 이 네 줄이 복원됐는가.** `npm test` 통과 확인 후 병합.
+
+### 3. 스키마 — `origin` 컬럼
+
+```bash
+npx wrangler d1 migrations apply devetym-cache --remote
+```
+
+`migrations`는 이름을 **설정에서** 찾으므로 2단계가 끝나야 동작한다(§1 표).
+적용 후 기존 행이 전부 `generated`로 백필됐는지 확인:
+
+```bash
+npx wrangler d1 execute devetym-cache --remote --json --command \
+  "SELECT origin, COUNT(*) n FROM entries GROUP BY origin"
+```
+
+### 4. 시딩
+
+```bash
+cd ~/devetym && python3 Scripts/db-expand/seed_d1.py > /tmp/authored-seed.sql   # stderr에 회계 로그
+cd ~/devetym-proxy && npx wrangler d1 execute devetym-cache --remote --file=/tmp/authored-seed.sql
+```
+
+**로그의 「entries 고유 키 650 · PK 충돌 0」을 눈으로 확인하고 나서** 붓는다.
+
+### 5. 검증
+
+```bash
+npx wrangler d1 execute devetym-cache --remote --json --command \
+ "SELECT (SELECT COUNT(*) FROM entries) e,
+         (SELECT COUNT(*) FROM entries WHERE origin='authored') au,
+         (SELECT COUNT(*) FROM entries WHERE origin='generated') ge,
+         (SELECT COUNT(*) FROM aliases) a,
+         (SELECT COUNT(*) FROM entry_versions) v,
+         (SELECT COUNT(*) FROM aliases x LEFT JOIN entries y ON x.term_key=y.term_key
+           WHERE y.term_key IS NULL) fk_dangling,
+         (SELECT COUNT(*) FROM entries
+           WHERE (origin='authored') != (prompt_version LIKE 'authored:%')) drift"
+```
+
+합격 기준: `au`=650 · `fk_dangling`=0 · `drift`=0 · `e` = (0단계 generated 수) + 650 − (겹친 수) ·
+`v` = 겹친 수.
+
+그다음 **실 앱 경로**로 왕복 확인(무영향 오라클 — 기존 iOS 앱이 계속 정상):
+
+```bash
+curl -s -X POST https://devetym-proxy.<계정>.workers.dev/v1/messages \
+  -H 'Content-Type: application/json' -H 'X-Device-Id: <아무 값>' \
+  -d '{"model":"claude-sonnet-5","max_tokens":1024,
+       "system":[{"type":"text","text":"당신은 개발 용어의 어원과 작명 이유를 설명하는 사전 데이터 제공자입니다."}],
+       "messages":[{"role":"user","content":"AA 트리"}]}'
+```
+
+한글 별칭이 `aa-tree`를 돌려주면 시딩·별칭·정규화가 원격에서 다 닫힌 것이다.
+
+### 6. 익스포트 왕복 + 커밋
+
+```bash
+npx wrangler d1 execute devetym-cache --remote --json --command \
+  "SELECT payload, prompt_version FROM entries WHERE origin='authored'" > /tmp/rows.json
+cd ~/devetym && python3 Scripts/db-expand/export_bundle.py --rows /tmp/rows.json --check
+```
+
+`바이트 동일`이 나와야 한다. 나오면 원격 정본과 커밋된 스냅샷이 같다는 뜻이고,
+ADR-0012의 「익스포트·커밋 의무」가 처음으로 실제로 닫힌다.
+
+### 7. 롤백 — 전체 복원이 아니라 표적 제거
+
+시딩은 **authored 행 추가 + 겹친 generated 덮어쓰기**만 한다. 그래서 되돌리기가 좁다:
+
+```sql
+-- (1) 덮어쓴 generated 본을 entry_versions에서 복원
+INSERT INTO entries (term_key, branch, payload, prompt_version, schema_version, created_at, hit_count, origin)
+SELECT v.term_key, 'term_entry', v.payload, v.prompt_version, v.schema_version, v.created_at, 0, 'generated'
+  FROM entry_versions v
+ WHERE v.prompt_version LIKE 'v2-pathA:%'
+ON CONFLICT(term_key) DO UPDATE SET
+  payload = excluded.payload, prompt_version = excluded.prompt_version, origin = 'generated';
+-- ⚠️ branch는 entry_versions에 없다 — not_dev_term/possible_typo였던 행은 분기가 복원되지 않는다.
+--    정확한 복원이 필요하면 1단계 백업 SQL을 쓴다.
+-- (2) 시딩이 넣은 authored 행 제거
+DELETE FROM aliases WHERE term_key IN (SELECT term_key FROM entries WHERE origin='authored');
+DELETE FROM entries WHERE origin='authored';
+```
+
+전체 복원이 필요하면 1단계 백업 SQL. **D1 Time Travel은 쓰기 전에 현재 플랜에서
+보존 기간이 얼마인지 대시보드에서 확인할 것** — 여기 적어 두고 믿을 만큼 확인된 바 없다.
+
+### 8. 마무리
+
+7단계까지 녹색이면 §8 절차로 `w0c-sandbox-roadmap.md`를 삭제하고 ROADMAP의 다음 걸음을
+**W1a 프록시 하드닝**으로 바꾼다.
+
+---
+
 ## 4. 열린 질문 — 결정 대기
 
 **A. 원격 적용을 누가 어떻게 치나** 〔사람〕
