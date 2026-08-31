@@ -1,7 +1,7 @@
 # W0c 샌드박스 로드맵 — `sandbox/w0c-d1-seeding`
 
 > **이 브랜치 작업의 SSOT.** 진행 상태·발견·백로그·오류·실측값을 전부 여기 모은다.
-> **최종 갱신 2026-08-26 (§3-1 normalizeTermKey 확정 반영).** 수명은 브랜치와 같다 — 흡수되면 §8 절차로 접고 이 파일을 지운다.
+> **최종 갱신 2026-08-26 (§3-2 origin 컬럼 반영).** 수명은 브랜치와 같다 — 흡수되면 §8 절차로 접고 이 파일을 지운다.
 
 ---
 
@@ -22,16 +22,19 @@ W0c · 650 D1 시딩  ─ sandbox/w0c-d1-seeding
 │   ├── CI                push·PR에서 npm test                 ✅ b3d9d09
 │   └── 문서              SSOT + ROADMAP·핸드오프·README 배너   ✅ 9385d54·d189d89
 │
-├── 본체 ─────────────────────────────────── 🚧 1/7
+├── 본체 ─────────────────────────────────── 🚧 2/7
 │   ├── 1. normalizeTermKey 정의 확정      ✅ N1(구분자 삭제) · 세 지점 동치 실측
 │   │   ├── Worker  normalizeTermKey       ✅ vitest 74/74 (69→+5)
 │   │   ├── 앱      normalizeKeyword       ✅ JVM 140 · 네이티브 130 · 0 fail
 │   │   │   └── + BundleDbSource 2패스 (keyword가 alias를 이김)
 │   │   ├── 파이프라인 term_key.py          ✅ 케이스표 + JS 교차실행 3,398건 불일치 0
 │   │   └── ✗ 앱 로컬 DB 재정규화는 남김 — 릴리스 블로커, §5-P0
-│   ├── 2. origin 컬럼 (DEFAULT 'generated' 필수)  ⬜ ← 다음 차례
-│   │   └── 이제 키가 확정돼 시딩 수(668)가 고정됐다
-│   ├── 3. prompt_version 센티널           ⬜
+│   ├── 2. origin 컬럼 (DEFAULT 'generated' 필수)  ✅ d635c3d
+│   │   ├── 18행 백필 generated · NULL 0 · CHECK 2값 제약   ✅
+│   │   ├── 체인 재생(.wrangler 삭제 후) 18/9/0 재현        ✅
+│   │   ├── vitest 79/79 (74→+5) · read path 무변경         ✅
+│   │   └── L2 왕복 bash 200·14ms·hit_count 1·origin 유지   ✅
+│   ├── 3. prompt_version 센티널           ⬜ ← 다음 차례
 │   ├── 4. authored 650 로컬 시딩          ⬜
 │   ├── 5. authored > generated 충돌 규칙  ⬜
 │   ├── 6. 익스포트 잡                     ⬜
@@ -40,21 +43,23 @@ W0c · 650 D1 시딩  ─ sandbox/w0c-d1-seeding
 └── 흡수 ─────────────────────────────────── ⬜ §8 절차
 ```
 
-### 다음 한 걸음 = §3-2 `origin` 컬럼 마이그레이션
+### 다음 한 걸음 = §3-3 `prompt_version` 센티널 확정
 
-§3-1이 끝나 **시딩 수가 668로 고정**됐다(§7). 이제 스키마를 얹는다.
+`origin`이 출처를 가르지만 **`prompt_version`은 여전히 `NOT NULL`**이다. authored 650에는
+AI 프롬프트 해시가 없으므로 무엇을 넣을지 정해야 시딩(§3-4)이 열린다.
 
 **착수 제안**:
-1. `migrations/cache/`에 `origin TEXT NOT NULL DEFAULT 'generated'` 추가 —
-   **DEFAULT가 없으면 `src/index.js:450`의 7컬럼 INSERT가 NOT NULL로 깨진다**(§3 표의 오라클)
-2. 로컬 적용 → 기존 18행이 `generated`로 백필되는지 확인
-3. `npm test` 무회귀(74) + `npm run db:local`로 백필 실측
-4. write-back 경로는 **건드리지 않는다** — DEFAULT가 흡수하는지가 이 단계의 요점
+1. 센티널 형식을 `authored:db-expand-v<N>`로 확정하고 `<N>`의 출처를 못 박는다 —
+   파이프라인 버전인지 번들 스냅샷 버전인지가 정해져야 재시딩 때 갈라지지 않는다
+2. **INV-9 버전 태깅이 두 갈래를 구분해 읽히는지** 확인 — `v2-pathA:` 접두가 generated,
+   `authored:` 접두가 authored. 접두로 갈리므로 `origin`과 **중복 축**이다(의도된 이중화인지 판정)
+3. `schema_version`도 같이 정한다 — 번들 payload가 현행 shape 게이트를 통과하는 형태인지 실측
+4. 오라클: authored 행이 `NOT NULL` 제약을 통과 + 두 갈래를 `prompt_version`만으로 분리 조회 가능
 
 ### 이어서 하기 전 확인 (2줄)
 
 ```bash
-cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22 && npm test   # 74/74 = 환경 정상
+cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22 && npm test   # 79/79 = 환경 정상
 npm run db:local "SELECT COUNT(*) n FROM entries"                       # 18 = 픽스처 살아있음
 cd ~/devetym && python3 Scripts/db-expand/test_term_key.py              # PASS = 세 지점 동치
 ```
@@ -94,7 +99,7 @@ cd ~/devetym && python3 Scripts/db-expand/test_term_key.py              # PASS =
 
 | 층 | 무엇 | 계정 접촉 | 상태 |
 |---|---|---|---|
-| **L1** | `npm test` — 실 DDL + 실 워커 코드 · fetch 스텁 | 없음 | ✅ 74개 |
+| **L1** | `npm test` — 실 DDL + 실 워커 코드 · fetch 스텁 | 없음 | ✅ 79개 |
 | **L2** | `npm run dev` (`wrangler dev --local`) — 앱과 동일한 요청으로 실제 왕복 | 없음 | ✅ 실증 |
 | **L3** | 원격 샌드박스(별도 Worker·D1) | 있음(프로덕션 아님) | ⬜ **§3-1~6엔 불필요** |
 
@@ -134,7 +139,7 @@ W0c 규모엔 과하다고 판정했다(§4-D). 실수로 밟히는 경로는 �
    🔁 흡수 시 PROD 값 복원 — 원본은 wrangler.toml 머리말에 있다
 
 명령
-├── npm test              L1 · 74개 · 계정 무관
+├── npm test              L1 · 79개 · 계정 무관
 ├── npm run dev           L2 · wrangler dev --local · localhost:8787
 ├── npm run db:local "<sql>"   로컬 D1 조회
 └── npm run db:reset:local     마이그레이션 + 픽스처로 초기화
@@ -148,7 +153,7 @@ CI  .github/workflows/test.yml — push·PR에서 npm test.
     Cloudflare 계정에 접속하지 않는다(miniflare가 로컬 D1·KV를 세움 → 시크릿 불요).
 ```
 
-베이스라인: 좌표 반전 후 재구성한 로컬 D1 위에서 `npm test` 74/74 통과(§3-1 +5).
+베이스라인: 좌표 반전 후 재구성한 로컬 D1 위에서 `npm test` 79/79 통과(§3-1 +5 · §3-2 +5).
 
 ## 3. W0c 작업 — 순서와 완료 오라클
 
@@ -159,7 +164,7 @@ CI  .github/workflows/test.yml — push·PR에서 npm test.
 | # | 작업 | 완료 오라클 | 상태 |
 |---|---|---|---|
 | **1** | **`normalizeTermKey` 정의 확정** — 파이프라인(`Scripts/`)·Worker(`src/index.js`)·앱이 한 정의를 공유 | 세 지점이 같은 입력에 같은 키를 낸다는 테스트 + **별칭 수·충돌 수를 하나의 값으로 확정** | ✅ **N1** · §7 |
-| **2** | `origin` 컬럼 마이그레이션 (`'authored' \| 'generated'`) — **`DEFAULT 'generated'` 필수** | 로컬 적용 후 74 테스트 무회귀 · 기존 18행이 `generated`로 백필 · **`src/index.js:450`의 7컬럼 INSERT가 수정 없이 계속 성공** | ⬜ |
+| **2** | `origin` 컬럼 마이그레이션 (`'authored' \| 'generated'`) — **`DEFAULT 'generated'` 필수** | 로컬 적용 후 74 테스트 무회귀 · 기존 18행이 `generated`로 백필 · **`src/index.js:450`의 7컬럼 INSERT가 수정 없이 계속 성공** | ✅ **d635c3d** · 79/79 · §7 |
 | **3** | `prompt_version` 센티널 확정 (`authored:db-expand-v<N>`) | authored 행이 `NOT NULL` 제약을 통과하고, INV-9 버전 태깅이 두 갈래를 구분해 읽힌다 | ⬜ |
 | **4** | authored 650 시딩 (로컬) | 로컬 entries = **668** · aliases = **1,301** (§7 확정값) · **충돌 0건이 우연이 아님을 로그로 증명** | ⬜ |
 | **5** | authored > generated 충돌 규칙 (authoring path 한정) | **충돌을 일부러 심은 뒤** authored가 이기고 구본이 `entry_versions`에 남는다 · read path 무변경(INV-2·INV-4) | ⬜ |
@@ -237,10 +242,14 @@ DB 스코프 API 토큰으로만 닫힌다. 블라스트 반경이 큰 둘(배�
 | **authored 650 × generated 18 충돌** | **0건** (N1 확정 정의 기준 · 재측정) | 08-26 |
 | generated `term_entry` 6개가 650에 없음 | `bash` `protocol` `squash` `production` `idempotency` `shedlock` | 08-26 |
 | authored `keyword` 형식 | 슬러그 — `aa-tree` · `aba-problem` · `abstract-factory` | 08-26 |
-| 베이스라인 테스트 | 74/74 통과 (§3-1 +5) | 08-26 |
+| 베이스라인 테스트 | **79/79** 통과 (§3-1 +5 · §3-2 +5) | 08-26 |
 | L2 로컬 왕복 지연 | `bash` 14ms · `idempotency` 2ms · `개발` 3ms (전부 200) | 08-26 |
 | 캐시 히트의 위치 | Anthropic 호출·일일 한도 검사 **앞**에서 리턴 (`src/index.js:143`) | 08-26 |
 | write-back 실패 시 거동 | `waitUntil` + `catch` 삼킴 — 앱은 안 죽고 **캐시만 조용히 멈춘다** (`src/index.js:519`) | 08-26 |
+| **§3-2 후** entries origin 분포 | `generated` 18 · `authored` 0 · NULL **0** | 08-26 |
+| 마이그레이션 체인 재생 (`.wrangler/state/v3/d1` 삭제 후) | entries **18** / aliases **9** / entry_versions **0** — 착수 전과 동일 | 08-26 |
+| `origin` CHECK 제약 | 허용 2값 외 INSERT 거부 실측 (`'imported'` → 예외 · 행 미생성) | 08-26 |
+| read path 영향 | **없음** — `src/index.js:343` SELECT가 4컬럼을 명시해 새 컬럼이 보이지 않는다 | 08-26 |
 
 ### §3-1 확정값 — 시딩 수의 근거 (실제 구현으로 측정, 08-26)
 
