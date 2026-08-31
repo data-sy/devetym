@@ -19,12 +19,16 @@ from __future__ import annotations
 import io
 import json
 import re
+import sqlite3
 import sys
 from contextlib import redirect_stderr
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from seed_d1 import BUNDLE, BUNDLE_CREATED_AT, build  # noqa: E402
+from authored_version import bundle_prompt_version  # noqa: E402
+
+MIGRATIONS = Path.home() / "devetym-proxy/migrations/cache"
 
 # §7 확정값 — 바꾸려면 실측 근거와 함께 SSOT §7도 같이 고쳐야 한다.
 EXPECTED = {
@@ -43,6 +47,99 @@ failures: list[str] = []
 def check(cond: bool, msg: str) -> None:
     if not cond:
         failures.append(msg)
+
+
+
+def test_conflict_rule_on_real_sqlite(entries, sql) -> None:
+    """
+    생성된 SQL을 **실제 SQLite 엔진에 돌린다** (§3-5).
+
+    문장 텍스트 검사만으로는 `DO UPDATE … WHERE`가 정말 그렇게 구는지 알 수 없다.
+    D1은 SQLite이므로 같은 DDL 위에서 돌리면 동작이 같다.
+    """
+    if not MIGRATIONS.exists():
+        print("  ⚠️ 프록시 마이그레이션 없음 — 엔진 실행 건너뜀")
+        return
+
+    db = sqlite3.connect(":memory:")
+    for m in sorted(MIGRATIONS.glob("*.sql")):
+        db.executescript(m.read_text(encoding="utf-8"))
+
+    # 650과 term_key가 겹치는 generated 행 3종을 심는다 — 세 분기를 다 덮는다
+    planted = [
+        ("aatree", "term_entry", '{"summary":"AI판"}', 42),
+        ("abaproblem", "not_dev_term", "{}", 7),
+        ("abstractfactory", "possible_typo", '{"suggestion":"x"}', 3),
+    ]
+    db.executemany(
+        "INSERT INTO entries (term_key, branch, payload, prompt_version, schema_version,"
+        " created_at, hit_count) VALUES (?, ?, ?, 'v2-pathA:956ba44a7c48', 1,"
+        " '2026-08-01T00:00:00.000Z', ?)",
+        planted,
+    )
+
+    def run() -> None:
+        db.executescript("\n".join(l for l in sql if not l.startswith("--")))
+
+    run()
+    rows = {
+        r[0]: r
+        for r in db.execute(
+            "SELECT term_key, branch, origin, hit_count FROM entries WHERE term_key IN"
+            " ('aatree','abaproblem','abstractfactory')"
+        )
+    }
+    for key, _, _, hits in planted:
+        r = rows.get(key)
+        check(r is not None, f"{key} 행이 사라졌다")
+        if r:
+            check(r[1] == "term_entry", f"{key} branch={r[1]} — 오판 분기가 안 고쳐졌다")
+            check(r[2] == "authored", f"{key} origin={r[2]} — authored가 졌다")
+            check(r[3] == hits, f"{key} hit_count={r[3]} ≠ {hits} — 요청 빈도가 지워졌다")
+
+    n_entries = db.execute("SELECT COUNT(*) FROM entries").fetchone()[0]
+    n_versions = db.execute("SELECT COUNT(*) FROM entry_versions").fetchone()[0]
+    n_alias = db.execute("SELECT COUNT(*) FROM aliases").fetchone()[0]
+    check(n_entries == len(entries), f"entries {n_entries} ≠ {len(entries)}")
+    check(n_versions == len(planted), f"entry_versions {n_versions} ≠ {len(planted)} (INV-5 보존)")
+
+    # 밀려난 본이 원문 그대로 남았나
+    archived = dict(
+        db.execute("SELECT term_key, prompt_version FROM entry_versions")
+    )
+    check(
+        all(v == "v2-pathA:956ba44a7c48" for v in archived.values()),
+        f"보존된 본의 태그가 원본이 아니다: {archived}",
+    )
+
+    # 재실행 멱등 — 여기가 깨지면 entry_versions가 실행할 때마다 650씩 자란다
+    run()
+    check(
+        db.execute("SELECT COUNT(*) FROM entry_versions").fetchone()[0] == n_versions,
+        "재실행이 entry_versions를 늘렸다 — 멱등이 깨졌다",
+    )
+    check(db.execute("SELECT COUNT(*) FROM entries").fetchone()[0] == n_entries, "재실행이 entries를 늘렸다")
+    check(db.execute("SELECT COUNT(*) FROM aliases").fetchone()[0] == n_alias, "재실행이 aliases를 늘렸다")
+
+    # 번들이 바뀌면(센티널이 달라지면) 반영된다 — 센티널의 존재 이유
+    edited = json.loads(json.dumps(entries))
+    edited[0]["summary"] += " (편집)"
+    with redirect_stderr(io.StringIO()):
+        sql2, _ = build(edited, BUNDLE_CREATED_AT)
+    db.executescript("\n".join(l for l in sql2 if not l.startswith("--")))
+    new_tag = bundle_prompt_version(edited)
+    check(
+        db.execute(
+            "SELECT COUNT(*) FROM entries WHERE origin='authored' AND prompt_version=?",
+            (new_tag,),
+        ).fetchone()[0]
+        == len(entries),
+        "번들을 고쳤는데 재시딩이 반영되지 않았다 — 선택적 무효화가 죽었다",
+    )
+    print(
+        f"  엔진 실행 ✓ entries {n_entries} · entry_versions {n_versions} ·"
+        f" 멱등 ✓ · 스냅샷 교체 ✓"
+    )
 
 
 def main() -> int:
@@ -80,8 +177,34 @@ def main() -> int:
         "aliases 문장이 entries보다 앞에 있다 — FK 위반",
     )
     check(
-        all("ON CONFLICT(term_key) DO NOTHING" in sql[i] for i in entry_stmts),
-        "entries INSERT에 ON CONFLICT 가드가 빠졌다 — 재실행이 깨진다",
+        all("ON CONFLICT(term_key) DO UPDATE SET" in sql[i] for i in entry_stmts),
+        "entries INSERT가 DO UPDATE가 아니다 — 검수 안 된 generated가 정본 자리를 지킨다 (§3-5)",
+    )
+    # 갱신 조건 = authored가 generated를 이긴다 + 번들 스냅샷이 바뀌었다. 둘뿐이어야 한다 —
+    # 조건이 빠지면 authored끼리 매번 덮어써 재실행 멱등이 깨지고 entry_versions가 무한히 자란다.
+    check(
+        all(
+            "WHERE entries.origin = 'generated' OR entries.prompt_version <>" in sql[i]
+            for i in entry_stmts
+        ),
+        "DO UPDATE 갱신 조건이 어긋났다 — 멱등이 깨진다",
+    )
+    set_clauses = [sql[i].split("DO UPDATE SET")[-1] for i in entry_stmts]
+    check(
+        all("DO UPDATE SET" in sql[i] for i in entry_stmts)
+        and all("hit_count" not in c for c in set_clauses),
+        "DO UPDATE가 hit_count를 덮는다 — 요청 빈도 실측 원자료가 사라진다",
+    )
+
+    # INV-5: 교체 대상은 덮이기 전에 entry_versions로 간다. 보존과 갱신의 조건이 같아야 한다.
+    archive_stmts = [i for i, l in enumerate(sql) if l.startswith("INSERT INTO entry_versions")]
+    check(
+        len(archive_stmts) == EXPECTED["entries"],
+        f"entry_versions 보존 문장 {len(archive_stmts)} ≠ entries {EXPECTED['entries']}",
+    )
+    check(
+        all(a < e for a, e in zip(archive_stmts, entry_stmts)),
+        "보존 문장이 덮어쓰기보다 뒤에 있다 — 보존 없이 덮인다",
     )
     check(
         all("WHERE NOT EXISTS" in sql[i] for i in alias_stmts),
@@ -94,6 +217,8 @@ def main() -> int:
     print(f"  {got}")
     print(f"  엔트리간 충돌 키 {sorted(cross)}")
     print(f"  SQL 문장 entries {len(entry_stmts)} · aliases {len(alias_stmts)} · 순서 ✓")
+
+    test_conflict_rule_on_real_sqlite(entries, sql)
 
     if failures:
         print(f"FAIL — {len(failures)}건")
