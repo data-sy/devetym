@@ -1,7 +1,7 @@
 # W0c 샌드박스 로드맵 — `sandbox/w0c-d1-seeding`
 
 > **이 브랜치 작업의 SSOT.** 진행 상태·발견·백로그·오류·실측값을 전부 여기 모은다.
-> **최종 갱신 2026-08-26 (§3-2 origin 컬럼 반영).** 수명은 브랜치와 같다 — 흡수되면 §8 절차로 접고 이 파일을 지운다.
+> **최종 갱신 2026-08-26 (§3-3 authored 센티널 반영).** 수명은 브랜치와 같다 — 흡수되면 §8 절차로 접고 이 파일을 지운다.
 
 ---
 
@@ -22,7 +22,7 @@ W0c · 650 D1 시딩  ─ sandbox/w0c-d1-seeding
 │   ├── CI                push·PR에서 npm test                 ✅ b3d9d09
 │   └── 문서              SSOT + ROADMAP·핸드오프·README 배너   ✅ 9385d54·d189d89
 │
-├── 본체 ─────────────────────────────────── 🚧 2/7
+├── 본체 ─────────────────────────────────── 🚧 3/7
 │   ├── 1. normalizeTermKey 정의 확정      ✅ N1(구분자 삭제) · 세 지점 동치 실측
 │   │   ├── Worker  normalizeTermKey       ✅ vitest 74/74 (69→+5)
 │   │   ├── 앱      normalizeKeyword       ✅ JVM 140 · 네이티브 130 · 0 fail
@@ -34,8 +34,13 @@ W0c · 650 D1 시딩  ─ sandbox/w0c-d1-seeding
 │   │   ├── 체인 재생(.wrangler 삭제 후) 18/9/0 재현        ✅
 │   │   ├── vitest 79/79 (74→+5) · read path 무변경         ✅
 │   │   └── L2 왕복 bash 200·14ms·hit_count 1·origin 유지   ✅
-│   ├── 3. prompt_version 센티널           ⬜ ← 다음 차례
-│   ├── 4. authored 650 로컬 시딩          ⬜
+│   ├── 3. prompt_version 센티널           ✅ 56ea002 · 0371064
+│   │   ├── 형식 확정  authored:<번들 정규화 JSON sha256[:12]>  ✅ = efa8f264dc67
+│   │   │   └── ✗ 손 번호(db-expand-v<N>) 기각 — Worker가 같은 문제서 이미 기각
+│   │   ├── payload 대칭 (컬럼만 채우면 반쪽)              ✅ 히트 왕복 실증
+│   │   ├── 접두로 두 갈래 분리 조회 · 두 축 드리프트 0    ✅
+│   │   └── 번들 650 전수 shape 게이트·카테고리 통과       ✅ 부적합 0
+│   ├── 4. authored 650 로컬 시딩          ⬜ ← 다음 차례
 │   ├── 5. authored > generated 충돌 규칙  ⬜
 │   ├── 6. 익스포트 잡                     ⬜
 │   └── 7. 원격 적용 〔사람 판정〕          ⬜  ※ 좌표 복원 없이는 시도 자체가 실패
@@ -43,25 +48,27 @@ W0c · 650 D1 시딩  ─ sandbox/w0c-d1-seeding
 └── 흡수 ─────────────────────────────────── ⬜ §8 절차
 ```
 
-### 다음 한 걸음 = §3-3 `prompt_version` 센티널 확정
+### 다음 한 걸음 = §3-4 authored 650 로컬 시딩
 
-`origin`이 출처를 가르지만 **`prompt_version`은 여전히 `NOT NULL`**이다. authored 650에는
-AI 프롬프트 해시가 없으므로 무엇을 넣을지 정해야 시딩(§3-4)이 열린다.
+키(§3-1)·출처 축(§3-2)·버전 태그(§3-3)가 다 고정됐다. 이제 실제로 붓는다.
 
 **착수 제안**:
-1. 센티널 형식을 `authored:db-expand-v<N>`로 확정하고 `<N>`의 출처를 못 박는다 —
-   파이프라인 버전인지 번들 스냅샷 버전인지가 정해져야 재시딩 때 갈라지지 않는다
-2. **INV-9 버전 태깅이 두 갈래를 구분해 읽히는지** 확인 — `v2-pathA:` 접두가 generated,
-   `authored:` 접두가 authored. 접두로 갈리므로 `origin`과 **중복 축**이다(의도된 이중화인지 판정)
-3. `schema_version`도 같이 정한다 — 번들 payload가 현행 shape 게이트를 통과하는 형태인지 실측
-4. 오라클: authored 행이 `NOT NULL` 제약을 통과 + 두 갈래를 `prompt_version`만으로 분리 조회 가능
+1. 시딩 스크립트 위치를 정한다 — 값을 만드는 쪽은 파이프라인(`Scripts/db-expand/`)이고
+   붓는 쪽은 프록시(`scripts/`)다. 선례 = `scripts/load-local-fixture.mjs`(JSON → SQL → `d1 execute --file`).
+   **번들을 프록시 repo로 복사하지 않는다** — 사본이 생기면 ADR-0012가 없애려던 드리프트가 돌아온다
+2. entries 650 + aliases는 **entries-우선 2패스**로 넣는다(§7 — 1패스면 별칭이 남의 keyword 키를 선점)
+3. 오라클: entries **668** · aliases **1,301** · **충돌 0건이 우연이 아님을 로그로 증명**
+   (§7 확정값과 한 자리라도 어긋나면 §3-1 정의가 어디선가 안 쓰인 것이다)
+4. `origin='authored'` + `prompt_version=authored:efa8f264dc67` + payload 8필드 —
+   세 개가 한 소스에서 같이 나와야 두 축 드리프트가 안 생긴다(§3-3 테스트가 잠근 지점)
 
 ### 이어서 하기 전 확인 (2줄)
 
 ```bash
-cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22 && npm test   # 79/79 = 환경 정상
+cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22 && npm test   # 83/83 = 환경 정상
 npm run db:local "SELECT COUNT(*) n FROM entries"                       # 18 = 픽스처 살아있음
 cd ~/devetym && python3 Scripts/db-expand/test_term_key.py              # PASS = 세 지점 동치
+python3 Scripts/db-expand/test_authored_version.py                      # PASS = 센티널·payload 대칭
 ```
 
 ⚠️ **`nvm use 22`를 빠뜨리면** wrangler가 조용히 이상하게 군다(§6).
@@ -99,7 +106,7 @@ cd ~/devetym && python3 Scripts/db-expand/test_term_key.py              # PASS =
 
 | 층 | 무엇 | 계정 접촉 | 상태 |
 |---|---|---|---|
-| **L1** | `npm test` — 실 DDL + 실 워커 코드 · fetch 스텁 | 없음 | ✅ 79개 |
+| **L1** | `npm test` — 실 DDL + 실 워커 코드 · fetch 스텁 | 없음 | ✅ 83개 |
 | **L2** | `npm run dev` (`wrangler dev --local`) — 앱과 동일한 요청으로 실제 왕복 | 없음 | ✅ 실증 |
 | **L3** | 원격 샌드박스(별도 Worker·D1) | 있음(프로덕션 아님) | ⬜ **§3-1~6엔 불필요** |
 
@@ -139,7 +146,7 @@ W0c 규모엔 과하다고 판정했다(§4-D). 실수로 밟히는 경로는 �
    🔁 흡수 시 PROD 값 복원 — 원본은 wrangler.toml 머리말에 있다
 
 명령
-├── npm test              L1 · 79개 · 계정 무관
+├── npm test              L1 · 83개 · 계정 무관
 ├── npm run dev           L2 · wrangler dev --local · localhost:8787
 ├── npm run db:local "<sql>"   로컬 D1 조회
 └── npm run db:reset:local     마이그레이션 + 픽스처로 초기화
@@ -153,7 +160,7 @@ CI  .github/workflows/test.yml — push·PR에서 npm test.
     Cloudflare 계정에 접속하지 않는다(miniflare가 로컬 D1·KV를 세움 → 시크릿 불요).
 ```
 
-베이스라인: 좌표 반전 후 재구성한 로컬 D1 위에서 `npm test` 79/79 통과(§3-1 +5 · §3-2 +5).
+베이스라인: 좌표 반전 후 재구성한 로컬 D1 위에서 `npm test` 83/83 통과(§3-1 +5 · §3-2 +5 · §3-3 +4).
 
 ## 3. W0c 작업 — 순서와 완료 오라클
 
@@ -165,7 +172,7 @@ CI  .github/workflows/test.yml — push·PR에서 npm test.
 |---|---|---|---|
 | **1** | **`normalizeTermKey` 정의 확정** — 파이프라인(`Scripts/`)·Worker(`src/index.js`)·앱이 한 정의를 공유 | 세 지점이 같은 입력에 같은 키를 낸다는 테스트 + **별칭 수·충돌 수를 하나의 값으로 확정** | ✅ **N1** · §7 |
 | **2** | `origin` 컬럼 마이그레이션 (`'authored' \| 'generated'`) — **`DEFAULT 'generated'` 필수** | 로컬 적용 후 74 테스트 무회귀 · 기존 18행이 `generated`로 백필 · **`src/index.js:450`의 7컬럼 INSERT가 수정 없이 계속 성공** | ✅ **d635c3d** · 79/79 · §7 |
-| **3** | `prompt_version` 센티널 확정 (`authored:db-expand-v<N>`) | authored 행이 `NOT NULL` 제약을 통과하고, INV-9 버전 태깅이 두 갈래를 구분해 읽힌다 | ⬜ |
+| **3** | `prompt_version` 센티널 확정 — **`authored:<번들 해시>`** (손 번호 기각) | authored 행이 `NOT NULL` 제약을 통과하고, INV-9 버전 태깅이 두 갈래를 구분해 읽힌다 | ✅ **56ea002·0371064** · 83/83 |
 | **4** | authored 650 시딩 (로컬) | 로컬 entries = **668** · aliases = **1,301** (§7 확정값) · **충돌 0건이 우연이 아님을 로그로 증명** | ⬜ |
 | **5** | authored > generated 충돌 규칙 (authoring path 한정) | **충돌을 일부러 심은 뒤** authored가 이기고 구본이 `entry_versions`에 남는다 · read path 무변경(INV-2·INV-4) | ⬜ |
 | **6** | 익스포트 잡 (스냅샷 커밋 의무의 실행 수단) | D1 → `terms.json` 왕복 후 **현행 파일과 의미적 동일** · 상단에 「generated — 직접 편집 금지」 마커 | ⬜ |
@@ -198,6 +205,21 @@ authored는 슬러그(`aa-tree`), generated는 입력 정규화형(`bash`·`개�
 
 ---
 
+**E. authored 센티널을 손 번호로 할 것인가** 〔**해소 2026-08-26 · 사람 판정**〕
+ADR-0012는 `authored:db-expand-v<N>`를 **예시로** 적었다(Decision 아님 · Negative 절의 미해결 비용).
+→ **내용 해시로 확정.** `authored:` + 번들 정규화 JSON sha256[:12].
+같은 문제에 대해 Worker가 이미 하드코딩 상수를 기각했고(`derivePromptVersion` 주석),
+한 문제에 두 답을 두면 "왜 여긴 다르지"를 나중에 아무도 답 못 한다. 잃는 것 = 값만 보고
+최신 여부를 못 읽는다(커밋 로그를 봐야 한다). 650은 기계 생성 파일이라 손 번호의
+장점인 가독성이 잘 안 산다.
+
+⚠️ **origin과 prompt_version 접두는 중복 축이 아니다.** origin = 갈래(닫힌 2값),
+prompt_version = 그 갈래 안의 개정(열린 집합, 접두가 네임스페이스). 교차 CHECK는 걸지 않았다 —
+SQLite는 제약 추가에 테이블 재빌드가 필요한데 정본 테이블엔 과한 위험이다. 드리프트가 날 수 있는
+유일한 지점(시딩)을 테스트로 잠갔다.
+
+---
+
 **D. 계정 분리까지 갈 것인가** 〔사람 · 08-26 시점 "가지 않음"으로 잠정 판정〕
 `d1 execute`가 계정 전체에서 이름을 해석하는 구멍(§1 표 마지막 줄)은 계정 분리 또는
 DB 스코프 API 토큰으로만 닫힌다. 블라스트 반경이 큰 둘(배포·스키마 변경)은 이미 막혔고,
@@ -212,6 +234,9 @@ DB 스코프 API 토큰으로만 닫힌다. 블라스트 반경이 큰 둘(배�
   §3-1이 `normalizeKeyword`를 바꿔 기존 사용자 기기의 `term.keyword`·`searchHistory.keyword`가
   옛 키로 남는다(북마크가 해제된 것처럼 보이고 중복 행이 생긴다).
   **W0c는 막지 않는다** — 코드·테스트까지만 하고 릴리스를 열지 않았다. 상세는 이슈.
+- **[P3 · 관찰] 번들 경로와 캐시 경로가 같은 용어에 다른 `promptVersion`을 준다** —
+  번들에서 읽으면 `null`, 캐시에서 받으면 `authored:efa8f264dc67`. 앱은 이 값으로 분기하지
+  않고 저장만 하므로(실측) 지금은 무해하다. "버전 다르면 갱신" 류 로직을 넣는 날 첫 지뢰가 된다.
 - **[P2] Anthropic 로컬 스텁** — L2의 캐시 미스가 진짜 API로 나간다(§1 ⚠️). W0c엔 실해가 없으나
   W1a에서 웹 경로를 실측할 땐 필요해진다.
 
@@ -242,7 +267,7 @@ DB 스코프 API 토큰으로만 닫힌다. 블라스트 반경이 큰 둘(배�
 | **authored 650 × generated 18 충돌** | **0건** (N1 확정 정의 기준 · 재측정) | 08-26 |
 | generated `term_entry` 6개가 650에 없음 | `bash` `protocol` `squash` `production` `idempotency` `shedlock` | 08-26 |
 | authored `keyword` 형식 | 슬러그 — `aa-tree` · `aba-problem` · `abstract-factory` | 08-26 |
-| 베이스라인 테스트 | **79/79** 통과 (§3-1 +5 · §3-2 +5) | 08-26 |
+| 베이스라인 테스트 | **83/83** 통과 (§3-1 +5 · §3-2 +5 · §3-3 +4) | 08-26 |
 | L2 로컬 왕복 지연 | `bash` 14ms · `idempotency` 2ms · `개발` 3ms (전부 200) | 08-26 |
 | 캐시 히트의 위치 | Anthropic 호출·일일 한도 검사 **앞**에서 리턴 (`src/index.js:143`) | 08-26 |
 | write-back 실패 시 거동 | `waitUntil` + `catch` 삼킴 — 앱은 안 죽고 **캐시만 조용히 멈춘다** (`src/index.js:519`) | 08-26 |
@@ -250,6 +275,11 @@ DB 스코프 API 토큰으로만 닫힌다. 블라스트 반경이 큰 둘(배�
 | 마이그레이션 체인 재생 (`.wrangler/state/v3/d1` 삭제 후) | entries **18** / aliases **9** / entry_versions **0** — 착수 전과 동일 | 08-26 |
 | `origin` CHECK 제약 | 허용 2값 외 INSERT 거부 실측 (`'imported'` → 예외 · 행 미생성) | 08-26 |
 | read path 영향 | **없음** — `src/index.js:343` SELECT가 4컬럼을 명시해 새 컬럼이 보이지 않는다 | 08-26 |
+| **§3-3** 현행 번들 authored 센티널 | **`authored:efa8f264dc67`** (정규화 JSON sha256[:12]) | 08-26 |
+| 원본 바이트 해시 vs 정규화 해시 | `656cd69d7a4c` ≠ `efa8f264dc67` — 포맷 민감성이 실재함 | 08-26 |
+| 번들 650 shape 게이트·정본 카테고리 | **부적합 0** · 분포 기타 137 · 자료구조/동시성/패턴 103 · DB/네트워크 102 | 08-26 |
+| 번들 엔트리 필드 | 6종(keyword·aliases·category·summary·etymology·namingReason) — **버전 2필드 없음** → 시딩이 실어야 함 | 08-26 |
+| 앱의 `promptVersion` 사용 | **저장만·분기 없음** (`TermMapper.kt`·`LocalTermStore.kt`) — 번들 경로는 `null`, 캐시 경로는 센티널 | 08-26 |
 
 ### §3-1 확정값 — 시딩 수의 근거 (실제 구현으로 측정, 08-26)
 
