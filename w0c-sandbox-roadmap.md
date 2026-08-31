@@ -1,7 +1,7 @@
 # W0c 샌드박스 로드맵 — `sandbox/w0c-d1-seeding`
 
 > **이 브랜치 작업의 SSOT.** 진행 상태·발견·백로그·오류·실측값을 전부 여기 모은다.
-> **최종 갱신 2026-08-26 (§3-3 authored 센티널 반영).** 수명은 브랜치와 같다 — 흡수되면 §8 절차로 접고 이 파일을 지운다.
+> **최종 갱신 2026-09-01 (§3-4 650 시딩 반영).** 수명은 브랜치와 같다 — 흡수되면 §8 절차로 접고 이 파일을 지운다.
 
 ---
 
@@ -22,7 +22,7 @@ W0c · 650 D1 시딩  ─ sandbox/w0c-d1-seeding
 │   ├── CI                push·PR에서 npm test                 ✅ b3d9d09
 │   └── 문서              SSOT + ROADMAP·핸드오프·README 배너   ✅ 9385d54·d189d89
 │
-├── 본체 ─────────────────────────────────── 🚧 3/7
+├── 본체 ─────────────────────────────────── 🚧 4/7
 │   ├── 1. normalizeTermKey 정의 확정      ✅ N1(구분자 삭제) · 세 지점 동치 실측
 │   │   ├── Worker  normalizeTermKey       ✅ vitest 74/74 (69→+5)
 │   │   ├── 앱      normalizeKeyword       ✅ JVM 140 · 네이티브 130 · 0 fail
@@ -40,35 +40,45 @@ W0c · 650 D1 시딩  ─ sandbox/w0c-d1-seeding
 │   │   ├── payload 대칭 (컬럼만 채우면 반쪽)              ✅ 히트 왕복 실증
 │   │   ├── 접두로 두 갈래 분리 조회 · 두 축 드리프트 0    ✅
 │   │   └── 번들 650 전수 shape 게이트·카테고리 통과       ✅ 부적합 0
-│   ├── 4. authored 650 로컬 시딩          ⬜ ← 다음 차례
-│   ├── 5. authored > generated 충돌 규칙  ⬜
+│   ├── 4. authored 650 로컬 시딩          ✅ a710c51 · e2533ec
+│   │   ├── entries 668 · aliases 1,301 · authored 650   ✅ §7 정확 일치
+│   │   ├── PK 충돌 0 · 엔트리간 3 · 가려짐 88 — 로그로 증명 ✅
+│   │   ├── FK 0 · 축 드리프트 0 · payload 부적합 0        ✅
+│   │   ├── 멱등(2회차 불변) · 0에서 재현 1942문장         ✅
+│   │   └── L2 왕복: aa-tree·AA 트리·aatree·집계 전부 히트  ✅ 2~6ms
+│   ├── 5. authored > generated 충돌 규칙  ⬜ ← 다음 차례
 │   ├── 6. 익스포트 잡                     ⬜
 │   └── 7. 원격 적용 〔사람 판정〕          ⬜  ※ 좌표 복원 없이는 시도 자체가 실패
 │
 └── 흡수 ─────────────────────────────────── ⬜ §8 절차
 ```
 
-### 다음 한 걸음 = §3-4 authored 650 로컬 시딩
+### 다음 한 걸음 = §3-5 authored > generated 충돌 규칙
 
-키(§3-1)·출처 축(§3-2)·버전 태그(§3-3)가 다 고정됐다. 이제 실제로 붓는다.
+650이 로컬에 들어갔다. 지금 규칙은 `ON CONFLICT DO NOTHING`이라 **먼저 있던 쪽이 이긴다** —
+실측상 충돌이 0건이라 이번엔 아무것도 안 밀렸지만, 규칙 자체는 아직 "검수 안 된 AI판이 이긴다"다.
 
 **착수 제안**:
-1. 시딩 스크립트 위치를 정한다 — 값을 만드는 쪽은 파이프라인(`Scripts/db-expand/`)이고
-   붓는 쪽은 프록시(`scripts/`)다. 선례 = `scripts/load-local-fixture.mjs`(JSON → SQL → `d1 execute --file`).
-   **번들을 프록시 repo로 복사하지 않는다** — 사본이 생기면 ADR-0012가 없애려던 드리프트가 돌아온다
-2. entries 650 + aliases는 **entries-우선 2패스**로 넣는다(§7 — 1패스면 별칭이 남의 keyword 키를 선점)
-3. 오라클: entries **668** · aliases **1,301** · **충돌 0건이 우연이 아님을 로그로 증명**
-   (§7 확정값과 한 자리라도 어긋나면 §3-1 정의가 어디선가 안 쓰인 것이다)
-4. `origin='authored'` + `prompt_version=authored:efa8f264dc67` + payload 8필드 —
-   세 개가 한 소스에서 같이 나와야 두 축 드리프트가 안 생긴다(§3-3 테스트가 잠근 지점)
+1. **충돌을 일부러 심는다** — 650 중 한 용어를 generated로 먼저 넣고 시딩을 돌린다.
+   현 규칙에서 authored가 지는 것을 **먼저 실패로 관측**한다(안 그러면 무엇을 고쳤는지 모른다)
+2. authoring path에만 `DO UPDATE`를 건다. **read path·write-back은 손대지 않는다**(INV-2·INV-4) —
+   `src/index.js`의 `ON CONFLICT DO NOTHING`은 그대로다. 바뀌는 건 시딩 SQL뿐
+3. 밀려난 generated 본을 `entry_versions`에 남긴다 (INV-5 — 지금 0행이고 여기가 첫 write 계기)
+4. 오라클: 심은 충돌에서 authored가 이기고 구본이 `entry_versions`에 있다 ·
+   `npm test` 83 무회귀 · 충돌 없는 649건은 그대로
+
+⚠️ `origin='generated'` 행에는 `not_dev_term` 11 · `possible_typo` 1이 섞여 있다(§7).
+   이들은 term_key가 650과 겹칠 수 있고 **페이지가 되면 안 되는 행**이다(§4-B). 승격 자격 판정은
+   W1c 소관이지만, 충돌 규칙이 이 12행을 어떻게 다루는지는 여기서 정해진다.
 
 ### 이어서 하기 전 확인 (2줄)
 
 ```bash
 cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22 && npm test   # 83/83 = 환경 정상
-npm run db:local "SELECT COUNT(*) n FROM entries"                       # 18 = 픽스처 살아있음
+npm run db:local "SELECT COUNT(*) n FROM entries"                       # 668 = 650 시딩 완료
 cd ~/devetym && python3 Scripts/db-expand/test_term_key.py              # PASS = 세 지점 동치
 python3 Scripts/db-expand/test_authored_version.py                      # PASS = 센티널·payload 대칭
+python3 Scripts/db-expand/test_seed_d1.py                               # PASS = 시딩 회계 §7 일치
 ```
 
 ⚠️ **`nvm use 22`를 빠뜨리면** wrangler가 조용히 이상하게 군다(§6).
@@ -152,7 +162,7 @@ W0c 규모엔 과하다고 판정했다(§4-D). 실수로 밟히는 경로는 �
 └── npm run db:reset:local     마이그레이션 + 픽스처로 초기화
 
 데이터
-├── 로컬 D1   .wrangler/state/v3/d1 · 실 DDL · tail 18행
+├── 로컬 D1   .wrangler/state/v3/d1 · 실 DDL · **668행**(generated 18 + authored 650)
 ├── 픽스처    ~/devetym-proxy/test/fixtures/prod-generated-tail.json (실 D1 읽기 전용 익스포트)
 └── 원격      devetym-cache — 08-26 익스포트 1회 외 무접촉. rows_written 0 실측
 
@@ -173,7 +183,7 @@ CI  .github/workflows/test.yml — push·PR에서 npm test.
 | **1** | **`normalizeTermKey` 정의 확정** — 파이프라인(`Scripts/`)·Worker(`src/index.js`)·앱이 한 정의를 공유 | 세 지점이 같은 입력에 같은 키를 낸다는 테스트 + **별칭 수·충돌 수를 하나의 값으로 확정** | ✅ **N1** · §7 |
 | **2** | `origin` 컬럼 마이그레이션 (`'authored' \| 'generated'`) — **`DEFAULT 'generated'` 필수** | 로컬 적용 후 74 테스트 무회귀 · 기존 18행이 `generated`로 백필 · **`src/index.js:450`의 7컬럼 INSERT가 수정 없이 계속 성공** | ✅ **d635c3d** · 79/79 · §7 |
 | **3** | `prompt_version` 센티널 확정 — **`authored:<번들 해시>`** (손 번호 기각) | authored 행이 `NOT NULL` 제약을 통과하고, INV-9 버전 태깅이 두 갈래를 구분해 읽힌다 | ✅ **56ea002·0371064** · 83/83 |
-| **4** | authored 650 시딩 (로컬) | 로컬 entries = **668** · aliases = **1,301** (§7 확정값) · **충돌 0건이 우연이 아님을 로그로 증명** | ⬜ |
+| **4** | authored 650 시딩 (로컬) | 로컬 entries = **668** · aliases = **1,301** (§7 확정값) · **충돌 0건이 우연이 아님을 로그로 증명** | ✅ **a710c51** · §7 |
 | **5** | authored > generated 충돌 규칙 (authoring path 한정) | **충돌을 일부러 심은 뒤** authored가 이기고 구본이 `entry_versions`에 남는다 · read path 무변경(INV-2·INV-4) | ⬜ |
 | **6** | 익스포트 잡 (스냅샷 커밋 의무의 실행 수단) | D1 → `terms.json` 왕복 후 **현행 파일과 의미적 동일** · 상단에 「generated — 직접 편집 금지」 마커 | ⬜ |
 | **7** | 원격 적용 〔**사람 판정 필요**〕 | 로컬 1~6 전부 녹색 + **좌표를 PROD로 복원**한 뒤에만 연다. §4-A 참조 | ⬜ |
@@ -253,6 +263,7 @@ DB 스코프 API 토큰으로만 닫힌다. 블라스트 반경이 큰 둘(배�
 | 08-26 | **명령 가드는 벽이 아니었다** | `scripts/d1.mjs`로 `--remote` DML을 막았으나 `npx wrangler`를 직접 치면 우회된다. **좌표 반전으로 교체**(b3d9d09). 가드는 로컬 헬퍼로 축소 |
 | 08-26 | **`\s`·`str.isspace()`·`trim()`은 셋 다 Kotlin `isWhitespace()`와 집합이 다르다** | 세 지점 어디서든 언어 기본 공백 판정을 쓰면 조용히 갈라진다(파이썬은 U+0085를 공백으로 보고 Kotlin은 아니다 · JS `trim()`은 BOM을 자르고 Kotlin은 아니다). 세 구현 모두 **코드포인트 집합을 명시**하고 `test_term_key.py`가 실제로 교차 실행해 고정 |
 | 08-26 | **측정 없이 세운 트레이드오프가 둘 다 틀렸다** | 착수 전 서술은 「구분자를 지우면 페이지를 잃는다 · `b트리`가 충돌한다」였는데 실측하니 페이지 소실 0건 · `b트리` 충돌 없음(§4-C). **후보 정의를 실 데이터에 돌려보기 전에는 판정 브리핑을 쓰지 않는다** |
+| 09-01 | **`~/devetym-proxy/node_modules`가 작업 중 사라졌다** | `vitest: command not found`로 드러남. 원인 미상 — 이 세션이 실행한 명령 중 삭제하는 것은 없었고(`rm -rf`는 `.wrangler/state/v3/d1`만), dev 로그도 정상 종료였다. `npm ci`로 복구·83/83 재확인. **package-lock.json이 있어 복구가 1분**이었다는 게 요점 |
 | 08-26 | **좌표 반전도 완전하지 않다** | `d1 execute`는 DB 이름을 wrangler.toml이 아니라 계정 전체에서 해석한다 — 프로덕션 이름을 손으로 주면 통과한다. `migrations`는 설정에서 찾아 거부한다. **둘의 해석 규칙이 다르다** |
 
 ---
@@ -280,6 +291,27 @@ DB 스코프 API 토큰으로만 닫힌다. 블라스트 반경이 큰 둘(배�
 | 번들 650 shape 게이트·정본 카테고리 | **부적합 0** · 분포 기타 137 · 자료구조/동시성/패턴 103 · DB/네트워크 102 | 08-26 |
 | 번들 엔트리 필드 | 6종(keyword·aliases·category·summary·etymology·namingReason) — **버전 2필드 없음** → 시딩이 실어야 함 | 08-26 |
 | 앱의 `promptVersion` 사용 | **저장만·분기 없음** (`TermMapper.kt`·`LocalTermStore.kt`) — 번들 경로는 `null`, 캐시 경로는 센티널 | 08-26 |
+
+### §3-4 시딩 실측 (09-01)
+
+| 항목 | 값 |
+|---|---|
+| entries / aliases / authored | **668** / **1,301** / **650** — 착수 전 확정값과 정확 일치 |
+| entries PK 충돌 | **0** (파이썬 사전 집계 + 668 = 18+650 산술로 이중 확인) |
+| 별칭 삽입 대상 / 실제 착지 | 1,292 / **1,292** — 실행 시점 탈락 0 = authored×generated 충돌 0 |
+| 엔트리 키에 가려진 별칭 | 88 (entries-우선 규칙이 흡수) |
+| 엔트리간 별칭 충돌 | **3** — `집계`(aggregate 유지/aggregation 버림) · `분기`(branch/fork) · `샤딩`(shard/sharding) |
+| 자기접힘 | 1 (`blue-green-deployment`) |
+| FK dangling / 별칭이 엔트리 키를 가림 / 축 드리프트 / payload 부적합 | **0 / 0 / 0 / 0** |
+| `prompt_version` 종류 | **2** — `authored:efa8f264dc67` · `v2-pathA:956ba44a7c48` |
+| 멱등 | 2회차 적용 후 668/1,301 불변 |
+| 0에서 재현 | `db:reset:local` → `db:seed:local` = **1,942 문장**(650+1,292) → 668/1,301 |
+| L2 왕복 (실 워커) | `aa-tree` `AA 트리` `aatree` → 전부 `aa-tree` · `집계` → `aggregate` · `blue green deployment` → `blue-green-deployment` · 전부 200 · **2~6ms** |
+| 무영향 확인 | `bash`(generated)는 자기 태그 `v2-pathA:` 그대로 200 |
+
+**N1 정의의 값이 여기서 실물로 확인됐다** — `aatree`(구분자 없는 표기)와 `AA 트리`(한글 별칭)가
+같은 행에 도달한다. N0였다면 앞의 것은 미스였다(§7 세 후보 비교의 272건).
+
 
 ### §3-1 확정값 — 시딩 수의 근거 (실제 구현으로 측정, 08-26)
 

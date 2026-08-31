@@ -1,10 +1,10 @@
-# 🤖 웹 트랙 W — 기반·ADR 완료 · **W0c 진행 중(환경 완료, 본체 3/7)**
+# 🤖 웹 트랙 W — 기반·ADR 완료 · **W0c 진행 중(환경 완료, 본체 4/7)**
 
 > **콜드 세션 시작점.** 사람이 *"뭐 하고 있었어? 이어서 하자"* 라고 물으면 **이 문서로 답한다.**
 > 상태 정본은 [`ROADMAP.md`](ROADMAP.md) Now의 「▶ 재개 지점」 — 충돌하면 ROADMAP이 이긴다.
-> **최종 갱신 2026-08-26 (W0c §3-3 authored 센티널 반영).** 선행 핸드오프·규모 판정 브리프는 2026-08-25 서류 정돈에서 삭제했다(판정 결과는 §1·§2에 흡수).
+> **최종 갱신 2026-09-01 (W0c §3-4 650 시딩 반영).** 선행 핸드오프·규모 판정 브리프는 2026-08-25 서류 정돈에서 삭제했다(판정 결과는 §1·§2에 흡수).
 
-**한 줄**: <https://devetym.com> 이 라이브다. **기반(W0a·W0b)은 끝났고 본체(650장·검색·AI)는 한 줄도 없다.** **ADR-0012·0013은 2026-08-25 비준됐다 — 웹 트랙에 사람 게이트는 더 없다.** **W0c는 2026-08-26 착수했다 — 격리 환경(로컬 D1·좌표 반전·CI) 완료, 본체 7단계 중 §3-1 `normalizeTermKey` 정의 확정 · §3-2 `origin` 컬럼 · §3-3 authored 센티널 완료(3/7).** 다음 한 걸음은 **§3-4 authored 650 로컬 시딩**이고, 트리·제안은 [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md) 「▶ 이어서 하자」에 있다.
+**한 줄**: <https://devetym.com> 이 라이브다. **기반(W0a·W0b)은 끝났고 본체(650장·검색·AI)는 한 줄도 없다.** **ADR-0012·0013은 2026-08-25 비준됐다 — 웹 트랙에 사람 게이트는 더 없다.** **W0c는 2026-08-26 착수했다 — 격리 환경(로컬 D1·좌표 반전·CI) 완료, 본체 7단계 중 §3-1 `normalizeTermKey` · §3-2 `origin` 컬럼 · §3-3 authored 센티널 · **§3-4 로컬 D1 650 시딩** 완료(4/7).** 다음 한 걸음은 **§3-5 authored > generated 충돌 규칙**이고, 트리·제안은 [`w0c-sandbox-roadmap.md`](w0c-sandbox-roadmap.md) 「▶ 이어서 하자」에 있다.
 
 ---
 
@@ -16,14 +16,14 @@
 ```bash
 # 환경이 살아 있는지 (2줄)
 cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22 && npm test   # 83/83
-npm run db:local "SELECT COUNT(*) n FROM entries"                       # 18
+npm run db:local "SELECT COUNT(*) n FROM entries"                       # 668
 ```
 
-**한 줄 요약**: W0c는 **환경 구축이 끝났고 본체 7단계는 3/7**이다. 다음 = **§3-4 authored 650 로컬 시딩**.
+**한 줄 요약**: W0c는 **환경 구축이 끝났고 본체 7단계는 4/7**이다. 다음 = **§3-5 authored > generated 충돌 규칙**.
 [ADR-0012](docs/adr/0012-content-canon-d1.md)·[ADR-0013](docs/adr/0013-web-route-contract.md) 둘 다 `Accepted` — 사람 게이트는 없다.
 
 - **W0c 착수 내용** = `~/devetym-proxy` D1에 **`origin` 컬럼 신설**(✅ 08-26) · authored 650 시딩 ·
-  **authored > generated 충돌 규칙** · `prompt_version` 센티널(✅ 08-26) · 익스포트 잡.
+  **authored > generated 충돌 규칙** · `prompt_version` 센티널(✅) · 익스포트 잡.
 - **순서는 W0c → W1a → W1b → W1c**다. 앞당기지 않는다.
 - **작업은 로컬 D1 샌드박스에서 한다** — 실 정본 무접촉. 좌표가 반전돼 있어 배포·원격 스키마 변경이 막혀 있다.
 
@@ -55,7 +55,7 @@ npm run db:local "SELECT COUNT(*) n FROM entries"                       # 18
 **함께 정해진 것**: 승격 잡(캐시 M5)을 **W1c로 W 트랙 안에서 닫는다**. 안 지으면 생성분은 영원히 `noindex`이고 ADR-0013의 최대 이점이 잠긴다.
 
 ### W0c · 650 D1 시딩 〔지금 여기 · 프록시 측〕
-`origin` 컬럼 신설(✅) · `prompt_version` 센티널(✅) · authored 650 시딩 · **authored > generated 충돌 규칙**(현행 `ON CONFLICT DO NOTHING`이면 검수 안 된 AI판이 이긴다) · 익스포트 잡. **W1b보다 반드시 먼저.**
+`origin` 컬럼 신설(✅) · `prompt_version` 센티널(✅) · authored 650 시딩(✅ 로컬) · **authored > generated 충돌 규칙**(현행 `ON CONFLICT DO NOTHING`이면 검수 안 된 AI판이 이긴다) · 익스포트 잡. **W1b보다 반드시 먼저.**
 
 ### W1a · 프록시 하드닝 〔⚠️ W1b보다 반드시 먼저〕
 `~/devetym-proxy` 수정 — CORS allowlist · Turnstile · **표면 분리 캡** · 워크스페이스 분리 · **프롬프트 소유권 이전(ADR-0011)** · **usage 로그에 표면 태그**. 웹 한도 3층: 쿠키 3건/일 · IP 15건/일 · 웹 전역 30건/일 (앱은 10/200 현행 유지).
@@ -101,6 +101,8 @@ W2 = 카테고리 허브·관련 용어·구조화 데이터·얇은 콘텐츠 �
 | 용어 1건 생성 단가 | **$0.023** (캐시 실증: 같은 용어 10회 → 호출 1회) | 07-28 |
 | 웹 빌드 / Worker 기동 | 750ms / 24ms | 08-25 |
 | 폰트 | woff2 5종 291KB→121KB (DM Sans는 **미탑재** — 앱에서도 실사용 0) | 08-25 |
+
+✅ **로컬 D1 시딩은 2026-09-01 완료됐다 — entries 668 · aliases 1,301 · authored 650.** 착수 전 확정값과 정확히 일치했고, PK 충돌 0·별칭 1,292 전량 착지·멱등·0에서 재현까지 실측했다. L2 왕복에서 `aatree`(구분자 없는 표기)와 `AA 트리`(한글 별칭)가 같은 행에 도달한다 — N1 정의의 값이 실물로 확인된 지점이다. 원격 적용은 아직이다(§3-7 · 사람 판정).
 
 ✅ **authored 센티널은 2026-08-26 확정됐다 — `authored:` + 번들 정규화 JSON sha256 앞 12자.** 현행 값 `authored:efa8f264dc67`. 손 번호(`db-expand-v<N>`)는 기각했다 — 원천을 고치고 번호를 안 올리면 신·구가 한 태그로 섞이는데 알아챌 수단이 없다. 시딩은 컬럼뿐 아니라 **payload JSON 안에도** `schemaVersion`·`promptVersion`을 실어야 한다 — 캐시 히트가 payload를 앱에 그대로 배달하므로, 컬럼만 채우면 같은 용어가 전달 경로에 따라 두 모양이 된다.
 
