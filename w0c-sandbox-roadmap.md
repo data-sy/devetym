@@ -206,6 +206,65 @@ CI  .github/workflows/test.yml — push·PR에서 npm test.
 
 ---
 
+## 3-7c. 프로덕션 실행 순서 — **확정 · 사람이 쳐야 함 (2026-09-01)**
+
+사람이 **1번(워커 배포 → 좌초 정리 → 시딩)** 을 선택했다. dev 리허설은 **개명까지 포함해 전부 통과**했다.
+Claude가 여기서 멈춘 이유는 판단이 아니라 **권한**이다 — `wrangler.toml`의 좌표를 프로덕션으로
+되돌리는 편집이 하네스 안전 분류기에 차단됐다(파일 편집·Bash 양쪽). 우회는 시도하지 않았다.
+
+### 왜 이 순서인가
+
+`0002 → 배포 → 시딩 → 개명`. 배포와 시딩 사이에만 창이 열리고, 그 창에서 생기는 generated 행은
+**§3-5 충돌 규칙이 흡수한다**(authored 승리 + `entry_versions` 보존). 반대로 시딩을 먼저 하면
+286개 keyword·784개 별칭이 현 워커가 조회하지 않는 키로 앉아 중복 행이 쌓인다.
+
+### ① 좌표 복원 〔사람 — 여기가 막힌 지점〕
+
+`~/devetym-proxy/wrangler.toml`에서 **네 값**을 되돌린다. 다른 설정 차이는 없다(diff 확인 완료):
+
+```
+name          = "devetym-proxy"                                    # ← -sandbox 제거
+RATE_LIMIT id = "513c44bf6df942eab2262397bbec04de"
+USAGE_DB      = "devetym-usage"  / "e76366e6-34e1-4a1a-8ed7-c771bd650580"
+CACHE_DB      = "devetym-cache"  / "a42d4408-ff64-40d4-8a6a-c71672fd71c2"
+```
+
+머리말의 「좌표가 반전돼 있다」 배너도 함께 갱신한다. `npm test` 83 통과 확인.
+
+### ② ~ ⑥ 〔이후는 Claude가 이어서 할 수 있다〕
+
+```bash
+cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22
+
+# ② 스키마 — origin 컬럼 (기존 21행이 generated로 백필된다)
+npx wrangler d1 migrations apply devetym-cache --remote
+
+# ③ 워커 배포 — src/index.js 변경은 normalizeTermKey 한 함수뿐이다
+npm run deploy
+
+# ④ 시딩 (SQL은 이미 생성돼 있다)
+npx wrangler d1 execute devetym-cache --remote --file=<seed.sql>
+
+# ⑤ 좌초 5건 재정규화 (#21의 서버 쪽 쌍둥이)
+npx wrangler d1 execute devetym-cache --remote --file=<renormalize.sql>
+
+# ⑥ 검증 — 합격 기준: entries 671 · authored 650 · generated 21 · aliases 1,304 ·
+#    entry_versions 0 · FK 0 · 드리프트 0 · 비-N1 키 0
+#    그다음 실 앱 경로로 `AA 트리` → aa-tree 왕복
+```
+
+⑤의 SQL은 리허설에서 검증된 6문장이다(aliases를 먼저 옮긴다 — entries PK가 바뀌면 FK가 매달린다).
+
+### 롤백
+
+`~/devetym-d1-backup-20260901-020554.sql` (프로덕션 전체 · 09-01 02:05).
+표적 롤백은 §3-7 7단계. 배포 롤백은 `wrangler rollback` 또는 main 재배포.
+
+⚠️ **`devetym-cache-dev`는 남겨 뒀다** (무료 3/10). 프로덕션이 끝나면 지울지 판정한다 —
+다음 스키마 변경 때 또 필요하면 유지가 싸다.
+
+---
+
 ## 3-7. 원격 적용 런북 〔선택지 (a) — 사람이 직접 실행〕
 
 > **비용**: (a)도 (b)도 **무료다.** D1 무료 티어는 5GB·읽기 500만행/일이고 이번 쓰기는
