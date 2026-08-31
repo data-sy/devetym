@@ -26,7 +26,7 @@
 | 서비스 | 쓰는 것 | 넘으면 |
 |---|---|---|
 | **Cloudflare Workers** | `devetym-proxy`(앱 AI 경로) · `devetym-web`(웹) | 무료 10만 요청/일. 넘으면 유료 전환($5/월~) — **유입이 붙었다는 신호이므로 나쁜 소식이 아니다** |
-| **Cloudflare D1** | `devetym-cache`(어원 정본) · `devetym-usage`(텔레메트리) — **무료 플랜 2/10개 사용 중** | 무료 5GB·읽기 500만행/일. 650행 규모에선 무의미. ⚠️ **[ADR-0012](../adr/0012-content-canon-d1.md) 비준 후엔 한도 소진이 캐시 열화가 아니라 콘텐츠 장애로 번역된다** |
+| **Cloudflare D1** | `devetym-cache`(어원 정본) · `devetym-usage`(텔레메트리) · `devetym-cache-dev`(W0c §3-7 스테이징, 2026-09-01 생성) — **무료 플랜 3/10개 사용 중** | 무료 5GB·읽기 500만행/일. 650행 규모에선 무의미. ⚠️ **[ADR-0012](../adr/0012-content-canon-d1.md) 비준 후엔 한도 소진이 캐시 열화가 아니라 콘텐츠 장애로 번역된다** |
 | **Cloudflare KV** | `RATE_LIMIT`(기기별 한도) · 웹 쿠키 한도 계수(W1a) | 무료 10만 읽기/일 |
 | **Cloudflare Turnstile** | 웹 AI 생성 봇 차단 (W1a) | 무료 100만 위젯 호출/월 |
 | **Sentry** | 크래시 리포팅(Android 실배선 · iOS WU-4B) | ⚠️ **플랜 미확인** — 무료 티어면 5천 이벤트/월 |
