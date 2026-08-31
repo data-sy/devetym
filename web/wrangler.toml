@@ -1,0 +1,34 @@
+# DevEtym 웹 — Cloudflare Worker 배포 설정 (W0a)
+#
+# ⚠️ 프록시(`~/devetym-proxy`)와 **다른 Worker**다. 표면을 분리해 두는 이유는
+#    ADR-0010(웹 남용 방지)의 「표면 분리 캡」과 같다 — 웹이 무엇을 태우든
+#    앱 요청 경로가 영향받지 않아야 한다.
+
+name = "devetym-web"
+compatibility_date = "2025-06-01"
+compatibility_flags = ["nodejs_compat"]
+main = "./dist/_worker.js/index.js"
+assets = { directory = "./dist", binding = "ASSETS" }
+# ⚠️ 실 도메인이 붙은 뒤로는 **끈다**. 켜 두면 workers.dev가 같은 내용을
+#    색인 허용 상태로 서빙해 devetym.com과 중복 콘텐츠로 경쟁한다
+#    (빌드가 SITE_URL=devetym.com이라 noindex가 안 붙는다 — 2026-08-25 실측).
+workers_dev = false
+
+# ⚠️ SITE_URL을 여기 두지 않는다. 페이지가 prerender라 도메인은 **빌드 시점**에
+#    구워진다 — 런타임 [vars]에 넣으면 정적 HTML의 canonical/OG와 어긋난 값이
+#    두 벌 생긴다. 정본은 src/config/site.ts 한 곳이고, 배포 환경이 덮을 때는
+#    빌드 전에 `SITE_URL=... npm run build`로 준다.
+
+# 커스텀 도메인 (W0b · 2026-08-25). wrangler가 DNS 레코드를 자동 생성한다.
+# ⚠️ **www 301은 Astro 미들웨어로 못 한다.** 어댑터가 생성하는 `_routes.json`이
+#    prerender된 경로(`/` 등)를 Worker 호출에서 **제외**하기 때문에 미들웨어가 아예 안 탄다
+#    (`assets.run_worker_first`로도 안 뒤집힌다 — 2026-08-25 실측).
+#    → 301은 **Cloudflare Redirect Rule**(존 레벨·Worker 미경유)로 건다. ROADMAP 백로그 참조.
+#    그때까지의 완화 = www가 서빙하는 HTML의 canonical이 apex를 가리킨다(BaseLayout).
+[[routes]]
+pattern = "devetym.com"
+custom_domain = true
+
+[[routes]]
+pattern = "www.devetym.com"
+custom_domain = true

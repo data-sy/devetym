@@ -1,0 +1,65 @@
+---
+/**
+ * 모든 페이지의 껍데기. 호스트명은 여기서도 **손으로 쓰지 않는다** —
+ * 전부 src/config/site.ts에서 읽는다(W0a의 「SITE_URL 단일 지점」).
+ */
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SITE_LOCALE, IS_CANONICAL_HOST, absoluteUrl } from "../config/site";
+import "../styles/tokens.css";
+import "../styles/base.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  /** 이 페이지의 경로. canonical 계산용. 없으면 현재 요청 경로. */
+  path?: string;
+  /**
+   * 색인 억제. ADR-0013(제안): 미승격 생성분 페이지는 noindex.
+   * 미리보기 호스트에서는 아래에서 **무조건** noindex가 된다.
+   */
+  noindex?: boolean;
+}
+
+const { title, description = SITE_DESCRIPTION, path, noindex = false } = Astro.props;
+
+const canonicalPath = path ?? Astro.url.pathname;
+const canonical = absoluteUrl(canonicalPath);
+
+/**
+ * ⚠️ 미리보기 호스트(*.workers.dev)는 예외 없이 noindex다.
+ *    안 그러면 미리보기가 색인돼 실 도메인과 중복 콘텐츠로 경쟁한다 —
+ *    도메인을 사기 전에 사이트를 띄우기로 한 결정(2026-08-25)의 대가를
+ *    여기서 지불한다. 도메인이 붙으면(W0b) 자동으로 풀린다.
+ */
+const blockIndex = noindex || !IS_CANONICAL_HOST;
+
+const fullTitle = title === SITE_NAME ? SITE_NAME : `${title} · ${SITE_NAME}`;
+---
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    {blockIndex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content={SITE_LOCALE} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+
+    <link rel="preload" href="/fonts/dmserifdisplay_regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/dmmono_regular.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

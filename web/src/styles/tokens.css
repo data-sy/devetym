@@ -1,0 +1,143 @@
+/* ⚠️ 생성물 — 손으로 고치지 않는다. `npm run tokens`가 다시 뽑는다.
+ * 정본: shared/src/commonMain/kotlin/com/robin/devetym/ui/theme/{AppColors,AppDimens,AppTypography}.kt
+ * 생성기: web/scripts/extract-tokens.mjs
+ *
+ * 다크가 기본이다 (LocalAppColors 기본값 = DarkColors, iOS appearanceMode 기본 2 계승).
+ * 그래서 :root가 다크를 들고, 라이트는 명시 선택/시스템 선호일 때 덮는다.
+ */
+
+:root {
+  /* ── 색 (다크 · 기본) ────────────────────────────────────────── */
+  --c-bg: #0a0a0a;
+  --c-surface: #111111;
+  --c-surface2: #1a1a1a;
+  --c-border: #363636;
+  --c-accent: #c8f060;
+  --c-accent2: #60c8f0;
+  --c-accent-ai: #f0a060;
+  --c-brand: #2e5d3a;
+  --c-text: #ececec;
+  --c-text-dim: #b4b4b4;
+  --c-text-muted: #8a8a8a;
+
+  /* ── 치수 ──────────────────────────────────────────────────── */
+  --d-screen-padding: 18px;
+  --d-card-padding: 14px;
+  --d-section-gap: 26px;
+  --d-label-gap: 9px;
+  --d-row-vpad: 11px;
+  --d-radius-card: 12px;
+  --d-radius-action: 10px;
+  --d-radius-block: 8px;
+  --d-radius-badge: 6px;
+  --d-stroke-border: 1px;
+  --d-stroke-field: 1.5px;
+
+  /* ── 타이포 ────────────────────────────────────────────────── */
+  --t-title-hero-size: 28px;
+  --t-title-hero-weight: 400;
+  --t-title-hero-family: var(--font-serif);
+  --t-title-tab-size: 20px;
+  --t-title-tab-weight: 400;
+  --t-title-tab-family: var(--font-serif);
+  --t-body-large-size: 17px;
+  --t-body-large-family: var(--font-body);
+  --t-body-size: 16px;
+  --t-body-line: 24px;
+  --t-body-family: var(--font-body);
+  --t-body-sub-size: 16px;
+  --t-body-sub-line: 22px;
+  --t-body-sub-family: var(--font-body);
+  --t-body-emphasis-size: 17px;
+  --t-body-emphasis-weight: 600;
+  --t-body-emphasis-family: var(--font-body);
+  --t-body-block-size: 16px;
+  --t-body-block-line: 24px;
+  --t-body-block-family: var(--font-body);
+  --t-body-notice-size: 16px;
+  --t-body-notice-line: 20px;
+  --t-body-notice-family: var(--font-body);
+  --t-body-preview-size: 17px;
+  --t-body-preview-family: var(--font-body);
+  --t-body-preview-small-size: 13px;
+  --t-body-preview-small-family: var(--font-body);
+  --t-code-hero-size: 20px;
+  --t-code-hero-weight: 500;
+  --t-code-hero-family: var(--font-code);
+  --t-code-body-size: 17px;
+  --t-code-body-weight: 500;
+  --t-code-body-family: var(--font-code);
+  --t-code-input-size: 17px;
+  --t-code-input-family: var(--font-code);
+  --t-code-value-size: 15px;
+  --t-code-value-family: var(--font-code);
+  --t-badge-size: 12px;
+  --t-badge-weight: 500;
+  --t-badge-tracking: 0.8px;
+  --t-badge-family: var(--font-code);
+  --t-badge-ai-size: 12px;
+  --t-badge-ai-weight: 600;
+  --t-badge-ai-tracking: 0.2px;
+  --t-badge-ai-family: var(--font-body);
+  --t-code-chip-size: 13px;
+  --t-code-chip-weight: 500;
+  --t-code-chip-family: var(--font-code);
+  --t-code-action-size: 16px;
+  --t-code-action-weight: 500;
+  --t-code-action-family: var(--font-body);
+  --t-section-header-size: 15px;
+  --t-section-header-weight: 500;
+  --t-section-header-tracking: 0.6px;
+  --t-section-header-family: var(--font-body);
+  --t-label-size: 15px;
+  --t-label-family: var(--font-body);
+  --t-caption-size: 12px;
+  --t-caption-tracking: 0.4px;
+  --t-caption-family: var(--font-body);
+}
+
+/* 시스템이 라이트를 선호하고, 사용자가 다크를 명시 선택하지 않았을 때 */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --c-bg: #fafafa;
+    --c-surface: #ffffff;
+    --c-surface2: #f1f1f1;
+    --c-border: #e4e4e4;
+    --c-accent: #3f7a00;
+    --c-accent2: #1e6b94;
+    --c-accent-ai: #a35a10;
+    --c-brand: #2e5d3a;
+    --c-text: #0a0a0a;
+    --c-text-dim: #555555;
+    --c-text-muted: #6b6b6b;
+  }
+}
+
+/* 사용자 명시 선택이 시스템을 이긴다 (앱 외관 3모드와 같은 규율) */
+:root[data-theme="light"] {
+  --c-bg: #fafafa;
+  --c-surface: #ffffff;
+  --c-surface2: #f1f1f1;
+  --c-border: #e4e4e4;
+  --c-accent: #3f7a00;
+  --c-accent2: #1e6b94;
+  --c-accent-ai: #a35a10;
+  --c-brand: #2e5d3a;
+  --c-text: #0a0a0a;
+  --c-text-dim: #555555;
+  --c-text-muted: #6b6b6b;
+}
+
+:root[data-theme="dark"] {
+  --c-bg: #0a0a0a;
+  --c-surface: #111111;
+  --c-surface2: #1a1a1a;
+  --c-border: #363636;
+  --c-accent: #c8f060;
+  --c-accent2: #60c8f0;
+  --c-accent-ai: #f0a060;
+  --c-brand: #2e5d3a;
+  --c-text: #ececec;
+  --c-text-dim: #b4b4b4;
+  --c-text-muted: #8a8a8a;
+}

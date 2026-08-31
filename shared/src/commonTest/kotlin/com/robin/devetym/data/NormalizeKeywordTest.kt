@@ -111,9 +111,55 @@ class NormalizeKeywordTest {
         }
     }
 
+    // ── W0c §3-1 확정: 구분자는 트림이 아니라 **삭제**한다 ──────────────────────
+    // 아래 케이스들은 devetym-proxy `test/term-key.test.js` ·
+    // `Scripts/db-expand/term_key.py`의 짝이다. 하나를 고치면 셋을 다 고쳐야 한다.
+
     @Test
-    fun test_normalizeKeyword_내부공백_보존() {
-        assertEquals("mutual exclusion", normalizeKeyword("  Mutual Exclusion  "))
+    fun test_normalizeKeyword_내부공백_삭제() {
+        assertEquals("mutualexclusion", normalizeKeyword("  Mutual Exclusion  "))
+    }
+
+    @Test
+    fun test_normalizeKeyword_하이픈언더스코어_삭제() {
+        assertEquals("aatree", normalizeKeyword("aa-tree"))
+        assertEquals("bplustree", normalizeKeyword("b_plus_tree"))
+    }
+
+    /** 이 정의의 존재 이유 — 슬러그·공백형·무공백형이 한 키로 접힌다. */
+    @Test
+    fun test_normalizeKeyword_표기변이_동일키() {
+        for (v in listOf("aa-tree", "AA tree", "AA-Tree", "aatree", "aa_tree", "  aa  tree  ")) {
+            assertEquals("aatree", normalizeKeyword(v), "\"$v\" 미접힘")
+        }
+    }
+
+    /** 한글 별칭의 무공백 표기 — 실 번들 별칭 609개가 이 경로로 도달한다(실측). */
+    @Test
+    fun test_normalizeKeyword_한글별칭_공백무관() {
+        assertEquals("추상팩토리", normalizeKeyword("추상 팩토리"))
+        assertEquals("추상팩토리", normalizeKeyword("추상팩토리"))
+        assertEquals("추상팩토리", normalizeKeyword(pad(IDEOGRAPHIC, "추상 팩토리")))
+    }
+
+    /** 내부에 있어도 삭제 집합은 [TRIMMED]와 정확히 같다 — 미삭제 방향 고정. */
+    @Test
+    fun test_normalizeKeyword_내부_공백류_전수삭제() {
+        for (cp in TRIMMED) {
+            assertEquals("golang", normalizeKeyword("Go${cp.toChar()}Lang"), "${hex(cp)} 내부 미삭제")
+        }
+    }
+
+    /** 과삭제 방향 고정 — BOM·NEL 등은 내부에서도 남는다. */
+    @Test
+    fun test_normalizeKeyword_내부_비공백류_전수보존() {
+        for (cp in NOT_TRIMMED) {
+            assertEquals(
+                "go${cp.toChar()}lang",
+                normalizeKeyword("Go${cp.toChar()}Lang"),
+                "${hex(cp)} 내부 과삭제",
+            )
+        }
     }
 
     @Test

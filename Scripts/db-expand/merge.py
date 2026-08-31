@@ -23,6 +23,9 @@ import sys
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).parent))
+from term_key import normalize_term_key
+
 
 def load_json_array(path: Path) -> list[dict[str, Any]]:
     data = json.loads(path.read_text(encoding="utf-8"))
@@ -41,10 +44,18 @@ def main() -> int:
     existing = load_json_array(args.existing)
     batch = load_json_array(args.batch)
 
-    existing_keys = {e["keyword"] for e in existing}
-    conflicts = [b["keyword"] for b in batch if b.get("keyword") in existing_keys]
+    # 충돌 검사는 **정규화 키 기준**(W0c §3-1) — 원문 비교로 되돌리지 말 것.
+    # `aa-tree`와 `aa_tree`는 원문이 달라도 같은 term_key라, 원문 비교로 통과시키면
+    # D1 entries PRIMARY KEY에서 조용히 하나가 버려진다.
+    existing_keys = {normalize_term_key(e["keyword"]): e["keyword"] for e in existing}
+    conflicts = [
+        f"{b['keyword']} (기존 {existing_keys[k]})"
+        for b in batch
+        if isinstance(b.get("keyword"), str)
+        and (k := normalize_term_key(b["keyword"])) in existing_keys
+    ]
     if conflicts:
-        sys.exit(f"keyword 충돌 — Phase 0-2 dedup 점검 필요: {conflicts}")
+        sys.exit(f"정규화 keyword 충돌 — Phase 0-2 dedup 점검 필요: {conflicts}")
 
     merged = existing + batch
     merged.sort(key=lambda e: e["keyword"].lower())

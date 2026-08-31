@@ -1,5 +1,7 @@
 # Claude API 비용 관리·모니터링 체계 — 결정 문서
 
+> **실제로 나가는 돈(도메인·개발자 프로그램·실측 청구액)의 원장은 [`running-costs.md`](running-costs.md)다.** 이 문서는 *왜 그 구조인가*를 다룬다.
+
 > 작성: 2026-07-14 컨설팅 세션. 입력: `docs/cost/consulting-prompt.md` + 코드·문서 전수 확인(`Scripts/generate_db.py`, `Scripts/prompt-probe/probe_prompt.py`, `Scripts/db-expand/`, ADR-0004/0006, `cache-delivery-milestones.md` INV-1~13, `db-expand/spec.md`, `ClaudeApi.kt`·`ClaudePrompt.kt`·`Constants.kt`).
 > 사용자 확인 사항: **월 예산 상한 미정(실측 후 결정)** / **Console 관리자 권한 있음(Admin 키 발급 가능)** / **예상 사용자 소규모(수십~수백)** / **devetym-proxy 구현 범위 포함 가능**.
 > 상태: **승인 대기** — 승인 후 §5 로드맵 순서로 구현 착수.
