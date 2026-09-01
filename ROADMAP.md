@@ -10,14 +10,14 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 
 ## Now — 진행 중
 
-> ## ▶ 재개 지점 — "이제 뭐 하면 돼?"에 대한 답 (2026-08-26 기준)
+> ## ▶ 재개 지점 — "이제 뭐 하면 돼?"에 대한 답 (2026-09-01 밤 기준)
 >
 > **아래 Now 목록에는 이미 닫힌 트랙이 섞여 있다**(M0~M8·M9 iOS·코드 갭·#19 — 완료 이력 보존용). **살아 있는 것은 둘뿐이다.**
 >
 > | 순서 | 할 일 | 상태 | 다음 한 걸음 |
 > |---|---|---|---|
 > | **1** | ~~**서류 정돈**~~ | **✅ 종결 (2026-08-25)** — repo·`~/Downloads/devetym-release` 양쪽 완료 | 없음. 살아 있는 트랙은 아래 2번뿐이다 |
-> | **2** | **웹 트랙 W — 「크게」** | **✅ W0a·W0b 완료 · ADR-0012·0013 ✅비준(2026-08-25) — 사람 게이트 없음** | **✅ W0c 완료 (2026-08-26 ~ 09-01)** — 본체 **7/7 · 프로덕션 적용까지 끝났다.** §3-1 `normalizeTermKey`(N1) · §3-2 `entries.origin` · §3-3 authored 센티널(번들 내용 해시) · §3-4 시딩 · §3-5 충돌 규칙 + INV-5 · §3-6 익스포트 왕복 바이트 동일 · §3-7 **원격 적용**. **프로덕션 실측: entries 671 · authored 650 · aliases 1,304 · 키 1,975개 전부 N1.** 실 앱 경로에서 `AA 트리`·`추상 팩토리`·`aatree`가 전부 정본 행에 도달한다. 워커 `c9ccd526` 배포. 백업 `~/devetym-d1-backup-20260901-020554.sql`. **잔여 = 🙋 브랜치 2개 병합·푸시(§8 흡수)** → **다음 한 걸음 = W1a 프록시 하드닝** → **W1b** 650장+검색+AI → **W1c 승격 잡**(2026-08-25 사람 선택 (b) — W 트랙 안에서 닫는다). 정본 = [`🤖-26-08-25-web-large-track-handoff.md`](🤖-26-08-25-web-large-track-handoff.md) |
+> | **2** | **웹 트랙 W — 「크게」** | **✅ W0a·W0b 완료 · ADR-0012·0013 ✅비준(2026-08-25) — 사람 게이트 없음** | **✅ W0c 완료 (2026-08-26 ~ 09-01)** — 본체 **7/7 · 프로덕션 적용까지 끝났다.** §3-1 `normalizeTermKey`(N1) · §3-2 `entries.origin` · §3-3 authored 센티널(번들 내용 해시) · §3-4 시딩 · §3-5 충돌 규칙 + INV-5 · §3-6 익스포트 왕복 바이트 동일 · §3-7 **원격 적용**. **프로덕션 실측: entries 671 · authored 650 · aliases 1,304 · 키 1,975개 전부 N1.** 실 앱 경로에서 `AA 트리`·`추상 팩토리`·`aatree`가 전부 정본 행에 도달한다. 워커 `c9ccd526` 배포. 백업 `~/devetym-d1-backup-20260901-020554.sql`. **✅ W1a 코드 완료 (2026-09-01 밤)** — `devetym-proxy` `feat/w1a-proxy-hardening` 2커밋, **미푸시·미배포**. CORS 고정 allowlist(밖은 서버가 403) · 표면 분리 캡(웹 쿠키 3/IP 15/전역 30 · **앱 10/200 불변**) · HMAC 서명 쿠키 식별 · Turnstile 배선(키 없으면 꺼진 채 통과) · 워크스페이스 키 분기 · **프롬프트 정본 앱→워커 이전**(바이트 동일 — 해시 `956ba44a7c48` 불변) · usage `surface`/`outcome`(차단 행 적재 = F5 지표의 분자). 테스트 83→**131**, 로컬 오라클 4축 녹색. **다음 한 걸음 = 🙋 사람 4줄**(Turnstile 위젯·워크스페이스 키·시크릿 3개·배포+앱 실측 — 아래 ⑦) → **W1b** 650장+검색+AI → **W1c 승격 잡**(2026-08-25 사람 선택 (b) — W 트랙 안에서 닫는다). 정본 = [`🤖-26-08-25-web-large-track-handoff.md`](🤖-26-08-25-web-large-track-handoff.md) |
 >
 > **✅ W0c는 2026-09-01 `sandbox/w0c-d1-seeding`에서 완료·흡수됐다.** 브랜치 전용 SSOT(`w0c-sandbox-roadmap.md`)는 흡수 커밋에서 삭제했고, 살아남을 값은 핸드오프 §4「인용해도 되는 실측값」·§5「실측으로 얻은 함정」과 아래 Later 백로그로 옮겼다. 세부 근거는 그 브랜치의 커밋 이력에 있다.
 >
@@ -32,7 +32,8 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 > **⓪ ~~`wrangler.toml` 좌표 복원~~ ✅ 완료 (2026-09-01)** — `accept edits` 모드로 전환하니
 > 통과했다(차단은 auto mode 전용 분류기였다). 이어서 **W0c 원격 적용 ①~⑥ 전부 완료** —
 > 프로덕션 D1에 650이 들어갔고 실 앱 경로에서 한글 별칭까지 도달한다.
-> **잔여(사람)**: 병합된 `main` **푸시** — `devetym`·`devetym-proxy` 양쪽. 병합·SSOT 삭제는 완료.
+> **잔여(사람)**: 병합된 `main` **푸시** — `devetym`·`devetym-proxy` 양쪽(각 10커밋). 병합·SSOT 삭제는 완료.
+> W1a 브랜치(`feat/w1a-proxy-hardening`)도 함께 밀면 된다. **브랜치는 지우지 않는다**(보존 규율).
 >
 > **① ~~ADR-0012·0013 비준~~ ✅ 완료 (2026-08-25 사람)** — 둘 다 `Accepted`. 함께 정해진 것: **승격 잡(캐시 M5)을 W 트랙 안에서 닫는다 — W1b 다음 `W1c`**(선택지 (b)). 근거 = 승격 잡이 없으면 생성분은 영원히 `noindex`이고 ADR-0013의 최대 이점이 잠긴 채 남는다. **비준에 따라 규범 문서 2곳이 갱신됐다**: `docs/cache-delivery-milestones.md` §1 **INV-11 전단 대체** · [ADR-0006](docs/adr/0006-server-cache-boundary.md) Decision 5. → **웹 트랙에 사람 게이트는 더 없다.**
 >
@@ -57,6 +58,17 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
 >
 > **⑥ ⏳ Search Console 사이트맵 제출 — 조건부 대기 〔트리거 = W1b 배포 완료〕**
 > 650장이 실 URL로 올라간 **뒤에** Search Console → 왼쪽 메뉴 **Sitemaps** → `sitemap-index.xml` 제출. 이걸로 색인률 측정 배선이 완결되고 **W3가 완전히 닫힌다**. 지금 하면 빈 사이트맵을 내는 셈이라 의미가 없다(2026-08-25 판단).
+>
+> **⑦ 🔴 W1a를 켜는 4줄 — 지금 가장 앞이다 〔코드는 준비됐고 대시보드 발급만 사람 몫〕**
+> 코드는 `devetym-proxy` `feat/w1a-proxy-hardening`에 있고 **배포되지 않았다.** 순서를 지킨다.
+> 1. **Turnstile 위젯 발급** — Cloudflare 대시보드 → **Turnstile** → **Add widget** → 도메인 `devetym.com`. site key는 W1b 프론트에, **secret key**는 아래 3번에.
+> 2. **Anthropic 워크스페이스** — Console → **Workspaces** → 새 워크스페이스 + **워크스페이스별 spend limit** → API key 발급. 4겹 방어의 마지막 겹이고, 앞 세 겹이 뚫려도 앱 예산을 살린다.
+> 3. **시크릿 3개 주입** (`cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22`)
+>    `openssl rand -base64 32 | npx wrangler secret put WEB_COOKIE_SECRET` · `npx wrangler secret put TURNSTILE_SECRET` · `npx wrangler secret put ANTHROPIC_API_KEY_WEB`
+> 4. **배포 + 앱 실측** — `npx wrangler d1 migrations apply devetym-usage --remote` → `npm run deploy` → **실 iOS 앱에서 새 용어 1건 생성이 정상 성공하는지 확인**.
+>
+> ⚠️ **4번의 앱 실측이 W1a의 완료 조건이다.** 프롬프트 소유권이 서버로 옮겨져 앱이 받는 응답 내용이 바뀔 수 있는 창은 배포 직후 하나뿐이다(이식이 바이트 동일이라 안 바뀌어야 정상). 실패하면 `npx wrangler rollback`.
+> ⚠️ 시크릿 없이 배포만 해도 안전하다 — 세 층이 꺼진 채 통과하고 앱 경로는 종전과 같다. 다만 **웹 공개 전에는 최소 `WEB_COOKIE_SECRET`이 있어야** 브라우저당 3건 층이 실재한다.
 >
 > **판단이 필요했으나 해소된 것**: ~~AI 크롤러 허용 여부~~ → Cloudflare 기본값이 이미 「학습 수집기는 차단, 인용·유입형 봇과 검색 크롤러는 허용」로 정확히 갈라져 있다. **손댈 것 없음**(근거는 아래 웹 트랙 W0b 항목).
 >
@@ -90,7 +102,7 @@ DevEtym(개발 어원 사전) CMP 앱의 중장기 작업 계획이자 **진행 
   - **⚠️ 실측이 뒤집은 전제 2건**(설계서 §0): (1) **전역 일일 캡은 이미 있다** — `devetym-proxy`의 `GLOBAL_DAILY_LIMIT=200`. `X-Device-Id` 위조 구멍의 방벽은 이미 서 있고, 남은 문제는 위조가 아니라 **표면 간 전이**(웹 폭주 → 앱 사용자 429/402). (2) **디자인 토큰은 `docs/design`에 없다** — 정본은 코드(`ui/theme/AppColors.kt`·`AppTypography.kt`·`AppDimens.kt`). 아래 M6의 "작성 예정" 서술은 무효(메모리 [ios-design-assets-inheritable]와 동일 결론).
   - **⚠️ 유입 자산의 실체(설계서 §1)**: 표제어 650개는 **전부 영어이고 한글 keyword는 0개**다. 한국어 이름은 `aliases`에 있고 **한글 별칭이 1,097개**. 한국인은 `뮤텍스 어원`으로 검색하므로, 한글 별칭을 title·h1·구조화 데이터에 1급으로 올리지 않으면 650페이지는 한국어 검색에 사실상 존재하지 않는다. 반대 방향 리스크도 실측됨 — **본문 중앙값 303자, 317개(48.8%)가 300자 미만**(thin content).
   - **⚙️ W0 분할 (2026-08-25) — ✅ 둘 다 완료**: **W0a**(Astro 스캐폴드·`SITE_URL` 단일 지점·토큰 추출·배포) / **W0b**(DNS·`SITE_URL` 교체·사이트맵). 아래 마일스톤 서술의 "W0"는 이 둘의 합이다. **W0b의 Search Console 소유권 확인만 사람 몫으로 남았다.** 〔2026-08-25 추가: **W0c**(650 D1 시딩)가 W1a 앞에 새로 끼어든다 — ADR-0012 **✅비준 완료**, 조건 해소. 같은 날 **W1c**(승격 잡)가 W1b 뒤에 추가됐다 — ADR-0013의 「승격 잡 없으면 영원히 noindex」를 W 트랙 안에서 닫는 사람 선택 (b)〕
-  - **마일스톤**: ~~**W0** 도메인·Astro 스캐폴드·**토큰 추출**~~ ✅완료(Search Console만 잔여) → **W0c** 650 D1 시딩〔ADR-0012 ✅비준 — 착수 가능〕 → **W1a** 프록시 하드닝(CORS allowlist·Turnstile·표면 분리 캡·워크스페이스 분리) → **W1b** 정적 650 + 검색 + AI 폴백 + 사이트맵〔배포 직후 **사람**: Search Console에 `sitemap-index.xml` 제출 — 「🙋 사람이 해야 하는 것」 ⑥〕 → **W1c** 승격 잡(= 캐시 M5 · `critic` 게이트 통과분 `origin` 승급 → 다음 빌드에서 SSG·색인 편입) → **W2** 카테고리 허브·구조화 데이터·thin content 대응 → **W3** 측정 리뷰. **⚠️ W1a가 W1b보다 반드시 먼저다** — A안은 방어와 개방을 동시에 공개하는 결정이지 방어 없이 먼저 여는 결정이 아니다.
+  - **마일스톤**: ~~**W0** 도메인·Astro 스캐폴드·**토큰 추출**~~ ✅완료(Search Console만 잔여) → **W0c** 650 D1 시딩〔ADR-0012 ✅비준 — 착수 가능〕 → ~~**W1a** 프록시 하드닝~~ **코드 ✅ 09-01**(CORS allowlist·Turnstile·표면 분리 캡·워크스페이스 분리·프롬프트 이전) 〔배포는 사람 4줄 뒤〕 → **W1b** 정적 650 + 검색 + AI 폴백 + 사이트맵〔배포 직후 **사람**: Search Console에 `sitemap-index.xml` 제출 — 「🙋 사람이 해야 하는 것」 ⑥〕 → **W1c** 승격 잡(= 캐시 M5 · `critic` 게이트 통과분 `origin` 승급 → 다음 빌드에서 SSG·색인 편입) → **W2** 카테고리 허브·구조화 데이터·thin content 대응 → **W3** 측정 리뷰. **⚠️ W1a가 W1b보다 반드시 먼저다** — A안은 방어와 개방을 동시에 공개하는 결정이지 방어 없이 먼저 여는 결정이 아니다.
   - **도메인 `devetym.com` — ✅ 등록·라이브 (2026-08-25)**. Amazon Registrar 등록($16/yr·자동 갱신·만료 2027-08-25), **네임서버만 Cloudflare 위임**(소유·결제는 Amazon 유지 — 등록기관 이전은 안 하기로 결정). Route 53 호스팅 영역 삭제로 $0.50/월 회피. 원장 = [`docs/cost/running-costs.md`](docs/cost/running-costs.md). 〔지나간 이력: 2026-08-05 가용성 실측 당시 미등록이었고 `.io`/`.app`/`.dev`는 채택하지 않았다〕 **⚠️ 다운스트림 3곳은 아직 바꾸지 않았다 — 순서 게이트가 있다**: `Constants.kt`의 `privacyPolicyUrl`은 현재 라이브인 `https://data-sy.github.io/devetym/privacy-policy`를 가리키고 **App Store 스토어 메타 라벨과 일치해야 하므로**, ① 도메인 구매 → ② `devetym.com`에 정책 페이지 실제 게시·응답 확인 → ③ `Constants.kt` 교체 → ④ 스토어 라벨 갱신 순으로만 옮긴다. 먼저 상수를 바꾸면 게시된 앱이 죽은 URL을 가리킨다.
   - **⚠️ 오라클 규율(설계서 F6)**: 이 프로젝트가 마일스톤마다 겪은 *"빌드는 되는데 실기동은 깨진다"*의 웹 대응물은 **"빌드는 되는데 색인은 안 된다"**이다. **로컬 빌드 성공은 오라클이 아니다** — 배포된 실 URL 650개 전수 확인 + Search Console 실측이 오라클.
   - **✅ ADR 3건 비준 완료 (2026-08-25 사람)**: [ADR-0009 웹 프레임워크·렌더링 경계](docs/adr/0009-web-framework-rendering.md) · [ADR-0010 웹 AI 폴백 남용 방지 경계](docs/adr/0010-web-abuse-prevention.md) · [ADR-0011 프롬프트 소유권 이전](docs/adr/0011-prompt-ownership-transfer.md) — 셋 다 `Proposed` → **`Accepted`**. ADR-0011은 ADR-0004가 유보해 둔 항목을 해소하며, **착수 시점 = W1a**로 함께 확정(설계서 Q5 종결).
