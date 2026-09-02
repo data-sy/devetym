@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-번들 650 → D1 `entries`·`aliases` 시딩 SQL (W0c §3-4).
+번들 authored 전량 → D1 `entries`·`aliases` 시딩 SQL (W0c §3-4).
 
 **stdout = SQL · stderr = 증명 로그.** 그래서 `> seed.sql`로 받아도 충돌 집계가 눈에 남는다.
 "충돌 0건"은 주장이 아니라 로그로 증명되어야 한다(§3 표 오라클) — 조용한 0은 정의가
@@ -19,7 +19,7 @@
 설계 결정 셋:
 
 1. **authored > generated (§3-5).** `DO NOTHING`이면 검수 안 된 AI판이 정본 자리를 지킨다.
-   실측 실증(09-01): 650에 있는 용어에 generated 행을 심고 시딩하면 `not_dev_term` 오판이
+   실측 실증(09-01): 번들에 있는 용어에 generated 행을 심고 시딩하면 `not_dev_term` 오판이
    살아남아 **검수된 용어를 "개발 용어 아님"으로 응답**한다. 그래서 `DO UPDATE`로 바꾼다.
 
    갱신 조건은 둘뿐이다:
@@ -40,7 +40,7 @@
    정본 교체 경로가 없어 write 계기가 없었기 때문이다. 시딩이 그 첫 계기다.
    남기지 않으면 AI가 만든 것이 무엇이었는지 복구 불가능하게 사라진다.
 
-2. **별칭은 SQL 안에서 entries를 확인한다** — 파이썬은 authored 650만 알고 D1에 이미 있는
+2. **별칭은 SQL 안에서 entries를 확인한다** — 파이썬은 번들 authored만 알고 D1에 이미 있는
    generated 18행을 모른다. `WHERE NOT EXISTS (SELECT 1 FROM entries …)`로 실행 시점에
    걸러야 Worker `insertAliases`(entries-우선)와 같은 규칙이 된다.
 

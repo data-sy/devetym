@@ -479,6 +479,17 @@
     "namingReason": "1998년 에릭 브루어가 ACID와 대비되는 분산 NoSQL 시스템의 특성을 설명하기 위해 명명했다. ACID(산, acid)의 반의어인 BASE(염기, base)를 두문자어로 삼아 두 모델이 일관성·가용성 축에서 서로 반대 방향에 있음을 화학 비유로 표현한다. '기본적으로 살아 있고, 상태는 유동적이며, 언젠가는 일관된다'는 세 속성이 이름 자체에 담겨 있다."
   },
   {
+    "keyword": "bash",
+    "aliases": [
+      "배시",
+      "Bourne Again SHell"
+    ],
+    "category": "기타",
+    "summary": "Unix/Linux 환경의 기본 명령줄 셸 인터프리터",
+    "etymology": "Bourne Again SHell의 약어. Bourne(Unix 셸 개발자 Stephen Bourne의 성), Again(재탄생), Shell(커널을 감싸는 사용자 인터페이스)로 이루어졌다.",
+    "namingReason": "1979년 Stephen Bourne이 만든 Unix 기본 셸(sh)을 계승하려 1989년 Brian Fox가 GNU 프로젝트로 개발했다. 'Bourne Again'은 전작을 다시 태어나게 했다는 뜻이면서 'born again(거듭나다)'과 발음이 같은 의도적 언어유희다. macOS는 Catalina부터 라이선스 문제로 기본 셸을 zsh로 바꿨다."
+  },
+  {
     "keyword": "bcnf",
     "aliases": [
       "BCNF",
@@ -547,6 +558,17 @@
     "summary": "알고리즘의 실행 시간·공간이 입력 크기에 따라 증가하는 상한을 나타내는 표기법",
     "etymology": "독일어 Ordnung(차수)의 머리글자 O를 차용",
     "namingReason": "1894년 수학자 Paul Bachmann이 함수의 '차수(Ordnung)'를 의미하는 독일어의 머리글자로 O를 택한 데서 유래. 이후 Edmund Landau가 수학·CS 전반에 확산"
+  },
+  {
+    "keyword": "bikeshedding",
+    "aliases": [
+      "바이크쉐딩",
+      "파킨슨의 사소함의 법칙"
+    ],
+    "category": "기타",
+    "summary": "사소한 문제에 논의가 집중되는 집단 의사결정 현상",
+    "etymology": "영어 bike shed(자전거 보관소)에 행위 접미사 -ing을 붙인 말. C. Northcote Parkinson이 1957년 저서에서 든 자전거 보관소 비유에서 나왔다.",
+    "namingReason": "Parkinson의 예시에서 원자력 발전소 건설을 논의하는 위원회는 설계의 복잡성에 압도돼 정작 발전소에는 의견을 못 내고, 누구나 아는 자전거 보관소 색깔을 놓고 오래 토론한다. 결론이 눈에 보이는 주제일수록 전문성과 무관하게 말이 길어지는 역설이다. 1999년 FreeBSD 메일링 리스트에서 Poul-Henning Kamp가 이 비유를 개발 현장에 적용했다."
   },
   {
     "keyword": "binary-search",
@@ -1595,6 +1617,17 @@
     "summary": "정확 커버 문제를 푸는 이중 연결 리스트 기법",
     "etymology": "영어 dancing(춤추는)과 link(연결고리)의 합성어. 라틴·그리스 어원이 아니라 자료구조의 동작 모습을 그대로 묘사해 붙인 이름이다.",
     "namingReason": "이중 연결 리스트에서 노드를 뺄 때 좌우 이웃의 포인터만 바꾸고 뺀 노드 자신의 포인터는 남겨 두면, 나중에 그 노드를 같은 자리에 되돌릴 수 있다. 제거와 복원이 반복되며 포인터들이 좌우로 흔들리는 모습이 춤추는 것 같다 하여 붙은 이름이다. Donald Knuth가 2000년 논문에서 정확 커버 문제를 푸는 Algorithm X의 구현 기법으로 소개했다."
+  },
+  {
+    "keyword": "dark-launch",
+    "aliases": [
+      "다크 런치",
+      "dark release"
+    ],
+    "category": "기타",
+    "summary": "사용자에게 감춘 채 기능을 배포하는 기법",
+    "etymology": "영어 dark(어두운 → 보이지 않는)와 launch(출시, 배포)의 합성어. dark는 조명이 꺼져 관객에게 보이지 않는 무대 상태를 은유한다.",
+    "namingReason": "공연에서 dark는 무대 조명이 꺼져 관객이 볼 수 없는 상태를 가리킨다. 이 은유대로 코드는 운영 환경에서 실제로 실행되지만 UI나 접근 경로를 열지 않아 사용자 눈에는 변화가 없다. Facebook이 2008년 채팅 기능을 이렇게 내보내 실트래픽으로 부하를 검증한 사례가 널리 알려졌다."
   },
   {
     "keyword": "data-mapper",
@@ -2694,6 +2727,16 @@
     "namingReason": "IPv6와 IPv4 연결을 동시에 시도해 먼저 성공하는 쪽을 써서 사용자가 지연을 거의 못 느끼게 하는 기법이다. 사용자(eyeballs)를 '행복하게(happy)' 만든다는 익살스러운 작명이다. IETF RFC 6555(2012)에서 공식화되고 RFC 8305으로 갱신되었다."
   },
   {
+    "keyword": "harness",
+    "aliases": [
+      "하네스"
+    ],
+    "category": "기타",
+    "summary": "테스트 실행을 자동화하는 도구·프레임워크 일체",
+    "etymology": "고대 프랑스어 harneis(군장, 마구)에서 온 영어 harness. 말이나 짐승에게 씌워 힘을 특정 방향으로 제어·전달하는 장비를 가리키며, 동사로는 제어하다·이용하다를 뜻한다.",
+    "namingReason": "힘을 통제해 원하는 방향으로 끌어낸다는 원어의 의미가 소프트웨어 테스팅으로 옮겨왔다. 테스트 하네스는 테스트 대상 코드를 실행하고 입력을 주입하며 출력을 검증하는 스캐폴딩(스텁·드라이버·픽스처)을 하나로 묶어 제어한다. 같은 은유가 CI 파이프라인의 실행 계층 이름에도 이어진다."
+  },
+  {
     "keyword": "hash",
     "aliases": [
       "해시"
@@ -2937,6 +2980,17 @@
     "summary": "편집·빌드·디버깅을 하나로 통합한 개발 도구",
     "etymology": "Integrated Development Environment의 약어. Integrated(통합된, 라틴어 integrare '전체로 만들다'에서 유래), Development(개발), Environment(환경, 라틴어 environner '둘러싸다'에서 유래)로 구성된 두문자어.",
     "namingReason": "1970~80년대 개발자들은 텍스트 편집기·컴파일러·디버거·링커를 각각 별도 도구로 실행해야 했다. 이를 하나의 '통합된 환경' 안에 묶어 제공한다는 개념을 명칭에 담아 Integrated Development Environment라 불렀다. Integrated(통합)는 산발적이던 도구들을 하나의 경계 안에 '완전하게 만든다'는 의미를 가지며, 1983년 Borland Turbo Pascal이 초기 IDE 형태를 대중화했다."
+  },
+  {
+    "keyword": "idempotency",
+    "aliases": [
+      "멱등성",
+      "idempotent"
+    ],
+    "category": "네트워크",
+    "summary": "같은 연산을 여러 번 실행해도 결과가 동일한 성질",
+    "etymology": "라틴어 idem(같은)과 potens(힘·능력)를 합친 말. 19세기 수학자 벤저민 피어스가 거듭 적용해도 값이 변하지 않는 대수학 원소를 가리키며 처음 썼다.",
+    "namingReason": "\"같은 힘을 몇 번 가해도 결과가 같다\"는 수학적 의미가 분산 시스템 설계로 옮겨왔다. HTTP 명세(RFC 7231)는 GET·PUT·DELETE를 멱등 메서드로 규정해 네트워크 오류 시 클라이언트가 요청을 안전하게 재시도하도록 보장한다. 결제·메시지 큐에서는 요청마다 멱등 키를 붙여 중복 처리를 막는다."
   },
   {
     "keyword": "identity-map",
@@ -4903,6 +4957,18 @@
     "namingReason": "경제학에서 재화를 만드는 생산자와 그것을 쓰는 소비자의 관계를 컴퓨터 과학에 그대로 차용했다. 에츠허르 데이크스트라(Edsger Dijkstra)가 1960년대 세마포어 개념과 함께 정형화한 동시성 문제로, 데이터를 생성하는 스레드와 소비하는 스레드가 공유 버퍼를 통해 결합도 없이 협력하는 구조를 기술한다. '생산-소비'라는 경제적 은유는 데이터의 흐름과 역할 분리를 직관적으로 전달한다."
   },
   {
+    "keyword": "production",
+    "aliases": [
+      "프로덕션",
+      "운영 환경",
+      "prod"
+    ],
+    "category": "기타",
+    "summary": "실제 사용자가 접근하는 실서비스 운영 환경",
+    "etymology": "라틴어 productio(앞으로 이끌어 내다)에서 유래한 영어 단어. pro-(앞으로)와 ducere(이끌다)의 합성으로, 무언가를 만들어 세상에 내놓는다는 뜻을 가진다.",
+    "namingReason": "제조업에서 production은 상품이 공장을 떠나 소비자에게 전달되는 최종 단계를 가리킨다. 그 의미가 그대로 전이되어 개발(development)·테스트(staging)를 거쳐 사용자에게 내보내진 환경을 뜻하게 됐다. 이 은유 때문에 배포 파이프라인의 마지막 칸 이름도 관례적으로 prod다."
+  },
+  {
     "keyword": "profiling",
     "aliases": [
       "프로파일링",
@@ -4935,6 +5001,16 @@
     "summary": "구조화된 데이터를 이진 형식으로 직렬화하는 Google의 인터페이스 정의 언어 및 포맷",
     "etymology": "Protocol Buffers의 축약어. Protocol은 그리스어 prōtokollon(두루마리 첫 장에 붙인 요약 기록)에서 유래해 '통신 규약'을 뜻하고, Buffer는 라틴어 bufare(완충하다)에서 온 '데이터를 임시 저장하는 공간'을 의미한다.",
     "namingReason": "Google이 내부 RPC 시스템에서 구조화된 데이터를 효율적으로 전송하기 위해 개발하여 2008년 오픈소스로 공개했다. '프로토콜(통신 규약)을 위한 버퍼(데이터 저장소)'라는 이름은 네트워크 경계를 넘기 전 데이터를 규약에 맞게 이진 버퍼에 담는 직렬화 과정을 직접 기술한다. JSON·XML 대비 스키마 강제와 높은 압축률이 특징이며, .proto 파일로 데이터 구조를 정의하는 방식도 '규약을 먼저 기술한다'는 원의미와 연결된다."
+  },
+  {
+    "keyword": "protocol",
+    "aliases": [
+      "프로토콜"
+    ],
+    "category": "네트워크",
+    "summary": "통신 주체 간에 합의된 규칙과 절차의 집합",
+    "etymology": "그리스어 prōtokollon에서 유래. prōtos(첫 번째)와 kolla(풀로 붙이다)의 합성어로, 파피루스 두루마리 맨 앞에 붙이던 목차 쪽지를 가리켰다.",
+    "namingReason": "외교·행정에서 합의된 공식 절차를 뜻하던 말이 컴퓨터 네트워킹으로 옮겨왔다. 두 시스템이 데이터를 주고받으려면 메시지 형식·순서·오류 처리를 미리 합의해야 하는데, 그 구조가 외교 의전의 문서화된 규약과 같다. Swift는 인터페이스 규약을 선언하는 키워드로 이 단어를 가져다 썼다."
   },
   {
     "keyword": "prototype",
@@ -5699,6 +5775,16 @@
     "namingReason": "'필요한 서비스(service)의 위치를 찾아(locator) 반환한다'는 어원이 패턴의 동작과 일치한다. 객체가 의존 대상을 직접 생성하지 않고 중앙 레지스트리(로케이터)에 이름을 제시하면 해당 구현체를 돌려받는 구조다. DI와 같이 IoC를 구현하는 방법이지만, 객체가 능동적으로 로케이터를 호출한다는 점에서 의존성이 코드 내부에 드러난다. Martin Fowler는 2004년 글에서 이 패턴을 DI와 대비하며, 테스트 어려움과 숨겨진 의존성을 단점으로 지적했다."
   },
   {
+    "keyword": "service-mesh",
+    "aliases": [
+      "서비스 메시"
+    ],
+    "category": "네트워크",
+    "summary": "마이크로서비스 간 통신을 제어·관찰하는 계층",
+    "etymology": "영어 service(기능 단위)와 mesh(그물, 격자)의 합성어. mesh는 고대 영어 max·mæscre(그물코)에서 유래해 실이 얽혀 그물 구조를 이루는 형태를 뜻한다.",
+    "namingReason": "수십~수백 개 서비스가 서로 통신하는 구조가 실이 촘촘히 얽힌 그물과 닮았다는 데서 온 이름이다. 각 서비스 옆에 사이드카 프록시를 붙여 라우팅·장애 차단·암호화·관측을 애플리케이션 코드 밖에서 처리한다. 2016년 Buoyant가 Linkerd를 내놓으며 이 명칭을 처음 썼고 Istio가 뒤를 이었다."
+  },
+  {
     "keyword": "session",
     "aliases": [
       "세션",
@@ -5751,6 +5837,16 @@
     "summary": "DB를 여러 조각으로 나눠 분산 저장하는 기법",
     "etymology": "영어 shard는 '깨진 조각, 파편'을 뜻하며 고대 영어 sceard(잘린 조각)에서 유래한다. 여기에 진행을 뜻하는 접미사 -ing이 붙어 '조각내기'라는 동작 명사가 되었다.",
     "namingReason": "하나의 큰 데이터베이스를 여러 작은 '조각(shard)'으로 쪼개 서로 다른 서버에 분산 저장함으로써, 단일 서버의 용량·처리 한계를 넘어서는 수평 확장을 노린다. 깨진 도자기 파편처럼 전체를 여러 단편으로 나눈다는 어원이 쓰임에 반영된 이름이다. 이 용어가 1997년 온라인 게임 Ultima Online의 분산 서버 'shard' 개념에서 영향을 받았다는 일화가 전한다."
+  },
+  {
+    "keyword": "shedlock",
+    "aliases": [
+      "셰드락"
+    ],
+    "category": "동시성",
+    "summary": "스케줄 작업의 중복 실행을 막는 분산 락",
+    "etymology": "영어 Scheduled의 앞 음절을 딴 Shed와 Lock(잠금)을 결합한 합성어. 스케줄된 작업에 잠금을 건다는 동작을 이름 두 마디로 압축했다.",
+    "namingReason": "이름 그대로 스케줄된 작업에 잠금을 건다. 애플리케이션이 여러 인스턴스로 배포되면 같은 시각에 예약된 작업이 인스턴스마다 실행돼 중복 처리가 생기는데, ShedLock은 DB나 Redis 같은 공유 저장소에 락 레코드를 써서 한 노드만 그 작업을 수행하게 한다. Spring의 @Scheduled 위에 애너테이션으로 얹히며 Maven 좌표는 net.javacrumbs.shedlock이다."
   },
   {
     "keyword": "shell",
@@ -6078,6 +6174,16 @@
     "summary": "악의적인 SQL 구문을 입력값에 삽입해 DB를 조작하는 공격",
     "etymology": "SQL(Structured Query Language의 약어)과 Injection(주입, 라틴어 iniectio에서 유래, in-은 '안으로', iacere는 '던지다'를 뜻함)의 합성어. 'SQL 안으로 던져 넣는다'는 구조적 의미를 가진다.",
     "namingReason": "사용자 입력값이 SQL 쿼리 문자열에 직접 포함될 때, 공격자가 SQL 문법을 '주입'하여 원래 쿼리의 의도를 변형하거나 DB를 무단으로 조작하는 공격이다. Injection이라는 단어는 외부 물질을 내부로 강제로 밀어 넣는 의료·화학적 행위에서 온 은유로, 신뢰된 코드 흐름 안에 이물질(악성 구문)을 끼워 넣는 공격 방식을 정확히 묘사한다. 1998년 Phrack 매거진에서 최초로 체계적으로 기술되었으며, OWASP Top 10의 최상위권 취약점으로 꾸준히 분류된다."
+  },
+  {
+    "keyword": "squash",
+    "aliases": [
+      "스쿼시"
+    ],
+    "category": "기타",
+    "summary": "여러 커밋을 하나의 커밋으로 합치는 작업",
+    "etymology": "고대 프랑스어 esquasser(부수다, 짓누르다)를 거쳐 온 영어 squash. 라틴어 ex-(완전히)와 quassare(흔들어 부수다)로 이루어져 납작하게 눌러 압축한다는 뜻이다.",
+    "namingReason": "여러 커밋을 납작하게 눌러 하나로 만드는 모습이 원어의 짓눌러 압축한다는 물리적 이미지와 맞아떨어진다. Git의 interactive rebase나 병합 전략(--squash)에서 WIP·오탈자 커밋을 정리해 이력을 의미 있는 단위로 줄일 때 쓴다. GitHub는 이를 Squash and merge라는 병합 버튼으로 제공한다."
   },
   {
     "keyword": "sre",

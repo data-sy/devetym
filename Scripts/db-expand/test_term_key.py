@@ -5,7 +5,7 @@
 두 겹으로 지킨다:
   1. 케이스 테이블 — devetym `NormalizeKeywordTest.kt` · devetym-proxy `test/term-key.test.js`와
      같은 케이스를 미러링한다. **하나를 고치면 넷을 다 고쳐야 한다.**
-  2. 교차 실행 — 실 번들 650의 keyword·aliases 전량 + 유니코드 경계 문자를 파이썬 구현과
+  2. 교차 실행 — 실 번들의 keyword·aliases 전량 + 유니코드 경계 문자를 파이썬 구현과
      **JS 구현 둘 다에 실제로 통과시켜** 키를 바이트 비교한다. 미러링한 표가 서로 어긋나는
      것까지 잡는다. (Kotlin은 자기 테스트가 같은 표를 들고 있고, 이 파일은 JS↔Python 축을 맡는다.)
 

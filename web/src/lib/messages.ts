@@ -72,5 +72,5 @@ export const LIMIT_SCREEN: Record<LimitScope, LimitScreen> = {
 
 export const APP_STORE_URL = "https://apps.apple.com/app/id6748814301";
 
-/** 이미 있는 650장은 한도와 무관하다 — 한도 화면에서 이 사실을 알려 준다. */
-export const LIMIT_FOOTNOTE = "이미 정리된 650개 용어는 한도 없이 계속 볼 수 있어요.";
+/** 이미 있는 660장은 한도와 무관하다 — 한도 화면에서 이 사실을 알려 준다. */
+export const LIMIT_FOOTNOTE = "이미 정리된 660개 용어는 한도 없이 계속 볼 수 있어요.";

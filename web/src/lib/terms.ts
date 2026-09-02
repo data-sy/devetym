@@ -68,7 +68,7 @@ export const ALL_TERMS: IndexedTerm[] = terms.map((t) => ({
   primaryKoreanAlias: pickKoreanAlias(t.aliases),
 }));
 
-/** slug → 용어. 650개, 충돌 0(실측). */
+/** slug → 용어. 660개, 충돌 0(실측). */
 export const BY_SLUG: ReadonlyMap<Slug, IndexedTerm> = new Map(
   ALL_TERMS.map((t) => [t.slug, t]),
 );
@@ -123,15 +123,15 @@ export function bodyLength(t: Term): number {
 // ── 빌드 시 단언 ──────────────────────────────────────────────────────────────
 //
 // ⚠️ **성공 디코드로는 안 잡히는 것들이다.** INV-A: `aliases` 키 이름이 다르거나 생략되면
-//    예외 없이 빈 배열로 떨어진다(설계서 §3-1.5). 그러면 빌드는 성공하고 650장이 나가지만
+//    예외 없이 빈 배열로 떨어진다(설계서 §3-1.5). 그러면 빌드는 성공하고 전량이 나가지만
 //    한글 별칭이 전부 사라진 채로 나간다 — 이 트랙의 핵심 자산이 조용히 증발한다.
-//    그래서 "깨지는 검사"로 둔다. 값은 W0c 실측 확정값이다.
+//    그래서 "깨지는 검사"로 둔다. 엔트리 수는 승격(W1c)마다 갱신되는 확정값이다.
 
 function assertBundle(): void {
   const problems: string[] = [];
 
-  if (ALL_TERMS.length !== 650) {
-    problems.push(`엔트리 650이 아니다: ${ALL_TERMS.length}`);
+  if (ALL_TERMS.length !== 660) {
+    problems.push(`엔트리 660이 아니다: ${ALL_TERMS.length}`);
   }
   if (BY_SLUG.size !== ALL_TERMS.length) {
     problems.push(`slug 충돌: ${ALL_TERMS.length}개 중 고유 ${BY_SLUG.size}개`);

@@ -5,10 +5,10 @@
 §7이 확정한 수를 **여기서 잠근다.** 이 숫자들은 §3-1 정규화 정의의 직접적 귀결이라,
 정의가 어디선가 안 쓰이면 조용히 달라진다 — 그리고 조용한 변화는 D1에 붓기 전엔 안 보인다.
 
-    entries 650 · PK 충돌 0 · aliases 1,292 · 엔트리간 충돌 3 · 자기접힘 1
+    entries 660 · PK 충돌 0 · aliases 1,308 · 엔트리간 충돌 3 · 자기접힘 1
 
 특히 **PK 충돌 0**은 "행이 사라지지 않는다"와 같은 말이다. 1이라도 생기면 시딩이
-650행을 넣었다고 보고하면서 실제로는 649행만 넣는다.
+660행을 넣었다고 보고하면서 실제로는 659행만 넣는다.
 
 실행:
     python3 Scripts/db-expand/test_seed_d1.py
@@ -32,8 +32,8 @@ MIGRATIONS = Path.home() / "devetym-proxy/migrations/cache"
 
 # §7 확정값 — 바꾸려면 실측 근거와 함께 SSOT §7도 같이 고쳐야 한다.
 EXPECTED = {
-    "entries": 650,
-    "aliases": 1292,
+    "entries": 660,
+    "aliases": 1308,
     "pk_collisions": 0,
     "cross_entry": 3,
     "self_fold": 1,
@@ -65,7 +65,7 @@ def test_conflict_rule_on_real_sqlite(entries, sql) -> None:
     for m in sorted(MIGRATIONS.glob("*.sql")):
         db.executescript(m.read_text(encoding="utf-8"))
 
-    # 650과 term_key가 겹치는 generated 행 3종을 심는다 — 세 분기를 다 덮는다
+    # 번들과 term_key가 겹치는 generated 행 3종을 심는다 — 세 분기를 다 덮는다
     planted = [
         ("aatree", "term_entry", '{"summary":"AI판"}', 42),
         ("abaproblem", "not_dev_term", "{}", 7),
@@ -112,7 +112,7 @@ def test_conflict_rule_on_real_sqlite(entries, sql) -> None:
         f"보존된 본의 태그가 원본이 아니다: {archived}",
     )
 
-    # 재실행 멱등 — 여기가 깨지면 entry_versions가 실행할 때마다 650씩 자란다
+    # 재실행 멱등 — 여기가 깨지면 entry_versions가 실행할 때마다 번들 크기만큼 자란다
     run()
     check(
         db.execute("SELECT COUNT(*) FROM entry_versions").fetchone()[0] == n_versions,

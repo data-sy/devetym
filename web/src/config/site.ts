@@ -52,5 +52,5 @@ function stripTrailingSlash(u: string): string {
 
 export const SITE_NAME = "DevEtym";
 export const SITE_DESCRIPTION =
-  "개발 용어의 어원을 찾아봅니다. 650개 큐레이션 용어와 AI 어원 설명.";
+  "개발 용어의 어원을 찾아봅니다. 660개 큐레이션 용어와 AI 어원 설명.";
 export const SITE_LOCALE = "ko_KR";
