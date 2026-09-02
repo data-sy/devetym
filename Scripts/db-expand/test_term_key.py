@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """
-`normalize_term_key` 케이스 테이블 + **세 지점 동치의 실행 오라클** (W0c §3-1).
+`normalize_term_key` 케이스 테이블 + **네 지점 동치의 실행 오라클** (W0c §3-1 · W1b 확장).
 
 두 겹으로 지킨다:
   1. 케이스 테이블 — devetym `NormalizeKeywordTest.kt` · devetym-proxy `test/term-key.test.js`와
-     같은 케이스를 미러링한다. **하나를 고치면 셋을 다 고쳐야 한다.**
+     같은 케이스를 미러링한다. **하나를 고치면 넷을 다 고쳐야 한다.**
   2. 교차 실행 — 실 번들 650의 keyword·aliases 전량 + 유니코드 경계 문자를 파이썬 구현과
-     **JS 구현에 실제로 통과시켜** 키를 바이트 비교한다. 미러링한 표가 서로 어긋나는 것까지 잡는다.
-     (Kotlin은 자기 테스트가 같은 표를 들고 있고, 이 파일은 JS↔Python 축을 맡는다.)
+     **JS 구현 둘 다에 실제로 통과시켜** 키를 바이트 비교한다. 미러링한 표가 서로 어긋나는
+     것까지 잡는다. (Kotlin은 자기 테스트가 같은 표를 들고 있고, 이 파일은 JS↔Python 축을 맡는다.)
+
+W1b에서 **네 번째 지점(웹 `web/src/lib/term-key.ts`)이 생겼다.** repo가 갈라져 있어 import로
+공유할 수 없어 이식본을 뒀고, 그 대가를 여기서 갚는다 — 웹 이식본도 같은 입력으로 교차 실행한다.
+웹 파일이 사라지거나 경로가 바뀌면 이 테스트가 깨진다(의도된 결합).
 
 실행:
     python3 Scripts/db-expand/test_term_key.py
@@ -28,6 +32,7 @@ from term_key import normalize_term_key as f  # noqa: E402
 REPO = Path(__file__).resolve().parents[2]
 BUNDLE = REPO / "shared/src/commonMain/composeResources/files/terms.json"
 PROXY_SRC = Path.home() / "devetym-proxy/src/index.js"
+WEB_SRC = REPO / "web/src/lib/term-key.ts"
 
 # Kotlin Char.isWhitespace()가 자르는 / 자르지 않는 집합 (NormalizeKeywordTest 정본)
 TRIMMED = (
@@ -79,56 +84,90 @@ def test_case_table() -> None:
     eq("", f("   "), "공백만")
 
 
-def test_cross_impl_js() -> None:
-    """실 번들 전량 + 경계 문자를 JS 구현에 통과시켜 파이썬 결과와 바이트 비교."""
-    if not PROXY_SRC.exists():
-        print(f"  SKIP 교차 실행 — {PROXY_SRC} 없음")
-        return
-    if shutil.which("node") is None:
-        print("  SKIP 교차 실행 — node 없음")
-        return
+def _node_major() -> int:
+    """node 메이저 버전. 실패하면 0."""
+    try:
+        out = subprocess.run(["node", "-v"], capture_output=True, text=True, check=True).stdout
+        return int(out.strip().lstrip("v").split(".")[0])
+    except Exception:
+        return 0
 
+
+def _cross_inputs() -> list[str]:
+    """실 번들 전량 + 사용자가 칠 법한 표기 변이 + 유니코드 경계 문자."""
     inputs: list[str] = []
     if BUNDLE.exists():
         for e in json.loads(BUNDLE.read_text(encoding="utf-8")):
             inputs.append(e["keyword"])
             inputs.extend(e.get("aliases", []))
-            # 사용자가 칠 법한 표기 변이도 같이 태운다
             inputs.append(e["keyword"].replace("-", " ").replace("_", " "))
             inputs.append(e["keyword"].replace("-", "").replace("_", ""))
     for cp in TRIMMED + NOT_TRIMMED:
         inputs.append(pad(cp, "Go"))
         inputs.append(f"Go{chr(cp)}Lang")
+    return inputs
 
+
+def _run_js(src: Path, inputs: list[str], node_flags: list[str]) -> list[str] | str:
+    """`src`의 normalizeTermKey에 inputs를 통과시킨 결과. 실패하면 에러 문자열."""
     with tempfile.TemporaryDirectory() as d:
         inp = Path(d) / "in.json"
         script = Path(d) / "run.mjs"
         inp.write_text(json.dumps(inputs), encoding="utf-8")
         script.write_text(
             f'import {{ readFileSync }} from "node:fs";\n'
-            f'import {{ normalizeTermKey }} from "{PROXY_SRC}";\n'
+            f'import {{ normalizeTermKey }} from "{src}";\n'
             f'const xs = JSON.parse(readFileSync("{inp}", "utf8"));\n'
             f"process.stdout.write(JSON.stringify(xs.map(normalizeTermKey)));\n",
             encoding="utf-8",
         )
         proc = subprocess.run(
-            ["node", str(script)], capture_output=True, text=True, check=False
+            ["node", *node_flags, str(script)], capture_output=True, text=True, check=False
         )
         if proc.returncode != 0:
-            failures.append(f"JS 실행 실패: {proc.stderr.strip()[:400]}")
-            return
-        js_keys = json.loads(proc.stdout)
+            return f"실행 실패: {proc.stderr.strip()[:400]}"
+        return json.loads(proc.stdout)
 
-    mismatches = [
-        (x, p, j)
-        for x, j in zip(inputs, js_keys)
-        if (p := f(x)) != j
+
+def test_cross_impl_js() -> None:
+    """실 번들 전량 + 경계 문자를 **JS 구현 둘 다**에 통과시켜 파이썬 결과와 바이트 비교."""
+    if shutil.which("node") is None:
+        print("  SKIP 교차 실행 — node 없음")
+        return
+
+    inputs = _cross_inputs()
+    py_keys = [f(x) for x in inputs]
+
+    # ⚠️ 웹 이식본은 TypeScript다. node 22.6+의 타입 스트리핑으로 그대로 실행한다
+    #    (22.18+는 기본 활성이라 플래그가 무해한 no-op). 프록시 쪽은 순수 .js라 플래그 불필요.
+    major = _node_major()
+    targets: list[tuple[str, Path, list[str]]] = [
+        ("프록시", PROXY_SRC, []),
+        ("웹", WEB_SRC, ["--experimental-strip-types"]),
     ]
-    for x, p, j in mismatches[:10]:
-        failures.append(f"JS↔Python 불일치 {x!r}: py={p!r} js={j!r}")
-    if len(mismatches) > 10:
-        failures.append(f"... 외 {len(mismatches) - 10}건 불일치")
-    print(f"  교차 실행 {len(inputs)}건 · 불일치 {len(mismatches)}건")
+
+    for label, src, flags in targets:
+        if not src.exists():
+            failures.append(f"{label} 구현이 없다: {src}")
+            continue
+        if flags and major < 22:
+            # 조용히 넘기지 않는다 — 왜 안 돌았는지가 출력에 남아야 한다.
+            print(f"  SKIP {label} 교차 실행 — node v{major} (타입 스트리핑은 22+ 필요)")
+            continue
+
+        result = _run_js(src, inputs, flags)
+        if isinstance(result, str):
+            failures.append(f"{label} JS {result}")
+            continue
+
+        mismatches = [
+            (x, p, j) for x, p, j in zip(inputs, py_keys, result) if p != j
+        ]
+        for x, p, j in mismatches[:10]:
+            failures.append(f"{label} JS↔Python 불일치 {x!r}: py={p!r} js={j!r}")
+        if len(mismatches) > 10:
+            failures.append(f"... 외 {len(mismatches) - 10}건 불일치")
+        print(f"  교차 실행({label}) {len(inputs)}건 · 불일치 {len(mismatches)}건")
 
 
 def main() -> int:

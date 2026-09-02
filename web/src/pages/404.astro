@@ -1,0 +1,16 @@
+---
+/**
+ * 일반 404.
+ *
+ * ⚠️ 용어 URL(`/term/<key>`)은 **여기 오지 않는다** — `term/[...rest].astro`가 먼저 받는다.
+ *    그 라우트를 따로 둔 이유는 실측 때문이다: 404 라우트에서는 `Astro.response.status = 200`이
+ *    먹지 않아, D1에 있는 용어를 서빙해도 응답이 404로 나간다(2026-09-02).
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import NotFound from "../components/NotFound.astro";
+
+export const prerender = false;
+---
+<BaseLayout title="찾는 페이지가 없어요" path={Astro.url.pathname} noindex>
+  <NotFound />
+</BaseLayout>

@@ -1,0 +1,114 @@
+---
+/**
+ * 용어 상세 650장 — **이 트랙이 존재하는 이유**(ADR-0013 Decision 1: SSG).
+ *
+ * 완료 오라클은 로컬 빌드 성공이 아니라 **배포된 실 URL 650개 전수 200**이다
+ * (설계서 F6: 이 프로젝트의 "빌드는 되는데 실기동은 깨진다"의 웹 대응물 = "빌드는 되는데
+ * 색인은 안 된다").
+ *
+ * ⚠️ 이 라우트는 prerender다. D1에만 있는 미승격 생성분은 여기 없고 **404 SSR 폴백**이
+ *    받는다(`src/pages/404.astro`). 폴백은 **조회 전용**이며 생성을 트리거하지 않는다 —
+ *    ADR-0013 Decision 2, 기각안 3. 여기서 "없으면 만들면 되지 않나"로 되돌아가면
+ *    Googlebot 한 번의 크롤로 웹 전역 캡이 소진된다(T6).
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import TermArticle from "../../components/TermArticle.astro";
+import TermJsonLd from "../../components/TermJsonLd.astro";
+import { ALL_TERMS, relatedTerms, type IndexedTerm } from "../../lib/terms";
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return ALL_TERMS.map((term) => ({ params: { slug: term.slug }, props: { term } }));
+}
+
+interface Props {
+  term: IndexedTerm;
+}
+
+const { term } = Astro.props;
+const path = `/term/${term.slug}`;
+const related = relatedTerms(term);
+
+/**
+ * ⚠️ **title이 이 트랙의 핵심 자산이 실제로 값을 내는 지점이다.** 한글 별칭이 앞에 오고
+ *    영문 표제어가 괄호로 따라온다 — 설계서 §5-1의 `뮤텍스(mutex) — 왜 이렇게 부르는가`.
+ *    영문을 빼면 영어 질의를, 한글을 빼면 한국어 질의를 잃는다.
+ */
+const headword = term.primaryKoreanAlias
+  ? `${term.primaryKoreanAlias}(${term.keyword})`
+  : term.keyword;
+const title = `${headword} — 왜 이렇게 부르는가`;
+
+/** meta description: 요약이 짧으면 어원 앞부분을 이어 붙여 스니펫을 채운다. */
+const description =
+  term.summary.length >= 70
+    ? term.summary
+    : `${term.summary} — ${term.etymology}`.slice(0, 155);
+---
+<BaseLayout title={title} description={description} path={path}>
+  <TermJsonLd term={term} path={path} />
+  <main>
+    <TermArticle term={term} koreanAlias={term.primaryKoreanAlias}>
+      {/*
+        관련 용어는 장식이 아니라 **얇은 콘텐츠 대응**이다(설계서 §5-2).
+        317개(48.8%)가 300자 미만이라, 본문을 새로 쓰지 않고 페이지의 실질과
+        내부 링크 밀도를 올리는 유일한 수단이다.
+      */}
+      <nav class="related" aria-labelledby="h-rel">
+        <h2 id="h-rel">같은 갈래의 용어</h2>
+        <ul>
+          {related.map((r) => (
+            <li>
+              <a href={`/term/${r.slug}`}>
+                <span class="r-name">{r.primaryKoreanAlias ?? r.keyword}</span>
+                <span class="r-key">{r.keyword}</span>
+                <span class="r-sum">{r.summary}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <p class="ask">
+        찾는 용어가 없나요? <a href="/search">검색하거나 AI에게 물어보세요</a>.
+      </p>
+    </TermArticle>
+  </main>
+</BaseLayout>
+
+<style>
+  .related h2 {
+    font-size: var(--t-section-header-size);
+    font-weight: var(--t-section-header-weight);
+    letter-spacing: var(--t-section-header-tracking);
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+    margin: 0 0 var(--d-label-gap);
+  }
+  .related ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--d-label-gap); }
+  .related a {
+    display: grid;
+    gap: 0.15rem;
+    text-decoration: none;
+    background: var(--c-surface);
+    border: var(--d-stroke-border) solid var(--c-border);
+    border-radius: var(--d-radius-card);
+    padding: var(--d-row-vpad) var(--d-card-padding);
+  }
+  .related a:hover { border-color: var(--c-accent); }
+  .r-name { color: var(--c-text); font-size: var(--t-body-emphasis-size); font-weight: var(--t-body-emphasis-weight); }
+  .r-key {
+    font-family: var(--font-code);
+    font-size: var(--t-code-chip-size);
+    font-weight: var(--t-code-chip-weight);
+    color: var(--c-accent);
+  }
+  .r-sum { color: var(--c-text-muted); font-size: var(--t-caption-size); letter-spacing: var(--t-caption-tracking); }
+
+  .ask {
+    margin: var(--d-section-gap) 0 0;
+    font-size: var(--t-label-size);
+    color: var(--c-text-muted);
+  }
+</style>

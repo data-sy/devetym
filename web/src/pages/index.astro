@@ -1,102 +1,170 @@
 ---
 /**
- * W0a 착지 페이지. 여기서 확인하는 것은 콘텐츠가 아니라 **기반**이다:
- * 배포가 되는가 · 토큰이 앱과 같은 값인가 · 폰트가 뜨는가 · SITE_URL이 한 지점인가.
- * 실제 홈(검색)은 W1b에서 이 자리를 대체한다.
+ * 홈 — 검색이 첫 화면이다 (W1b가 W0a 착지 페이지를 대체).
+ *
+ * ⚠️ **JS 없이 성립해야 한다.** 검색 폼은 GET 제출이라 자바스크립트가 꺼져 있어도
+ *    `/search?q=`로 넘어간다. 홈은 650장으로 들어가는 입구이자 색인 대상이므로
+ *    **클라이언트 JS 0바이트**를 유지한다(ADR-0009 Positive).
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { SITE_NAME, SITE_URL, IS_CANONICAL_HOST } from "../config/site";
+import { SITE_NAME, SITE_URL, absoluteUrl } from "../config/site";
+import { ALL_TERMS, CATEGORIES, bodyLength } from "../lib/terms";
+import { APP_STORE_URL } from "../lib/messages";
 
 export const prerender = true;
+
+const counts = CATEGORIES.map((c) => ({
+  name: c,
+  n: ALL_TERMS.filter((t) => t.category === c).length,
+}));
+
+/**
+ * 홈에 거는 맛보기.
+ *
+ * ⚠️ **무작위가 아니라 결정적**이어야 한다 — 빌드마다 바뀌면 크롤러가 매번 다른 페이지를 보고
+ *    diff도 무의미해진다. 갈래마다 **본문이 가장 두꺼운 것**을 집는다. 사전순으로 집으면 A로
+ *    시작하는 것만 모여(ABA·AA 트리·ALPN·ACID) 사이트가 뭘 하는 곳인지 안 드러난다.
+ *    두꺼운 페이지는 얇은 콘텐츠 317개와 대비되는 이 사이트의 최선을 보여준다.
+ */
+const featured = CATEGORIES.map((c) =>
+  ALL_TERMS.filter((t) => t.category === c && t.primaryKoreanAlias).sort(
+    (a, b) => bodyLength(b) - bodyLength(a) || a.slug.localeCompare(b.slug),
+  )[0],
+).filter(Boolean);
+
+/** 사이트 전역 구조화 데이터 — 검색창을 검색엔진에 알린다. */
+const siteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE_NAME,
+  url: SITE_URL,
+  inLanguage: "ko",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: { "@type": "EntryPoint", urlTemplate: `${absoluteUrl("/search")}?q={search_term_string}` },
+    "query-input": "required name=search_term_string",
+  },
+};
 ---
 <BaseLayout title={SITE_NAME} path="/">
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(siteJsonLd)} />
   <main>
     <p class="eyebrow">DEVETYM</p>
     <h1>개발 용어의 <em>어원</em></h1>
     <p class="lede">
-      650개 큐레이션 용어와 AI 어원 설명. 웹 표면을 짓는 중입니다.
+      왜 뮤텍스는 뮤텍스인가. {ALL_TERMS.length}개 용어의 이름이 어디서 왔는지 정리했고,
+      없는 용어는 AI가 찾아 줍니다.
     </p>
 
-    <section class="status" aria-labelledby="s">
-      <h2 id="s">W0a · 기반</h2>
-      <dl>
-        <dt>SITE_URL</dt>
-        <dd><code>{SITE_URL}</code>{!IS_CANONICAL_HOST && <span class="badge">임시 · noindex</span>}</dd>
-        <dt>토큰</dt>
-        <dd><code>AppColors · AppDimens · AppTypography</code>에서 빌드마다 추출</dd>
-        <dt>폰트</dt>
-        <dd><span class="serif">DM Serif Display</span> · <code>DM Mono</code> · 본문 시스템 폰트</dd>
-      </dl>
+    <form role="search" action="/search" method="get" autocomplete="off">
+      <label class="sr-only" for="q">개발 용어 검색</label>
+      <input
+        id="q" name="q" type="search" inputmode="search"
+        placeholder="mutex, 뮤텍스, 낙관적 잠금…"
+        spellcheck="false" autocapitalize="off"
+      />
+      <button type="submit">검색</button>
+    </form>
+    <p class="hint">표제어와 한글 별칭을 함께 찾습니다.</p>
+
+    <section aria-labelledby="h-cat">
+      <h2 id="h-cat">갈래</h2>
+      <ul class="cats">
+        {counts.map((c) => (
+          <li><a href={`/terms#${encodeURIComponent(c.name)}`}>
+            <span class="c-name">{c.name}</span><span class="c-n">{c.n}</span>
+          </a></li>
+        ))}
+      </ul>
+    </section>
+
+    <section aria-labelledby="h-feat">
+      <h2 id="h-feat">이런 것들이 있어요</h2>
+      <ul class="feat">
+        {featured.map((t) => (
+          <li><a href={`/term/${t.slug}`}>
+            <span class="f-name">{t.primaryKoreanAlias}</span>
+            <span class="f-key">{t.keyword}</span>
+            <span class="f-sum">{t.summary}</span>
+          </a></li>
+        ))}
+      </ul>
+      <p class="more"><a href="/terms">용어 {ALL_TERMS.length}개 전체 보기 →</a></p>
     </section>
 
     <p class="app">
-      지금 바로 쓰려면 <a href="https://apps.apple.com/app/id6748814301">iOS 앱</a>에서.
+      휴대폰에서 쓰려면 <a href={APP_STORE_URL}>iOS 앱</a>이 있습니다.
     </p>
   </main>
 </BaseLayout>
 
 <style>
-  main {
-    max-width: 40rem;
-    margin: 0 auto;
-    padding: calc(var(--d-section-gap) * 2) var(--d-screen-padding);
-  }
+  main { max-width: 44rem; margin: 0 auto; padding: calc(var(--d-section-gap) * 1.5) var(--d-screen-padding) calc(var(--d-section-gap) * 2); }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
   .eyebrow {
-    font-family: var(--font-code);
-    font-size: var(--t-badge-size);
-    font-weight: var(--t-badge-weight);
-    letter-spacing: var(--t-badge-tracking);
-    color: var(--c-accent);
-    margin: 0 0 var(--d-label-gap);
+    font-family: var(--font-code); font-size: var(--t-badge-size);
+    font-weight: var(--t-badge-weight); letter-spacing: var(--t-badge-tracking);
+    color: var(--c-accent); margin: 0 0 var(--d-label-gap);
   }
   h1 {
-    font-family: var(--font-serif);
-    font-size: var(--t-title-hero-size);
-    font-weight: var(--t-title-hero-weight);
-    letter-spacing: var(--t-title-hero-tracking);
-    line-height: 1.25;
-    margin: 0 0 var(--d-label-gap);
+    font-family: var(--font-serif); font-size: var(--t-title-hero-size);
+    font-weight: var(--t-title-hero-weight); letter-spacing: var(--t-title-hero-tracking);
+    line-height: 1.2; margin: 0 0 var(--d-label-gap);
   }
   h1 em { color: var(--c-accent); font-style: italic; }
   .lede {
-    font-size: var(--t-body-large-size);
-    letter-spacing: var(--t-body-large-tracking);
-    color: var(--c-text-dim);
-    margin: 0 0 var(--d-section-gap);
+    font-size: var(--t-body-large-size); letter-spacing: var(--t-body-large-tracking);
+    color: var(--c-text-dim); margin: 0 0 var(--d-section-gap);
   }
-  .status {
-    background: var(--c-surface);
-    border: var(--d-stroke-border) solid var(--c-border);
-    border-radius: var(--d-radius-card);
-    padding: var(--d-card-padding);
+
+  form { display: flex; gap: var(--d-label-gap); }
+  input {
+    flex: 1; min-width: 0;
+    font-family: var(--font-body); font-size: var(--t-code-input-size);
+    color: var(--c-text); background: var(--c-surface);
+    border: var(--d-stroke-field) solid var(--c-border);
+    border-radius: var(--d-radius-action);
+    padding: var(--d-row-vpad) var(--d-card-padding);
   }
-  .status h2 {
-    font-size: var(--t-section-header-size);
-    font-weight: var(--t-section-header-weight);
-    letter-spacing: var(--t-section-header-tracking);
-    color: var(--c-text-muted);
-    margin: 0 0 var(--d-label-gap);
-    text-transform: uppercase;
+  input:focus { border-color: var(--c-accent); }
+  button {
+    font-family: var(--font-code); font-size: var(--t-code-action-size); font-weight: var(--t-code-action-weight);
+    color: var(--c-bg); background: var(--c-accent);
+    border: 0; border-radius: var(--d-radius-action);
+    padding: var(--d-row-vpad) var(--d-card-padding); cursor: pointer;
   }
-  dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: var(--d-label-gap) var(--d-card-padding); }
-  dt { font-size: var(--t-label-size); color: var(--c-text-muted); }
-  dd { margin: 0; font-size: var(--t-label-size); color: var(--c-text-dim); }
-  code {
-    font-family: var(--font-code);
-    font-size: var(--t-code-value-size);
-    letter-spacing: var(--t-code-value-tracking);
-    color: var(--c-accent-2);
-    background: var(--c-surface-2);
-    border-radius: var(--d-radius-badge);
-    padding: 0.1em 0.4em;
+  .hint { color: var(--c-text-muted); font-size: var(--t-caption-size); letter-spacing: var(--t-caption-tracking); margin: var(--d-label-gap) 0 0; }
+
+  section { margin: calc(var(--d-section-gap) * 1.5) 0 0; }
+  h2 {
+    font-size: var(--t-section-header-size); font-weight: var(--t-section-header-weight);
+    letter-spacing: var(--t-section-header-tracking); text-transform: uppercase;
+    color: var(--c-text-muted); margin: 0 0 var(--d-label-gap);
   }
-  .serif { font-family: var(--font-serif); color: var(--c-text); }
-  .badge {
-    font-family: var(--font-code);
-    font-size: var(--t-badge-size);
-    letter-spacing: var(--t-badge-tracking);
-    color: var(--c-accent-ai);
-    margin-left: 0.5em;
+
+  .cats { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--d-label-gap); }
+  .cats a {
+    display: inline-flex; align-items: baseline; gap: 0.4em; text-decoration: none;
+    background: var(--c-surface); border: var(--d-stroke-border) solid var(--c-border);
+    border-radius: var(--d-radius-badge); padding: 0.3em 0.8em;
   }
-  .app { margin: var(--d-section-gap) 0 0; font-size: var(--t-label-size); color: var(--c-text-muted); }
+  .cats a:hover { border-color: var(--c-accent); }
+  .c-name { color: var(--c-text); font-size: var(--t-label-size); }
+  .c-n { font-family: var(--font-code); font-size: var(--t-code-chip-size); color: var(--c-text-muted); }
+
+  .feat { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--d-label-gap); }
+  .feat a {
+    display: grid; gap: 0.15rem; text-decoration: none;
+    background: var(--c-surface); border: var(--d-stroke-border) solid var(--c-border);
+    border-radius: var(--d-radius-card); padding: var(--d-row-vpad) var(--d-card-padding);
+  }
+  .feat a:hover { border-color: var(--c-accent); }
+  .f-name { color: var(--c-text); font-size: var(--t-body-emphasis-size); font-weight: var(--t-body-emphasis-weight); }
+  .f-key { font-family: var(--font-code); font-size: var(--t-code-chip-size); color: var(--c-accent); }
+  .f-sum { color: var(--c-text-muted); font-size: var(--t-caption-size); letter-spacing: var(--t-caption-tracking); }
+
+  .more { margin: var(--d-label-gap) 0 0; font-size: var(--t-label-size); }
+  .more a { text-decoration: none; }
+  .app { margin: calc(var(--d-section-gap) * 1.5) 0 0; font-size: var(--t-label-size); color: var(--c-text-muted); }
 </style>

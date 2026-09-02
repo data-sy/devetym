@@ -1,0 +1,148 @@
+---
+/**
+ * 용어 본문 — **SSG 650장과 SSR 폴백(미승격 생성분)이 같은 컴포넌트를 쓴다.**
+ * ADR-0013 Consequences가 지목한 위험이 *"라우트가 둘이라 캐시 헤더·404 처리가 두 곳에서
+ * 정합해야 한다"*이므로, 최소한 **보이는 것**은 한 곳에서만 정의한다.
+ */
+import type { Term } from "../lib/terms";
+
+interface Props {
+  term: Term;
+  /** title·h1에 올릴 한글 별칭. 없으면 표제어가 제목이 된다. */
+  koreanAlias: string | null;
+  /** 미승격 생성분인가 — 사람에게 출처를 밝힌다(색인 억제는 페이지 쪽 책임). */
+  generated?: boolean;
+}
+
+const { term, koreanAlias, generated = false } = Astro.props;
+
+/** h1에 안 쓰인 나머지 별칭. 중복 노출을 피하되 **하나도 버리지 않는다**. */
+const otherAliases = term.aliases.filter((a) => a !== koreanAlias);
+---
+<article>
+  <p class="crumb">
+    <a href="/">DevEtym</a> <span aria-hidden="true">/</span>
+    <span class="cat">{term.category}</span>
+  </p>
+
+  {/*
+    ⚠️ h1은 **한글 별칭 + 영문 표제어**다. 둘 중 하나만 두면 한쪽 질의를 잃는다 —
+       한글만이면 `mutex etymology`가, 영문만이면 `뮤텍스 어원`이 이 페이지에 닿지 않는다.
+  */}
+  <h1>
+    {koreanAlias
+      ? <><span class="ko">{koreanAlias}</span><span class="en">({term.keyword})</span></>
+      : <span class="ko">{term.keyword}</span>}
+  </h1>
+
+  <p class="summary">{term.summary}</p>
+
+  {generated && (
+    <p class="generated-note">
+      이 설명은 AI가 생성했고 아직 사람 검수를 거치지 않았습니다.
+    </p>
+  )}
+
+  {otherAliases.length > 0 && (
+    <p class="aliases">
+      <span class="aliases-label">달리 부르는 이름</span>
+      {otherAliases.map((a) => <span class="alias">{a}</span>)}
+    </p>
+  )}
+
+  <section aria-labelledby="h-etym">
+    <h2 id="h-etym">어원</h2>
+    <p>{term.etymology}</p>
+  </section>
+
+  <section aria-labelledby="h-why">
+    <h2 id="h-why">왜 이렇게 부르는가</h2>
+    <p>{term.namingReason}</p>
+  </section>
+
+  <slot />
+</article>
+
+<style>
+  article { max-width: 44rem; margin: 0 auto; padding: var(--d-section-gap) var(--d-screen-padding) calc(var(--d-section-gap) * 2); }
+
+  .crumb {
+    font-family: var(--font-code);
+    font-size: var(--t-badge-size);
+    letter-spacing: var(--t-badge-tracking);
+    color: var(--c-text-muted);
+    margin: 0 0 var(--d-section-gap);
+  }
+  .crumb a { color: var(--c-text-muted); text-decoration: none; }
+  .crumb a:hover { color: var(--c-accent); }
+  .crumb .cat { color: var(--c-accent); }
+
+  h1 {
+    font-family: var(--font-serif);
+    font-size: var(--t-title-hero-size);
+    font-weight: var(--t-title-hero-weight);
+    letter-spacing: var(--t-title-hero-tracking);
+    line-height: 1.2;
+    margin: 0 0 var(--d-label-gap);
+    /* 긴 영문 표제어가 좁은 화면에서 넘치지 않게 — 모바일 유입 비중이 높다 */
+    overflow-wrap: anywhere;
+  }
+  h1 .en {
+    font-family: var(--font-code);
+    font-size: var(--t-code-hero-size);
+    font-weight: var(--t-code-hero-weight);
+    color: var(--c-accent);
+    margin-left: 0.4em;
+  }
+
+  .summary {
+    font-size: var(--t-body-large-size);
+    letter-spacing: var(--t-body-large-tracking);
+    color: var(--c-text-dim);
+    margin: 0 0 var(--d-section-gap);
+  }
+
+  .generated-note {
+    font-size: var(--t-body-notice-size);
+    line-height: var(--t-body-notice-line);
+    color: var(--c-accent-ai);
+    background: var(--c-surface);
+    border: var(--d-stroke-border) solid var(--c-border);
+    border-radius: var(--d-radius-block);
+    padding: var(--d-card-padding);
+    margin: 0 0 var(--d-section-gap);
+  }
+
+  .aliases {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--d-label-gap);
+    margin: 0 0 var(--d-section-gap);
+  }
+  .aliases-label {
+    font-size: var(--t-caption-size);
+    letter-spacing: var(--t-caption-tracking);
+    color: var(--c-text-muted);
+  }
+  .alias {
+    font-size: var(--t-label-size);
+    color: var(--c-text-dim);
+    background: var(--c-surface2);
+    border-radius: var(--d-radius-badge);
+    padding: 0.15em 0.6em;
+  }
+
+  section { margin: 0 0 var(--d-section-gap); }
+  h2 {
+    font-size: var(--t-section-header-size);
+    font-weight: var(--t-section-header-weight);
+    letter-spacing: var(--t-section-header-tracking);
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+    margin: 0 0 var(--d-label-gap);
+  }
+  section p {
+    margin: 0;
+    font-size: var(--t-body-block-size);
+    line-height: var(--t-body-block-line);
+    color: var(--c-text);
+  }
+</style>

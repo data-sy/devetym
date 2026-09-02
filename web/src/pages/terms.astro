@@ -1,0 +1,86 @@
+---
+/**
+ * 전체 색인 — 650장을 **홈에서 1클릭 깊이**로 만든다.
+ *
+ * ⚠️ 사이트맵만으로는 부족하다. 사이트맵은 발견을 돕지만 크롤러는 내부 링크로 중요도와
+ *    도달성을 판단한다. 이 페이지가 없으면 650장 대부분이 다른 어떤 페이지에서도 링크되지
+ *    않는다(관련 용어 6개는 같은 카테고리 안에서만 순환한다).
+ *
+ * ⚠️ 카테고리 허브 6개(`/category/{…}`)는 W2다. 여기서는 **한 장 안에서 갈래로 묶기만** 한다 —
+ *    허브의 자리를 미리 차지하지 않으면서 크롤 구조는 지금 닫는다.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { ALL_TERMS, CATEGORIES } from "../lib/terms";
+
+export const prerender = true;
+
+const groups = CATEGORIES.map((name) => ({
+  name,
+  // 한글 별칭이 있으면 그 사전순, 없으면 표제어. 사람이 훑는 순서와 맞춘다.
+  items: ALL_TERMS.filter((t) => t.category === name).sort((a, b) =>
+    (a.primaryKoreanAlias ?? a.keyword).localeCompare(b.primaryKoreanAlias ?? b.keyword, "ko"),
+  ),
+}));
+---
+<BaseLayout
+  title="용어 전체"
+  description={`개발 용어 ${ALL_TERMS.length}개를 갈래별로 모았습니다. 각 용어의 어원과 이름의 유래를 봅니다.`}
+  path="/terms"
+>
+  <main>
+    <p class="crumb"><a href="/">DevEtym</a></p>
+    <h1>용어 {ALL_TERMS.length}개</h1>
+    <p class="lede">갈래별로 모았습니다. 찾는 것이 없으면 <a href="/search">검색</a>에서 AI에게 물어볼 수 있어요.</p>
+
+    <nav class="jump" aria-label="갈래 바로가기">
+      {groups.map((g) => <a href={`#${encodeURIComponent(g.name)}`}>{g.name} <span>{g.items.length}</span></a>)}
+    </nav>
+
+    {groups.map((g) => (
+      <section id={g.name} aria-labelledby={`h-${g.name}`}>
+        <h2 id={`h-${g.name}`}>{g.name} <span class="n">{g.items.length}</span></h2>
+        <ul>
+          {g.items.map((t) => (
+            <li>
+              <a href={`/term/${t.slug}`}>
+                <span class="t-name">{t.primaryKoreanAlias ?? t.keyword}</span>
+                {t.primaryKoreanAlias && <span class="t-key">{t.keyword}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </main>
+</BaseLayout>
+
+<style>
+  main { max-width: 52rem; margin: 0 auto; padding: var(--d-section-gap) var(--d-screen-padding) calc(var(--d-section-gap) * 2); }
+  .crumb { font-family: var(--font-code); font-size: var(--t-badge-size); letter-spacing: var(--t-badge-tracking); margin: 0 0 var(--d-section-gap); }
+  .crumb a { color: var(--c-text-muted); text-decoration: none; }
+  h1 { font-family: var(--font-serif); font-size: var(--t-title-hero-size); font-weight: var(--t-title-hero-weight); margin: 0 0 var(--d-label-gap); }
+  .lede { font-size: var(--t-body-large-size); color: var(--c-text-dim); margin: 0 0 var(--d-section-gap); }
+
+  .jump { display: flex; flex-wrap: wrap; gap: var(--d-label-gap); margin: 0 0 var(--d-section-gap); }
+  .jump a {
+    text-decoration: none; font-size: var(--t-label-size); color: var(--c-text);
+    background: var(--c-surface); border: var(--d-stroke-border) solid var(--c-border);
+    border-radius: var(--d-radius-badge); padding: 0.3em 0.8em;
+  }
+  .jump a:hover { border-color: var(--c-accent); }
+  .jump span { font-family: var(--font-code); font-size: var(--t-code-chip-size); color: var(--c-text-muted); }
+
+  section { margin: 0 0 calc(var(--d-section-gap) * 1.5); scroll-margin-top: 1rem; }
+  h2 {
+    font-family: var(--font-serif); font-size: var(--t-title-tab-size); font-weight: var(--t-title-tab-weight);
+    margin: 0 0 var(--d-label-gap); padding-bottom: var(--d-label-gap);
+    border-bottom: var(--d-stroke-border) solid var(--c-border);
+  }
+  h2 .n { font-family: var(--font-code); font-size: var(--t-code-chip-size); color: var(--c-text-muted); }
+
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.15rem; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
+  li a { display: flex; align-items: baseline; gap: 0.5em; text-decoration: none; padding: 0.35em 0.5em; border-radius: var(--d-radius-badge); }
+  li a:hover { background: var(--c-surface); }
+  .t-name { color: var(--c-text); font-size: var(--t-label-size); }
+  .t-key { font-family: var(--font-code); font-size: var(--t-code-chip-size); color: var(--c-text-muted); }
+</style>

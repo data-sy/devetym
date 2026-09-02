@@ -1,0 +1,41 @@
+---
+/**
+ * `DefinedTerm` 구조화 데이터 (설계서 §5-1).
+ *
+ * ⚠️ **`alternateName`에 한글 별칭을 전부 싣는 것이 이 컴포넌트의 존재 이유다.** 표제어는 전부
+ *    영어라, 별칭을 빼면 검색엔진이 이 페이지를 한국어 질의와 연결할 근거가 본문 말고는 없다.
+ *
+ * ⚠️ JSON-LD는 `set:html`로 넣는다. Astro가 문자열을 이스케이프하면 `<script type="ld+json">`
+ *    안에서 `&quot;`가 되어 파서가 통째로 버린다 — **깨져도 페이지는 멀쩡해 보인다.**
+ *    대신 이스케이프를 우리가 진다: `</script>` 시퀀스만 무해화한다(본문에 코드가 섞일 수 있다).
+ */
+import { absoluteUrl } from "../config/site";
+import type { IndexedTerm } from "../lib/terms";
+
+interface Props {
+  term: IndexedTerm;
+  path: string;
+}
+
+const { term, path } = Astro.props;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  "@id": absoluteUrl(path),
+  name: term.primaryKoreanAlias ?? term.keyword,
+  alternateName: [term.keyword, ...term.aliases],
+  description: term.summary,
+  inDefinedTermSet: {
+    "@type": "DefinedTermSet",
+    name: "DevEtym 개발 용어 어원 사전",
+    url: absoluteUrl("/"),
+  },
+  termCode: term.slug,
+  url: absoluteUrl(path),
+  inLanguage: "ko",
+};
+
+const serialized = JSON.stringify(jsonLd).replace(/<\/(script)/gi, "<\\/$1");
+---
+<script is:inline type="application/ld+json" set:html={serialized} />

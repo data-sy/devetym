@@ -8,7 +8,15 @@ name = "devetym-web"
 compatibility_date = "2025-06-01"
 compatibility_flags = ["nodejs_compat"]
 main = "./dist/_worker.js/index.js"
-assets = { directory = "./dist", binding = "ASSETS" }
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+# ⚠️ 기본값 `auto-trailing-slash`는 `dist/term/index.html`을 **`/term/`의 디렉터리 인덱스**로도
+#    해석해, 용어 `index`(인덱스·색인 — DB 갈래)의 URL `/term/index`가 `/term/`로 **307**이 된다
+#    (실측 2026-09-02, 전수 200 오라클이 잡았다). 사이트맵·canonical은 `/term/index`를 가리키는데
+#    실 응답이 리다이렉트라 그 한 장만 조용히 다른 URL에 산다.
+#    `drop-trailing-slash`는 슬래시 없는 쪽을 정본으로 고정해 이 겹침을 없앤다.
+html_handling = "drop-trailing-slash"
 # ⚠️ 실 도메인이 붙은 뒤로는 **끈다**. 켜 두면 workers.dev가 같은 내용을
 #    색인 허용 상태로 서빙해 devetym.com과 중복 콘텐츠로 경쟁한다
 #    (빌드가 SITE_URL=devetym.com이라 noindex가 안 붙는다 — 2026-08-25 실측).
@@ -32,3 +40,25 @@ custom_domain = true
 [[routes]]
 pattern = "www.devetym.com"
 custom_domain = true
+
+# ── 프록시 service binding (W1b) ──────────────────────────────────────────────
+# `devetym.com/api/term`이 프록시를 **런타임 내부 호출**로 부른다. 인터넷을 다시 타지 않으므로
+# 요청 헤더가 그대로 건너가고, 특히 `CF-Connecting-IP`가 보존된다 — 이게 안 보존되면
+# 프록시의 IP 15건/일 층이 **전 웹 사용자 공용 버킷 하나**로 붕괴한다(15건 뒤 전원 429).
+#
+# ⚠️ 이 바인딩이 없으면 /api/term은 503을 낸다. **workers.dev로 폴백하지 않는다** —
+#    폴백하면 서드파티 쿠키가 되어 Safari에서 3건 층이 조용히 사라진다(핸드오프 §5-12).
+[[services]]
+binding = "PROXY"
+service = "devetym-proxy"
+
+# ── D1 조회 전용 바인딩 (W1b · ADR-0013 Decision 2) ────────────────────────────
+# `/term/<key>`가 정적 650장에 없을 때 **조회만** 한다. 생성은 여기서 절대 일어나지 않는다 —
+# GET 경로에 생성을 두면 크롤러 한 번이 웹 전역 캡을 태운다(T6, ADR-0013 기각안 3).
+#
+# ⚠️ 프록시(`devetym-proxy`)와 **같은 프로덕션 DB**다. 웹 워커는 여기에 쓰지 않는다 —
+#    쓰기(캐시 적재·충돌 규칙)는 프록시 한 곳이 정본이다.
+[[d1_databases]]
+binding = "CACHE_DB"
+database_name = "devetym-cache"
+database_id = "a42d4408-ff64-40d4-8a6a-c71672fd71c2"
