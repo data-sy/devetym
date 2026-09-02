@@ -1,18 +1,18 @@
-# 🤖 웹 트랙 W — **W0c 완료 · W1a 코드 완료(브랜치) · 다음 = 사람 4줄 → 배포 → W1b**
+# 🤖 웹 트랙 W — **W0c·W1a 프로덕션 적용 완료 · 남은 것 = 실기기 생성 1건 → W1b**
 
 > **콜드 세션 시작점.** 사람이 *"뭐 하고 있었어? 이어서 하자"* 라고 물으면 **이 문서로 답한다.**
 > 상태 정본은 [`ROADMAP.md`](ROADMAP.md) Now의 「▶ 재개 지점」 — 충돌하면 ROADMAP이 이긴다.
-> **최종 갱신 2026-09-01 밤 (W1a 코드 완료 — `devetym-proxy` `feat/w1a-proxy-hardening`, 미배포).** 선행 핸드오프·규모 판정 브리프는 2026-08-25 서류 정돈에서 삭제했다(판정 결과는 §1·§2에 흡수).
+> **최종 갱신 2026-09-02 (W1a 프로덕션 배포 완료 — 워커 `078e1a3a`).** 선행 핸드오프·규모 판정 브리프는 2026-08-25 서류 정돈에서 삭제했다(판정 결과는 §1·§2에 흡수).
 
-**한 줄**: <https://devetym.com> 이 라이브다. **W0c가 끝났고(650 정본이 프로덕션 D1에 있다) W1a의 코드도 끝났다 — 다만 브랜치에 있고 배포되지 않았다.** W1a에서 코드로 닫히는 것(CORS·3층 한도·표면 분리·프롬프트 이전·관측)은 전부 됐고 테스트 83→131. **남은 것은 사람만 할 수 있는 4줄**(Turnstile 위젯·워크스페이스 키·시크릿 주입·배포+앱 실측)이다. **웹 본체(650장·검색·AI)는 아직 한 줄도 없다.**
+**한 줄**: <https://devetym.com> 이 라이브다. **W0c·W1a가 둘 다 프로덕션에 들어갔다 (2026-09-01 · 09-02).** 650 정본이 D1에 있고, 프록시는 웹/앱을 Origin으로 갈라 각자의 캡을 쓰며 Turnstile이 켜져 있다. 프롬프트 정본은 워커로 옮겨졌다. **남은 완료 조건 하나 = 🙋 실 iPhone에서 새 용어 1건 생성 성공**(프롬프트 이전 무영향 실측). 그다음이 **W1b 웹 본체** — 650장·검색·AI는 아직 한 줄도 없다.
 
 ---
 
 ## 0. 새 세션이 *"이어서 하자"* 를 들었을 때 — **읽고 바로 이 말을 하면 된다**
 
-> **W0c는 끝났고(프로덕션 D1에 650) W1a는 코드까지 끝났다** — `devetym-proxy`의
-> `feat/w1a-proxy-hardening` 브랜치에 있고 **배포되지 않았다.** 다음은 코드가 아니라
-> **사람 4줄**(§2-W1a의 「남은 것」)이고, 그게 끝나면 바로 **W1b 웹 본체**다.
+> **W0c·W1a 둘 다 프로덕션에 적용됐다.** 남은 것은 🙋 **실기기 생성 1건**뿐이고
+> (앱이 받는 내용이 바뀌지 않았는지 눈으로 보는 단계), 그게 통과하면 바로 **W1b 웹 본체**다.
+> 실패하면 `cd ~/devetym-proxy && npx wrangler rollback` — 직전 버전 `d0504c73`으로 돌아간다.
 
 ### 지금 상태 한 눈
 
@@ -24,46 +24,46 @@
 | 닫힘 증명 | 익스포트가 커밋된 `terms.json`과 **바이트 동일** · 키 1,975개 전부 N1 |
 | 백업 | `~/devetym-d1-backup-20260901-020554.sql` (적용 **전** 상태) |
 | 스테이징 | `devetym-cache-dev` — 리허설용, 남겨 뒀다 |
-| W1a | **코드 ✅ / 배포 ⬜** — `feat/w1a-proxy-hardening` 2커밋. 테스트 **131** 통과 |
+| W1a | **✅ 배포 완료 (09-02)** — 워커 `078e1a3a`. 롤백 대상 = `d0504c73` |
+| W1a 라이브 실측 | 제3자 Origin **403** · preflight 204 · 양 표면 캐시 히트 200 · **Turnstile 실제 차단 확인**(토큰 없는 웹 생성 = 403, 과금 0) |
+| 시크릿 4개 | `ANTHROPIC_API_KEY` · `WEB_COOKIE_SECRET` · `TURNSTILE_SECRET` · `ANTHROPIC_API_KEY_WEB` — 이름 대조 완료 |
+| usage DB | 0003 적용 · 기존 50행 전부 `app`/`ok` 백필 · 백업 `~/devetym-usage-backup-20260902.sql` |
 | W1a 로컬 오라클 | dry-run · vitest 131 · 마이그레이션 2 DB · 프롬프트 바이트 대조 — **4축 녹색** |
 | 프롬프트 정본 | 앱 → 워커 이전 완료. `sha256[:12]=956ba44a7c48` **불변**(프로덕션 태그와 동일) |
 
-### 남은 일 — 전부 사람 손이다
+### 남은 일
 
-**① 🙋 `main` 푸시** — `sandbox/w0c-d1-seeding` 은 `devetym`·`devetym-proxy` 양쪽에서
-**2026-09-01 `main`에 병합됐고** 브랜치 전용 SSOT도 같은 커밋에서 삭제했다. 남은 건 푸시뿐이다.
-**브랜치는 지우지 않는다**(보존 규율). W1a 브랜치도 같이 밀면 된다.
+**① 🙋 실기기 생성 1건** — iPhone 앱에서 **번들에 없을 법한 새 용어**를 검색해 정상 결과가
+나오는지 본다(예: `bikeshedding`·`yak shaving`). 이미 있는 용어는 캐시 히트라 아무것도
+검증하지 않는다. 이게 W1a의 마지막 완료 조건이다 — 프롬프트가 서버로 옮겨졌으므로 앱이
+받는 내용이 바뀔 수 있는 창이 여기 하나뿐이고, 바이트 동일 이식이라 **안 바뀌어야 정상**이다.
 
-**② 🙋 W1a 마무리 4줄** — 아래 §2-W1a의 「남은 것」. 대시보드 발급 2건 + 시크릿 주입 + 배포/실측.
+**② W1a 브랜치 → `main` 병합** — ①이 통과한 뒤에. W0c와 같은 규율(적용 확인 후 병합).
 
-**③ W1b 웹 본체** — ②가 닫히면 바로. 여기부터 다시 Claude 자율.
+**③ W1b 웹 본체** — 여기부터 다시 Claude 자율. Turnstile site key는 §4에 있다.
 
 ⚠️ **`wrangler.toml`의 좌표는 이제 프로덕션이다.** `npm run deploy`·`d1 migrations apply --remote`가
 라이브에 닿는다. 샌드박스 격리는 2026-09-01에 해제됐다.
 
-### W1a를 켜는 순서 — 바꾸지 말 것
+### W1a는 이 순서로 켜졌다 (2026-09-02 · 기록)
 
 ```
-① Cloudflare 대시보드 → Turnstile → Add widget (도메인 devetym.com)   〔사람〕
-② Anthropic Console → Workspaces → 새 워크스페이스 + spend limit → API key  〔사람〕
-③ cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22
-   openssl rand -base64 32 | npx wrangler secret put WEB_COOKIE_SECRET
-   npx wrangler secret put TURNSTILE_SECRET        # ①의 secret key
-   npx wrangler secret put ANTHROPIC_API_KEY_WEB   # ②의 키
-④ npx wrangler d1 migrations apply devetym-usage --remote   # surface·outcome 컬럼
-⑤ npm run deploy
-⑥ 실 iOS 앱에서 새 용어 1건 생성 — 정상 성공해야 한다
+① Turnstile 위젯 발급 (사람)          site key 0x4AAAAAAEkZxJ7JdEVEtZ47
+② Anthropic 워크스페이스 DevEtym-Web + spend limit $20 → 웹 전용 키 (사람)
+③ 시크릿 3개 주입 — WEB_COOKIE_SECRET(openssl) · TURNSTILE_SECRET · ANTHROPIC_API_KEY_WEB
+④ d1 migrations apply devetym-usage --remote      # surface·outcome, 50행 백필
+⑤ npm run deploy                                   # 078e1a3a
+⑥ 라이브 무과금 검증 (403·204·히트·Turnstile 차단)
+⑦ 🙋 실기기 생성 1건  ← 남음
 ```
 
-**⑤가 ⑥보다 먼저인 건 당연하지만, ⑥ 없이는 W1a가 끝난 게 아니다.** 프롬프트 소유권이
-서버로 옮겨졌으므로 **앱이 받는 응답 내용이 바뀔 수 있는 유일한 창**이 여기다. 이식이
-바이트 동일이라 안 바뀌어야 정상이고, 그걸 눈으로 확인하는 단계다.
+**④가 ⑤보다 먼저인 이유**: 새 코드가 `surface`·`outcome`에 쓰는데 컬럼이 없으면 INSERT가
+실패한다. logUsage는 실패를 삼키므로 **서비스는 멀쩡하고 텔레메트리만 조용히 멈춘다** —
+가장 늦게 발견되는 종류의 손실이다. 반대 순서(마이그레이션 먼저)는 옛 코드가 DEFAULT로
+정확히 기록되므로 무손실이다.
 
-**시크릿 없이 ⑤만 해도 안전하다** — 세 층이 꺼진 채 통과하고 앱 경로는 종전과 같다.
-다만 웹을 공개하기 전에 최소 `WEB_COOKIE_SECRET`은 있어야 브라우저 층이 실재한다.
-
-**롤백**: `git revert` 없이 이전 배포로 되돌리려면 `npx wrangler rollback`. 캐시 킬 스위치와
-달리 W1a는 한 줄 토글이 없다 — 표면 분리가 코드 경로 전체에 걸쳐 있기 때문이다.
+**롤백**: `npx wrangler rollback` → `d0504c73`. 캐시 킬 스위치와 달리 W1a는 한 줄 토글이
+없다 — 표면 분리가 코드 경로 전체에 걸쳐 있기 때문이다.
 
 이 문서는 **W 트랙 전체 순서**의 정본이다. W0c의 세부 절차·SQL·리허설 기록은
 브랜치 SSOT에 있었고 흡수 커밋에서 삭제했다 — 필요하면 `sandbox/w0c-d1-seeding` 커밋 이력에서 찾는다.
