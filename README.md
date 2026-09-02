@@ -76,7 +76,7 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 | [`docs/architecture.md`](docs/architecture.md) | 아키텍처 설계 — 레이어링·Ktor·로컬 저장·Koin (기술 *어떻게*) | ✅ |
 | [`docs/adr/`](docs/adr/) | 돌이킬 수 없는 결정 기록 (0001~0008: CMP·관용구 원칙·로컬 DB·프록시 경계·SKIE interop·서버 캐시 경계·AI 프롬프트 품질·이슈 트래킹 / **0009~0011: 웹 프레임워크·웹 남용 방지·프롬프트 소유권 — ✅ 비준 2026-08-25** / **0012~0013: 콘텐츠 정본 D1 승격·웹 라우트 계약 — ✅ 비준 2026-08-25**) | ✅ |
 | [`docs/design/web-transition-design.md`](docs/design/web-transition-design.md) | **웹 이행 설계 정본** — 렌더링·이식 판정·남용 위협 모델·범위·실패 모드 (진행 상태는 ROADMAP W 트랙) | 🚧 구현 중 |
-| [`web/`](web/README.md) | **웹 표면 구현** — Astro + Cloudflare Workers. 기반(W0a·W0b) 완료, 용어 페이지·검색·AI는 미착수 | 🚧 |
+| [`web/`](web/README.md) | **웹 표면 구현** — Astro + Cloudflare Workers. 기반·D1 정본·프록시 하드닝(W0~W1a) 완료, **용어 페이지·검색·AI(W1b)는 미착수** | 🚧 |
 | [`docs/cache-delivery-milestones.md`](docs/cache-delivery-milestones.md) | 캐시·딜리버리 불변식(INV-1~13)·마일스톤 정본 — 서버 트랙의 제약 | ✅ |
 | [`docs/specs/spec.md`](docs/specs/spec.md) | 화면·동작 구현 명세 (Phase 1~4, Claude Code 전용) | ✅ |
 | [`ROADMAP.md`](ROADMAP.md) | 이행 순서(코어 먼저, UI 나중) + **진행 상태 정본** | ✅ |
@@ -128,15 +128,21 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 설정 「앱 평가하기」가 무반응이던 것을 App Store 리뷰 딥링크로 교체했고, **실기기 검증 PASS**(iPhone 13 mini · iOS 26.5.2)로 종결 근거를 확보했다.
 빌드 `0.1.1(3)` 제출 → 심사 통과 → 수동 게시 → **게시본에서 재확인 완료**(업데이트 받은 App Store 판으로 「앱 평가하기」 동작 확인). **수정이 실사용자에게 도달했고 제보자 회신까지 완료**(2026-08-19). 제보→회신 전 구간이 닫힌 첫 사이클 — 잔여 없음.
 
-남은 것 = **[외부]** F Android 배포(후행 — 폐쇄테스트 20명×14일 게이트 + 스크린샷 캡처 잔여) · **웹 트랙 W(기반 완료·본체 미착수 — 아래)** · **씨딩·리뷰 확보 — W에 종속**(2026-08-19 결정: App Store 착지는 다운로드 마찰로 커뮤니티 참여도가 낮아, 씨딩은 웹 완성 후 웹과 함께 나간다).
+남은 것 = **[외부]** F Android 배포(후행 — 폐쇄테스트 20명×14일 게이트 + 스크린샷 캡처 잔여) · **웹 트랙 W(W0~W1a 완료 · 본체 W1b 미착수 — 아래)** · **씨딩·리뷰 확보 — W에 종속**(2026-08-19 결정: App Store 착지는 다운로드 마찰로 커뮤니티 참여도가 낮아, 씨딩은 웹 완성 후 웹과 함께 나간다).
 진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md), 출시 실무 자료의 위치는 [`docs/release/README.md`](docs/release/README.md).
 
-**🌐 웹 트랙 W — 기반 라이브 (2026-08-25).** <https://devetym.com> 이 200 응답한다(Astro + Cloudflare Workers,
-[ADR-0009](docs/adr/0009-web-framework-rendering.md)). 앱을 대체하는 게 아니라 **채널 확장**이다 — 웹 = 검색·씨딩 착지면, 앱 = 무제한 표면.
-지금 있는 것은 **기반뿐**이다: 디자인 토큰을 앱 Kotlin 정본에서 **빌드마다 자동 추출**(손으로 안 베낀다 — 개수를 단언해 드리프트 시 빌드가 깨진다) ·
-도메인 참조 `SITE_URL` 단일 지점 · 폰트 woff2 · 사이트맵 · 클라이언트 JS 0바이트.
-**아직 없는 것**: 용어 페이지 650장·검색·AI 폴백. **[ADR-0012](docs/adr/0012-content-canon-d1.md)·[ADR-0013](docs/adr/0013-web-route-contract.md) 비준(2026-08-25)으로 게이트가 해소됐고, W0c(650 D1 시딩)는 2026-09-01 완료됐다** — 650개 어원 정본이 프로덕션 D1에 있다(entries 671 · aliases 1,304). 다음은 **W1a 프록시 하드닝**([ROADMAP](ROADMAP.md) Now)
-— 정본은 D1로 올라가고, 웹은 SSG 650 + 조회 전용 SSR 폴백(색인 자격은 품질 게이트가 연다)으로 간다. 상세 = [`web/README.md`](web/README.md), 상태 = [ROADMAP](ROADMAP.md) W 트랙.
+**🌐 웹 트랙 W — 기반·정본·방어까지 라이브 (2026-08-25 ~ 09-02).** <https://devetym.com> 이 200 응답한다
+(Astro + Cloudflare Workers, [ADR-0009](docs/adr/0009-web-framework-rendering.md)). 앱을 대체하는 게 아니라 **채널 확장**이다 — 웹 = 검색·씨딩 착지면, 앱 = 무제한 표면.
+
+**지금까지 선 것 셋**: ① **기반**(디자인 토큰을 앱 Kotlin 정본에서 **빌드마다 자동 추출** — 손으로 안 베낀다,
+개수를 단언해 드리프트 시 빌드가 깨진다 · `SITE_URL` 단일 지점 · 폰트 woff2 · 사이트맵 · 클라이언트 JS 0바이트)
+② **콘텐츠 정본**(W0c, 2026-09-01 — 650개 어원이 프로덕션 D1에. entries 671 · aliases 1,304 · [ADR-0012](docs/adr/0012-content-canon-d1.md))
+③ **프록시 방어**(W1a, 2026-09-02 — 웹/앱 표면 분리 캡 · CORS allowlist · Turnstile · 프롬프트 정본을 앱에서
+워커로 이전. [ADR-0010](docs/adr/0010-web-abuse-prevention.md)·[ADR-0011](docs/adr/0011-prompt-ownership-transfer.md)). **웹이 태워도 앱 사용자 몫(10/200)은 건드리지 않는다.**
+
+**아직 없는 것**: 용어 페이지 650장 · 검색 · AI 폴백 — 이게 **W1b**이고 지금 있는 건 착지 페이지 한 장뿐이다.
+웹은 SSG 650 + 조회 전용 SSR 폴백으로 가고 색인 자격은 품질 게이트가 연다([ADR-0013](docs/adr/0013-web-route-contract.md)).
+상세 = [`web/README.md`](web/README.md) · 착수 지침 = [핸드오프](🤖-26-08-25-web-large-track-handoff.md) §2 · 상태 = [ROADMAP](ROADMAP.md) W 트랙.
 
 **서버 캐시 트랙 S1 — 가동 중 (2026-07-28).** 앱 배포와 **독립**으로 완결되는 트랙이라 심사와 무관하게
 먼저 나갔다. `devetym-proxy`에 D1 read-through 캐시를 붙여 **한 사용자가 생성시킨 항목을 다른 사용자가
@@ -154,6 +160,8 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 둘 다 **v0.1.1에 태우지 않기로 확정**(2026-08-16) — #15는 수용 기준이 self-healing 구조라 검증 표면이 늘고 제보자 대기가 밀린다. 다음 판 대상.
 〔[#19](https://github.com/data-sy/devetym/issues/19)는 CLOSED — 실기기 PASS 후 v0.1.1로 제출 완료. 검증 결과는 이슈 코멘트에 기록.〕
 
-**브랜치 — 전부 원격에 있다 (2026-08-16 `git ls-remote` 실측).** 종전 "로컬 미푸시 2건" 서술은 stale이었다.
-`fix/settings-review-deeplink`(#19, 병합됨·보존) · `docs/web-track-autonomy-prep`(웹 트랙 W 감사 준비 + 피드백 원문) · `chore/doc-pruning` — 로컬·원격 tip 일치.
+**브랜치 — 전부 원격에 있다 (2026-09-02 `git ls-remote` 실측).** 병합돼도 지우지 않는다(보존 규율).
+`fix/settings-review-deeplink`(#19, 병합됨·보존) · `docs/web-track-autonomy-prep`(웹 트랙 W 감사 준비 + 피드백 원문) ·
+`chore/doc-pruning` · **`sandbox/w0c-d1-seeding`**(W0c 세부 SQL·리허설 기록 — 양쪽 repo에 푸시됨) ·
+**`feat/w1a-proxy-hardening`**(`devetym-proxy`, `main` 병합됨·보존).
 ⚠️ 다만 **제보 원문은 여전히 main에 없다** — `docs/feedback/`가 `docs/web-track-autonomy-prep`에만 있고, 그 브랜치 병합 시점은 웹 트랙 감사(0/26)와 묶인 별개 판단이다.

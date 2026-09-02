@@ -18,58 +18,26 @@
 
 | | |
 |---|---|
-| W0c | **✅ 7/7 완료** — 키·origin·센티널·시딩·충돌규칙·익스포트·**원격 적용** |
-| 프로덕션 D1 | entries **671** · authored **650** · generated **21** · aliases **1,304** · entry_versions 0 |
-| 배포 워커 | `devetym-proxy` `c9ccd526` — N1 정규화 |
-| 닫힘 증명 | 익스포트가 커밋된 `terms.json`과 **바이트 동일** · 키 1,975개 전부 N1 |
-| 백업 | `~/devetym-d1-backup-20260901-020554.sql` (적용 **전** 상태) |
+| 웹 | <https://devetym.com> 라이브 — **착지 페이지 한 장뿐.** 용어 650장·검색·AI는 아직 없다(= W1b) |
+| 프로덕션 D1 | entries **671** · authored **650** · generated **21+** · aliases **1,304** · 키 전부 N1 |
+| 배포 워커 | `devetym-proxy` **`078e1a3a`** (W1a) — 롤백 대상 `d0504c73` |
+| 프록시 방어 | CORS allowlist · Turnstile **켜짐** · 웹 3층(쿠키 3·IP 15·전역 30) / 앱 10·200 **불변** |
+| 프롬프트 정본 | **워커 소유**(ADR-0011). `sha256[:12] = 956ba44a7c48` — 이전 전후 불변 |
+| 시크릿 4개 | `ANTHROPIC_API_KEY` · `ANTHROPIC_API_KEY_WEB` · `WEB_COOKIE_SECRET` · `TURNSTILE_SECRET` |
+| 백업 | `~/devetym-d1-backup-20260901-020554.sql`(캐시·W0c 전) · `~/devetym-usage-backup-20260902.sql`(W1a 전) |
 | 스테이징 | `devetym-cache-dev` — 리허설용, 남겨 뒀다 |
-| W1a | **✅ 종결 (09-02)** — 워커 `078e1a3a` 배포 · 실기기 실측 통과 · `main` 병합 |
-| W1a 라이브 실측 | 제3자 Origin **403** · preflight 204 · 양 표면 캐시 히트 200 · **Turnstile 실제 차단 확인**(토큰 없는 웹 생성 = 403, 과금 0) |
-| 프롬프트 이전 증거 | 실기기 생성 `bikeshedding` → `prompt_version = v2-pathA:956ba44a7c48` = **이전 전과 동일 태그** |
-| 시크릿 4개 | `ANTHROPIC_API_KEY` · `WEB_COOKIE_SECRET` · `TURNSTILE_SECRET` · `ANTHROPIC_API_KEY_WEB` — 이름 대조 완료 |
-| usage DB | 0003 적용 · 기존 50행 전부 `app`/`ok` 백필 · 백업 `~/devetym-usage-backup-20260902.sql` |
-| W1a 로컬 오라클 | dry-run · vitest 131 · 마이그레이션 2 DB · 프롬프트 바이트 대조 — **4축 녹색** |
-| 프롬프트 정본 | 앱 → 워커 이전 완료. `sha256[:12]=956ba44a7c48` **불변**(프로덕션 태그와 동일) |
+
+**근거·실측값은 §4, 다시 밟지 말 함정은 §5.** 완료된 절차는 여기서 털었다 — 전체 이력은
+[ROADMAP](ROADMAP.md) Done, W0c 세부 SQL·리허설은 원격 브랜치 `sandbox/w0c-d1-seeding`
+커밋 이력(양쪽 repo에 푸시됨), W1a 세부는 `devetym-proxy` `feat/w1a-proxy-hardening`에 있다.
 
 ### 남은 일 — **W1b 하나뿐이다**
 
-정적 650장 + 검색 + 상세 + AI 폴백. 사람 게이트 없음. 착수 전에 §2의 W1b 항목과
-아래 두 가지를 함께 읽을 것:
+정적 650장 + 검색 + 상세 + AI 폴백. **사람 게이트 없음.** 착수 지침 5가지는 §2 「▶ W1b」에
+있고, 그것만 읽으면 바로 시작할 수 있다. 배포 직후 사람 1건 = Search Console 사이트맵 제출.
 
-- **웹 API를 `devetym.com/api/*`(same-site)로 붙인다** — 안 그러면 식별 쿠키가 서드파티가 되어
-  Safari에서 죽고 「브라우저당 3건」 층이 사실상 사라진다(§5-12). 표면 판정은 same-site에서도
-  성립한다(비-GET 요청엔 동일 출처에도 Origin이 실린다) — 옮기는 날 한 줄로 실측할 것.
-- **429의 `scope`로 문구를 가른다** — `browser`일 때만 앱 유도, `ip`·`web`은 "내일 다시".
-  같은 화면을 띄우면 거짓말이 된다.
-
-배포 직후 사람 1건: Search Console에 `sitemap-index.xml` 제출(ROADMAP ⑥).
-
-⚠️ **`wrangler.toml`의 좌표는 이제 프로덕션이다.** `npm run deploy`·`d1 migrations apply --remote`가
-라이브에 닿는다. 샌드박스 격리는 2026-09-01에 해제됐다.
-
-### W1a는 이 순서로 켜졌다 (2026-09-02 · 기록)
-
-```
-① Turnstile 위젯 발급 (사람)          site key 0x4AAAAAAEkZxJ7JdEVEtZ47
-② Anthropic 워크스페이스 DevEtym-Web + spend limit $20 → 웹 전용 키 (사람)
-③ 시크릿 3개 주입 — WEB_COOKIE_SECRET(openssl) · TURNSTILE_SECRET · ANTHROPIC_API_KEY_WEB
-④ d1 migrations apply devetym-usage --remote      # surface·outcome, 50행 백필
-⑤ npm run deploy                                   # 078e1a3a
-⑥ 라이브 무과금 검증 (403·204·히트·Turnstile 차단)
-⑦ 🙋 실기기 생성 1건  ← 남음
-```
-
-**④가 ⑤보다 먼저인 이유**: 새 코드가 `surface`·`outcome`에 쓰는데 컬럼이 없으면 INSERT가
-실패한다. logUsage는 실패를 삼키므로 **서비스는 멀쩡하고 텔레메트리만 조용히 멈춘다** —
-가장 늦게 발견되는 종류의 손실이다. 반대 순서(마이그레이션 먼저)는 옛 코드가 DEFAULT로
-정확히 기록되므로 무손실이다.
-
-**롤백**: `npx wrangler rollback` → `d0504c73`. 캐시 킬 스위치와 달리 W1a는 한 줄 토글이
-없다 — 표면 분리가 코드 경로 전체에 걸쳐 있기 때문이다.
-
-이 문서는 **W 트랙 전체 순서**의 정본이다. W0c의 세부 절차·SQL·리허설 기록은
-브랜치 SSOT에 있었고 흡수 커밋에서 삭제했다 — 필요하면 `sandbox/w0c-d1-seeding` 커밋 이력에서 찾는다.
+⚠️ **`wrangler.toml`의 좌표는 프로덕션이다.** `npm run deploy`·`d1 migrations apply --remote`가
+라이브에 닿는다(샌드박스 격리는 2026-09-01 해제). 로컬 D1 작업은 `--local`이 유일한 안전선이다.
 
 ```bash
 # 환경 확인 (3줄)
@@ -83,7 +51,7 @@ python3 Scripts/db-expand/test_export_bundle.py                       # PASS
 
 ---
 
-## 1. 무엇이 끝났나 (2026-08-25)
+## 1. 무엇이 끝났나 (2026-08-25 ~ 09-02)
 
 | | 상태 | 근거 |
 |---|---|---|
@@ -91,6 +59,8 @@ python3 Scripts/db-expand/test_export_bundle.py                       # PASS
 | **ADR-0009·0010·0011** | ✅ 비준 | 스택 · 남용 방지 · 프롬프트 소유권 |
 | **W0a 기반** | ✅ | Astro 5.18 + `@astrojs/cloudflare` 12.6 · `SITE_URL` 단일 지점 · 토큰 자동 추출 · 폰트 woff2 · **클라이언트 JS 0바이트** |
 | **W0b 도메인 결선** | ✅ | `devetym.com` 200 · `noindex` 해제 · 사이트맵 200 · 미리보기 서브도메인 차단 |
+| **W0c 650 D1 시딩** | ✅ 2026-09-01 | 프로덕션 entries 671 · authored 650 · aliases 1,304 · 키 전부 N1 |
+| **W1a 프록시 하드닝** | ✅ 2026-09-02 | 워커 `078e1a3a` · 실기기 실측 통과 · `main` 병합 · 테스트 131 |
 | **ADR-0012·0013 비준** | ✅ 사람 비준 (2026-08-25) | 둘 다 `Accepted`. INV-11 전단·ADR-0006 D5 갱신 완료. 함께 정해진 것 = **승격 잡을 W1c로 W 트랙 안에서 닫는다**(선택지 (b)) |
 
 **도메인**: Amazon Registrar 등록($16/yr·자동 갱신 ✅), **네임서버만 Cloudflare 위임**(소유·결제는 Amazon 유지 — 이전은 하지 않기로 결정). Route 53 호스팅 영역 삭제로 $0.50/월 회피.
@@ -108,33 +78,36 @@ python3 Scripts/db-expand/test_export_bundle.py                       # PASS
 
 **함께 정해진 것**: 승격 잡(캐시 M5)을 **W1c로 W 트랙 안에서 닫는다**. 안 지으면 생성분은 영원히 `noindex`이고 ADR-0013의 최대 이점이 잠긴다.
 
-### W0c · 650 D1 시딩 〔✅ 완료 2026-09-01〕
-`origin` 컬럼 신설(✅) · `prompt_version` 센티널(✅) · authored 650 시딩(✅ 로컬) · **authored > generated 충돌 규칙**(✅ — 실증: 안 고치면 검수된 용어에 `not_dev_term` 오판이 살아남아 앱이 "개발 용어 아님"을 답한다) · 익스포트 잡(✅ 바이트 동일 왕복). **W1b보다 반드시 먼저.** 원격 적용까지 완료 — 남은 것 없음.
+### ✅ W0c · W1a — 종결 (상세는 [ROADMAP](ROADMAP.md) Done)
 
-### W1a · 프록시 하드닝 〔코드 ✅ 2026-09-01 · 배포 ⬜〕
+**W0c**(2026-09-01) 650 정본이 프로덕션 D1에. **W1a**(2026-09-02) 프록시가 웹/앱을 갈라
+각자의 캡을 쓰고 Turnstile이 켜져 있으며 프롬프트 정본은 워커 소유다.
+여기서 **인용할 값과 밟지 말 함정은 §4·§5**에 있다 — 그 둘만 살아 있고 절차는 소진됐다.
 
-`devetym-proxy` `feat/w1a-proxy-hardening` (2커밋, **미푸시·미배포**). 테스트 83 → **131**.
+### ▶ W1b · 웹 본체 〔지금 여기 · 사람 게이트 없음〕
 
-| 항목 | 상태 | 무엇이 됐나 |
-|---|---|---|
-| CORS 고정 allowlist | ✅ | allowlist 밖 Origin은 **서버가 403** — 헤더만으론 방어가 아니다(요청은 이미 도달·과금됨) |
-| 표면 분리 캡 | ✅ | 웹 3층(쿠키 3·IP 15·웹 전역 30) / 앱 2층(10·200 **현행 유지**, KV 키도 그대로) |
-| 서명 쿠키 식별 | ✅ | HMAC·HttpOnly·Partitioned. 시크릿 없으면 층만 빠지고 나머지 동작 |
-| Turnstile | ✅ 배선 | 웹 생성 요청에만·fail-closed. **키 없으면 꺼진 채 통과**(대시보드 작업과 배포 분리) |
-| 워크스페이스 키 | ✅ 배선 | `ANTHROPIC_API_KEY_WEB` 있으면 웹만 그 키. 없으면 앱 키 폴백 |
-| 프롬프트 이전 | ✅ | `src/prompt.js` = `ClaudePrompt.kt` **바이트 동일**. 앱 코드 무변경(INV-1) |
-| usage 표면 태그 | ✅ | `surface`·`outcome` 컬럼(0003). **차단 행도 적재** — F5 지표의 분자가 생겼다 |
+정적 650장 + 검색 + 상세 + AI 폴백. **완료 오라클: 배포된 실 URL 650개 전수 200 응답 + AI 생성
+왕복 성공.** 로컬 빌드 성공은 오라클이 아니다(설계서 F6 — 이 프로젝트의 "빌드는 되는데 실기동은
+깨진다"의 웹 대응물은 "빌드는 되는데 색인은 안 된다").
 
-**남은 것 = 사람 4줄** (§0 「W1a를 켜는 순서」): ① Turnstile 위젯 발급 ② Anthropic 워크스페이스+키
-③ 시크릿 3개 주입 ④ `d1 migrations apply devetym-usage --remote` + `npm run deploy` + **앱 실측**.
+**착수 시 지켜야 하는 것 5가지**
 
-완료 오라클: **기존 iOS 앱에서 생성 정상 성공**(무영향 실측) + 브라우저에서 토큰 없이 호출 시 차단.
-⚠️ 앞의 것은 로컬로 못 닫는다 — 프롬프트가 서버로 옮겨져 **앱이 받는 내용이 바뀔 수 있는 유일한 창**이 배포 직후다.
+1. **한글 별칭 1,097개를 title·h1·구조화 데이터에 1급으로 올린다.** 표제어 650개는 전부 영어이고
+   한글 keyword는 **0개**다. 안 하면 650장은 한국어 검색에 사실상 존재하지 않는다.
+2. **웹 API를 `devetym.com/api/*`(same-site)로 붙인다.** 워커를 `workers.dev`로 직접 부르면 식별
+   쿠키가 서드파티가 되어 Safari에서 차단되고 **「브라우저당 3건」 층이 사실상 사라진다**(§5-12).
+   표면 판정은 same-site에서도 성립한다(비-GET 요청엔 동일 출처에도 `Origin`이 실린다) —
+   옮기는 날 한 줄로 실측할 것.
+3. **429의 `scope`로 문구를 가른다.** `browser` = "앱을 받으세요"(전환 경로), `ip`·`web` = "내일 다시".
+   같은 화면을 띄우면 거짓말이 된다. **Q4 결정(2026-08-25): 한도 화면은 앱 유도를 전면에** —
+   문구 최종안은 **2~3안을 만들어 사람이 고른다**(살아 있는 사람 결정 지점).
+4. **웹 요청 계약** — 본문은 `{"keyword": "React"}` 한 줄, 헤더에 `X-Turnstile-Token`,
+   `fetch(url, { credentials: "include" })`. 응답은 앱과 같은 Anthropic shape이다.
+   Turnstile site key는 §4에 있다. 서버 계약 정본 = `~/devetym-proxy/README.md` 「웹 표면」 절.
+5. **`web/src/styles/tokens.css`를 손으로 고치지 않는다.** 생성물이다(앱 `ui/theme/*.kt`가 정본).
 
-### W1b · 웹 본체
-정적 650장 + 검색 + 상세 + AI 폴백. **한글 별칭 1,097개를 title·h1·구조화 데이터에 1급으로 올린다** — 안 하면 650장은 한국어 검색에 존재하지 않는다.
-완료 오라클: **배포된 실 URL 650개 전수 200 응답** + AI 생성 왕복 성공. **로컬 빌드 성공은 오라클이 아니다.**
-**배포 직후 사람 1건**: Search Console → Sitemaps → `sitemap-index.xml` 제출(소유권은 2026-08-25 확인 완료, 계측 가동 중). 이걸로 색인률 배선이 닫힌다.
+**배포 직후 사람 1건**: Search Console → Sitemaps → `sitemap-index.xml` 제출. 이걸로 색인률
+배선이 닫히고 W3가 완전해진다(소유권 확인은 2026-08-25 완료, 계측 가동 중).
 
 ### W1c · 승격 잡 (= 캐시 M5) 〔2026-08-25 사람 선택 (b)〕
 `critic` 게이트(INV-7)를 통과한 `origin='generated'` 행을 `authored`로 승급 → 다음 빌드에서 SSG 집합·사이트맵에 편입되며 그때 색인된다. **이게 없으면 웹 AI로 자란 콘텐츠는 영원히 `noindex`**다. 완료 오라클: 승격된 용어가 **배포 후 실 URL에서 `noindex` 없이 200** + 사이트맵에 등장.
@@ -210,6 +183,7 @@ W2 = 카테고리 허브·관련 용어·구조화 데이터·얇은 콘텐츠 �
 13. **관측 구멍은 "지표가 없다"가 아니라 "분자가 없다"로 나타난다.** 설계서 F5(앱의 429/402 발생률)를 보려면 차단된 요청이 로그에 있어야 하는데, usage 로그가 **성공 호출만** 적재하고 있었다. 컬럼을 더하는 일보다 **무엇을 적재하지 않고 있었는지**를 찾는 게 실제 작업이었다.
 14. **좌표를 복원할 때는 좌표를 쓰는 모든 곳을 함께 본다.** W0c 좌표 복원(09-01)이 `wrangler.toml`만 되돌리고 `scripts/d1.mjs`·`package.json`의 DB 이름은 샌드박스로 남겨서 `db:*:local` 3개가 조용히 깨져 있었다. 테스트는 miniflare를 쓰므로 **전부 녹색이었다** — 깨진 걸 알려 줄 오라클이 없었다.
 15. **프롬프트를 옮길 때의 오라클은 "돌아간다"가 아니라 "해시가 같다"다.** 이식이 한 글자 틀려도 코드는 돌고 테스트도 통과하며, 차이는 생성 품질과 `prompt_version` 분열로만 조용히 드러난다. 프로덕션이 이미 아는 값(`956ba44a7c48`)을 오라클로 쓰면 그 창이 닫힌다.
+16. **스키마 마이그레이션이 배포보다 먼저다 — 순서가 바뀌면 조용히 잃는다.** W1a에서 새 코드가 `usage_log`의 새 컬럼에 쓰는데 컬럼이 없으면 INSERT가 실패하고, `logUsage`가 실패를 삼키므로 **서비스는 멀쩡하고 텔레메트리만 멈춘다.** 반대 순서(마이그레이션 먼저)는 옛 코드가 DEFAULT로 정확히 기록해 무손실이다. "삼키는 코드"가 있는 곳에서는 배포 순서가 곧 데이터 손실 여부다.
 
 ---
 
@@ -218,10 +192,11 @@ W2 = 카테고리 허브·관련 용어·구조화 데이터·얇은 콘텐츠 �
 | 무엇 | 어디 |
 |---|---|
 | 상태 정본 | [`ROADMAP.md`](ROADMAP.md) Now 「▶ 재개 지점」 |
-| **사람이 할 일 (구체 절차)** | 같은 곳 「🙋 사람이 해야 하는 것」 — **남은 것 = `www`→apex 301 · Apple 리마인더 등록(2027-06-08) · ⏳사이트맵 제출(W1b 배포 후)**. ADR 비준·Apple 갱신일·**Search Console 소유권**은 ✅완료 |
+| **사람이 할 일** | 같은 곳 「🙋 사람이 해야 하는 것」 — **살아 있는 것 셋뿐**: `www`→apex 301 · 앱 방침 URL 이전(선택) · ⏳사이트맵 제출(W1b 배포 후). 나머지는 완료 이력으로 접었다 |
+| 서버 계약 (웹) | `~/devetym-proxy/README.md` 「웹 표면 (W1a)」 — 요청 형태·3층 한도·429 `scope`·시크릿 |
 | 설계 정본 | [`docs/design/web-transition-design.md`](docs/design/web-transition-design.md) |
 | 웹 코드 | `~/devetym/web/` ([README](web/README.md) — 손대면 안 되는 것·앱과 의도적으로 다른 곳) |
-| 서버 코드 | `~/devetym-proxy` (별도 repo) · 계약 = [ADR-0006](docs/adr/0006-server-cache-boundary.md) |
+| 서버 코드 | `~/devetym-proxy` (별도 repo) · 계약 = [ADR-0006](docs/adr/0006-server-cache-boundary.md)(캐시) · [ADR-0010](docs/adr/0010-web-abuse-prevention.md)(표면 분리) · [ADR-0011](docs/adr/0011-prompt-ownership-transfer.md)(프롬프트) |
 | 운영 비용 원장 | [`docs/cost/running-costs.md`](docs/cost/running-costs.md) |
 | 버그·개선 | GitHub Issues ([ADR-0008](docs/adr/0008-issue-tracking.md)) |
 | 씨딩 복붙본 | `~/Downloads/devetym-release/` — **폐기 금지**, 착지 링크를 `devetym.com`으로 교체해 재사용. 발사 = 웹 본체 완성 후 |
