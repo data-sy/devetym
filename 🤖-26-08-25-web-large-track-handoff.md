@@ -35,7 +35,21 @@
 
 ### 남은 일
 
-**W1c 승격 잡 하나.** 그리고 **사람 2건**: ① Search Console 사이트맵 제출(트리거 발화됨) ② 위 간헐 403 조사.
+**트랙에서 살아 있는 것은 W1c 승격 잡 하나.** 착수 브리프는 §2 「▶ W1c」에 있고,
+**그것만 읽으면 바로 시작할 수 있다.** 다만 거기 적힌 **1번(critic이 수동 프롬프트다)**은
+범위를 가르는 사람 결정이라 먼저 확인할 것.
+
+**사람 3건**
+| | 무엇 | 왜 지금 |
+|---|---|---|
+| ① | **Search Console 사이트맵 제출** — `sitemap-index.xml` | 트리거(W1b 배포)가 발화했다. 652 URL 전부 200 확인됨. 이걸로 색인률(K1) 측정 배선이 닫히고 W3가 완전해진다 |
+| ② | **간헐 403 조사** (Anthropic Console) | 위 🔴 참조. **라이브 앱도 영향** |
+| ③ | `www` → apex **301 Redirect Rule** | `www.devetym.com`이 지금도 **200으로 같은 내용을 서빙**한다(2026-09-02 재확인). 완화는 canonical뿐. 설정값은 [ROADMAP](ROADMAP.md) 「사람이 해야 하는 것」 ④ |
+
+**백로그로 넘긴 것 4건** — [ROADMAP](ROADMAP.md) Later 「W1b에서 이월된 항목」.
+그중 하나는 **앱 오류 화면에 재시도가 없다**(`DetailScreen.kt:136` 실측 — 「돌아가기」뿐).
+간헐 403이 살아 있는 동안 **웹과 앱의 회복력이 비대칭**이라는 뜻이다.
+나머지는 웹↔앱 디자인 일치 · 정적 캐시 헤더 · `_routes.json` 무용 함정.
 
 ```bash
 # 환경 확인
@@ -93,7 +107,43 @@ same-site `/api/term` → service binding → 프록시 · `/term/<key>` **조�
 (3안 중 **「담백 사실형」** — 종전 Q4의 *"앱 유도를 전면에"*를 **완화한 최신 결정**이며 이쪽이 이긴다).
 
 ### ▶ W1c · 승격 잡 (= 캐시 M5) 〔지금 여기 · 2026-08-25 사람 선택 (b)〕
-`critic` 게이트(INV-7)를 통과한 `origin='generated'` 행을 `authored`로 승급 → 다음 빌드에서 SSG 집합·사이트맵에 편입되며 그때 색인된다. **이게 없으면 웹 AI로 자란 콘텐츠는 영원히 `noindex`**다. 완료 오라클: 승격된 용어가 **배포 후 실 URL에서 `noindex` 없이 200** + 사이트맵에 등장.
+
+**무엇을 만드나**: `critic` 게이트(INV-7)를 통과한 `origin='generated'` 행을 `authored`로 승급 →
+다음 빌드에서 SSG 집합·사이트맵에 편입되며 **그때 색인된다**.
+**완료 오라클**: 승격된 용어가 **배포 후 실 URL에서 `noindex` 없이 200** + 사이트맵에 등장.
+
+**착수 전에 반드시 아는 것 4가지** — 이걸 모르고 시작하면 범위를 잘못 잡는다.
+
+1. **⚠️ `critic`은 자동화된 게이트가 아니다. 사람이 돌리는 프롬프트다.**
+   `Scripts/db-expand/prompts/critic-v2.paste.md`를 **claude.ai 탭 B의 system instruction에 붙여
+   수동으로** 돌리는 방식이다(`docs/db-expand/README.md`: *"claude.ai 2탭(Generator/Critic) 수동 batch"*).
+   코드로 된 critic은 repo 어디에도 없다(`grep -rn critic ~/devetym-proxy/src` → 0건).
+   → **W1c의 범위 판정이 여기서 갈린다**: (a) critic을 자동화하고 잡을 무인화할 것인가,
+   (b) 기존 수동 critic 절차에 승격 단계만 얹을 것인가. **사람 결정이 필요한 지점이다.**
+   자동화된 것은 `validator.py`(정량 룰)뿐이고 그건 **write 시점** 게이트다 — 승격 시점 게이트가 아니다.
+
+2. **⚠️ 입력 필터에 `branch`가 필요하다 — `origin`만으로 가르면 쓰레기가 섞인다.**
+   프로덕션 `generated` 행 중 상당수가 `not_dev_term`·`possible_typo`다(W0c 시점 21행 중 14행).
+   이건 페이지가 되면 안 되는 행이다. `WHERE origin='generated' AND branch='term_entry'`가 최소 조건.
+   ADR-0013은 *"생성분도 페이지가 될 자격이 있다"*만 말하고 이 필터를 규정하지 않았다 —
+   **규범 변경이면 새 ADR**(백로그에 「W1c 착수 전 판정」으로 등재돼 있다).
+
+3. **승격은 D1 컬럼만 바꾸면 끝이 아니다.** `origin='authored'`가 되면 그 행은
+   **번들 익스포트 대상**이 된다(`export_bundle.py`가 `WHERE origin='authored'`로 뽑는다).
+   즉 승격 → 익스포트 → `terms.json` 커밋 → 웹 재빌드까지 가야 SSG에 들어간다.
+   그리고 `authored` 센티널(`authored:efa8f264dc67`)이 **바뀐다** — 왕복 검증이 그 위에서 닫혀야 한다.
+   ⚠️ 시딩 충돌 규칙(ADR-0012 D6)상 authored는 generated를 덮어쓰고 구본은 `entry_versions`에 남는다.
+
+4. **웹 쪽은 이미 준비돼 있다 — 새로 지을 게 없다.** 승격된 용어는 다음 빌드에서 자동으로
+   `getStaticPaths`에 들어가고 사이트맵에 실리며 `noindex`가 사라진다. SSR 폴백은 그 용어를
+   더 이상 타지 않는다. **웹 코드 변경 없이 데이터만으로 닫히는 마일스톤이다.**
+
+**첫 명령**
+```bash
+cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22
+npx wrangler d1 execute devetym-cache --remote --command \
+  "SELECT branch, origin, COUNT(*) FROM entries GROUP BY branch, origin"
+```
 
 ### W2 · W3
 W2 = 카테고리 허브·관련 용어·구조화 데이터·얇은 콘텐츠 대응(317개가 300자 미만). W3 = 8주 실측 리뷰(**검색 수요 가정이 여기서 사후 판정된다**).
