@@ -1,19 +1,21 @@
-# 🤖 웹 트랙 W — **W1b 웹 본체까지 프로덕션 · 다음 = W1c 승격 잡**
+# 🤖 웹 트랙 W — **W1c 승격 라운드 001 로컬 종결 · 다음 = 원격 반영 2건**
 
 > **콜드 세션 시작점.** 사람이 *"뭐 하고 있었어? 이어서 하자"* 라고 물으면 **이 문서로 답한다.**
 > 상태 정본은 [`ROADMAP.md`](ROADMAP.md) Now의 「▶ 재개 지점」 — 충돌하면 ROADMAP이 이긴다.
-> **최종 갱신 2026-09-02 (W1b 종결 — 배포·전수 200·웹 생성 왕복까지 끝).**
+> **최종 갱신 2026-09-02 (W1c 라운드 001 로컬 종결 — 승격 10건·번들 660·빌드까지 끝. 원격 반영만 남았다).**
 
-**한 줄**: <https://devetym.com> 이 **650장짜리 사이트**다. W0c·W1a에 이어 **W1b가 프로덕션에 들어갔다(2026-09-02)**. 용어 상세 650장이 정적으로 서고, 한글 별칭이 title·h1·구조화 데이터에 1급으로 올라가 있으며, 검색과 AI 폴백이 돈다. 생성된 용어는 그 자리에서 자기 URL을 얻는다(단 `noindex`). **다음 한 걸음은 W1c 승격 잡** — 그게 없으면 웹 AI로 자란 콘텐츠는 **영원히 색인되지 않는다**.
+**한 줄**: <https://devetym.com> 이 **650장짜리 사이트**이고, **레포는 660장**이다. W1b(웹 본체)에 이어 **W1c 승격 라운드 001이 로컬에서 끝났다(2026-09-02)** — 웹 AI가 만든 생성분 10건이 `critic`을 통과해 `authored`로 올라갔고, 번들·빌드·테스트가 660으로 서 있다. **남은 것은 원격 반영 둘뿐**(D1 시딩 · 웹 재배포). 그 둘을 하기 전까지 승격분은 여전히 `noindex`이고 라이브는 650장이다.
 
 ---
 
 ## 0. 새 세션이 *"이어서 하자"* 를 들었을 때 — **읽고 바로 이 말을 하면 된다**
 
-> **W1b까지 끝났다 — 배포와 실측(전수 200 · 웹 생성 왕복)까지.**
-> **다음은 W1c 승격 잡**(= 캐시 M5). `critic`을 통과한 `generated` 행을 `authored`로 올려 다음
-> 빌드에서 SSG·사이트맵에 편입시키는 일이다. 이게 없으면 ADR-0013의 최대 이점이 잠긴 채 남는다.
-> 문제가 생기면 롤백 = `cd ~/devetym/web && npx wrangler rollback`.
+> **W1c 승격 라운드 001이 로컬에서 끝났다.** 생성분 10건을 번들 규격으로 리라이트해
+> `critic` 2회차를 통과시켰고(1회차 8/10), 번들이 **650 → 660**이 됐다. 익스포트 왕복 660행
+> 바이트 동일 · 테스트 전 축 green · 웹 빌드 660장/사이트맵 662까지 확인됐다.
+> **남은 것은 원격 반영 둘** — ① D1 원격 시딩 ② 웹 재배포. 명령과 오라클은
+> [ROADMAP](ROADMAP.md) 「사람이 해야 하는 것」 **⑧⑨**에 있다.
+> 문제가 생기면 롤백 = `cd ~/devetym/web && npx wrangler rollback`(직전 `eeba288a`).
 
 ### 🔴 살아 있는 사고 1건 — 프록시→Anthropic 간헐 403
 
@@ -25,24 +27,26 @@
 
 | | |
 |---|---|
-| 웹 | <https://devetym.com> — **용어 650장 · 검색 · AI 폴백 · 전체 색인(`/terms`)**. 실 URL 656개 전수 200 |
+| 웹 (라이브) | <https://devetym.com> — **용어 650장** · 검색 · AI 폴백 · 전체 색인(`/terms`). 실 URL 656개 전수 200 |
+| 웹 (레포) | **용어 660장** · 사이트맵 662 — 빌드·테스트 green, **아직 배포 안 됨** |
 | 배포 워커(웹) | `devetym-web` **`eeba288a`** |
 | 배포 워커(프록시) | `devetym-proxy` **`078e1a3a`** (W1a · 무변경) — 롤백 대상 `d0504c73` |
-| 프로덕션 D1 | entries **673+** · authored **650** · generated **23+**(`service mesh`·`dark launch` 추가) |
+| 프로덕션 D1 | entries **674** · authored **650** · generated **24**(term_entry 10 · not_dev_term 13 · possible_typo 1) — **승격 시딩 미적용** |
 | 프록시 방어 | CORS allowlist · Turnstile **켜짐** · 웹 3층(쿠키 3·IP 15·전역 30) / 앱 10·200 **불변** — **3층 전부 실측으로 무는 것 확인** |
 | 웹 API | `devetym.com/api/term` (same-site) → **service binding** → 프록시. `CF-Connecting-IP` 보존 확인 |
-| 색인 | 사이트맵 **652 URL**(650 + `/` + `/terms`). `/search`·생성분은 `noindex`이며 사이트맵에서 제외 |
+| 색인 | 라이브 사이트맵 **652 URL**(650 + `/` + `/terms`) · 재배포 후 **662**. `/search`·미승격 생성분은 `noindex`이며 사이트맵에서 제외 |
 
 ### 남은 일
 
-**트랙에서 살아 있는 것은 W1c 승격 잡 하나.** 착수 브리프는 §2 「▶ W1c」에 있고,
-**그것만 읽으면 바로 시작할 수 있다.** 다만 거기 적힌 **1번(critic이 수동 프롬프트다)**은
-범위를 가르는 사람 결정이라 먼저 확인할 것.
+**트랙에서 살아 있는 것은 W1c 원격 반영 둘뿐**(아래 표 ⓐⓑ). 승격 잡 자체는 지어졌고
+자격 규범은 [ADR-0014](docs/adr/0014-promotion-eligibility.md)로 닫혔다 — §2 「▶ W1c」 참조.
 
-**사람 3건**
+**사람 5건**
 | | 무엇 | 왜 지금 |
 |---|---|---|
-| ① | **Search Console 사이트맵 제출** — `sitemap-index.xml` | 트리거(W1b 배포)가 발화했다. 652 URL 전부 200 확인됨. 이걸로 색인률(K1) 측정 배선이 닫히고 W3가 완전해진다 |
+| ⓐ | **W1c D1 원격 시딩** — `npx wrangler d1 execute devetym-cache --remote --file=/tmp/promote-seed.sql` | 승격 10건이 `authored`가 되는 지점. **`shedlock`의 틀린 인물명이 앱·API에서 고쳐지는 것도 여기다.** Claude Code 자동 모드가 원격 D1 쓰기를 차단해 세션 안에서 못 돌렸다 |
+| ⓑ | **W1c 웹 재배포** — `cd ~/devetym/web && npx wrangler deploy` | 660장이 색인 자격을 갖고 나간다. 오라클 = 전수 200(666) + 승격분 `noindex` 없음 + 사이트맵 662 |
+| ① | **Search Console 사이트맵 제출** — `sitemap-index.xml` | **ⓑ 뒤에 할 것** — 지금 내면 승격분 10장이 첫 제출에서 빠진다(라이브 652 → 재배포 후 662) |
 | ② | **간헐 403 조사** (Anthropic Console) | 위 🔴 참조. **라이브 앱도 영향** |
 | ③ | `www` → apex **301 Redirect Rule** | `www.devetym.com`이 지금도 **200으로 같은 내용을 서빙**한다(2026-09-02 재확인). 완화는 canonical뿐. 설정값은 [ROADMAP](ROADMAP.md) 「사람이 해야 하는 것」 ④ |
 
@@ -74,6 +78,8 @@ node scripts/check-urls.mjs https://devetym.com                       # 실 URL 
 | **W0c 650 D1 시딩** | ✅ 2026-09-01 | 프로덕션 entries 671 · authored 650 · aliases 1,304 · 키 전부 N1 |
 | **W1a 프록시 하드닝** | ✅ 2026-09-02 | 워커 `078e1a3a` · 실기기 실측 통과 · `main` 병합 · 테스트 131 |
 | **W1b 웹 본체** | ✅ 2026-09-02 | 워커 `eeba288a` · 실 URL **656 전수 200** · 웹 생성 왕복 성공 · 3층 한도 실측 |
+| **W1c 라운드 001 (로컬)** | ✅ 2026-09-02 | 승격 10건 · 번들 650→660 · 센티널 `f1f414be02d2` · critic 1회차 8/10 → 2회차 10/10 · 빌드 660장/사이트맵 662. **원격 미반영** |
+| **ADR-0014 비준** | ✅ 사람 비준 (2026-09-02) | 승격 자격 = `branch='term_entry'` + 번들 규격. 위반은 탈락이 아니라 리라이트 |
 | **ADR-0012·0013 비준** | ✅ 사람 비준 (2026-08-25) | 둘 다 `Accepted`. INV-11 전단·ADR-0006 D5 갱신 완료. 함께 정해진 것 = **승격 잡을 W1c로 W 트랙 안에서 닫는다**(선택지 (b)) |
 
 **도메인**: Amazon Registrar 등록($16/yr·자동 갱신 ✅), **네임서버만 Cloudflare 위임**(소유·결제는 Amazon 유지 — 이전은 하지 않기로 결정). Route 53 호스팅 영역 삭제로 $0.50/월 회피.
@@ -106,43 +112,40 @@ same-site `/api/term` → service binding → 프록시 · `/term/<key>` **조�
 `scope`별 한도 화면. 착수 시 지키기로 했던 5가지는 전부 반영됐고, 그중 문구 결정만 사람이 골랐다
 (3안 중 **「담백 사실형」** — 종전 Q4의 *"앱 유도를 전면에"*를 **완화한 최신 결정**이며 이쪽이 이긴다).
 
-### ▶ W1c · 승격 잡 (= 캐시 M5) 〔지금 여기 · 2026-08-25 사람 선택 (b)〕
+### ✅ W1c · 승격 잡 — 라운드 001 로컬 종결 (2026-09-02) · 〔남은 것 = 원격 반영 ⓐⓑ〕
 
-**무엇을 만드나**: `critic` 게이트(INV-7)를 통과한 `origin='generated'` 행을 `authored`로 승급 →
-다음 빌드에서 SSG 집합·사이트맵에 편입되며 **그때 색인된다**.
-**완료 오라클**: 승격된 용어가 **배포 후 실 URL에서 `noindex` 없이 200** + 사이트맵에 등장.
+**지어진 것**: `Scripts/db-expand/promote_select.py`(후보 선별·분류) + 오라클. 승격 이후 경로는
+새로 짓지 않고 W0c 것을 그대로 쓴다 — `merge.py` → `seed_d1.py` → `export_bundle.py`.
+자격 규범은 [ADR-0014](docs/adr/0014-promotion-eligibility.md)(`Accepted`).
 
-**착수 전에 반드시 아는 것 4가지** — 이걸 모르고 시작하면 범위를 잘못 잡는다.
+**착수 브리프의 전제 하나가 실측으로 뒤집혔다.** 갈림길은 "critic을 자동화할 것인가"가 아니었다:
 
-1. **⚠️ `critic`은 자동화된 게이트가 아니다. 사람이 돌리는 프롬프트다.**
-   `Scripts/db-expand/prompts/critic-v2.paste.md`를 **claude.ai 탭 B의 system instruction에 붙여
-   수동으로** 돌리는 방식이다(`docs/db-expand/README.md`: *"claude.ai 2탭(Generator/Critic) 수동 batch"*).
-   코드로 된 critic은 repo 어디에도 없다(`grep -rn critic ~/devetym-proxy/src` → 0건).
-   → **W1c의 범위 판정이 여기서 갈린다**: (a) critic을 자동화하고 잡을 무인화할 것인가,
-   (b) 기존 수동 critic 절차에 승격 단계만 얹을 것인가. **사람 결정이 필요한 지점이다.**
-   자동화된 것은 `validator.py`(정량 룰)뿐이고 그건 **write 시점** 게이트다 — 승격 시점 게이트가 아니다.
+- 후보 10건(= `origin='generated' AND branch='term_entry'`)을 `validator.py`에 넣으면 **통과 0건 · 위반 18건**
+  (길이 초과 15 · keyword 공백 2 · 한글 alias 없음 1).
+- 워커 프롬프트(`~/devetym-proxy/src/prompt.js:51-53`)는 번들과 **같은 범위**를 지시한다.
+  다른 것은 **루프**다 — 파이프라인엔 "validator 100%까지 재생성"이 있고 런타임 생성 경로엔 없다.
+- 그래서 **승격은 컬럼 갱신이 아니라 편집 작업**이다. 이 대가는 ADR-0014 Negative에 적혀 있다.
 
-2. **⚠️ 입력 필터에 `branch`가 필요하다 — `origin`만으로 가르면 쓰레기가 섞인다.**
-   프로덕션 `generated` 행 중 상당수가 `not_dev_term`·`possible_typo`다(W0c 시점 21행 중 14행).
-   이건 페이지가 되면 안 되는 행이다. `WHERE origin='generated' AND branch='term_entry'`가 최소 조건.
-   ADR-0013은 *"생성분도 페이지가 될 자격이 있다"*만 말하고 이 필터를 규정하지 않았다 —
-   **규범 변경이면 새 ADR**(백로그에 「W1c 착수 전 판정」으로 등재돼 있다).
+**라운드 001 결과**: 리라이트 10건 → validator 10/10 → critic 1회차 8/10 → 고침 2건 → 2회차 10/10.
 
-3. **승격은 D1 컬럼만 바꾸면 끝이 아니다.** `origin='authored'`가 되면 그 행은
-   **번들 익스포트 대상**이 된다(`export_bundle.py`가 `WHERE origin='authored'`로 뽑는다).
-   즉 승격 → 익스포트 → `terms.json` 커밋 → 웹 재빌드까지 가야 SSG에 들어간다.
-   그리고 `authored` 센티널(`authored:efa8f264dc67`)이 **바뀐다** — 왕복 검증이 그 위에서 닫혀야 한다.
-   ⚠️ 시딩 충돌 규칙(ADR-0012 D6)상 authored는 generated를 덮어쓰고 구본은 `entry_versions`에 남는다.
+| keyword | 룰 | 조치 |
+|---|---|---|
+| `shedlock` | `RULE_ETYMOLOGY_FACT` | 제작자 이름이 사실과 어긋난다는 지적. **표기를 확증할 수 없는 다른 이름으로 갈지 않고** 인물 언급을 삭제, Spring `@Scheduled` 연동·Maven 좌표로 대체 |
+| `harness` | `RULE_ALIAS_STRICT` | 한정 수식어 변형(`test harness`·`테스트 하네스`) 제거 |
 
-4. **웹 쪽은 이미 준비돼 있다 — 새로 지을 게 없다.** 승격된 용어는 다음 빌드에서 자동으로
-   `getStaticPaths`에 들어가고 사이트맵에 실리며 `noindex`가 사라진다. SSR 폴백은 그 용어를
-   더 이상 타지 않는다. **웹 코드 변경 없이 데이터만으로 닫히는 마일스톤이다.**
+⚠️ **`shedlock`의 틀린 인물명은 지금 라이브에 서 있다** — 런타임 생성물에서 딸려온 값이다.
+원격 시딩이 D1 행을 덮을 때 함께 고쳐진다. **이번 승격은 색인 개방이자 정정 배포다.**
 
-**첫 명령**
+⚠️ **`harness` 별칭 제거는 반쪽만 먹는다.** D1 `aliases`에 `testharness`·`테스트하네스` 행이
+남아 있고 시딩은 별칭을 지우지 않는다 → 조회·API에서는 계속 찾아지고 **웹 정적 검색 인덱스에서만 빠진다.**
+한글 검색 자산이 줄어드는 방향이라 별칭 정리 정책은 별건이다(백로그).
+
+**다음 라운드를 여는 첫 명령**
 ```bash
 cd ~/devetym-proxy && source ~/.nvm/nvm.sh && nvm use 22
-npx wrangler d1 execute devetym-cache --remote --command \
-  "SELECT branch, origin, COUNT(*) FROM entries GROUP BY branch, origin"
+npx wrangler d1 execute devetym-cache --remote --json \
+  --command "$(python3 ~/devetym/Scripts/db-expand/promote_select.py --sql)" > /tmp/cands.json
+cd ~/devetym && python3 Scripts/db-expand/promote_select.py --rows /tmp/cands.json --out-dir /tmp/w1c
 ```
 
 ### W2 · W3
@@ -191,6 +194,12 @@ W2 = 카테고리 허브·관련 용어·구조화 데이터·얇은 콘텐츠 �
 | 검색 인덱스 | 109KB / **gzip 35KB** (요약 포함). 검색 화면 JS 6.7KB · **용어 650장은 JS 0바이트** | 09-02 |
 | 웹 3층 실측 | 생성 1건에 `rl:web:c:*`·`rl:web:ip:*`·`rl:web:global` **전부 증가**. IP 버킷이 실 클라이언트 IP 해시와 **일치** → service binding이 `CF-Connecting-IP` 보존 | 09-02 |
 | term_key 교차 실행 | 4지점(앱·프록시·파이프라인·웹) · **3,398건 불일치 0** | 09-02 |
+| **W1c 승격 후보** | `origin='generated' AND branch='term_entry'` **10건** / 전체 generated 24 — 나머지 14는 `not_dev_term` 13·`possible_typo` 1 | **09-02** |
+| **W1c 정량 통과율** | 리라이트 전 **0/10**(위반 18) · 리라이트 후 **10/10** | **09-02** |
+| **W1c critic** | 1회차 8/10(`shedlock` 사실오류 · `harness` alias) → 2회차 **10/10** | **09-02** |
+| **번들 / 센티널** | **660건** · `authored:f1f414be02d2` (종전 650 · `efa8f264dc67`) | **09-02** |
+| **W1c 시딩 회계** | 게이트 660/660 · PK 충돌 0 · 별칭 대상 1,308(가려짐 88 · 자기접힘 1 · 엔트리간 충돌 3) | **09-02** |
+| **W1c 웹 빌드** | 정적 용어 **660장** · 사이트맵 **662** · term_key 4지점 교차 **3,444건 불일치 0** | **09-02** |
 | W0c 적용 전 백업 | `~/devetym-d1-backup-20260901-020554.sql` (entries 21 · aliases 12) | 09-01 |
 | 스테이징 D1 | `devetym-cache-dev` `1be332f5-d3fb-48cb-9ba7-fc481c2a0fec` (무료 3/10) | 09-01 |
 
@@ -228,6 +237,9 @@ W2 = 카테고리 허브·관련 용어·구조화 데이터·얇은 콘텐츠 �
 20. **TOML 섹션 헤더 뒤의 최상위 키는 그 섹션에 삼켜진다.** `wrangler.toml`에서 `[assets]`를 위로 옮겼더니 뒤따르던 `workers_dev = false`가 `assets.workers_dev`가 됐다 — 그대로 배포했으면 미리보기 서브도메인이 되살아나 함정 #1이 재발했다. wrangler의 "Unexpected fields found in assets field" 경고가 잡아 줬다. **배포 전 `deployments list` 한 번이 설정 오라클 노릇을 한다.**
 21. **자산 전파에는 지연이 있다.** 배포 직후 전수 200을 돌리면 72건이 404였고, 20초 뒤 재실행에서 656/656이었다. 배포 직후의 실패를 결함으로 읽지 말 것 — **한 번 더 돌려보고 판정한다.**
 22. **상류 오류가 간헐적이면 "안 된다"는 판정이 틀린다.** 프록시→Anthropic 구간이 같은 요청에 1·2회차 403, 3회차 200을 냈다. 첫 실패로 디버깅을 시작하면 없는 버그를 몇 시간 쫓는다 — **비결정적 실패는 재시도 횟수를 먼저 늘려 성격을 확정한 뒤에 원인을 판다.**
+24. **승격은 번들 크기가 박힌 곳 전부를 건드린다.** 라운드 001에서 손으로 맞춘 곳이 여섯이었다 — `terms.ts` 엔트리 가드 · 사이트 설명 · 한도 문구 · 시딩 확정값 · 스냅샷 · 테스트 서술. **한 곳만 빠뜨려도 사이트가 스스로 틀린 수를 말하거나 빌드가 깨진다.** 그런데 이 노동은 매 라운드 반복된다 → 「수를 정체성에서 뺀다」가 백로그에 있다. 단 **깨지는 검사로서의 수는 남겨야 한다**(INV-A: 별칭이 조용히 증발해도 빌드는 성공한다).
+25. **런타임 생성 경로에는 정량 게이트가 없다.** 워커 프롬프트가 길이 범위를 지시해도 **지시는 게이트가 아니다** — 파이프라인이 가졌던 "통과할 때까지 재생성" 루프가 런타임엔 없어서 규격 밖 본문이 그대로 정본에 앉는다. 실측 통과율 **0/10**. "프롬프트에 적었으니 지켜질 것"으로 설계하면 이 구멍이 조용히 열린다.
+26. **AI가 만든 인물·연도는 라이브에 그대로 선다.** `shedlock`의 제작자 이름이 틀린 채 서비스되고 있었고, 잡은 것은 모니터링도 사용자 제보도 아닌 **승격 critic**이었다. 검수 게이트를 색인 게이트로 쓰기로 한 ADR-0013의 부수 효과 — 승격 잡은 색인 개방이자 **정정 경로**다. ⚠️ 고칠 때 **확증 못 하는 다른 이름으로 갈지 말 것**(같은 오류를 한 번 더 심는다) — 인물을 빼고 검증 가능한 사실로 대체한다.
 23. **응답 shape이 출처를 말해 준다.** 위 403의 본문은 pretty-print된 `{"error":{"type":"forbidden",…}}`였는데, Anthropic 자체 오류는 compact한 `{"type":"error","error":{…},"request_id":…}`다. **로컬에서 자리표시자 키로 한 번 찍어 두면** 정상 오류 shape을 알게 되고, 그것과 다르면 "상류가 아니라 상류 앞단"이라고 바로 가른다.
 
 
@@ -238,7 +250,7 @@ W2 = 카테고리 허브·관련 용어·구조화 데이터·얇은 콘텐츠 �
 | 무엇 | 어디 |
 |---|---|
 | 상태 정본 | [`ROADMAP.md`](ROADMAP.md) Now 「▶ 재개 지점」 |
-| **사람이 할 일** | 같은 곳 「🙋 사람이 해야 하는 것」 — **살아 있는 것 셋뿐**: `www`→apex 301 · 앱 방침 URL 이전(선택) · ⏳사이트맵 제출(W1b 배포 후). 나머지는 완료 이력으로 접었다 |
+| **사람이 할 일** | 같은 곳 「🙋 사람이 해야 하는 것」 — **살아 있는 것 다섯**: ⑧ W1c D1 원격 시딩 · ⑨ W1c 웹 재배포 · ⑥ 사이트맵 제출(⑨ 뒤) · ④ `www`→apex 301 · ⑤ 앱 방침 URL 이전(선택). 나머지는 완료 이력으로 접었다 |
 | 서버 계약 (웹) | `~/devetym-proxy/README.md` 「웹 표면 (W1a)」 — 요청 형태·3층 한도·429 `scope`·시크릿 |
 | 설계 정본 | [`docs/design/web-transition-design.md`](docs/design/web-transition-design.md) |
 | 웹 코드 | `~/devetym/web/` ([README](web/README.md) — 손대면 안 되는 것·앱과 의도적으로 다른 곳) |

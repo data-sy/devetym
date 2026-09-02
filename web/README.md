@@ -6,10 +6,14 @@
 - 결정: [ADR-0009](../docs/adr/0009-web-framework-rendering.md)(스택) · [ADR-0010](../docs/adr/0010-web-abuse-prevention.md)(남용 방지) · [ADR-0011](../docs/adr/0011-prompt-ownership-transfer.md)(프롬프트) · [ADR-0012](../docs/adr/0012-content-canon-d1.md)(D1 = 콘텐츠 정본) · [ADR-0013](../docs/adr/0013-web-route-contract.md)(SSG + 조회 전용 SSR 폴백) — **5건 모두 `Accepted`**
 - 진행 상태 정본: [`../ROADMAP.md`](../ROADMAP.md) W 트랙
 
-## 지금 상태 — **W1b까지 프로덕션 · 다음은 W1c(승격 잡)**
+## 지금 상태 — **W1c 로컬 종결 · 원격 반영 대기**
 
 **<https://devetym.com> 라이브** — 용어 상세 **650장** · 검색 · AI 폴백 · 전체 색인(`/terms`).
 배포 워커 `devetym-web` `eeba288a` (2026-09-02).
+
+⚠️ **레포는 660장인데 라이브는 아직 650장이다.** W1c 승격 라운드 001(생성분 10건 → `authored`)이
+로컬에서 끝나 번들·빌드·테스트는 660으로 서 있으나, **원격 D1 시딩과 재배포가 아직 실행되지 않았다**
+(사람 실행 대기 — [ROADMAP](../ROADMAP.md) 「사람이 해야 하는 것」). 그때까지 이 아래 표의 숫자는 라이브 기준이다.
 
 | | |
 |---|---|
@@ -27,12 +31,12 @@ IP 버킷이 **실 클라이언트 IP의 해시와 일치**했다(= service bind
 
 | 파일 | 역할 |
 |---|---|
-| `src/pages/term/[slug].astro` | 용어 상세 **650장 SSG**. 한글 별칭을 title·h1에 1급으로 |
+| `src/pages/term/[slug].astro` | 용어 상세 **SSG**(레포 660장 · 라이브 650장). 한글 별칭을 title·h1에 1급으로 |
 | `src/pages/term/[...rest].astro` | **조회 전용 SSR 폴백**. D1에 있으면 200+`noindex`, 없으면 404. **생성하지 않는다** |
 | `src/pages/search.astro` | 검색 화면. 이 페이지에만 JS가 있다(6.7KB) |
 | `src/pages/search-index.json.ts` | 빌드가 굽는 정적 검색 인덱스(109KB / gzip 35KB) |
 | `src/pages/api/term.ts` | same-site 생성 착지점 → **service binding**으로 프록시 호출 |
-| `src/pages/terms.astro` | 전체 색인 — 650장을 홈에서 1클릭 깊이로 |
+| `src/pages/terms.astro` | 전체 색인 — 용어 전량을 홈에서 1클릭 깊이로 |
 | `src/lib/terms.ts` | 번들 스냅샷 로더 + 빌드 시 단언. **SSR 라우트에서 import 금지**(518KB가 워커에 들어간다) |
 | `src/lib/term-key.ts` | 정규화 **네 번째 구현**(웹). 교차 실행 오라클이 고정한다 — 아래 참조 |
 | `src/lib/search.ts` · `messages.ts` · `lookup.ts` | 검색 매칭 · 사용자 문구 전수 매핑 · D1 조회 |
@@ -129,7 +133,7 @@ canonical·OG·robots·사이트맵·내부 절대링크가 전부 거기서 읽
 | DM Sans | 정의됐으나 실사용 0 | **싣지 않음** | `appTypography` 21종 중 아무도 참조하지 않는다 |
 | 자동완성 | keyword prefix만 | **+ aliases** ✅ | 그대로 옮기면 한글 입력에 반응이 전혀 없다 |
 | 교차 충돌 3건 | 검색에서 뒤 엔트리가 가려짐 | **검색에서도 둘 다 나온다** ✅ | 정적 페이지는 용어마다 자기 URL이 있다 |
-| `normalizeKeyword` | Kotlin | **웹 이식본(`src/lib/term-key.ts`)** | repo가 갈라져 import 공유가 불가능했다. 대신 **교차 실행 오라클**로 갚는다 — `Scripts/db-expand/test_term_key.py`가 웹 이식본을 실제로 실행해 번들 650 전량 + 유니코드 경계에서 파이썬·프록시 구현과 바이트 비교한다(**3,398건 불일치 0**). 이 파일을 옮기거나 이름을 바꾸면 그 테스트가 깨진다(의도된 결합) |
+| `normalizeKeyword` | Kotlin | **웹 이식본(`src/lib/term-key.ts`)** | repo가 갈라져 import 공유가 불가능했다. 대신 **교차 실행 오라클**로 갚는다 — `Scripts/db-expand/test_term_key.py`가 웹 이식본을 실제로 실행해 번들 전량 + 유니코드 경계에서 파이썬·프록시 구현과 바이트 비교한다(**3,444건 불일치 0**). 이 파일을 옮기거나 이름을 바꾸면 그 테스트가 깨진다(의도된 결합) |
 
 ## 아직 없는 것 (= W1c)
 
