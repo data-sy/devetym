@@ -55,15 +55,23 @@ export const prerender = true;
   const $results = document.getElementById("results") as HTMLElement;
   const $hint = document.getElementById("hint") as HTMLElement;
 
-  let rows: IndexRow[] | null = null;
   let indexError = false;
 
-  async function loadIndex(): Promise<IndexRow[]> {
-    if (rows) return rows;
-    const res = await fetch("/search-index.json");
-    if (!res.ok) throw new Error(`index ${res.status}`);
-    rows = (await res.json()) as IndexRow[];
-    return rows;
+  // ⚠️ **결과가 아니라 약속을 캐시한다.** 결과만 캐시하면 프리페치와 첫 질의가 겹칠 때
+  //    둘 다 미완료 상태라 인덱스를 **두 번 내려받는다**(프로덕션 네트워크 로그에서 실측).
+  let indexPromise: Promise<IndexRow[]> | null = null;
+
+  function loadIndex(): Promise<IndexRow[]> {
+    if (!indexPromise) {
+      indexPromise = fetch("/search-index.json").then((res) => {
+        if (!res.ok) {
+          indexPromise = null; // 실패는 캐시하지 않는다 — 다음 입력에서 다시 시도할 수 있어야 한다
+          throw new Error(`index ${res.status}`);
+        }
+        return res.json() as Promise<IndexRow[]>;
+      });
+    }
+    return indexPromise;
   }
 
   const esc = (s: string) =>
@@ -150,7 +158,22 @@ export const prerender = true;
       if (!res.ok) {
         // 402=예산 소진 · 그 외 non-2xx는 앱과 같은 분류로 접는다.
         const kind: ErrorKind = res.status === 402 ? "ServiceExhausted" : "InvalidResponse";
-        renderPanel(`<h2>${esc(ERROR_MESSAGE[kind])}</h2>`);
+        // ⚠️ **막다른 길로 두지 않는다.** 상류(Anthropic 앞단)가 403을 **간헐적으로** 낸다 —
+        //    프로덕션 실측 2026-09-02: 같은 요청이 1·2회차 403, 3회차 200. 한 번 실패했다고
+        //    "안 된다"로 끝내면 사용자는 되는 기능을 안 되는 줄 알고 떠난다.
+        //    재시도는 캐시 미스라 한도를 쓰지만, 실패한 호출은 한도에 가산되지 않는다
+        //    (프록시는 `upstream.ok`일 때만 카운터를 올린다).
+        const retryable = kind === "InvalidResponse";
+        renderPanel(
+          `<h2>${esc(ERROR_MESSAGE[kind])}</h2>` +
+            (retryable
+              ? `<p class="panel-actions"><button type="button" class="cta" id="again">다시 시도</button></p>`
+              : ""),
+        );
+        document.getElementById("again")?.addEventListener("click", () => {
+          document.querySelector(".panel")?.remove();
+          askAi(keyword);
+        });
         return;
       }
 
