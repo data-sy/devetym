@@ -6,14 +6,16 @@
 - 결정: [ADR-0009](../docs/adr/0009-web-framework-rendering.md)(스택) · [ADR-0010](../docs/adr/0010-web-abuse-prevention.md)(남용 방지) · [ADR-0011](../docs/adr/0011-prompt-ownership-transfer.md)(프롬프트) · [ADR-0012](../docs/adr/0012-content-canon-d1.md)(D1 = 콘텐츠 정본) · [ADR-0013](../docs/adr/0013-web-route-contract.md)(SSG + 조회 전용 SSR 폴백) — **5건 모두 `Accepted`**
 - 진행 상태 정본: [`../ROADMAP.md`](../ROADMAP.md) W 트랙
 
-## 지금 상태 — **W1c 로컬 종결 · 원격 반영 대기**
+## 지금 상태 — **W1c까지 프로덕션 · 다음은 W2**
 
-**<https://devetym.com> 라이브** — 용어 상세 **650장** · 검색 · AI 폴백 · 전체 색인(`/terms`).
-배포 워커 `devetym-web` `eeba288a` (2026-09-02).
+**<https://devetym.com> 라이브** — 용어 상세 **660장** · 검색 · AI 폴백 · 전체 색인(`/terms`).
+배포 워커 `devetym-web` `16ac69f8` (2026-09-02 · W1c).
 
-⚠️ **레포는 660장인데 라이브는 아직 650장이다.** W1c 승격 라운드 001(생성분 10건 → `authored`)이
-로컬에서 끝나 번들·빌드·테스트는 660으로 서 있으나, **원격 D1 시딩과 재배포가 아직 실행되지 않았다**
-(사람 실행 대기 — [ROADMAP](../ROADMAP.md) 「사람이 해야 하는 것」). 그때까지 이 아래 표의 숫자는 라이브 기준이다.
+**W1c 승격 잡이 프로덕션까지 닫혔다** — 웹 AI가 만든 생성분 10건이 `critic`을 통과해 `authored`로
+올라갔고, 다음 빌드에서 SSG·사이트맵에 편입돼 색인 자격을 얻었다(650 → **660**). 자격 규범 =
+[ADR-0014](../docs/adr/0014-promotion-eligibility.md). ⚠️ **승격분은 데이터로만 들어온다** —
+웹 코드는 손대지 않았다. 페이지 수를 코드에 박아 둔 곳(`src/lib/terms.ts` 엔트리 가드 ·
+`src/config/site.ts` · `src/lib/messages.ts`)은 승격 때마다 함께 맞춰야 한다.
 
 | | |
 |---|---|
@@ -21,9 +23,10 @@
 | ✅ W0c (09-01) | **650개 어원 정본이 프로덕션 D1에** (entries 671 · aliases 1,304 · 키 전부 N1) |
 | ✅ W1a (09-02) | 프록시가 웹/앱을 갈라 각자 캡을 쓴다 · CORS allowlist · Turnstile 켜짐 · 프롬프트 정본은 워커 소유 |
 | ✅ **W1b (09-02)** | **용어 페이지 650장 SSG · 검색+자동완성 · AI 폴백 · 조회 전용 SSR 폴백 · `/terms`** |
+| ✅ **W1c (09-02)** | **승격 잡** — `critic` 통과 생성분 10건이 `authored`로 올라가 색인 자격을 얻었다(650 → 660). 웹 코드 무변경 |
 | ⬜ **W1c** | **승격 잡** — `critic` 통과한 `generated`를 `authored`로. 없으면 웹 AI 생성분은 영원히 `noindex` |
 
-**완료 오라클(W1b) 통과**: 배포된 실 URL **656개 전수 200** + 웹 표면 AI 생성 왕복 성공.
+**완료 오라클 통과**: W1b = 실 URL **656개 전수 200** + 웹 표면 AI 생성 왕복 성공 · W1c = 실 URL **666개 전수 200** + 승격분 `noindex` 없음 + 사이트맵 **662**.
 3층 한도가 실제로 무는 것도 확인 — 생성 1건에 쿠키·IP·전역 카운터가 전부 증가했고,
 IP 버킷이 **실 클라이언트 IP의 해시와 일치**했다(= service binding이 `CF-Connecting-IP`를 보존한다).
 
@@ -31,7 +34,7 @@ IP 버킷이 **실 클라이언트 IP의 해시와 일치**했다(= service bind
 
 | 파일 | 역할 |
 |---|---|
-| `src/pages/term/[slug].astro` | 용어 상세 **SSG**(레포 660장 · 라이브 650장). 한글 별칭을 title·h1에 1급으로 |
+| `src/pages/term/[slug].astro` | 용어 상세 **660장 SSG**. 한글 별칭을 title·h1에 1급으로 |
 | `src/pages/term/[...rest].astro` | **조회 전용 SSR 폴백**. D1에 있으면 200+`noindex`, 없으면 404. **생성하지 않는다** |
 | `src/pages/search.astro` | 검색 화면. 이 페이지에만 JS가 있다(6.7KB) |
 | `src/pages/search-index.json.ts` | 빌드가 굽는 정적 검색 인덱스(109KB / gzip 35KB) |
