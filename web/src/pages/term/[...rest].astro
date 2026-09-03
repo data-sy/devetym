@@ -57,7 +57,7 @@ const headword = term ? (koreanAlias ? `${koreanAlias}(${term.keyword})` : term.
       noindex
     >
       <main>
-        <TermArticle term={term} koreanAlias={koreanAlias} generated={term.generated}>
+        <TermArticle term={term} koreanAlias={koreanAlias} path={`/term/${requestedKey}`} generated={term.generated}>
           <p class="ask"><a href="/search">다른 용어 검색하기</a></p>
         </TermArticle>
       </main>

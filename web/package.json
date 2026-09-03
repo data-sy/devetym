@@ -12,7 +12,8 @@
     "preview": "wrangler dev",
     "deploy": "astro build && wrangler deploy",
     "check": "astro check",
-    "test": "node scripts/test-search.mjs && python3 ../Scripts/db-expand/test_term_key.py"
+    "test": "node scripts/test-search.mjs && python3 ../Scripts/db-expand/test_term_key.py && npm run build && npm run test:structure",
+    "test:structure": "node scripts/test-structure.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

@@ -9,13 +9,19 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE_NAME, SITE_URL, absoluteUrl } from "../config/site";
 import { ALL_TERMS, CATEGORIES, bodyLength } from "../lib/terms";
+import { CATEGORY_META } from "../lib/categories";
 import { APP_STORE_URL } from "../lib/messages";
 
 export const prerender = true;
 
-const counts = CATEGORIES.map((c) => ({
-  name: c,
-  n: ALL_TERMS.filter((t) => t.category === c).length,
+/**
+ * ⚠️ **W2에서 갈래 칩의 목적지가 바뀌었다** — `/terms#앵커` → `/category/{slug}`.
+ *    앵커는 같은 한 장 안의 자리라 크롤러에게는 새 페이지가 아니었다. 허브는 페이지다.
+ */
+const counts = CATEGORY_META.map((c) => ({
+  name: c.heading,
+  slug: c.slug,
+  n: ALL_TERMS.filter((t) => t.category === c.name).length,
 }));
 
 /**
@@ -71,7 +77,7 @@ const siteJsonLd = {
       <h2 id="h-cat">갈래</h2>
       <ul class="cats">
         {counts.map((c) => (
-          <li><a href={`/terms#${encodeURIComponent(c.name)}`}>
+          <li><a href={`/category/${c.slug}`}>
             <span class="c-name">{c.name}</span><span class="c-n">{c.n}</span>
           </a></li>
         ))}

@@ -25,9 +25,16 @@ const WS = "\\u0009-\\u000D\\u001C-\\u0020\\u00A0\\u1680\\u2000-\\u200A\\u2028\\
 const SEP = new RegExp(`[${WS}\\u002D\\u005F]`, "g");
 const slug = (s) => s.replace(SEP, "").toLowerCase();
 
+/**
+ * 갈래 허브 6장 (W2). ⚠️ **슬러그를 여기 손으로 적어 둔 것이 의도다** — `categories.ts`에서
+ * import하면 그 파일이 틀려도 검사가 같이 틀려서 통과한다. 오라클은 코드 밖에서 온 값이어야 한다.
+ */
+const CATEGORY_SLUGS = ["concurrency", "data-structure", "network", "database", "pattern", "etc"];
+
 /** 용어 URL + 반드시 살아 있어야 하는 구조 URL. 후자가 죽으면 색인 배선이 끊긴다. */
 const urls = [
   ...terms.map((t) => `/term/${slug(t.keyword)}`),
+  ...CATEGORY_SLUGS.map((s) => `/category/${s}`),
   "/", "/terms", "/search", "/search-index.json", "/robots.txt", "/sitemap-index.xml",
 ];
 

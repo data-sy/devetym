@@ -14,7 +14,8 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import TermArticle from "../../components/TermArticle.astro";
 import TermJsonLd from "../../components/TermJsonLd.astro";
-import { ALL_TERMS, relatedTerms, type IndexedTerm } from "../../lib/terms";
+import { ALL_TERMS, relatedTerms, mentionedTerms, type IndexedTerm } from "../../lib/terms";
+import { categoryMeta, categoryPath } from "../../lib/categories";
 
 export const prerender = true;
 
@@ -28,7 +29,21 @@ interface Props {
 
 const { term } = Astro.props;
 const path = `/term/${term.slug}`;
-const related = relatedTerms(term);
+const hub = categoryMeta(term.category);
+
+/**
+ * 두 종류의 링크를 낸다 — **하는 일이 다르다**(W2).
+ *  - `mentioned`: 이 용어의 본문이 실제로 **언급한** 용어. 실측 792링크 중 29%가 갈래를 넘는다.
+ *    관련 용어만 있으면 크롤 그래프가 서로 안 닿는 6덩어리가 되는데, 이 링크가 그 다리다.
+ *  - `related`: 같은 갈래 이웃. 언급이 없는 페이지(절반 가까이)도 **반드시 6개를 받는다** —
+ *    얇은 페이지가 링크 0인 채로 남지 않게 하는 바닥이다.
+ * 겹치면 언급 쪽이 이긴다(더 구체적인 관계다).
+ */
+const mentioned = mentionedTerms(term);
+const mentionedSlugs = new Set(mentioned.map((t) => t.slug));
+const related = relatedTerms(term, 6 + mentioned.length).filter(
+  (t) => !mentionedSlugs.has(t.slug),
+).slice(0, 6);
 
 /**
  * ⚠️ **title이 이 트랙의 핵심 자산이 실제로 값을 내는 지점이다.** 한글 별칭이 앞에 오고
@@ -49,7 +64,24 @@ const description =
 <BaseLayout title={title} description={description} path={path}>
   <TermJsonLd term={term} path={path} />
   <main>
-    <TermArticle term={term} koreanAlias={term.primaryKoreanAlias}>
+    <TermArticle term={term} koreanAlias={term.primaryKoreanAlias} path={path}>
+      {mentioned.length > 0 && (
+        <nav class="related" aria-labelledby="h-men">
+          <h2 id="h-men">본문에 나온 용어</h2>
+          <ul>
+            {mentioned.map((r) => (
+              <li>
+                <a href={`/term/${r.slug}`}>
+                  <span class="r-name">{r.primaryKoreanAlias ?? r.keyword}</span>
+                  <span class="r-key">{r.keyword}</span>
+                  <span class="r-sum">{r.summary}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+
       {/*
         관련 용어는 장식이 아니라 **얇은 콘텐츠 대응**이다(설계서 §5-2).
         317개(48.8%)가 300자 미만이라, 본문을 새로 쓰지 않고 페이지의 실질과
@@ -69,6 +101,10 @@ const description =
           ))}
         </ul>
       </nav>
+
+      <p class="hub">
+        <a href={categoryPath(term.category)}>{hub?.heading ?? term.category} 갈래 전체 보기 →</a>
+      </p>
 
       <p class="ask">
         찾는 용어가 없나요? <a href="/search">검색하거나 AI에게 물어보세요</a>.
@@ -106,8 +142,17 @@ const description =
   }
   .r-sum { color: var(--c-text-muted); font-size: var(--t-caption-size); letter-spacing: var(--t-caption-tracking); }
 
-  .ask {
+  .related + .related { margin-top: var(--d-section-gap); }
+
+  .hub {
     margin: var(--d-section-gap) 0 0;
+    font-size: var(--t-label-size);
+  }
+  .hub a { color: var(--c-accent); text-decoration: none; }
+  .hub a:hover { text-decoration: underline; }
+
+  .ask {
+    margin: var(--d-label-gap) 0 0;
     font-size: var(--t-label-size);
     color: var(--c-text-muted);
   }

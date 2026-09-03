@@ -1,0 +1,72 @@
+---
+/**
+ * 빵부스러기 — 보이는 것과 `BreadcrumbList` 구조화 데이터를 **한 곳에서** 낸다 (W2).
+ *
+ * ⚠️ 둘을 따로 두면 조용히 갈라진다. 보이는 경로와 구조화 데이터가 다르면 검색엔진은
+ *    구조화 데이터 쪽을 **불일치로 판정**해 통째로 무시한다 — 그리고 그 무시는 페이지를
+ *    깨뜨리지 않으므로 눈으로는 영영 안 보인다. 그래서 입력을 하나로 묶는다.
+ *
+ * ⚠️ JSON-LD는 `set:html`이다(`TermJsonLd`와 같은 이유). 문자열로 넣으면 Astro가
+ *    이스케이프해 `&quot;`가 되고 파서가 통째로 버린다 — **깨져도 페이지는 멀쩡해 보인다.**
+ */
+import { absoluteUrl } from "../config/site";
+
+export interface Crumb {
+  name: string;
+  /** 사이트 내부 경로. 마지막(현재 페이지)은 비운다. */
+  path?: string;
+}
+
+interface Props {
+  items: Crumb[];
+  /** 현재 페이지 이름. 구조화 데이터의 마지막 항목이 된다(보이는 줄에도 나온다). */
+  current: string;
+  /** 현재 페이지 경로 — `item`을 채워 목록을 닫는다. */
+  currentPath: string;
+}
+
+const { items, current, currentPath } = Astro.props;
+
+const all: Crumb[] = [...items, { name: current, path: currentPath }];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: all.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: absoluteUrl(c.path!),
+  })),
+};
+
+const serialized = JSON.stringify(jsonLd).replace(/<\/(script)/gi, "<\\/$1");
+---
+<script is:inline type="application/ld+json" set:html={serialized} />
+<nav class="crumb" aria-label="위치">
+  {items.map((c) => (
+    <>
+      <a href={c.path}>{c.name}</a>
+      <span class="sep" aria-hidden="true">/</span>
+    </>
+  ))}
+  <span class="here">{current}</span>
+</nav>
+
+<style>
+  .crumb {
+    font-family: var(--font-code);
+    font-size: var(--t-badge-size);
+    letter-spacing: var(--t-badge-tracking);
+    color: var(--c-text-muted);
+    margin: 0 0 var(--d-section-gap);
+    /* 긴 표제어가 좁은 화면에서 한 줄을 넘겨도 레이아웃이 안 밀리게 */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35em;
+    align-items: baseline;
+  }
+  .crumb a { color: var(--c-text-muted); text-decoration: none; }
+  .crumb a:hover { color: var(--c-accent); }
+  .here { color: var(--c-accent); overflow-wrap: anywhere; }
+</style>

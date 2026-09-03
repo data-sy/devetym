@@ -10,6 +10,7 @@
  *    대신 이스케이프를 우리가 진다: `</script>` 시퀀스만 무해화한다(본문에 코드가 섞일 수 있다).
  */
 import { absoluteUrl } from "../config/site";
+import { categoryMeta, categoryPath } from "../lib/categories";
 import type { IndexedTerm } from "../lib/terms";
 
 interface Props {
@@ -18,6 +19,13 @@ interface Props {
 }
 
 const { term, path } = Astro.props;
+
+/**
+ * ⚠️ **W2에서 `inDefinedTermSet`이 사이트 루트 → 갈래 허브로 바뀌었다.** 660개가 전부 같은
+ *    집합 하나를 가리키면 그 관계는 "이 사이트에 있다"는 말밖에 안 한다. 갈래 허브를 가리키면
+ *    6개 집합으로 묶인 그래프가 되고, 허브가 그 집합의 실제 페이지로 존재한다.
+ */
+const hub = categoryMeta(term.category);
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -28,8 +36,9 @@ const jsonLd = {
   description: term.summary,
   inDefinedTermSet: {
     "@type": "DefinedTermSet",
-    name: "DevEtym 개발 용어 어원 사전",
-    url: absoluteUrl("/"),
+    "@id": absoluteUrl(categoryPath(term.category)),
+    name: hub ? `${hub.heading} 용어` : "DevEtym 개발 용어 어원 사전",
+    url: absoluteUrl(categoryPath(term.category)),
   },
   termCode: term.slug,
   url: absoluteUrl(path),
