@@ -36,7 +36,7 @@
 | 네트워킹 | Ktor Client + `kotlinx.serialization` (엔진: Android=OkHttp, iOS=Darwin) |
 | 로컬 저장 | **SQLDelight** 2.3.2 (히스토리·북마크·AI 캐시) — [ADR-0003 확정](docs/adr/0003-local-storage.md) |
 | DI | Koin (`module`/`single`/`viewModel`) |
-| 큐레이션 DB | 앱 번들 내 JSON (`terms.json`, 650개) |
+| 큐레이션 DB | 앱 번들 내 JSON (`terms.json`, **660개** — W1c 승격으로 650→660) |
 | AI 폴백 | Claude (Cloudflare Worker 프록시 경유, 기기당 일 10회) |
 
 > **백엔드 계약은 앱과 분리돼 있다.** 클라이언트는 `devetym-proxy`(Cloudflare Worker)를 거쳐 Claude에 닿는다. 서버 계약은 플랫폼과 무관하게 그대로다.
@@ -74,9 +74,9 @@ Ktor(원격)        DB(로컬)     # 엔진·드라이버만 플랫폼별 (expec
 |---|---|---|
 | [`docs/product/prd.md`](docs/product/prd.md) | 제품 기획 — 문제·타겟·유저 스토리·콘텐츠 (*왜*의 정본) | ✅ |
 | [`docs/architecture.md`](docs/architecture.md) | 아키텍처 설계 — 레이어링·Ktor·로컬 저장·Koin (기술 *어떻게*) | ✅ |
-| [`docs/adr/`](docs/adr/) | 돌이킬 수 없는 결정 기록 (0001~0008: CMP·관용구 원칙·로컬 DB·프록시 경계·SKIE interop·서버 캐시 경계·AI 프롬프트 품질·이슈 트래킹 / **0009~0011: 웹 프레임워크·웹 남용 방지·프롬프트 소유권 — ✅ 비준 2026-08-25** / **0012~0013: 콘텐츠 정본 D1 승격·웹 라우트 계약 — ✅ 비준 2026-08-25**) | ✅ |
-| [`docs/design/web-transition-design.md`](docs/design/web-transition-design.md) | **웹 이행 설계 정본** — 렌더링·이식 판정·남용 위협 모델·범위·실패 모드 (진행 상태는 ROADMAP W 트랙) | 🚧 구현 중 |
-| [`web/`](web/README.md) | **웹 표면 구현** — Astro + Cloudflare Workers. 기반·D1 정본·프록시 하드닝·**본체(용어 650장·검색·AI 폴백, W1b) 프로덕션 가동** | ✅ |
+| [`docs/adr/`](docs/adr/) | 돌이킬 수 없는 결정 기록 (0001~0008: CMP·관용구 원칙·로컬 DB·프록시 경계·SKIE interop·서버 캐시 경계·AI 프롬프트 품질·이슈 트래킹 / **0009~0011: 웹 프레임워크·웹 남용 방지·프롬프트 소유권 — ✅ 비준 2026-08-25** / **0012~0013: 콘텐츠 정본 D1 승격·웹 라우트 계약 — ✅ 비준 2026-08-25** / **0014: 승격 자격 — ✅ 비준 2026-09-02**) | ✅ |
+| [`docs/design/web-transition-design.md`](docs/design/web-transition-design.md) | **웹 이행 설계 정본** — 렌더링·이식 판정·남용 위협 모델·범위·실패 모드 (진행 상태는 ROADMAP W 트랙) | 🚧 구현분 완료 · W3 실측 남음 |
+| [`web/`](web/README.md) | **웹 표면 구현** — Astro + Cloudflare Workers. 기반·D1 정본·프록시 하드닝·**본체(용어 660장·검색·AI 폴백) + 승격 잡 + 갈래 허브·구조화 데이터(W2) 프로덕션 가동** | ✅ |
 | [`docs/cache-delivery-milestones.md`](docs/cache-delivery-milestones.md) | 캐시·딜리버리 불변식(INV-1~13)·마일스톤 정본 — 서버 트랙의 제약 | ✅ |
 | [`docs/specs/spec.md`](docs/specs/spec.md) | 화면·동작 구현 명세 (Phase 1~4, Claude Code 전용) | ✅ |
 | [`ROADMAP.md`](ROADMAP.md) | 이행 순서(코어 먼저, UI 나중) + **진행 상태 정본** | ✅ |
@@ -128,10 +128,10 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 설정 「앱 평가하기」가 무반응이던 것을 App Store 리뷰 딥링크로 교체했고, **실기기 검증 PASS**(iPhone 13 mini · iOS 26.5.2)로 종결 근거를 확보했다.
 빌드 `0.1.1(3)` 제출 → 심사 통과 → 수동 게시 → **게시본에서 재확인 완료**(업데이트 받은 App Store 판으로 「앱 평가하기」 동작 확인). **수정이 실사용자에게 도달했고 제보자 회신까지 완료**(2026-08-19). 제보→회신 전 구간이 닫힌 첫 사이클 — 잔여 없음.
 
-남은 것 = **[외부]** F Android 배포(후행 — 폐쇄테스트 20명×14일 게이트 + 스크린샷 캡처 잔여) · **웹 트랙 W(W0~W1b 완료 · 남은 것은 승격 잡 W1c — 아래)** · **씨딩·리뷰 확보 — W에 종속**(2026-08-19 결정: App Store 착지는 다운로드 마찰로 커뮤니티 참여도가 낮아, 씨딩은 웹 완성 후 웹과 함께 나간다).
+남은 것 = **[외부]** F Android 배포(후행 — 폐쇄테스트 20명×14일 게이트 + 스크린샷 캡처 잔여) · **웹 트랙 W(W0~W2 프로덕션 완료 · 남은 것은 W3 8주 실측 리뷰 — 아래)** · **씨딩·리뷰 확보 — W에 종속**(2026-08-19 결정: App Store 착지는 다운로드 마찰로 커뮤니티 참여도가 낮아, 씨딩은 웹 완성 후 웹과 함께 나간다).
 진행 상태 정본은 [`ROADMAP.md`](ROADMAP.md), 출시 실무 자료의 위치는 [`docs/release/README.md`](docs/release/README.md).
 
-**🌐 웹 트랙 W — 기반·정본·방어까지 라이브 (2026-08-25 ~ 09-02).** <https://devetym.com> 이 200 응답한다
+**🌐 웹 트랙 W — 구현분 전건 라이브 (2026-08-25 ~ 09-03).** <https://devetym.com> 이 200 응답한다
 (Astro + Cloudflare Workers, [ADR-0009](docs/adr/0009-web-framework-rendering.md)). 앱을 대체하는 게 아니라 **채널 확장**이다 — 웹 = 검색·씨딩 착지면, 앱 = 무제한 표면.
 
 **지금까지 선 것 셋**: ① **기반**(디자인 토큰을 앱 Kotlin 정본에서 **빌드마다 자동 추출** — 손으로 안 베낀다,
@@ -145,9 +145,20 @@ seam actual·외관 3모드·라이선스·아이콘). **시뮬/에뮬이 4축 g
 `DefinedTerm.alternateName`에 1급으로** 올렸다 — 표제어 650개는 전부 영어라, 이게 없으면 650장은 한국어
 검색에 사실상 존재하지 않는다.
 
-**아직 없는 것**: **승격 잡(W1c)**. 웹 AI가 만든 용어는 그 자리에서 자기 URL을 얻지만 전부 `noindex`이고,
-`critic`을 통과한 것을 `authored`로 올려 SSG 집합에 편입시키는 잡이 없으면 **영원히 그렇다**
-([ADR-0013](docs/adr/0013-web-route-contract.md) — 색인 자격은 품질 게이트가 연다).
+⑤ **승격 잡**(W1c, 2026-09-02 — 웹 AI 생성분 10건이 `critic`을 통과해 `authored`로 올라갔다. 번들 650 → **660**,
+[ADR-0014](docs/adr/0014-promotion-eligibility.md)가 자격 규범). **캐시 플라이휠이 SEO 플라이휠이 되는 회로가
+실제로 한 바퀴 돌았다** — 사용자가 물어본 용어가 검수를 거쳐 색인 대상 페이지가 된다.
+부수 효과가 하나 더 있었다: 승격 `critic`이 **라이브에 서 있던 사실 오류 1건**(`shedlock`의 틀린 인물명)을
+잡았다. 검수 게이트를 색인 게이트로 쓰기로 한 결정이 **정정 경로**도 같이 만들어 준 셈이다.
+
+⑥ **색인 구조**(W2, 2026-09-03 — 갈래 허브 6장 `/category/…` · 빵부스러기 + `BreadcrumbList` ·
+`DefinedTerm`이 갈래 허브를 가리킴 · 본문이 언급한 용어로 **갈래를 넘는 링크**).
+실 URL **672개 전수 200** · 사이트맵 **668**. 종전 관련 용어는 같은 갈래 안에서만 순환해 갈래를 넘는 링크가
+**0**이었다 — 링크 개수는 충분했지만 크롤 그래프가 서로 안 닿는 6덩어리였다.
+
+**남은 것**: **W3 — 8주 실측 리뷰.** 짓는 일은 끝났고 남은 것은 **재는 일**이다(K1 색인률 · K2 자연 검색 세션 ·
+K3 세션당 신규 검색). 사이트맵은 2026-09-03 Search Console에 제출됐으므로 계측은 돌고 있다.
+⚠️ **8주 이전에는 "유입이 늘지 않았다"고 말할 수 없다**(색인 지연) — 이 구간을 실패로 읽지 않는 것이 규율이다.
 상세 = [`web/README.md`](web/README.md) · 상태 = [ROADMAP](ROADMAP.md) W 트랙 · 인수인계 = [핸드오프](🤖-26-08-25-web-large-track-handoff.md).
 
 **서버 캐시 트랙 S1 — 가동 중 (2026-07-28).** 앱 배포와 **독립**으로 완결되는 트랙이라 심사와 무관하게

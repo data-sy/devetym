@@ -3,19 +3,24 @@
 유입(acquisition)용 웹 표면. **앱을 대체하지 않는다** — 채널 확장이다(웹 = 검색·씨딩 착지면, 앱 = 무제한 표면).
 
 - 설계 정본: [`../docs/design/web-transition-design.md`](../docs/design/web-transition-design.md)
-- 결정: [ADR-0009](../docs/adr/0009-web-framework-rendering.md)(스택) · [ADR-0010](../docs/adr/0010-web-abuse-prevention.md)(남용 방지) · [ADR-0011](../docs/adr/0011-prompt-ownership-transfer.md)(프롬프트) · [ADR-0012](../docs/adr/0012-content-canon-d1.md)(D1 = 콘텐츠 정본) · [ADR-0013](../docs/adr/0013-web-route-contract.md)(SSG + 조회 전용 SSR 폴백) — **5건 모두 `Accepted`**
+- 결정: [ADR-0009](../docs/adr/0009-web-framework-rendering.md)(스택) · [ADR-0010](../docs/adr/0010-web-abuse-prevention.md)(남용 방지) · [ADR-0011](../docs/adr/0011-prompt-ownership-transfer.md)(프롬프트) · [ADR-0012](../docs/adr/0012-content-canon-d1.md)(D1 = 콘텐츠 정본) · [ADR-0013](../docs/adr/0013-web-route-contract.md)(SSG + 조회 전용 SSR 폴백) · [ADR-0014](../docs/adr/0014-promotion-eligibility.md)(승격 자격) — **6건 모두 `Accepted`**
 - 진행 상태 정본: [`../ROADMAP.md`](../ROADMAP.md) W 트랙
 
-## 지금 상태 — **W1c까지 프로덕션 · 다음은 W2**
+## 지금 상태 — **W2까지 프로덕션 · 다음은 W3(실측 리뷰)**
 
-**<https://devetym.com> 라이브** — 용어 상세 **660장** · 검색 · AI 폴백 · 전체 색인(`/terms`).
-배포 워커 `devetym-web` `16ac69f8` (2026-09-02 · W1c).
+**<https://devetym.com> 라이브** — 용어 상세 **660장** · **갈래 허브 6장** · 검색 · AI 폴백 · 전체 색인(`/terms`).
+배포 워커 `devetym-web` `887d5dc5` (2026-09-03 · W2).
 
-**W1c 승격 잡이 프로덕션까지 닫혔다** — 웹 AI가 만든 생성분 10건이 `critic`을 통과해 `authored`로
+**W1c 승격 잡이 프로덕션까지 닫혔다(09-02)** — 웹 AI가 만든 생성분 10건이 `critic`을 통과해 `authored`로
 올라갔고, 다음 빌드에서 SSG·사이트맵에 편입돼 색인 자격을 얻었다(650 → **660**). 자격 규범 =
 [ADR-0014](../docs/adr/0014-promotion-eligibility.md). ⚠️ **승격분은 데이터로만 들어온다** —
 웹 코드는 손대지 않았다. 페이지 수를 코드에 박아 둔 곳(`src/lib/terms.ts` 엔트리 가드 ·
 `src/config/site.ts` · `src/lib/messages.ts`)은 승격 때마다 함께 맞춰야 한다.
+
+**W2가 그 위에 색인 구조를 얹었다(09-03)** — 갈래 허브 6장 · 빵부스러기(`BreadcrumbList`) ·
+`DefinedTerm`이 사이트 루트 대신 **갈래 허브**를 가리키게 · 본문이 언급한 용어로 **갈래를 넘는 링크**.
+⚠️ 종전 관련 용어는 같은 갈래 안에서만 순환해 **갈래를 넘는 링크가 0**이었다 — 링크 *개수*는
+충분했지만 크롤 그래프가 서로 안 닿는 6덩어리였다. 봐야 할 것은 개수가 아니라 **연결성**이다.
 
 | | |
 |---|---|
@@ -24,9 +29,10 @@
 | ✅ W1a (09-02) | 프록시가 웹/앱을 갈라 각자 캡을 쓴다 · CORS allowlist · Turnstile 켜짐 · 프롬프트 정본은 워커 소유 |
 | ✅ **W1b (09-02)** | **용어 페이지 650장 SSG · 검색+자동완성 · AI 폴백 · 조회 전용 SSR 폴백 · `/terms`** |
 | ✅ **W1c (09-02)** | **승격 잡** — `critic` 통과 생성분 10건이 `authored`로 올라가 색인 자격을 얻었다(650 → 660). 웹 코드 무변경 |
-| ⬜ **W1c** | **승격 잡** — `critic` 통과한 `generated`를 `authored`로. 없으면 웹 AI 생성분은 영원히 `noindex` |
+| ✅ **W2 (09-03)** | **갈래 허브 6장 · 빵부스러기 · 구조화 데이터 확장 · 갈래를 넘는 언급 링크** — 설계서 §5-2의 얇은 콘텐츠 3수단이 전부 가동 |
+| ⬜ **W3** | 8주 실측 리뷰 — K1 색인률 · K2 자연 검색 세션 · K3 세션당 신규 검색. **검색 수요 가정이 여기서 사후 판정된다** |
 
-**완료 오라클 통과**: W1b = 실 URL **656개 전수 200** + 웹 표면 AI 생성 왕복 성공 · W1c = 실 URL **666개 전수 200** + 승격분 `noindex` 없음 + 사이트맵 **662**.
+**완료 오라클 통과**: W1b = 실 URL **656개 전수 200** + 웹 표면 AI 생성 왕복 성공 · W1c = 실 URL **666개 전수 200** + 승격분 `noindex` 없음 + 사이트맵 **662** · W2 = 실 URL **672개 전수 200**(용어 660 + 허브 6 + 구조 6) + 사이트맵 **668** + 구조 검사(JSON-LD 1,335블록·내부 링크 전수) 문제 0.
 3층 한도가 실제로 무는 것도 확인 — 생성 1건에 쿠키·IP·전역 카운터가 전부 증가했고,
 IP 버킷이 **실 클라이언트 IP의 해시와 일치**했다(= service binding이 `CF-Connecting-IP`를 보존한다).
 
@@ -40,9 +46,13 @@ IP 버킷이 **실 클라이언트 IP의 해시와 일치**했다(= service bind
 | `src/pages/search-index.json.ts` | 빌드가 굽는 정적 검색 인덱스(109KB / gzip 35KB) |
 | `src/pages/api/term.ts` | same-site 생성 착지점 → **service binding**으로 프록시 호출 |
 | `src/pages/terms.astro` | 전체 색인 — 용어 전량을 홈에서 1클릭 깊이로 |
-| `src/lib/terms.ts` | 번들 스냅샷 로더 + 빌드 시 단언. **SSR 라우트에서 import 금지**(518KB가 워커에 들어간다) |
+| `src/pages/category/[slug].astro` | **갈래 허브 6장**(W2). 목록 앞에 *이 갈래의 이름이 어디서 왔는지* 문단이 온다 — 목록만 두면 얇은 페이지를 6장 더 만드는 셈이다 |
+| `src/lib/categories.ts` | 갈래 6종 + 슬러그 + 소개문. 슬러그는 앱 `Category.kt` 상수명 표기(`DATA_STRUCTURE`→`data-structure`). ⚠️ **`terms.json`을 import하지 않는다** — SSR 폴백이 빵부스러기를 그리려면 이 표가 필요한데 `terms.ts`에 두면 518KB가 워커에 딸려 간다 |
+| `src/components/Breadcrumbs.astro` | 보이는 경로와 `BreadcrumbList`를 **한 입력**에서 낸다. 둘이 갈라지면 검색엔진이 구조화 데이터를 통째로 무시하는데 눈으로는 안 보인다 |
+| `src/lib/terms.ts` | 번들 스냅샷 로더 + 빌드 시 단언 + `relatedTerms`·`mentionedTerms`. **SSR 라우트에서 import 금지**(518KB가 워커에 들어간다) |
 | `src/lib/term-key.ts` | 정규화 **네 번째 구현**(웹). 교차 실행 오라클이 고정한다 — 아래 참조 |
 | `src/lib/search.ts` · `messages.ts` · `lookup.ts` | 검색 매칭 · 사용자 문구 전수 매핑 · D1 조회 |
+| `scripts/test-structure.mjs` | **구조 오라클**(W2) — `dist`를 읽어 JSON-LD 파싱·필수 타입·허브 실재·내부 링크 전수를 본다. 이 셋은 깨져도 빌드·타입검사·화면이 전부 녹색이다 |
 
 ### 서버 계약 (가동 중)
 
@@ -94,7 +104,7 @@ npm run tokens     # Kotlin 정본 → src/styles/tokens.css 재추출 (prebuild
 npm run fonts      # 앱 번들 TTF → public/fonts/*.woff2 (폰트 바뀔 때만)
 npm run build
 npm run deploy     # = astro build && wrangler deploy (프로덕션)
-npm test           # 검색 골든 케이스 + term_key 4지점 교차 실행
+npm test           # 검색 골든 + term_key 4지점 교차 + 빌드 + 구조 검사(JSON-LD·내부 링크)
 
 # 완료 오라클 — 로컬/프로덕션 어느 쪽이든
 node scripts/check-urls.mjs http://127.0.0.1:8788
@@ -121,7 +131,7 @@ canonical·OG·robots·사이트맵·내부 절대링크가 전부 거기서 읽
 1. `SITE_URL=https://devetym.com npm run build && npx wrangler deploy` — **빌드 전에** 줘야 한다.
    페이지가 prerender라 도메인이 HTML에 구워지기 때문이다(런타임 `[vars]`로 주면 어긋난 값이 두 벌 생긴다).
 2. DNS를 Worker에 연결.
-3. Search Console 소유권 확인 → 색인률(K1) 측정 시작. 〔✅ 완료. **사이트맵 제출만 W1b 배포 후로 남아 있다** — 페이지가 없는데 사이트맵부터 내는 건 의미가 없다〕
+3. Search Console 소유권 확인 → 색인률(K1) 측정 시작. 〔✅ 완료. **사이트맵(`sitemap-index.xml`) 제출도 2026-09-03 완료** — 668 URL. K1 측정 배선이 닫혔고 W3가 성립한다〕
 
 `IS_CANONICAL_HOST`가 자동으로 따라온다 — 실 도메인이 되는 순간 `noindex`가 풀리고 `robots.txt`가
 `Allow`로 바뀐다. **손댈 곳 없다.**
@@ -138,11 +148,17 @@ canonical·OG·robots·사이트맵·내부 절대링크가 전부 거기서 읽
 | 교차 충돌 3건 | 검색에서 뒤 엔트리가 가려짐 | **검색에서도 둘 다 나온다** ✅ | 정적 페이지는 용어마다 자기 URL이 있다 |
 | `normalizeKeyword` | Kotlin | **웹 이식본(`src/lib/term-key.ts`)** | repo가 갈라져 import 공유가 불가능했다. 대신 **교차 실행 오라클**로 갚는다 — `Scripts/db-expand/test_term_key.py`가 웹 이식본을 실제로 실행해 번들 전량 + 유니코드 경계에서 파이썬·프록시 구현과 바이트 비교한다(**3,444건 불일치 0**). 이 파일을 옮기거나 이름을 바꾸면 그 테스트가 깨진다(의도된 결합) |
 
-## 아직 없는 것 (= W1c)
+## 아직 없는 것 (= W3에서 판정되는 것)
 
-**승격 잡.** `critic` 게이트(INV-7)를 통과한 `origin='generated'` 행을 `authored`로 올려
-다음 빌드에서 SSG 집합·사이트맵에 편입시키는 일이다. 지금은 웹 AI가 만든 용어가 자기 URL로
-200을 내지만 **전부 `noindex`**이고, 이 잡이 없으면 영원히 그렇다 —
-[ADR-0013](../docs/adr/0013-web-route-contract.md)의 최대 이점이 잠긴 채로 남는다.
+**빌드로 만들 수 있는 것은 다 만들었다.** 남은 것은 짓는 일이 아니라 **재는 일**이다 —
+W3(8주 실측 리뷰)에서 K1 색인률 · K2 자연 검색 세션 · K3 세션당 신규 검색을 본다.
+사이트맵은 2026-09-03 제출됐으므로 계측은 이미 돌고 있다.
 
-그 다음은 W2(카테고리 허브 6 · 관련 용어 확장 · 얇은 콘텐츠 317건 대응) · W3(8주 실측 리뷰).
+⚠️ **8주 이전에는 "유입이 늘지 않았다"고 말할 수 없다**(색인 지연). 이 구간을 실패로 읽지
+않는 것이 규율이다 — 설계서 §5-3 「반증 가능성의 경계」.
+
+⚠️ 정직하게 남는 위험: **한국어 어원 검색 수요는 여전히 미검증**이고, 사전 측정 없이 눈 뜨고
+수용한 상태다. 다만 웹의 값이 검색 단독에 걸려 있지는 않다 — 씨딩 착지면과 웹 AI 자체는
+검색 수요와 무관하게 성립한다.
+
+다음 승격 라운드(W1c의 반복)는 언제든 열 수 있다 — 절차는 [핸드오프](../🤖-26-08-25-web-large-track-handoff.md) §2.
