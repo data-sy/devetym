@@ -1,0 +1,41 @@
+---
+/**
+ * 없는 페이지 화면 — **404 라우트와 용어 폴백이 공유**한다.
+ *
+ * ⚠️ 200 빈 페이지(soft 404)를 내지 않는다(ADR-0013 Decision 5). 크롤러에게
+ *    "내용 없는 페이지가 무한히 있는 사이트"로 읽히면 사이트 전체 품질 신호가 깎인다.
+ *    대신 **「AI에게 물어보기」 어포던스**를 준다 — 사용자에게는 막다른 길이 아니어야 한다.
+ */
+interface Props {
+  /** 용어 URL로 들어왔다면 그 키. 아니면 빈 문자열. */
+  requestedKey?: string;
+}
+const { requestedKey = "" } = Astro.props;
+---
+<main class="nf">
+  <p class="code">404</p>
+  <h1>{requestedKey ? "아직 정리되지 않은 용어예요" : "찾는 페이지가 없어요"}</h1>
+  <p class="lede">
+    {requestedKey
+      ? "검색 화면에서 AI에게 이 용어의 어원을 물어볼 수 있어요."
+      : "주소가 바뀌었거나 없는 페이지입니다."}
+  </p>
+  <p>
+    <a class="cta" href={requestedKey ? `/search?q=${encodeURIComponent(requestedKey)}` : "/search"}>
+      {requestedKey ? "이 용어 검색하기" : "검색으로 가기"}
+    </a>
+  </p>
+</main>
+
+<style>
+  .nf { max-width: 40rem; margin: 0 auto; padding: calc(var(--d-section-gap) * 2) var(--d-screen-padding); }
+  .code { font-family: var(--font-code); font-size: var(--t-badge-size); letter-spacing: var(--t-badge-tracking); color: var(--c-accent); margin: 0 0 var(--d-label-gap); }
+  h1 { font-family: var(--font-serif); font-size: var(--t-title-hero-size); font-weight: var(--t-title-hero-weight); margin: 0 0 var(--d-label-gap); }
+  .lede { font-size: var(--t-body-large-size); color: var(--c-text-dim); margin: 0 0 var(--d-section-gap); }
+  .cta {
+    display: inline-block; text-decoration: none;
+    font-family: var(--font-code); font-size: var(--t-code-action-size); font-weight: var(--t-code-action-weight);
+    color: var(--c-bg); background: var(--c-accent);
+    border-radius: var(--d-radius-action); padding: var(--d-row-vpad) var(--d-card-padding);
+  }
+</style>

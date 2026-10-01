@@ -1,0 +1,112 @@
+---
+/**
+ * 전체 색인 — 650장을 **홈에서 1클릭 깊이**로 만든다.
+ *
+ * ⚠️ 사이트맵만으로는 부족하다. 사이트맵은 발견을 돕지만 크롤러는 내부 링크로 중요도와
+ *    도달성을 판단한다. 이 페이지가 없으면 650장 대부분이 다른 어떤 페이지에서도 링크되지
+ *    않는다(관련 용어 6개는 같은 카테고리 안에서만 순환한다).
+ *
+ * ⚠️ **허브(W2)가 생긴 뒤에도 이 페이지는 남는다.** 하는 일이 다르다 — 허브는 갈래 하나를
+ *    설명하는 **착지면**이고, 여기는 660장 전부에 한 번에 닿는 **색인**이다. 갈래 제목은
+ *    이제 허브로 가는 링크다.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+import { ALL_TERMS, TERMS_BY_CATEGORY } from "../lib/terms";
+import { CATEGORY_META } from "../lib/categories";
+import { absoluteUrl } from "../config/site";
+
+export const prerender = true;
+
+const groups = CATEGORY_META.map((meta) => ({
+  meta,
+  items: TERMS_BY_CATEGORY.get(meta.name) ?? [],
+}));
+
+/** 갈래 허브 6장을 한 줄로 묶어 **위 구조를 검색엔진에 알린다.** */
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": absoluteUrl("/terms"),
+  name: `개발 용어 ${ALL_TERMS.length}개`,
+  url: absoluteUrl("/terms"),
+  inLanguage: "ko",
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: groups.length,
+    itemListElement: groups.map((g, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: `${g.meta.heading} 용어`,
+      url: absoluteUrl(`/category/${g.meta.slug}`),
+    })),
+  },
+};
+const serialized = JSON.stringify(jsonLd).replace(/<\/(script)/gi, "<\\/$1");
+---
+<BaseLayout
+  title="용어 전체"
+  description={`개발 용어 ${ALL_TERMS.length}개를 갈래별로 모았습니다. 각 용어의 어원과 이름의 유래를 봅니다.`}
+  path="/terms"
+>
+  <script is:inline type="application/ld+json" set:html={serialized} />
+  <main>
+    <Breadcrumbs items={[{ name: "DevEtym", path: "/" }]} current="용어 전체" currentPath="/terms" />
+    <h1>용어 {ALL_TERMS.length}개</h1>
+    <p class="lede">갈래별로 모았습니다. 찾는 것이 없으면 <a href="/search">검색</a>에서 AI에게 물어볼 수 있어요.</p>
+
+    <nav class="jump" aria-label="갈래별 보기">
+      {groups.map((g) => <a href={`/category/${g.meta.slug}`}>{g.meta.heading} <span>{g.items.length}</span></a>)}
+    </nav>
+
+    {groups.map((g) => (
+      <section id={g.meta.slug} aria-labelledby={`h-${g.meta.slug}`}>
+        <h2 id={`h-${g.meta.slug}`}>
+          <a href={`/category/${g.meta.slug}`}>{g.meta.heading}</a>
+          <span class="n">{g.items.length}</span>
+        </h2>
+        <ul>
+          {g.items.map((t) => (
+            <li>
+              <a href={`/term/${t.slug}`}>
+                <span class="t-name">{t.primaryKoreanAlias ?? t.keyword}</span>
+                {t.primaryKoreanAlias && <span class="t-key">{t.keyword}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </main>
+</BaseLayout>
+
+<style>
+  main { max-width: 52rem; margin: 0 auto; padding: var(--d-section-gap) var(--d-screen-padding) calc(var(--d-section-gap) * 2); }
+  h1 { font-family: var(--font-serif); font-size: var(--t-title-hero-size); font-weight: var(--t-title-hero-weight); margin: 0 0 var(--d-label-gap); }
+  .lede { font-size: var(--t-body-large-size); color: var(--c-text-dim); margin: 0 0 var(--d-section-gap); }
+
+  .jump { display: flex; flex-wrap: wrap; gap: var(--d-label-gap); margin: 0 0 var(--d-section-gap); }
+  .jump a {
+    text-decoration: none; font-size: var(--t-label-size); color: var(--c-text);
+    background: var(--c-surface); border: var(--d-stroke-border) solid var(--c-border);
+    border-radius: var(--d-radius-badge); padding: 0.3em 0.8em;
+  }
+  .jump a:hover { border-color: var(--c-accent); }
+  .jump span { font-family: var(--font-code); font-size: var(--t-code-chip-size); color: var(--c-text-muted); }
+
+  section { margin: 0 0 calc(var(--d-section-gap) * 1.5); scroll-margin-top: 1rem; }
+  h2 {
+    font-family: var(--font-serif); font-size: var(--t-title-tab-size); font-weight: var(--t-title-tab-weight);
+    margin: 0 0 var(--d-label-gap); padding-bottom: var(--d-label-gap);
+    border-bottom: var(--d-stroke-border) solid var(--c-border);
+  }
+  h2 a { color: inherit; text-decoration: none; }
+  h2 a:hover { color: var(--c-accent); }
+  h2 .n { font-family: var(--font-code); font-size: var(--t-code-chip-size); color: var(--c-text-muted); margin-left: 0.4em; }
+
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.15rem; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
+  li a { display: flex; align-items: baseline; gap: 0.5em; text-decoration: none; padding: 0.35em 0.5em; border-radius: var(--d-radius-badge); }
+  li a:hover { background: var(--c-surface); }
+  .t-name { color: var(--c-text); font-size: var(--t-label-size); }
+  .t-key { font-family: var(--font-code); font-size: var(--t-code-chip-size); color: var(--c-text-muted); }
+</style>

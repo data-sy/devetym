@@ -1,0 +1,189 @@
+---
+/**
+ * 갈래 허브 6장 (W2 · 설계서 §5-1 「카테고리 허브 `/category/{6종}`」).
+ *
+ * **왜 있는가 — 얇은 콘텐츠 대응이 목록을 만드는 일이 아니다**(설계서 §5-2). 660장 중 절반이
+ * 300자 미만이라, 페이지 하나하나를 두껍게 만드는 대신 **묶는 상위 구조**로 사이트의 실질을
+ * 세운다. 그래서 이 페이지는 링크 더미가 아니라 **이 갈래의 이름들이 어디서 왔는지**를 먼저
+ * 말한다(`categories.ts`의 `blurb`). 그 문단이 없으면 얇은 페이지를 6장 더 만드는 셈이다.
+ *
+ * ⚠️ SSG다. 660장과 같은 이유로 JS를 싣지 않는다.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import { CATEGORY_META, type CategoryMeta } from "../../lib/categories";
+import { ALL_TERMS, TERMS_BY_CATEGORY, bodyLength, type IndexedTerm } from "../../lib/terms";
+import { absoluteUrl } from "../../config/site";
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return CATEGORY_META.map((meta) => ({
+    params: { slug: meta.slug },
+    props: { meta, items: TERMS_BY_CATEGORY.get(meta.name) ?? [] },
+  }));
+}
+
+interface Props {
+  meta: CategoryMeta;
+  items: IndexedTerm[];
+}
+
+const { meta, items } = Astro.props;
+const path = `/category/${meta.slug}`;
+
+/**
+ * 갈래 안의 맛보기 3개 — 본문이 가장 두꺼운 것. 홈과 같은 규칙이다(무작위 금지: 빌드마다
+ * 바뀌면 크롤러가 매번 다른 페이지를 보고 diff도 무의미해진다).
+ */
+const featured = items
+  .filter((t) => t.primaryKoreanAlias)
+  .sort((a, b) => bodyLength(b) - bodyLength(a) || a.slug.localeCompare(b.slug))
+  .slice(0, 3);
+
+const others = CATEGORY_META.filter((c) => c.slug !== meta.slug);
+
+const title = `${meta.heading} 용어의 어원`;
+const description = `${meta.heading} 용어 ${items.length}개의 이름이 어디서 왔는지 모았습니다. ${meta.blurb.slice(0, 80)}…`;
+
+/**
+ * `DefinedTermSet` — 이 갈래가 **용어 집합**임을 밝힌다. 상세 페이지의 `DefinedTerm`이
+ * `inDefinedTermSet`으로 여기를 가리키므로(W2에서 사이트 루트 → 갈래 허브로 바꿨다),
+ * 660개 낱장이 6개 집합으로 묶인 그래프가 된다.
+ *
+ * ⚠️ `hasDefinedTerm`에 660개를 다 실으면 갈래당 100개가 넘는 배열이 HTML에 들어간다.
+ *    목록은 이미 본문에 링크로 다 있고, 구조화 데이터는 **관계**를 말하는 자리다 —
+ *    그래서 여기엔 대표 몇 개만 싣고 수(`numberOfItems`)로 규모를 말한다.
+ */
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "DefinedTermSet",
+  "@id": absoluteUrl(path),
+  name: `${meta.heading} 용어`,
+  description: meta.blurb,
+  url: absoluteUrl(path),
+  inLanguage: "ko",
+  numberOfItems: items.length,
+  hasDefinedTerm: featured.map((t) => ({
+    "@type": "DefinedTerm",
+    "@id": absoluteUrl(`/term/${t.slug}`),
+    name: t.primaryKoreanAlias ?? t.keyword,
+    alternateName: t.keyword,
+    url: absoluteUrl(`/term/${t.slug}`),
+  })),
+  isPartOf: {
+    "@type": "WebSite",
+    name: "DevEtym",
+    url: absoluteUrl("/"),
+  },
+};
+const serialized = JSON.stringify(jsonLd).replace(/<\/(script)/gi, "<\\/$1");
+---
+<BaseLayout title={title} description={description} path={path}>
+  <script is:inline type="application/ld+json" set:html={serialized} />
+  <main>
+    <Breadcrumbs
+      items={[{ name: "DevEtym", path: "/" }, { name: "용어 전체", path: "/terms" }]}
+      current={meta.heading}
+      currentPath={path}
+    />
+
+    <h1>{meta.heading} <span class="n">{items.length}</span></h1>
+    <p class="blurb">{meta.blurb}</p>
+
+    {featured.length > 0 && (
+      <section aria-labelledby="h-feat">
+        <h2 id="h-feat">먼저 볼 것</h2>
+        <ul class="feat">
+          {featured.map((t) => (
+            <li><a href={`/term/${t.slug}`}>
+              <span class="f-name">{t.primaryKoreanAlias}</span>
+              <span class="f-key">{t.keyword}</span>
+              <span class="f-sum">{t.summary}</span>
+            </a></li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <section aria-labelledby="h-all">
+      <h2 id="h-all">{meta.heading} 용어 전체</h2>
+      <ul class="all">
+        {items.map((t) => (
+          <li><a href={`/term/${t.slug}`}>
+            <span class="t-name">{t.primaryKoreanAlias ?? t.keyword}</span>
+            {t.primaryKoreanAlias && <span class="t-key">{t.keyword}</span>}
+          </a></li>
+        ))}
+      </ul>
+    </section>
+
+    <nav class="others" aria-labelledby="h-oth">
+      <h2 id="h-oth">다른 갈래</h2>
+      <ul>
+        {others.map((c) => (
+          <li><a href={`/category/${c.slug}`}>{c.heading}
+            <span class="o-n">{(TERMS_BY_CATEGORY.get(c.name) ?? []).length}</span>
+          </a></li>
+        ))}
+      </ul>
+      <p class="more">
+        <a href="/terms">용어 {ALL_TERMS.length}개 전체 보기 →</a>
+        <a href="/search">찾는 게 없으면 검색 →</a>
+      </p>
+    </nav>
+  </main>
+</BaseLayout>
+
+<style>
+  main { max-width: 52rem; margin: 0 auto; padding: var(--d-section-gap) var(--d-screen-padding) calc(var(--d-section-gap) * 2); }
+
+  h1 {
+    font-family: var(--font-serif); font-size: var(--t-title-hero-size);
+    font-weight: var(--t-title-hero-weight); letter-spacing: var(--t-title-hero-tracking);
+    margin: 0 0 var(--d-label-gap);
+  }
+  h1 .n { font-family: var(--font-code); font-size: var(--t-code-chip-size); color: var(--c-text-muted); }
+
+  .blurb {
+    font-size: var(--t-body-large-size); letter-spacing: var(--t-body-large-tracking);
+    line-height: var(--t-body-block-line);
+    color: var(--c-text-dim); margin: 0 0 calc(var(--d-section-gap) * 1.5);
+    max-width: 42rem;
+  }
+
+  section, .others { margin: 0 0 calc(var(--d-section-gap) * 1.5); }
+  h2 {
+    font-size: var(--t-section-header-size); font-weight: var(--t-section-header-weight);
+    letter-spacing: var(--t-section-header-tracking); text-transform: uppercase;
+    color: var(--c-text-muted); margin: 0 0 var(--d-label-gap);
+  }
+
+  .feat { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--d-label-gap); }
+  .feat a {
+    display: grid; gap: 0.15rem; text-decoration: none;
+    background: var(--c-surface); border: var(--d-stroke-border) solid var(--c-border);
+    border-radius: var(--d-radius-card); padding: var(--d-row-vpad) var(--d-card-padding);
+  }
+  .feat a:hover { border-color: var(--c-accent); }
+  .f-name { color: var(--c-text); font-size: var(--t-body-emphasis-size); font-weight: var(--t-body-emphasis-weight); }
+  .f-key { font-family: var(--font-code); font-size: var(--t-code-chip-size); font-weight: var(--t-code-chip-weight); color: var(--c-accent); }
+  .f-sum { color: var(--c-text-muted); font-size: var(--t-caption-size); letter-spacing: var(--t-caption-tracking); }
+
+  .all { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.15rem; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
+  .all li a { display: flex; align-items: baseline; gap: 0.5em; text-decoration: none; padding: 0.35em 0.5em; border-radius: var(--d-radius-badge); }
+  .all li a:hover { background: var(--c-surface); }
+  .t-name { color: var(--c-text); font-size: var(--t-label-size); }
+  .t-key { font-family: var(--font-code); font-size: var(--t-code-chip-size); color: var(--c-text-muted); }
+
+  .others ul { list-style: none; margin: 0 0 var(--d-label-gap); padding: 0; display: flex; flex-wrap: wrap; gap: var(--d-label-gap); }
+  .others a {
+    text-decoration: none; font-size: var(--t-label-size); color: var(--c-text);
+    background: var(--c-surface); border: var(--d-stroke-border) solid var(--c-border);
+    border-radius: var(--d-radius-badge); padding: 0.3em 0.8em;
+  }
+  .others a:hover { border-color: var(--c-accent); }
+  .o-n { font-family: var(--font-code); font-size: var(--t-code-chip-size); color: var(--c-text-muted); margin-left: 0.4em; }
+  .more { display: flex; flex-wrap: wrap; gap: var(--d-section-gap); margin: 0; font-size: var(--t-label-size); }
+  .more a { color: var(--c-text-muted); }
+</style>

@@ -1,0 +1,407 @@
+---
+/**
+ * 검색 + AI 폴백 (W1b).
+ *
+ * ⚠️ **색인 대상이 아니다**(설계서 §5-1 · ADR-0013 Decision 6). 사이트맵에서도 빠져 있다
+ *    (astro.config의 sitemap filter). 검색 결과 페이지가 색인되면 얇은 중복 페이지가 무한히
+ *    생긴다.
+ *
+ * ⚠️ 이 페이지에만 JS가 있다. 650장은 여전히 **클라이언트 JS 0바이트**다(ADR-0009 Positive).
+ *    React 아일랜드를 쓰지 않은 것은 의도다 — 입력 하나·목록 하나에 45KB 런타임을 싣는 것보다
+ *    검색 인덱스(gzip 35KB)에 예산을 쓰는 편이 낫다. 상태가 늘면 그때 아일랜드로 올린다.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+export const prerender = true;
+---
+<BaseLayout title="검색" description="개발 용어를 검색하고, 없으면 AI에게 어원을 물어봅니다." path="/search" noindex>
+  <main>
+    <p class="crumb"><a href="/">DevEtym</a></p>
+
+    {/* JS 없이도 제출은 된다(GET) — 결과 렌더만 JS가 한다. */}
+    <form id="f" role="search" action="/search" method="get" autocomplete="off">
+      <label class="sr-only" for="q">개발 용어 검색</label>
+      <input
+        id="q" name="q" type="search" inputmode="search"
+        placeholder="용어를 입력하세요 — mutex, 뮤텍스, 낙관적 잠금…"
+        spellcheck="false" autocapitalize="off"
+      />
+      <button type="submit">검색</button>
+    </form>
+
+    <p id="hint" class="hint">표제어와 한글 별칭을 함께 찾습니다.</p>
+
+    <div id="results" aria-live="polite"></div>
+
+    <noscript>
+      <p class="hint">
+        검색에는 자바스크립트가 필요합니다. <a href="/">첫 화면</a>에서 용어 목록을 둘러보세요.
+      </p>
+    </noscript>
+  </main>
+</BaseLayout>
+
+<script>
+  import { search, exactMatches, type IndexRow, type Match } from "../lib/search";
+  import { normalizeTermKey } from "../lib/term-key";
+  import { ERROR_MESSAGE, LIMIT_SCREEN, LIMIT_FOOTNOTE, APP_STORE_URL, type ErrorKind, type LimitScope } from "../lib/messages";
+
+  const TURNSTILE_SITE_KEY = "0x4AAAAAAEkZxJ7JdEVEtZ47";
+  const DEBOUNCE_MS = 300;   // 앱과 같은 값(설계서 §3-1.9)
+  const TIMEOUT_MS = 30_000; // 앱과 같은 값
+
+  const $form = document.getElementById("f") as HTMLFormElement;
+  const $q = document.getElementById("q") as HTMLInputElement;
+  const $results = document.getElementById("results") as HTMLElement;
+  const $hint = document.getElementById("hint") as HTMLElement;
+
+  let indexError = false;
+
+  // ⚠️ **결과가 아니라 약속을 캐시한다.** 결과만 캐시하면 프리페치와 첫 질의가 겹칠 때
+  //    둘 다 미완료 상태라 인덱스를 **두 번 내려받는다**(프로덕션 네트워크 로그에서 실측).
+  let indexPromise: Promise<IndexRow[]> | null = null;
+
+  function loadIndex(): Promise<IndexRow[]> {
+    if (!indexPromise) {
+      indexPromise = fetch("/search-index.json").then((res) => {
+        if (!res.ok) {
+          indexPromise = null; // 실패는 캐시하지 않는다 — 다음 입력에서 다시 시도할 수 있어야 한다
+          throw new Error(`index ${res.status}`);
+        }
+        return res.json() as Promise<IndexRow[]>;
+      });
+    }
+    return indexPromise;
+  }
+
+  const esc = (s: string) =>
+    s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+
+  // ── 렌더 ────────────────────────────────────────────────────────────────────
+
+  function renderMatches(ms: Match[], query: string, exact: IndexRow[]) {
+    // ⚠️ 완전일치가 있으면 AI 버튼을 열지 않는다. 이미 정본에 있는 용어를 다시 생성하면
+    //    한도와 돈을 태우고 결과는 같다 — 생성은 정본에 없을 때만 연다.
+    const list = ms.length
+      ? `<ul class="hits">${ms
+          .map(
+            (m) => `<li><a href="/term/${m.row.s}">
+              <span class="h-name">${esc(m.via)}</span>
+              ${m.via !== m.row.k ? `<span class="h-key">${esc(m.row.k)}</span>` : ""}
+              <span class="h-cat">${esc(m.row.c)}</span>
+              <span class="h-sum">${esc(m.row.d)}</span>
+            </a></li>`,
+          )
+          .join("")}</ul>`
+      : "";
+
+    const ask = exact.length
+      ? ""
+      : `<div class="ask-box">
+           <p class="ask-title">${ms.length ? "찾던 용어가 아닌가요?" : `‘${esc(query)}’는 아직 정리되지 않았어요`}</p>
+           <p class="ask-sub">AI에게 어원을 물어볼 수 있어요. 웹은 하루 3개까지입니다.</p>
+           <button type="button" id="ask">AI에게 물어보기</button>
+           <div id="ts"></div>
+         </div>`;
+
+    $results.innerHTML = list + ask;
+    document.getElementById("ask")?.addEventListener("click", () => askAi(query));
+  }
+
+  function renderPanel(html: string) {
+    const box = document.createElement("div");
+    box.className = "panel";
+    box.innerHTML = html;
+    $results.prepend(box);
+  }
+
+  // ── AI 폴백 ─────────────────────────────────────────────────────────────────
+
+  let asking = false;
+
+  async function askAi(keyword: string) {
+    if (asking) return;
+    asking = true;
+    const $ask = document.getElementById("ask") as HTMLButtonElement | null;
+    if ($ask) { $ask.disabled = true; $ask.textContent = "AI가 어원을 찾고 있어요…"; }
+
+    try {
+      const token = await turnstileToken();
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+      // ⚠️ same-site 라우트로 부른다. `credentials: "include"`가 없으면 식별 쿠키가 오가지
+      //    않아 브라우저 3건 층이 성립하지 않는다(프록시 README 「웹 표면」).
+      const res = await fetch("/api/term", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "content-type": "application/json",
+          ...(token ? { "X-Turnstile-Token": token } : {}),
+        },
+        body: JSON.stringify({ keyword }),
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timer));
+
+      const data = await res.json().catch(() => null);
+
+      if (res.status === 429) {
+        const scope = (data?.scope ?? "web") as LimitScope;
+        const screen = LIMIT_SCREEN[scope] ?? LIMIT_SCREEN.web;
+        renderPanel(`
+          <h2>${esc(screen.title)}</h2>
+          <p>${esc(screen.body)}</p>
+          ${screen.showApp ? `<p class="panel-actions"><a class="cta" href="${APP_STORE_URL}">앱 보기</a></p>` : ""}
+          <p class="foot">${esc(LIMIT_FOOTNOTE)}</p>`);
+        return;
+      }
+      if (!res.ok) {
+        // 402=예산 소진 · 그 외 non-2xx는 앱과 같은 분류로 접는다.
+        const kind: ErrorKind = res.status === 402 ? "ServiceExhausted" : "InvalidResponse";
+        // ⚠️ **막다른 길로 두지 않는다.** 상류(Anthropic 앞단)가 403을 **간헐적으로** 낸다 —
+        //    프로덕션 실측 2026-09-02: 같은 요청이 1·2회차 403, 3회차 200. 한 번 실패했다고
+        //    "안 된다"로 끝내면 사용자는 되는 기능을 안 되는 줄 알고 떠난다.
+        //    재시도는 캐시 미스라 한도를 쓰지만, 실패한 호출은 한도에 가산되지 않는다
+        //    (프록시는 `upstream.ok`일 때만 카운터를 올린다).
+        const retryable = kind === "InvalidResponse";
+        renderPanel(
+          `<h2>${esc(ERROR_MESSAGE[kind])}</h2>` +
+            (retryable
+              ? `<p class="panel-actions"><button type="button" class="cta" id="again">다시 시도</button></p>`
+              : ""),
+        );
+        document.getElementById("again")?.addEventListener("click", () => {
+          document.querySelector(".panel")?.remove();
+          askAi(keyword);
+        });
+        return;
+      }
+
+      renderResult(data, keyword);
+    } catch (err) {
+      const kind: ErrorKind =
+        (err as Error)?.name === "AbortError" ? "Timeout" : "Network";
+      renderPanel(`<h2>${esc(ERROR_MESSAGE[kind])}</h2>`);
+    } finally {
+      asking = false;
+      // 위젯을 남겨 두지 않는다. 실패한 챌린지 박스가 화면에 붙박이로 남으면 사용자는
+      // 방금 받은 결과보다 그 오류 상자를 먼저 읽는다(로컬 실측 2026-09-02).
+      const host = document.getElementById("ts");
+      if (host) host.innerHTML = "";
+      const b = document.getElementById("ask") as HTMLButtonElement | null;
+      if (b) { b.disabled = false; b.textContent = "AI에게 물어보기"; }
+    }
+  }
+
+  /**
+   * 응답은 앱과 같은 Anthropic shape이다. **3분기 전부를 다룬다** — 설계서 §3-1.7이
+   * "오타 제안 분기를 웹 UI가 빠뜨리기 쉽다"고 지목한 지점이다.
+   */
+  function renderResult(data: any, keyword: string) {
+    const block = data?.content?.find((c: any) => c?.type === "tool_use");
+    const input = block?.input ?? {};
+
+    switch (block?.name) {
+      case "return_term_entry": {
+        // 생성됐으니 더 물을 것이 없다 — 어포던스를 치운다.
+        document.querySelector(".ask-box")?.remove();
+        // 생성분은 D1에 적재됐으므로 **자기 URL이 생긴다**(ADR-0013 Decision 3).
+        // ⚠️ slug는 반드시 공용 정규화를 쓴다. 여기서 손으로 다시 만들면 네 지점 동치를
+        //    고정한 교차 실행 오라클 밖에 다섯 번째 구현이 생긴다.
+        const slug = normalizeTermKey(input.keyword ?? keyword);
+        renderPanel(`
+          <h2>${esc(input.keyword ?? keyword)}</h2>
+          <p class="p-sum">${esc(input.summary ?? "")}</p>
+          <h3>어원</h3><p>${esc(input.etymology ?? "")}</p>
+          <h3>왜 이렇게 부르는가</h3><p>${esc(input.namingReason ?? "")}</p>
+          <p class="panel-actions"><a class="cta" href="/term/${esc(slug)}">이 용어 페이지 열기</a></p>
+          <p class="foot">AI가 방금 생성했고 아직 사람 검수를 거치지 않았습니다.</p>`);
+        return;
+      }
+      case "return_not_dev_term":
+        renderPanel(`<h2>‘${esc(keyword)}’는 개발 용어로 보이지 않아요</h2>
+          <p>다른 용어로 검색해 보세요.</p>`);
+        return;
+      case "return_possible_typo": {
+        const s = String(input.suggestion ?? "");
+        renderPanel(`<h2>혹시 ‘${esc(s)}’를 찾으셨나요?</h2>
+          <p class="panel-actions"><button type="button" class="cta" id="retry">${esc(s)}로 검색</button></p>`);
+        document.getElementById("retry")?.addEventListener("click", () => {
+          $q.value = s;
+          run(s);
+        });
+        return;
+      }
+      default:
+        renderPanel(`<h2>${esc(ERROR_MESSAGE.InvalidResponse)}</h2>`);
+    }
+  }
+
+  // ── Turnstile ───────────────────────────────────────────────────────────────
+  //
+  // ⚠️ 위젯 스크립트를 페이지 로드 때 받지 않는다. 검색만 하고 떠나는 사람(대다수)에게
+  //    불필요한 네트워크·JS를 지운다. **생성을 누른 순간**에만 받는다.
+  // ⚠️ 토큰을 못 받아도 요청은 보낸다. 판정은 서버가 한다 — 클라가 미리 막으면
+  //    `TURNSTILE_SECRET`이 꺼져 있을 때(그러면 프록시는 통과시킨다) 웹만 조용히 죽는다.
+
+  let turnstileLoaded: Promise<void> | null = null;
+
+  function loadTurnstile(): Promise<void> {
+    if (turnstileLoaded) return turnstileLoaded;
+    turnstileLoaded = new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error("turnstile load failed"));
+      document.head.appendChild(s);
+    });
+    return turnstileLoaded;
+  }
+
+  async function turnstileToken(): Promise<string | null> {
+    try {
+      await loadTurnstile();
+      const ts = (window as any).turnstile;
+      const host = document.getElementById("ts");
+      if (!ts || !host) return null;
+      host.innerHTML = "";
+      return await new Promise<string | null>((resolve) => {
+        const done = (v: string | null) => resolve(v);
+        ts.render(host, {
+          sitekey: TURNSTILE_SITE_KEY,
+          callback: done,
+          "error-callback": () => done(null),
+          "timeout-callback": () => done(null),
+        });
+      });
+    } catch {
+      return null;
+    }
+  }
+
+  // ── 입력 배선 ───────────────────────────────────────────────────────────────
+
+  let timer: number | undefined;
+
+  async function run(query: string) {
+    const q = query.trim();
+    // 주소창이 실제 질의를 반영해야 결과를 공유·새로고침할 수 있다.
+    const url = q ? `/search?q=${encodeURIComponent(q)}` : "/search";
+    history.replaceState(null, "", url);
+
+    if (!q) { $results.innerHTML = ""; $hint.hidden = false; return; }
+    $hint.hidden = true;
+
+    try {
+      const data = await loadIndex();
+      renderMatches(search(data, q), q, exactMatches(data, q));
+    } catch {
+      if (!indexError) {
+        indexError = true;
+        $results.innerHTML = `<p class="hint">${ERROR_MESSAGE.Network}</p>`;
+      }
+    }
+  }
+
+  $q.addEventListener("input", () => {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(() => run($q.value), DEBOUNCE_MS);
+  });
+
+  $form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    window.clearTimeout(timer);
+    run($q.value);
+  });
+
+  // 첫 진입: ?q= 를 그대로 실행한다(검색 결과를 링크로 공유할 수 있게).
+  const initial = new URLSearchParams(location.search).get("q") ?? "";
+  if (initial) { $q.value = initial; run(initial); }
+  $q.focus();
+
+  // 인덱스는 어차피 곧 필요하다 — 입력을 기다리지 않고 미리 받아 둔다(35KB gzip).
+  loadIndex().catch(() => {});
+</script>
+
+<style>
+  main { max-width: 44rem; margin: 0 auto; padding: var(--d-section-gap) var(--d-screen-padding) calc(var(--d-section-gap) * 2); }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  .crumb { font-family: var(--font-code); font-size: var(--t-badge-size); letter-spacing: var(--t-badge-tracking); margin: 0 0 var(--d-section-gap); }
+  .crumb a { color: var(--c-text-muted); text-decoration: none; }
+  .crumb a:hover { color: var(--c-accent); }
+
+  form { display: flex; gap: var(--d-label-gap); }
+  input {
+    flex: 1; min-width: 0;
+    font-family: var(--font-body); font-size: var(--t-code-input-size);
+    color: var(--c-text); background: var(--c-surface);
+    border: var(--d-stroke-field) solid var(--c-border);
+    border-radius: var(--d-radius-action);
+    padding: var(--d-row-vpad) var(--d-card-padding);
+  }
+  input:focus { border-color: var(--c-accent); }
+  form button {
+    font-family: var(--font-code); font-size: var(--t-code-action-size); font-weight: var(--t-code-action-weight);
+    color: var(--c-bg); background: var(--c-accent);
+    border: 0; border-radius: var(--d-radius-action);
+    padding: var(--d-row-vpad) var(--d-card-padding); cursor: pointer;
+  }
+  .hint { color: var(--c-text-muted); font-size: var(--t-caption-size); letter-spacing: var(--t-caption-tracking); margin: var(--d-label-gap) 0 0; }
+</style>
+
+{/*
+  ⚠️ **결과 영역은 전역 스타일이어야 한다 — 실측(2026-09-02).** Astro의 스코프 CSS는 템플릿
+     요소에 `data-astro-cid-*`를 박아 매칭하는데, `innerHTML`로 만든 노드에는 그 속성이 없다.
+     스코프 블록에 두면 규칙이 하나도 안 붙어 **결과가 브라우저 기본 목록으로 렌더된다**
+     (빌드도 통과하고 콘솔 에러도 없다 — 눈으로만 드러난다).
+     `#results` 밑으로만 한정해 전역 오염을 막는다.
+*/}
+<style is:global>
+  #results .hits { list-style: none; margin: var(--d-section-gap) 0 0; padding: 0; display: grid; gap: var(--d-label-gap); }
+  #results .hits a {
+    display: grid; gap: 0.15rem; text-decoration: none;
+    background: var(--c-surface); border: var(--d-stroke-border) solid var(--c-border);
+    border-radius: var(--d-radius-card); padding: var(--d-row-vpad) var(--d-card-padding);
+  }
+  #results .hits a:hover { border-color: var(--c-accent); }
+  #results .h-name { color: var(--c-text); font-size: var(--t-body-emphasis-size); font-weight: var(--t-body-emphasis-weight); }
+  #results .h-key { font-family: var(--font-code); font-size: var(--t-code-chip-size); color: var(--c-accent); }
+  #results .h-cat { font-size: var(--t-caption-size); color: var(--c-text-muted); }
+  #results .h-sum { font-size: var(--t-label-size); color: var(--c-text-dim); }
+
+  #results .ask-box, #results .panel {
+    margin: var(--d-section-gap) 0 0;
+    background: var(--c-surface); border: var(--d-stroke-border) solid var(--c-border);
+    border-radius: var(--d-radius-card); padding: var(--d-card-padding);
+  }
+  #results .ask-title { margin: 0 0 0.25rem; font-size: var(--t-body-emphasis-size); font-weight: var(--t-body-emphasis-weight); color: var(--c-text); }
+  #results .ask-sub { margin: 0 0 var(--d-label-gap); font-size: var(--t-label-size); color: var(--c-text-muted); }
+  #results button {
+    font-family: var(--font-code); font-size: var(--t-code-action-size); font-weight: var(--t-code-action-weight);
+    color: var(--c-bg); background: var(--c-accent);
+    border: 0; border-radius: var(--d-radius-action);
+    padding: var(--d-row-vpad) var(--d-card-padding); cursor: pointer;
+  }
+  #results button:disabled { opacity: 0.6; cursor: default; }
+
+  #results .panel h2 { font-family: var(--font-serif); font-size: var(--t-title-tab-size); font-weight: var(--t-title-tab-weight); margin: 0 0 var(--d-label-gap); color: var(--c-text); }
+  #results .panel h3 {
+    font-size: var(--t-section-header-size); font-weight: var(--t-section-header-weight);
+    letter-spacing: var(--t-section-header-tracking); text-transform: uppercase;
+    color: var(--c-text-muted); margin: var(--d-section-gap) 0 var(--d-label-gap);
+  }
+  #results .panel p { margin: 0; font-size: var(--t-body-block-size); line-height: var(--t-body-block-line); color: var(--c-text); }
+  #results .panel .p-sum { color: var(--c-text-dim); }
+  #results .panel-actions { margin-top: var(--d-section-gap) !important; }
+  #results .cta {
+    display: inline-block; text-decoration: none;
+    font-family: var(--font-code); font-size: var(--t-code-action-size); font-weight: var(--t-code-action-weight);
+    color: var(--c-bg); background: var(--c-accent);
+    border: 0; border-radius: var(--d-radius-action); padding: var(--d-row-vpad) var(--d-card-padding); cursor: pointer;
+  }
+  #results .foot { margin-top: var(--d-label-gap) !important; font-size: var(--t-caption-size); color: var(--c-text-muted); }
+  #results .hint { color: var(--c-text-muted); font-size: var(--t-caption-size); }
+  #ts:not(:empty) { margin-top: var(--d-label-gap); }
+</style>

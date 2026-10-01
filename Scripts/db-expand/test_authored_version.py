@@ -5,7 +5,7 @@ authored 센티널·payload 오라클 (W0c §3-3).
 지키는 것 셋:
   1. 태그가 **내용에만** 반응한다 — 포맷을 바꿔도 안 변하고, 한 글자만 고쳐도 변한다.
   2. authored payload가 generated payload와 **같은 모양**이다(버전 2필드 포함).
-  3. 실 번들 650 전수가 Worker shape 게이트·정본 카테고리 집합을 통과한다.
+  3. 실 번들 전수가 Worker shape 게이트·정본 카테고리 집합을 통과한다.
      (여기서 걸러야 §3-4 시딩이 D1에 못 들어가는 행을 들고 가지 않는다)
 
 실행:
@@ -68,7 +68,7 @@ def test_tag_is_content_only() -> None:
     )
     check(
         bundle_prompt_version(reformatted) == base,
-        "포맷만 바꿨는데 태그가 변했다 — 650행이 통째로 오탐된다",
+        "포맷만 바꿨는데 태그가 변했다 — 번들 전량이 오탐된다",
     )
 
     # 내용 한 글자 — 반드시 변해야 한다
@@ -122,7 +122,7 @@ def test_payload_shape_matches_generated() -> None:
     print("  payload 8필드 · Worker 상수 대조 ✓")
 
 
-def test_bundle_650_all_valid() -> None:
+def test_bundle_all_valid() -> None:
     entries = json.loads(BUNDLE.read_text(encoding="utf-8"))
     bad = [(e.get("keyword"), validate_authored(e)) for e in entries]
     bad = [(k, p) for k, p in bad if p]
@@ -137,13 +137,13 @@ def main() -> int:
     test_tag_shape()
     test_tag_is_content_only()
     test_payload_shape_matches_generated()
-    test_bundle_650_all_valid()
+    test_bundle_all_valid()
     if failures:
         print(f"FAIL — {len(failures)}건")
         for msg in failures:
             print(f"  {msg}")
         return 1
-    print("PASS — authored 센티널 · payload 대칭 · 번들 650 전수")
+    print("PASS — authored 센티널 · payload 대칭 · 번들 전수")
     return 0
 
 
